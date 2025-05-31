@@ -158,6 +158,28 @@ npx task-master init
 
 This will prompt you for project details and set up a new project with the necessary files and structure.
 
+#### Interactive Menu (Recommended)
+
+For the best user experience, use the interactive menu system:
+
+```bash
+# Launch interactive menu
+task-master menu
+
+# OR use the shorthand flag
+task-master --menu
+task-master -m
+```
+
+The interactive menu provides:
+- 🎯 **Guided workflows** - No need to remember command syntax
+- 📊 **Real-time project info** - See task counts and status at a glance
+- 🧭 **Easy navigation** - Organized categories with breadcrumb navigation
+- ✅ **Input validation** - Prevents common mistakes with smart prompts
+- 🔄 **Error recovery** - Graceful handling of issues with recovery options
+
+[📖 Complete Interactive Menu Guide](docs/interactive-menu.md)
+
 #### Common Commands
 
 ```bash
@@ -181,6 +203,7 @@ task-master generate
 
 For more detailed information, check out the documentation in the `docs` directory:
 
+- [Interactive Menu Guide](docs/interactive-menu.md) - Complete guide to the menu system
 - [Configuration Guide](docs/configuration.md) - Set up environment variables and customize Task Master
 - [Tutorial](docs/tutorial.md) - Step-by-step guide to getting started with Task Master
 - [Command Reference](docs/command-reference.md) - Complete list of all available commands

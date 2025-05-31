@@ -1,6 +1,6 @@
 # Task ID: 2
 # Title: Develop Core Menu Framework and UI
-# Status: pending
+# Status: done
 # Dependencies: 1
 # Priority: high
 # Description: Develop the foundational framework for the interactive menu using `inquirer.js` for prompts and `chalk` and `boxen` for visual styling. This includes rendering the main menu structure, handling user input for navigation, and displaying basic project status.

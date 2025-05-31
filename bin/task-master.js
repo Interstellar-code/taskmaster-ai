@@ -297,6 +297,24 @@ program
 		runDevScript(args);
 	});
 
+// Add interactive menu commands
+program
+	.command('menu')
+	.description('Launch interactive menu system')
+	.action(async () => {
+		try {
+			const { initializeInteractiveMenu } = await import('../src/menu/index.js');
+			await initializeInteractiveMenu();
+		} catch (err) {
+			console.error(chalk.red('Error loading interactive menu:'), err.message);
+			process.exit(1);
+		}
+	});
+
+// Add menu option flag
+program
+	.option('-m, --menu', 'Launch interactive menu system');
+
 // Use a temporary Command instance to get all command definitions
 const tempProgram = new Command();
 registerCommands(tempProgram);
@@ -322,6 +340,19 @@ tempProgram.commands.forEach((cmd) => {
 
 // Parse the command line arguments
 program.parse(process.argv);
+
+// Handle --menu flag
+if (program.opts().menu) {
+	(async () => {
+		try {
+			const { initializeInteractiveMenu } = await import('../src/menu/index.js');
+			await initializeInteractiveMenu();
+		} catch (err) {
+			console.error(chalk.red('Error loading interactive menu:'), err.message);
+			process.exit(1);
+		}
+	})();
+}
 
 // Add global error handling for unknown commands and options
 process.on('uncaughtException', (err) => {

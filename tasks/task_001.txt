@@ -1,6 +1,6 @@
 # Task ID: 1
 # Title: Implement CLI Entry Point for Interactive Menu
-# Status: pending
+# Status: done
 # Dependencies: None
 # Priority: high
 # Description: Implement the core command-line interface entry point for the interactive menu system, allowing users to launch it using `task-hero --menu`, `task-hero -m`, or `task-hero menu`.
