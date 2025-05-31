@@ -310,10 +310,7 @@ async function handleProjectManagement(sessionState) {
                     await executeCommand('init', [], { projectRoot: sessionState.projectRoot });
                     break;
                 case 'parse-prd':
-                    await executeCommandWithParams('parse-prd', [
-                        COMMON_PARAMS.filePath,
-                        COMMON_PARAMS.numTasks
-                    ], { projectRoot: sessionState.projectRoot });
+                    await handleParsePRD(sessionState);
                     break;
                 case 'models':
                     await executeCommand('models', ['--setup'], { projectRoot: sessionState.projectRoot });
@@ -821,6 +818,242 @@ async function handleSettings(sessionState) {
         }
     } finally {
         sessionState.menuPath.pop();
+    }
+}
+
+/**
+ * Specialized handlers for complex operations
+ */
+async function handleParsePRD(sessionState) {
+    try {
+        // Check if tasks already exist
+        const path = await import('path');
+        const fs = await import('fs');
+        const tasksPath = path.join(sessionState.projectRoot, 'tasks', 'tasks.json');
+
+        let hasExistingTasks = false;
+        let existingTaskCount = 0;
+
+        try {
+            if (fs.existsSync(tasksPath)) {
+                const tasksData = JSON.parse(fs.readFileSync(tasksPath, 'utf8'));
+                if (tasksData.tasks && Array.isArray(tasksData.tasks) && tasksData.tasks.length > 0) {
+                    hasExistingTasks = true;
+                    existingTaskCount = tasksData.tasks.length;
+                }
+            }
+        } catch (err) {
+            // If we can't read tasks, assume no existing tasks
+        }
+
+        // Show warning if tasks exist
+        if (hasExistingTasks) {
+            console.log(chalk.yellow(`\n⚠️  Found ${existingTaskCount} existing tasks`));
+
+            const { action } = await inquirer.prompt([{
+                type: 'list',
+                name: 'action',
+                message: 'How would you like to proceed?',
+                choices: [
+                    {
+                        name: chalk.green('➕ Append new tasks (recommended)'),
+                        value: 'append',
+                        short: 'Append'
+                    },
+                    {
+                        name: chalk.yellow('🔄 Replace all tasks'),
+                        value: 'replace',
+                        short: 'Replace'
+                    },
+                    {
+                        name: chalk.gray('❌ Cancel'),
+                        value: 'cancel',
+                        short: 'Cancel'
+                    }
+                ]
+            }]);
+
+            if (action === 'cancel') {
+                console.log(chalk.gray('Operation cancelled.'));
+                return;
+            }
+
+            // Get PRD file path and other parameters
+            const params = await promptForPRDParameters();
+            if (!params) return;
+
+            // Build arguments based on user choice
+            const args = [`--input=${params.filePath}`, `--num-tasks=${params.numTasks}`];
+            if (action === 'append') {
+                args.push('--append');
+            }
+
+            await executeCommand('parse-prd', args, { projectRoot: sessionState.projectRoot });
+        } else {
+            // No existing tasks, proceed normally
+            const params = await promptForPRDParameters();
+            if (!params) return;
+
+            const args = [`--input=${params.filePath}`, `--num-tasks=${params.numTasks}`];
+            await executeCommand('parse-prd', args, { projectRoot: sessionState.projectRoot });
+        }
+    } catch (error) {
+        console.error(chalk.red('Error handling PRD parsing:'), error.message);
+        logError('PRD parsing error', error, { sessionState: sessionState.menuPath });
+    }
+}
+
+async function promptForPRDParameters() {
+    try {
+        // First, let user choose how to specify the PRD file
+        const { fileSource } = await inquirer.prompt([{
+            type: 'list',
+            name: 'fileSource',
+            message: 'How would you like to specify the PRD file?',
+            choices: [
+                {
+                    name: chalk.blue('📁 Browse and select file'),
+                    value: 'browse',
+                    short: 'Browse'
+                },
+                {
+                    name: chalk.green('⌨️ Enter file path manually'),
+                    value: 'manual',
+                    short: 'Manual'
+                },
+                {
+                    name: chalk.yellow('📄 Use default (scripts/prd.txt)'),
+                    value: 'default',
+                    short: 'Default'
+                }
+            ]
+        }]);
+
+        let filePath;
+
+        switch (fileSource) {
+            case 'browse':
+                filePath = await browsePRDFiles();
+                if (!filePath) return null;
+                break;
+            case 'manual':
+                const { manualPath } = await inquirer.prompt([{
+                    type: 'input',
+                    name: 'manualPath',
+                    message: 'Enter PRD file path:',
+                    validate: (input) => {
+                        if (!input.trim()) return 'File path cannot be empty';
+                        // Basic validation - could be enhanced
+                        return true;
+                    }
+                }]);
+                filePath = manualPath;
+                break;
+            case 'default':
+                filePath = 'scripts/prd.txt';
+                break;
+        }
+
+        // Get number of tasks
+        const { numTasks } = await inquirer.prompt([{
+            type: 'input',
+            name: 'numTasks',
+            message: 'Number of tasks to generate:',
+            default: '10',
+            validate: (input) => {
+                const num = parseInt(input);
+                return !isNaN(num) && num > 0 && num <= 50 ? true : 'Please enter a number between 1 and 50';
+            }
+        }]);
+
+        return { filePath, numTasks };
+    } catch (error) {
+        console.error(chalk.red('Error getting PRD parameters:'), error.message);
+        return null;
+    }
+}
+
+async function browsePRDFiles() {
+    try {
+        const fs = await import('fs');
+        const path = await import('path');
+
+        // Common PRD file locations
+        const searchPaths = [
+            'scripts',
+            'docs',
+            'requirements',
+            '.',
+            'prd'
+        ];
+
+        const prdFiles = [];
+
+        for (const searchPath of searchPaths) {
+            try {
+                if (fs.existsSync(searchPath)) {
+                    const files = fs.readdirSync(searchPath);
+                    const prdFilesInPath = files
+                        .filter(file => {
+                            const ext = path.extname(file).toLowerCase();
+                            const name = path.basename(file, ext).toLowerCase();
+                            return (ext === '.txt' || ext === '.md') &&
+                                   (name.includes('prd') || name.includes('requirement') || name.includes('spec'));
+                        })
+                        .map(file => ({
+                            name: `${searchPath}/${file}`,
+                            value: path.join(searchPath, file)
+                        }));
+
+                    prdFiles.push(...prdFilesInPath);
+                }
+            } catch (err) {
+                // Skip directories we can't read
+            }
+        }
+
+        if (prdFiles.length === 0) {
+            console.log(chalk.yellow('No PRD files found in common locations.'));
+            const { manualPath } = await inquirer.prompt([{
+                type: 'input',
+                name: 'manualPath',
+                message: 'Enter PRD file path manually:',
+                validate: (input) => input.trim().length > 0 ? true : 'File path cannot be empty'
+            }]);
+            return manualPath;
+        }
+
+        // Add option to enter manual path
+        prdFiles.push(
+            new inquirer.Separator(),
+            {
+                name: chalk.gray('⌨️ Enter path manually'),
+                value: 'manual'
+            }
+        );
+
+        const { selectedFile } = await inquirer.prompt([{
+            type: 'list',
+            name: 'selectedFile',
+            message: 'Select a PRD file:',
+            choices: prdFiles,
+            pageSize: 10
+        }]);
+
+        if (selectedFile === 'manual') {
+            const { manualPath } = await inquirer.prompt([{
+                type: 'input',
+                name: 'manualPath',
+                message: 'Enter PRD file path:',
+                validate: (input) => input.trim().length > 0 ? true : 'File path cannot be empty'
+            }]);
+            return manualPath;
+        }
+
+        return selectedFile;
+    } catch (error) {
+        console.error(chalk.red('Error browsing PRD files:'), error.message);
+        return null;
     }
 }
 

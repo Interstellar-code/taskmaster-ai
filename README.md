@@ -177,6 +177,8 @@ The interactive menu provides:
 - 🧭 **Easy navigation** - Organized categories with breadcrumb navigation
 - ✅ **Input validation** - Prevents common mistakes with smart prompts
 - 🔄 **Error recovery** - Graceful handling of issues with recovery options
+- 📁 **Smart file selection** - Automatically finds and suggests PRD files
+- ⚠️ **Append detection** - Automatically uses `--append` when tasks exist
 
 [📖 Complete Interactive Menu Guide](docs/interactive-menu.md)
 

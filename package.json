@@ -17,6 +17,7 @@
 		"test:e2e": "./tests/e2e/run_e2e.sh",
 		"test:e2e-report": "./tests/e2e/run_e2e.sh --analyze-log",
 		"prepare": "node -e \"const fs = require('fs'); const files = ['bin/task-master.js', 'mcp-server/server.js']; files.forEach(f => { try { fs.chmodSync(f, '755'); } catch(e) { /* Windows doesn't need chmod */ } });\"",
+		"menu": "node bin/task-master.js menu",
 		"changeset": "changeset",
 		"release": "changeset publish",
 		"inspector": "npx @modelcontextprotocol/inspector node mcp-server/server.js",

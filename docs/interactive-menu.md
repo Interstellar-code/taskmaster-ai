@@ -7,12 +7,35 @@ The TaskMaster Interactive Menu provides a user-friendly, menu-driven interface 
 Launch the interactive menu using any of these methods:
 
 ```bash
-# Method 1: Menu command
+# Method 1: Global command (if installed globally)
 task-master menu
-
-# Method 2: Menu flag
 task-master --menu
 task-master -m
+
+# Method 2: Local project (always works)
+node bin/task-master.js menu
+
+# Method 3: NPM script (in project directory)
+npm run menu
+
+# Method 4: NPX (if installed globally)
+npx task-master menu
+```
+
+### Troubleshooting Menu Launch
+
+If `task-master menu` shows "unknown command 'menu'", your global installation may be outdated:
+
+```bash
+# Solution 1: Reinstall globally
+npm uninstall -g task-master-ai
+npm install -g task-master-ai
+
+# Solution 2: Use local command
+node bin/task-master.js menu
+
+# Solution 3: Use npm script
+npm run menu
 ```
 
 ## Menu Structure
@@ -21,8 +44,15 @@ The interactive menu is organized into logical categories:
 
 ### 📁 Project Management
 - **🚀 Initialize Project** - Set up a new TaskMaster project
-- **📄 Parse PRD** - Generate tasks from Product Requirements Document
+- **📄 Parse PRD** - Generate tasks from Product Requirements Document with smart file selection
 - **🤖 Configure Models** - Set up AI model configuration
+
+#### Enhanced PRD Parsing Features
+The Parse PRD option includes intelligent features:
+- **📁 File Browser** - Automatically finds PRD files in common locations (scripts/, docs/, requirements/, etc.)
+- **⚠️ Existing Task Detection** - Warns when tasks already exist and offers to append or replace
+- **🔄 Append Mode** - Automatically uses `--append` flag when adding to existing projects
+- **📄 Multiple Input Methods** - Browse files, enter path manually, or use default location
 
 ### 📋 Task Operations
 - **📋 List Tasks** - View all tasks with status
