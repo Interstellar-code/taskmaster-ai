@@ -2238,6 +2238,21 @@ function registerCommands(programInstance) {
 			}
 		});
 
+	// menu command - Interactive menu system
+	programInstance
+		.command('menu')
+		.description('Launch interactive menu system')
+		.action(async () => {
+			try {
+				// Dynamic import to avoid circular dependencies
+				const { initializeInteractiveMenu } = await import('../../src/menu/index.js');
+				await initializeInteractiveMenu();
+			} catch (err) {
+				console.error(chalk.red('Error loading interactive menu:'), err.message);
+				process.exit(1);
+			}
+		});
+
 	// init command (Directly calls the implementation from init.js)
 	programInstance
 		.command('init')
@@ -2652,6 +2667,7 @@ function setupCLI() {
 			return 'unknown'; // Default fallback if package.json fails
 		})
 		.helpOption('-h, --help', 'Display help')
+		.option('-m, --menu', 'Launch interactive menu system')
 		.addHelpCommand(false); // Disable default help command
 
 	// Modify the help option to use your custom display
@@ -2807,6 +2823,17 @@ async function runCLI(argv = process.argv) {
 		// This means the ConfigurationError might be thrown here if .taskmasterconfig is missing.
 		const programInstance = setupCLI();
 		await programInstance.parseAsync(argv);
+
+	// Handle --menu flag
+	if (programInstance.opts().menu) {
+		try {
+			const { initializeInteractiveMenu } = await import('../../src/menu/index.js');
+			await initializeInteractiveMenu();
+		} catch (err) {
+			console.error(chalk.red('Error loading interactive menu:'), err.message);
+			process.exit(1);
+		}
+	}
 
 		// After command execution, check if an update is available
 		const updateInfo = await updateCheckPromise;

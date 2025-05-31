@@ -27,7 +27,7 @@ npx task-master menu
 If `task-master menu` shows "unknown command 'menu'", your global installation may be outdated:
 
 ```bash
-# Solution 1: Reinstall globally
+# Solution 1: Reinstall globally (Recommended)
 npm uninstall -g task-master-ai
 npm install -g task-master-ai
 
@@ -37,6 +37,11 @@ node bin/task-master.js menu
 # Solution 3: Use npm script
 npm run menu
 ```
+
+**Note**: After updating to the latest version, all menu launch methods should work correctly:
+- `task-master menu` ✅
+- `task-master --menu` ✅
+- `task-master -m` ✅
 
 ## Menu Structure
 
@@ -156,6 +161,18 @@ The menu system respects your TaskMaster configuration:
 - **Model Settings** - Uses configured AI models
 - **Project Settings** - Reads from `.taskmasterconfig`
 - **Environment Variables** - Respects debug and development settings
+- **AI Integration** - Automatically sets up workspace guidelines for various AI editors
+
+### AI Editor Integration
+
+TaskMaster automatically generates workspace guidelines and rules for popular AI-powered editors:
+
+- **Augment AI** - `.augment-guidelines` file with TaskMaster-specific context and best practices
+- **Cursor** - `.cursor/rules/` directory with comprehensive rule files
+- **Windsurf** - `.windsurfrules` file for AI assistance
+- **Roo Code** - `.roo/` directory with mode-specific rules
+
+These files help AI assistants understand your TaskMaster project structure and provide more accurate suggestions.
 
 ## Troubleshooting
 

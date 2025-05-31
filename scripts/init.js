@@ -228,6 +228,9 @@ function copyTemplateFile(templateName, targetPath, replacements = {}) {
 		case '.roomodes':
 			sourcePath = path.join(__dirname, '..', 'assets', 'roocode', '.roomodes');
 			break;
+		case 'augment-guidelines':
+			sourcePath = path.join(__dirname, '..', 'templates', 'augment-guidelines');
+			break;
 		case 'architect-rules':
 		case 'ask-rules':
 		case 'boomerang-rules':
@@ -549,6 +552,10 @@ function createProjectStructure(addAliases, dryRun) {
 
 	// Copy .roomodes for Roo Code integration
 	copyTemplateFile('.roomodes', path.join(targetDir, '.roomodes'));
+
+	// Copy Augment AI guidelines
+	log('info', 'Setting up Augment AI workspace guidelines...');
+	copyTemplateFile('augment-guidelines', path.join(targetDir, '.augment-guidelines'));
 
 	// Copy Roo rule files for each mode
 	const rooModes = ['architect', 'ask', 'boomerang', 'code', 'debug', 'test'];

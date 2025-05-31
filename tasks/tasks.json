@@ -8,7 +8,7 @@
       "testStrategy": "Verify that `task-hero --menu`, `task-hero -m`, and `task-hero menu` successfully launch the interactive menu. Test that existing commands still function correctly when the menu is not invoked.",
       "priority": "high",
       "dependencies": [],
-      "status": "pending",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
@@ -16,7 +16,7 @@
           "description": "Set up Commander.js in the main CLI entry file (e.g., `index.js` or `cli.js`) and define the base `task-hero` command. This subtask focuses on initializing the CLI framework.",
           "dependencies": [],
           "details": "Install Commander.js. In the main CLI file, import Commander and initialize `program`. Set the program's name and version. Ensure `program.parse(process.argv)` is called at the end of the file.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Run `node your-cli-file.js --version` and `node your-cli-file.js --help` to verify Commander.js is active and displays basic info."
         },
         {
@@ -27,7 +27,7 @@
             1
           ],
           "details": "Use `program.command('menu')` or `program.option('-m, --menu', 'Launch interactive menu')`. If using `program.command('menu')`, ensure it has a description. If using `program.option`, its action should be defined to trigger the menu logic. Ensure it doesn't conflict with existing commands.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Run `task-hero menu --help` and `task-hero --help` to confirm the 'menu' command/option is listed correctly. Verify `task-hero --menu` and `task-hero -m` don't throw immediate errors."
         },
         {
@@ -38,7 +38,7 @@
             2
           ],
           "details": "Create a new file (e.g., `src/menu/index.js`) or a function within the main CLI file. This function should simply `console.log('Initializing interactive menu...')`. Call this function from the action handler of the `menu` command/option defined in subtask 2.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Run `task-hero menu`, `task-hero --menu`, and `task-hero -m`. Verify that 'Initializing interactive menu...' is printed to the console for each invocation."
         },
         {
@@ -49,7 +49,7 @@
             3
           ],
           "details": "Review the existing Commander.js setup for other commands. Ensure that `program.parse()` correctly dispatches to existing command handlers when the `menu` command/option is not present. No changes should be required for existing commands, but their functionality must be confirmed.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Execute a few existing commands (e.g., `task-hero add 'Test task'`, `task-hero list`). Confirm they function exactly as before, without any interference from the new menu logic."
         },
         {
@@ -60,7 +60,7 @@
             4
           ],
           "details": "If `initializeInteractiveMenu` was in the main CLI file, move it to a dedicated module (e.g., `src/menu/index.js`) and import it. Ensure the `menu` command/option's action handler correctly calls this imported function. Add comments for clarity. The entry point should be robust and ready to call the actual menu rendering logic in future tasks.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Perform a comprehensive test: run `task-hero menu`, `task-hero --menu`, `task-hero -m`, and several existing commands. All should execute successfully and produce the expected output, confirming both new and old functionalities are intact and integrated cleanly."
         }
       ]
@@ -75,7 +75,7 @@
       "dependencies": [
         1
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
@@ -83,7 +83,7 @@
           "description": "Initialize the project, install core dependencies (`inquirer`, `chalk`, `boxen`), and create a basic entry point file to ensure the environment is ready for menu development.",
           "dependencies": [],
           "details": "Create a new Node.js project. Install `inquirer`, `chalk`, and `boxen` as production dependencies. Create an `index.js` or `app.js` file. Add a simple 'Hello World' console log to verify execution.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Run `node index.js` and verify 'Hello World' output. Check `package.json` for installed dependencies."
         },
         {
@@ -94,7 +94,7 @@
             1
           ],
           "details": "Create a function, e.g., `renderMainMenuHeader()`, that takes project name, total tasks, and completed tasks as arguments. Use `chalk` to colorize text (e.g., project name, status). Use `boxen` to draw a border around the header content. For initial testing, hardcode placeholder values for project name and task counts.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Call `renderMainMenuHeader()` with sample data. Visually inspect the console output to ensure correct colors, borders, and layout as per PRD."
         },
         {
@@ -105,7 +105,7 @@
             2
           ],
           "details": "Create a function, e.g., `promptMainMenu()`, that uses `inquirer.prompt` with a `list` type. Define at least 3-4 placeholder menu options (e.g., 'View Tasks', 'Add Task', 'Exit'). Ensure the prompt is displayed below the header rendered in the previous step. Capture the user's choice.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Run the application. Verify that the menu options are displayed correctly. Select an option and confirm that the choice is logged to the console."
         },
         {
@@ -116,7 +116,7 @@
             3
           ],
           "details": "Wrap the menu rendering and prompting logic within an asynchronous `while` loop. Implement a `switch` or `if/else if` statement to handle different user choices. For non-exit choices, simply log a message indicating the selected action (e.g., 'Viewing tasks...') and then re-render the menu. The loop should break when the 'Exit' option is chosen.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Run the application. Select various options and verify that the corresponding action message is displayed, and the menu reappears. Select 'Exit' and confirm the application terminates."
         },
         {
@@ -127,7 +127,7 @@
             4
           ],
           "details": "Review the PRD for specific color schemes, padding, and border styles for both the header and potentially the menu options. Adjust `chalk` and `boxen` parameters accordingly. Create simple placeholder variables for 'project name', 'total tasks', and 'completed tasks' (e.g., `const projectName = 'My Project'; const totalTasks = 10; const completedTasks = 3;`). Pass these variables to the `renderMainMenuHeader()` function.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Run the application. Visually inspect the entire menu for adherence to design specifications. Change the placeholder task counts and verify that the header updates correctly on subsequent menu renders."
         }
       ]
@@ -142,7 +142,7 @@
       "dependencies": [
         2
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
@@ -150,7 +150,7 @@
           "description": "Create a data structure (e.g., a JavaScript object or array) that defines the 'Project Management' and 'Task Operations' menu categories, their display names, and the mapping of each numbered option to its corresponding `task-hero` command name.",
           "dependencies": [],
           "details": "Define a clear, maintainable data structure, possibly in a new module like `scripts/modules/menu_definitions.js`. Each menu item should include its display text, the associated command name, and potentially a short description. Ensure the command names precisely match those expected by `task-hero`.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Manually inspect the defined data structure to ensure correctness and completeness of menu items and command mappings."
         },
         {
@@ -161,7 +161,7 @@
             1
           ],
           "details": "Create a function, perhaps `displayMenu(menuStructure)`, that iterates through the menu categories and their options, printing them in a user-friendly format. Use `console.log` for output. Ensure clear numbering for each option.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Run the menu display function and visually verify that all categories and options are displayed correctly and are properly numbered according to the defined structure."
         },
         {
@@ -173,7 +173,7 @@
             2
           ],
           "details": "Use `readline` or similar module for input. Implement a loop that repeatedly prompts the user until valid input (a number corresponding to an existing menu option) is received. Map the selected number back to the command name using the data structure defined in subtask 1. Handle invalid input gracefully.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Manually test by entering valid numbers for various options, invalid numbers, and non-numeric input. Verify that the correct command name is identified for valid inputs and that error messages are displayed for invalid inputs."
         },
         {
@@ -184,7 +184,7 @@
             3
           ],
           "details": "Call the appropriate function from `scripts/modules/commands.js` with the identified command name and any necessary arguments. Wrap the command execution in a `try-catch` block for error handling. After execution (or error), re-display the menu (calling the function from subtask 2) to allow further selections.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Select various menu options (e.g., 'list', 'next', 'init'). Verify that the corresponding `task-hero` command executes as expected and that the menu is redisplayed immediately after the command finishes."
         },
         {
@@ -195,7 +195,7 @@
             4
           ],
           "details": "Add clear instructions for menu navigation. Implement specific error messages for command failures, perhaps by catching exceptions from `scripts/modules/commands.js`. Consider adding a 'back' or 'exit' option to the menu. Ensure consistent formatting for all console output.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Test edge cases: try to execute commands that might fail (e.g., `set-status` with an invalid ID). Verify that user prompts are clear, error messages are informative, and the application remains stable. Test the 'exit' functionality if implemented."
         }
       ]
@@ -210,7 +210,7 @@
       "dependencies": [
         3
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
@@ -218,7 +218,7 @@
           "description": "Establish the foundational data structure for the 'Task Management' and 'Subtask Operations' menu categories, including their respective commands and metadata (e.g., command name, description, required parameters). This will serve as the blueprint for menu generation.",
           "dependencies": [],
           "details": "Create a JavaScript object or array structure that maps menu categories to an array of command objects. Each command object should specify its `command` (e.g., 'add-task'), `description`, and an array of `parameters` (e.g., `[{ name: 'name', type: 'string', required: true }]`). This structure will be used by the menu rendering logic.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Verify that the data structure correctly defines all specified commands and their parameters for both 'Task Management' and 'Subtask Operations' categories."
         },
         {
@@ -229,7 +229,7 @@
             1
           ],
           "details": "Create a function, e.g., `promptForParameters(parametersArray)`, that takes an array of parameter definitions (from Subtask 1's data structure) and uses `inquirer.js` to generate appropriate prompts (e.g., input, list, confirm). It should return a promise resolving with an object containing the user's inputs. Handle different parameter types (string, number, boolean) and implement basic validation for required fields.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Test the utility with various parameter configurations (e.g., single required string, multiple mixed types, optional parameters) to ensure correct prompting and input capture. Simulate user input for automated testing."
         },
         {
@@ -241,7 +241,7 @@
             2
           ],
           "details": "Use `inquirer.js` to present the main menu categories. Upon category selection, present the list of commands within that category. When a command is selected, check its parameter requirements. If parameters are needed, call the utility from Subtask 2. Once parameters are gathered (or if none are needed), dynamically construct and execute the `task-hero` command (e.g., `task-hero add-task 'Task Name'`). Ensure command output is captured and displayed back to the user within the menu interface.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Manually test navigation through both menu categories, selecting various commands. Verify that parameter prompts appear correctly and that the underlying `task-hero` commands are executed with the provided inputs. Check that command output is displayed."
         },
         {
@@ -252,7 +252,7 @@
             3
           ],
           "details": "For commands like `add-task` or `add-subtask`, consider implementing smart defaults. For example, if a project is currently active, default the project name. For `update` commands, pre-fill current values if available. This might involve querying the `task-hero` state or maintaining a simple context store. Modify the `promptForParameters` utility to accept and utilize default values for prompts.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Test commands with smart defaults (e.g., `add-task` when a project is active, `update-task` for an existing task). Verify that default values are correctly pre-filled in prompts and can be overridden by the user."
         },
         {
@@ -263,7 +263,7 @@
             4
           ],
           "details": "Implement `try-catch` blocks around command executions to gracefully handle errors returned by `task-hero` or during parameter prompting. Display user-friendly error messages instead of raw exceptions. Provide clear success messages after command completion. Ensure a 'Back' or 'Exit' option is available at appropriate menu levels to allow users to navigate or quit the application cleanly. Consider adding input validation beyond just 'required' checks (e.g., format validation for IDs).",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Test error scenarios (e.g., attempting to remove a non-existent task, providing invalid input format). Verify that error messages are clear and that the application doesn't crash. Test navigation back through menus and the exit functionality."
         }
       ]
@@ -278,7 +278,7 @@
       "dependencies": [
         4
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
@@ -286,7 +286,7 @@
           "description": "Create the 'Analysis & Dependencies' top-level menu and its sub-items: 'Analyze Complexity', 'Complexity Report', 'Add Dependency', 'Remove Dependency', 'Validate Dependencies', and 'Fix Dependencies'. For this subtask, focus on the menu structure and placeholder actions that can be triggered (e.g., logging a message when an item is clicked), without implementing the full backend logic for each action.",
           "dependencies": [],
           "details": "Utilize the existing menu framework. Each menu item should have a basic event handler that, for now, simply logs the action to the console or displays a simple 'Not yet implemented' message. Ensure proper menu hierarchy and naming.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Verify that the 'Analysis & Dependencies' menu appears correctly in the UI and that all its sub-items are present and clickable. Check console logs for placeholder action triggers."
         },
         {
@@ -297,7 +297,7 @@
             1
           ],
           "details": "Integrate these menu items into the UI. For 'Command Reference' and 'Quick Start Guide', consider opening a simple modal or a new tab with placeholder content. For 'Keyboard Shortcuts', a simple display of common shortcuts (even if hardcoded for now) would suffice. Ensure proper menu hierarchy and naming.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Verify that the 'Help & Information' menu appears correctly and all its sub-items are present and clickable. Check that placeholder content or modals appear as expected."
         },
         {
@@ -308,7 +308,7 @@
             2
           ],
           "details": "The 'Settings' menu items should reflect the current state read from `.taskmasterconfig`. 'Toggle Research Mode' and 'Debug Mode' should be checkboxes or toggle switches that update the config file upon change. 'Set Default File Paths' can initially be a text input that reads/writes a path string. Implement robust error handling for config file operations.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Verify the 'Settings' menu appears correctly. Test toggling 'Research Mode' and 'Debug Mode' to ensure they read from and write to `.taskmasterconfig` correctly. Verify 'Set Default File Paths' can display and update a path. Check for error messages on invalid config operations."
         },
         {
@@ -319,7 +319,7 @@
             3
           ],
           "details": "Identify at least 2-3 specific UI elements (e.g., a specific input field, a button, or a menu item) where contextual help would be useful. Implement a mechanism (e.g., on-hover tooltips, a dedicated help panel that updates based on focus, or status bar messages) to display pre-defined help text. This framework should be extensible for future additions.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Verify that contextual help appears for the selected UI elements. Test different interaction methods (e.g., hovering, focusing) to ensure the help text is displayed correctly and is relevant to the context."
         },
         {
@@ -330,7 +330,7 @@
             4
           ],
           "details": "For 'Analysis' menu items, instead of just logging, open a small modal indicating the feature is under development. For 'Help' menu items, open a simple static HTML page or a modal with the relevant (even if minimal) content. Ensure consistent styling and responsiveness across all menus. Add basic visual feedback on click (e.g., button press state).",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Verify that all menu items across 'Analysis', 'Help', and 'Settings' are fully functional in terms of UI interaction. Check that placeholder modals or content appear as expected for 'Analysis' and 'Help' items. Ensure consistent user experience and responsiveness."
         }
       ]
@@ -345,7 +345,7 @@
       "dependencies": [
         2
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
@@ -353,7 +353,7 @@
           "description": "Implement robust input validation for all menu selections using Inquirer.js's built-in validation features. This includes ensuring that user input for menu choices corresponds to valid options.",
           "dependencies": [],
           "details": "For each Inquirer.js prompt used for menu selections (e.g., list, rawlist, expand), add a `validate` function. This function should check if the user's input is one of the expected options. Provide clear, user-friendly error messages for invalid selections. Consider using a helper function to centralize common validation logic.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Manually test each menu by entering invalid options (e.g., non-numeric, out-of-range numbers, text) and verifying that the correct error message is displayed and the prompt re-appears until valid input is provided."
         },
         {
@@ -364,7 +364,7 @@
             1
           ],
           "details": "For each Inquirer.js prompt used to gather command parameters (e.g., input, number), add a `validate` function. This function should enforce specific rules such as non-emptiness, correct data type (e.g., numeric, string), specific format (e.g., valid file path pattern), or range constraints. Provide specific, actionable error messages for each validation failure.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "For each command requiring parameters, test with various invalid inputs: empty strings, incorrect data types (e.g., text for a number field), out-of-range values, and malformed inputs (e.g., invalid file paths). Verify that appropriate error messages are shown and the prompt re-appears."
         },
         {
@@ -375,7 +375,7 @@
             2
           ],
           "details": "Implement a simple logging utility (e.g., using `console.error` or a dedicated logging library like Winston/Pino if scope allows) that can record error details such as timestamp, error type, stack trace, and relevant context (e.g., command executed, input provided). Ensure logs are written to a file or displayed prominently in the console for development. Define a standard error object or structure.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Trigger known errors (e.g., intentionally cause a file not found error, or a parsing error) and verify that the error details are correctly logged to the console or a designated log file. Check for completeness of logged information."
         },
         {
@@ -386,7 +386,7 @@
             3
           ],
           "details": "Identify all points where external commands are executed or potentially failing operations occur (e.g., file system operations, external API calls). Enclose these operations in `try-catch` blocks. Within the `catch` block, log the error using the mechanism from subtask 3, provide a user-friendly error message to the console, and ensure the application returns to the relevant menu or a stable state, rather than crashing.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Simulate various command execution failures (e.g., attempt to delete a non-existent file, write to a read-only directory, or trigger an internal logic error). Verify that the application does not crash, an appropriate error message is displayed to the user, the error is logged, and the user is returned to the main menu or the previous stable state."
         },
         {
@@ -397,7 +397,7 @@
             4
           ],
           "details": "Review all error paths. For input validation errors, ensure the prompt re-appears with the error message. For command execution errors, after displaying the error message and logging, ensure the control flow returns to the main menu or the specific sub-menu from which the command was initiated, allowing the user to choose another action or retry. Avoid infinite loops or dead ends.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Perform end-to-end tests for various error scenarios. After an error, confirm that the user is always presented with clear options to proceed (e.g., return to main menu, retry input). Verify that the application state is consistent and not corrupted after an error."
         }
       ]
@@ -412,7 +412,7 @@
       "dependencies": [
         2
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
@@ -420,7 +420,7 @@
           "description": "Design and implement the data structure for storing session-specific information, including current menu path (breadcrumbs) and placeholders for user preferences. Establish a mechanism for persisting this state across user interactions within a session.",
           "dependencies": [],
           "details": "Create a `SessionState` object or similar structure. For initial implementation, use in-memory storage (e.g., a singleton or application-scoped bean) for simplicity. Consider how this state will be accessed and updated by different parts of the application. Define clear getters and setters for menu path and preference placeholders.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Unit tests to verify `SessionState` object creation, data storage, and retrieval. Integration tests to ensure the state persists across multiple simulated user actions within a single session."
         },
         {
@@ -431,7 +431,7 @@
             1
           ],
           "details": "Modify menu navigation handlers to push/pop menu items onto/from a stack or list within the `SessionState` object. Ensure the breadcrumb accurately reflects the user's current location. Consider how to handle direct URL access to specific pages (e.g., reset breadcrumbs or reconstruct them based on URL).",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Manual testing by navigating through various menu paths and verifying the breadcrumb display. Automated UI tests to simulate navigation and assert the correctness of the displayed breadcrumbs."
         },
         {
@@ -442,7 +442,7 @@
             1
           ],
           "details": "Identify or create specific API endpoints/methods within the project and task management modules that can provide: 1) The currently active project's name. 2) The total count of tasks associated with the active project. 3) The count of pending tasks for the active project. Ensure these calls are efficient and handle cases where no project is active or no tasks exist.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Unit tests for the data retrieval methods, mocking the underlying data sources. Integration tests to ensure correct data is fetched from the actual project/task services."
         },
         {
@@ -454,7 +454,7 @@
             3
           ],
           "details": "Modify the menu header template or component to include placeholders for 'Project: [name]', 'Tasks: [total] total ([pending] pending)', and 'Status: ✓ Configured'. Bind these placeholders to the data retrieved from the session state (for breadcrumbs) and the project/task data retrieval logic. Ensure the header updates reactively to changes in the underlying data.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Manual UI testing to verify correct display of all header elements under various scenarios (e.g., project active, no project, tasks present, no tasks). Visual regression tests if applicable."
         },
         {
@@ -465,7 +465,7 @@
             4
           ],
           "details": "Refactor the `SessionState` object if necessary to ensure it's well-structured and easily extendable. Add a dedicated field (e.g., a map or a nested object) within `SessionState` to hold user preferences. Document the intended use of this field for future preference management features. Ensure the current session management is stable and handles edge cases gracefully.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Code review of the `SessionState` structure. Unit tests to confirm the presence and accessibility of the new preference placeholder. End-to-end testing to ensure the entire session management and header display remains stable after refinements."
         }
       ]
@@ -481,7 +481,7 @@
         5,
         7
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
@@ -489,7 +489,7 @@
           "description": "Before implementing optimizations, establish clear performance baselines for menu rendering time, command execution time, memory usage, and startup time. Implement robust monitoring tools to track these metrics.",
           "dependencies": [],
           "details": "Use browser developer tools (e.g., Chrome DevTools Performance tab) for profiling rendering and execution times. For memory, use the Memory tab. For startup time, measure the time from application launch to full interactivity. Integrate a simple logging mechanism or a dedicated performance monitoring library if available to capture these metrics programmatically.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Run automated scripts to launch the application, navigate through menus, execute common commands, and record the specified metrics. Compare against initial non-functional requirements (e.g., startup < 500ms, memory < 50MB additional)."
         },
         {
@@ -500,7 +500,7 @@
             1
           ],
           "details": "Identify parts of the menu structure or command details that can be loaded asynchronously. For example, if a submenu has many items, only load the first few and fetch more as the user scrolls or hovers. For command details, load comprehensive descriptions or complex parameters only when a command is selected or about to be executed. Use techniques like React.lazy() and Suspense if applicable, or custom component-level lazy loading logic.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Verify that initial menu load times are reduced. Observe network requests to confirm that lazy-loaded content is fetched only when needed. Test user experience to ensure no noticeable lag when content is loaded on demand."
         },
         {
@@ -512,7 +512,7 @@
             2
           ],
           "details": "Analyze component re-renders using profiling tools (e.g., React DevTools Profiler). Implement memoization techniques (e.g., React.memo, useCallback, useMemo) for functional components and PureComponent/shouldComponentUpdate for class components. Ensure that state updates are granular and only trigger re-renders for affected components. Avoid passing new object/array references as props unnecessarily.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Use profiling tools to confirm a significant reduction in re-renders for menu components when unrelated state changes occur. Verify that menu interactions remain smooth and responsive."
         },
         {
@@ -524,7 +524,7 @@
             3
           ],
           "details": "Identify computationally intensive parts of command execution. If possible, offload heavy computations to web workers or process them asynchronously. Minimize synchronous operations that could block the main thread. Review data structures and algorithms used in command processing for efficiency. Cache results of frequently executed commands or expensive computations where appropriate.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Measure command execution times for various commands, especially complex ones, to ensure they meet performance targets. Verify that the UI remains responsive during command execution, without freezing or noticeable delays."
         },
         {
@@ -538,7 +538,7 @@
             4
           ],
           "details": "Re-run all performance baseline tests established in Subtask 1. Compare current metrics against baselines and target non-functional requirements. Document all findings, including improvements, any regressions, and remaining areas for optimization. Ensure memory usage is within limits and startup time is fast. Provide a summary report with recommendations for future performance monitoring.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Automated performance tests covering all key metrics (startup, rendering, execution, memory). Manual verification of user experience responsiveness. Generate a final report detailing compliance with NFRs and comparing 'before' and 'after' metrics."
         }
       ]
@@ -553,7 +553,7 @@
       "dependencies": [
         8
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
@@ -561,7 +561,7 @@
           "description": "Create a detailed test plan outlining the scope, objectives, resources, and schedule for comprehensive testing. Develop specific test cases for all menu navigation paths, command integrations, error handling scenarios, and cross-platform compatibility. Prioritize test cases based on criticality and frequency of use.",
           "dependencies": [],
           "details": "The test plan should cover functional, integration, error handling, and compatibility testing. Test cases should include preconditions, steps, expected results, and post-conditions. Utilize a test management tool if available to organize and track test cases.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Review test plan and test cases with development and product teams to ensure coverage and accuracy before execution."
         },
         {
@@ -572,7 +572,7 @@
             1
           ],
           "details": "Systematically go through each menu path and command, ensuring that all options are accessible and function as expected. Document any deviations from expected behavior as bugs. Pay close attention to edge cases in navigation.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Perform manual execution of all functional and navigation test cases. Log defects with clear steps to reproduce, actual results, and expected results."
         },
         {
@@ -583,7 +583,7 @@
             2
           ],
           "details": "For command integration, test with valid, invalid, and boundary parameters. Verify that outputs are correctly formatted and displayed. For error handling, simulate various error conditions (e.g., network issues, file not found, permission denied) and confirm that the application handles them robustly without crashing, providing user-friendly feedback.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Automate command integration tests where possible. Manually test a wide range of error scenarios, focusing on user experience and system stability under duress."
         },
         {
@@ -594,7 +594,7 @@
             3
           ],
           "details": "Set up test environments for each target terminal and OS. Execute a subset of critical functional and integration test cases on each platform. For backward compatibility, test the new version with configurations and data generated by previous versions of the application.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Manual testing on different terminal emulators and OS environments. Use a matrix to track compatibility results. Ensure that old commands still function as expected in the new environment."
         },
         {
@@ -605,7 +605,7 @@
             4
           ],
           "details": "Monitor resource usage (CPU, memory) during heavy command execution or long sessions. Use a bug tracking system to log, assign, and manage defects. Ensure all critical and major bugs are resolved and retested before final sign-off. The test report should include test coverage, executed test cases, defects found, and overall quality assessment.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Use system monitoring tools for performance checks. Implement a clear bug lifecycle in the tracking system. Conduct regression testing after bug fixes to ensure no new issues are introduced."
         }
       ]
@@ -620,7 +620,7 @@
       "dependencies": [
         9
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
@@ -628,7 +628,7 @@
           "description": "Review existing documentation to identify relevant sections for updates and propose new sections if necessary. Create a detailed outline for the interactive menu system documentation, covering entry points, navigation, and key features.",
           "dependencies": [],
           "details": "Access the current TaskHero AI documentation. Map out where the new interactive menu system information best fits. Consider creating a dedicated 'Interactive Menu System' section or integrating into existing 'Getting Started' or 'User Interface' sections. Outline sub-sections for 'Launching the Menu', 'Navigating Options', 'Common Workflows', and 'Key Features'.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Review the proposed outline with a product owner or subject matter expert to ensure all critical aspects are covered and logically organized."
         },
         {
@@ -639,7 +639,7 @@
             1
           ],
           "details": "Based on the outline from subtask 1, focus on the 'Launching the Menu' and 'Navigating Options' sections. Describe all methods to open the menu (e.g., hotkey, command line). Detail how to move between options (e.g., arrow keys, mouse clicks) and select items. Include specific keyboard shortcuts for common actions.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Perform a walkthrough of the drafted instructions using the actual interactive menu system to verify accuracy and clarity. Ensure all steps are reproducible."
         },
         {
@@ -650,7 +650,7 @@
             2
           ],
           "details": "Expand on the 'Key Features' and 'Common Workflows' sections. Describe the purpose and usage of each significant feature accessible via the menu. Provide step-by-step examples for typical user scenarios (e.g., 'How to create a new task using the menu', 'How to filter tasks'). Use clear, concise language and avoid jargon where possible.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Test each documented workflow and feature example against the live interactive menu system to confirm accuracy and completeness. Solicit feedback from a new user to assess clarity."
         },
         {
@@ -661,7 +661,7 @@
             3
           ],
           "details": "Proofread the entire document for grammatical errors, typos, and awkward phrasing. Ensure consistent terminology and formatting. Capture high-quality screenshots of the interactive menu at various stages (e.g., open menu, selected option, confirmation dialog) and embed them appropriately. Add alt text to all images.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Perform a final read-through focusing on user experience. Check that all images are correctly placed and enhance the text. Have a peer review the entire document for any missed errors or areas of confusion."
         },
         {
@@ -672,7 +672,7 @@
             4
           ],
           "details": "Upload the updated documentation files to the designated documentation repository (e.g., Confluence, ReadTheDocs, internal wiki). Ensure proper linking and navigation within the documentation portal. Draft an announcement (e.g., email, release notes, internal chat message) highlighting the new documentation and its benefits for users.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Verify that the published documentation is accessible, searchable, and correctly rendered on the live platform. Confirm that the announcement reaches the intended audience and clearly communicates the update."
         }
       ]
@@ -806,6 +806,669 @@
       ],
       "status": "pending",
       "subtasks": []
+    },
+    {
+      "id": 21,
+      "title": "Enhance Task Schema with PRD Source Field",
+      "description": "Enhance the existing task data structure to include a new 'prdSource' field. This field will be an object containing metadata about the PRD file from which the task was generated. This is a foundational change for all subsequent features.",
+      "details": "Modify the task object schema to include the 'prdSource' field as specified in the PRD. The 'prdSource' object should contain 'filePath', 'fileName', 'parsedDate', 'fileHash', and 'fileSize'. Ensure backward compatibility for existing tasks by setting 'prdSource' to null or an empty object for tasks not yet associated with a PRD. This will likely involve updating `tasks.json` and potentially `task_xxx.txt` file formats.",
+      "testStrategy": "Unit tests to verify the new schema can be parsed and serialized correctly. Integration tests to ensure existing tasks without the new field are handled gracefully without errors. Verify that new tasks created with the 'prdSource' field correctly store the data.",
+      "priority": "high",
+      "dependencies": [],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Define `prdSource` Field and Sub-fields in Task Object Schema",
+          "description": "Precisely define the new `prdSource` field within the task object schema, including its specified sub-fields (e.g., `type`, `url`, `id`). This involves updating the internal data structure definition.",
+          "dependencies": [],
+          "details": "This step involves updating the core data structure that represents a task. For example, if using a class, add a new property `prdSource` with its own nested properties. If using a JSON schema, update the schema definition accordingly. Ensure data types and constraints for each sub-field are clearly defined.",
+          "status": "pending"
+        },
+        {
+          "id": 2,
+          "title": "Implement Backward Compatibility for `tasks.json`",
+          "description": "Develop logic to gracefully handle existing `tasks.json` files that do not contain the `prdSource` field. This includes ensuring the application can read and process these files without errors, potentially initializing `prdSource` to a default or null value.",
+          "dependencies": [
+            1
+          ],
+          "details": "When loading `tasks.json`, if `prdSource` is missing, the parsing logic should not fail. It should either assign a default empty/null object to `prdSource` or ensure that subsequent code gracefully handles its absence. This might involve conditional parsing or default value assignment during deserialization.",
+          "status": "pending"
+        },
+        {
+          "id": 3,
+          "title": "Implement Backward Compatibility for `task_xxx.txt`",
+          "description": "Develop logic to gracefully handle existing `task_xxx.txt` files that do not contain the `prdSource` field. This involves updating the parsing mechanism for these files to avoid errors and ensure existing data remains accessible.",
+          "dependencies": [
+            1
+          ],
+          "details": "Similar to `tasks.json`, the parsing logic for `task_xxx.txt` files needs to be updated. If `prdSource` information is not present in the text file, the parser should not throw an error. It should either ignore the missing field or initialize it to a default value when constructing the task object from the text file.",
+          "status": "pending"
+        },
+        {
+          "id": 4,
+          "title": "Develop Unit Tests for Schema Parsing and Serialization",
+          "description": "Create comprehensive unit tests to verify correct parsing of both old (without `prdSource`) and new (with `prdSource`) schema versions from `tasks.json` and `task_xxx.txt`. Also, test serialization of tasks with and without `prdSource` to ensure correct output.",
+          "dependencies": [
+            2,
+            3
+          ],
+          "details": "Unit tests should cover: 1. Loading an old `tasks.json` and verifying `prdSource` is handled correctly (e.g., null/default). 2. Loading a new `tasks.json` and verifying `prdSource` is parsed correctly. 3. Loading an old `task_xxx.txt` and verifying `prdSource` is handled correctly. 4. Loading a new `task_xxx.txt` and verifying `prdSource` is parsed correctly. 5. Serializing a task without `prdSource` and verifying the output. 6. Serializing a task with `prdSource` and verifying the output.",
+          "status": "pending"
+        },
+        {
+          "id": 5,
+          "title": "Develop Integration Tests for Graceful Handling of Existing Data",
+          "description": "Create integration tests to simulate real-world scenarios, including loading a mix of old and new task data, performing operations (e.g., editing, saving), and verifying data integrity and application stability.",
+          "dependencies": [
+            4
+          ],
+          "details": "Integration tests should simulate: 1. Starting the application with an existing `tasks.json` (old format) and `task_xxx.txt` files (old format). 2. Modifying an existing task (which might not have `prdSource`) and saving it. 3. Creating a new task with `prdSource` and saving it. 4. Verifying that all tasks (old and new) are displayed correctly and that no data corruption occurs. 5. Testing edge cases like malformed `prdSource` data if applicable.",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "title": "Integrate PRD Metadata Capture into Parse Command",
+      "description": "Modify the `parse-prd` command to capture and store PRD metadata (file path, name, parsed date, hash, size) into the new 'prdSource' field of generated tasks. This is crucial for establishing the traceability link.",
+      "details": "Update the `parse-prd` command in `scripts/modules/commands.js` to extract the file path, file name, current timestamp for `parsedDate`, calculate `fileHash` (e.g., SHA256), and `fileSize` during PRD parsing. This information should then be populated into the `prdSource` field of each task generated from that PRD. Handle both relative and absolute file paths consistently. Consider using a hashing library for `fileHash` calculation.",
+      "testStrategy": "Unit tests for the `parse-prd` command to ensure all `prdSource` fields are correctly populated for newly generated tasks. End-to-end tests to verify that tasks created via `parse-prd` have accurate PRD source information stored in their respective JSON and text files.",
+      "priority": "high",
+      "dependencies": [
+        21
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Analyze existing `parse-prd` command and identify modification points",
+          "description": "Review `scripts/modules/commands.js` to understand the current `parse-prd` command's logic, data extraction methods, and where `prdSource` fields can be integrated. Identify the specific areas requiring modification for new data extraction.",
+          "dependencies": [],
+          "details": "Examine the `parse-prd` function, its input parameters, and how it currently processes PRD files. Pinpoint the exact location where `prdSource` data should be extracted and populated within the command's output structure.",
+          "status": "pending"
+        },
+        {
+          "id": 2,
+          "title": "Implement `prdSource` field extraction and population",
+          "description": "Modify the `parse-prd` command to extract all necessary `prdSource` fields from the PRD files. Populate these fields into the appropriate data structure generated by the command.",
+          "dependencies": [
+            1
+          ],
+          "details": "Define the structure for `prdSource` fields (e.g., `sourcePath`, `fileHash`, `lastModified`). Implement logic to read these values from the PRD file's metadata or content and assign them to the `prdSource` object.",
+          "status": "pending"
+        },
+        {
+          "id": 3,
+          "title": "Develop `fileHash` calculation logic",
+          "description": "Implement a robust method within the `parse-prd` command to calculate the `fileHash` for each PRD file. This should ensure uniqueness and integrity of the file identification.",
+          "dependencies": [
+            2
+          ],
+          "details": "Choose an appropriate hashing algorithm (e.g., SHA256). Implement the file reading and hashing process, ensuring efficient handling of file I/O and accurate hash generation. Integrate this calculation into the `prdSource` population.",
+          "status": "pending"
+        },
+        {
+          "id": 4,
+          "title": "Handle file paths for `prdSource`",
+          "description": "Ensure correct and consistent handling of file paths for `prdSource` fields, including absolute vs. relative paths, and cross-platform compatibility.",
+          "dependencies": [
+            2
+          ],
+          "details": "Determine whether to store absolute or relative paths for `sourcePath`. Implement logic to normalize paths and ensure they are correctly resolved regardless of the operating system or execution environment.",
+          "status": "pending"
+        },
+        {
+          "id": 5,
+          "title": "Write unit tests for `prdSource` field population",
+          "description": "Create comprehensive unit tests to verify that all `prdSource` fields are correctly extracted and populated by the `parse-prd` command.",
+          "dependencies": [
+            4
+          ],
+          "details": "Develop test cases that cover various PRD file structures, including cases with missing or malformed `prdSource` data. Assert that `sourcePath`, `fileHash`, and other `prdSource` fields are populated accurately.",
+          "status": "pending"
+        },
+        {
+          "id": 6,
+          "title": "Write unit tests for `fileHash` calculation",
+          "description": "Develop specific unit tests to validate the accuracy and consistency of the `fileHash` calculation logic.",
+          "dependencies": [
+            3
+          ],
+          "details": "Create test files with known content and pre-calculated hashes. Verify that the implemented `fileHash` function produces the expected hash values for these files. Test edge cases like empty files or very large files.",
+          "status": "pending"
+        },
+        {
+          "id": 7,
+          "title": "Develop end-to-end tests for accurate storage in task files",
+          "description": "Implement end-to-end tests to ensure that the `prdSource` information, including `fileHash` and paths, is accurately stored in the generated task files after running the `parse-prd` command.",
+          "dependencies": [
+            5,
+            6
+          ],
+          "details": "Set up a test environment, run the `parse-prd` command on sample PRD files, and then inspect the generated task files to confirm that the `prdSource` object and its fields are correctly persisted.",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "title": "Display PRD Source in Task Views and Reports",
+      "description": "Update all relevant UI components (task list, task details, project dashboard, interactive menu) to display the PRD source information for each task. This provides immediate visual traceability to users.",
+      "details": "Modify `scripts/modules/ui.js` and other display functions to show the `prdSource.fileName` in the task list view (e.g., as a new column). Enhance the individual task details view to display all `prdSource` fields (filePath, parsedDate, version, etc.). Update the project dashboard to include a summary of PRD sources (e.g., number of PRD files processed, total tasks generated per PRD). Ensure interactive menu displays also reflect this information.",
+      "testStrategy": "Manual UI testing to confirm PRD source information is correctly displayed across all specified views (task list, task details, dashboard, interactive menu). Automated screenshot comparisons or UI element checks could be implemented for regression testing.",
+      "priority": "medium",
+      "dependencies": [
+        22
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Identify UI Components for Modification",
+          "description": "List all specific UI components that will be affected by the integration of `prdSource` information, based on the provided context.",
+          "dependencies": [],
+          "details": "The prompt explicitly mentions 'task list, task details, project dashboard, interactive menu'. These should be confirmed as the target components.",
+          "status": "pending"
+        },
+        {
+          "id": 2,
+          "title": "Detail Changes for Task List and Task Details Views",
+          "description": "Specify the exact modifications required for the 'task list' and 'task details' UI components to display `prdSource` information. This includes layout, formatting, and data presentation.",
+          "dependencies": [
+            1
+          ],
+          "details": "For each view, consider where `prdSource` will be displayed, its label, and how it will be formatted (e.g., as a link, text, etc.).",
+          "status": "pending"
+        },
+        {
+          "id": 3,
+          "title": "Detail Changes for Project Dashboard and Interactive Menu Views",
+          "description": "Specify the exact modifications required for the 'project dashboard' and 'interactive menu' UI components to display `prdSource` information. This includes layout, formatting, and data presentation.",
+          "dependencies": [
+            1
+          ],
+          "details": "Similar to subtask 2, define how `prdSource` will be integrated into these views, considering their specific layouts and functionalities.",
+          "status": "pending"
+        },
+        {
+          "id": 4,
+          "title": "Outline Manual UI Testing Plan",
+          "description": "Develop a comprehensive plan for manually testing the UI changes across all modified components to ensure correct display and functionality of `prdSource` information.",
+          "dependencies": [
+            2,
+            3
+          ],
+          "details": "The plan should include test cases for each modified view, covering different scenarios (e.g., `prdSource` present, `prdSource` absent, different `prdSource` formats).",
+          "status": "pending"
+        },
+        {
+          "id": 5,
+          "title": "Consider Automated UI Element Checks for Regression",
+          "description": "Investigate and propose strategies for implementing automated UI element checks to prevent regression issues related to the `prdSource` display.",
+          "dependencies": [
+            2,
+            3
+          ],
+          "details": "This could involve using existing UI testing frameworks (e.g., Selenium, Cypress) to verify the presence, position, and content of the `prdSource` element after changes.",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "title": "Implement PRD Source Query and Filter Commands",
+      "description": "Implement new commands to query and filter tasks based on their PRD source. This includes listing all PRDs, showing tasks from a specific PRD, and displaying the PRD source for a given task ID.",
+      "details": "Add new commands to the command registry (e.g., `task-master list-prds`, `task-master tasks-from-prd --file=<path>`, `task-master show-prd-source --id=<id>`). `list-prds` should iterate through all tasks and unique `prdSource.filePath` values. `tasks-from-prd` should filter tasks based on the provided PRD file path. `show-prd-source` should retrieve and display the `prdSource` object for a specific task ID. Implement efficient data retrieval for these queries.",
+      "testStrategy": "Unit tests for each new command to verify correct filtering and data retrieval logic. Integration tests to ensure commands interact correctly with the task data store and return accurate results based on the PRD source information.",
+      "priority": "medium",
+      "dependencies": [
+        21
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Define `list-prds` command",
+          "description": "Specify the command name, arguments (e.g., filters like status, owner), and expected output format for listing product requirements documents (PRDs).",
+          "dependencies": [],
+          "details": "This command should allow users to view a summary of all PRDs, potentially filtered by their current status (e.g., 'draft', 'approved', 'in-progress') or assigned owner. The output should be concise, showing key identifiers and a brief description.",
+          "status": "pending"
+        },
+        {
+          "id": 2,
+          "title": "Define `tasks-from-prd` command",
+          "description": "Specify the command name, arguments (e.g., PRD ID), and expected output format for extracting tasks associated with a specific PRD.",
+          "dependencies": [
+            1
+          ],
+          "details": "This command will take a PRD identifier as input and display all tasks that are linked to that PRD. The output should include task ID, description, and current status. Consider options for filtering tasks (e.g., by status).",
+          "status": "pending"
+        },
+        {
+          "id": 3,
+          "title": "Define `show-prd-source` command",
+          "description": "Specify the command name, arguments (e.g., PRD ID), and expected output format for displaying the raw source content of a PRD.",
+          "dependencies": [
+            1
+          ],
+          "details": "This command will retrieve and display the complete, raw content of a specified PRD. This is useful for debugging or reviewing the full document as it exists in the data store.",
+          "status": "pending"
+        },
+        {
+          "id": 4,
+          "title": "Implement data retrieval and filtering logic",
+          "description": "Develop the backend logic for efficiently retrieving PRD and task data, including filtering capabilities based on command arguments.",
+          "dependencies": [
+            1,
+            2,
+            3
+          ],
+          "details": "Focus on optimizing queries for performance, especially when dealing with large datasets. Implement indexing strategies if applicable. Ensure robust error handling for invalid inputs or missing data.",
+          "status": "pending"
+        },
+        {
+          "id": 5,
+          "title": "Implement command handlers",
+          "description": "Develop the command handlers that parse arguments, call the data retrieval logic, and format the output for each new command.",
+          "dependencies": [
+            4
+          ],
+          "details": "Each command handler (`list-prds`, `tasks-from-prd`, `show-prd-source`) will be responsible for interpreting user input, invoking the appropriate data access methods, and presenting the results in a user-friendly format.",
+          "status": "pending"
+        },
+        {
+          "id": 6,
+          "title": "Develop unit tests for command logic",
+          "description": "Write unit tests to verify the correctness of argument parsing, filtering logic, and output formatting for each command.",
+          "dependencies": [
+            5
+          ],
+          "details": "These tests should isolate the command logic from the actual data store, using mock data where necessary. Cover various scenarios, including valid inputs, invalid inputs, and edge cases.",
+          "status": "pending"
+        },
+        {
+          "id": 7,
+          "title": "Develop integration tests for data store interaction",
+          "description": "Write integration tests to ensure the commands correctly interact with the data store and produce accurate results.",
+          "dependencies": [
+            5,
+            6
+          ],
+          "details": "These tests will involve a real or simulated data store to verify that data retrieval, filtering, and display work as expected end-to-end. Test data should be set up to cover different scenarios (e.g., PRDs with no tasks, PRDs with many tasks, filtered results).",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "title": "Implement PRD Change Detection and Flagging",
+      "description": "Develop functionality to detect modifications in source PRD files and flag associated tasks as outdated. This is a critical step for change management and ensuring task relevance.",
+      "details": "Create a mechanism (e.g., a new command `task-master check-prd-updates` or an automated background process) that compares the current `fileHash` and `fileSize` of the PRD file on disk with the stored `prdSource.fileHash` and `prdSource.fileSize` for each task. If a discrepancy is found, flag the associated tasks (e.g., by adding a new 'outdated' status or a specific flag in the task object). Consider using file system watchers for real-time detection if feasible, otherwise, a periodic check.",
+      "testStrategy": "Unit tests for the change detection logic, simulating file modifications and verifying that tasks are correctly flagged. End-to-end tests to confirm that running `check-prd-updates` accurately identifies and flags tasks linked to modified PRD files.",
+      "priority": "medium",
+      "dependencies": [
+        21
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Choose PRD File Monitoring Mechanism",
+          "description": "Evaluate and select the most suitable mechanism for detecting PRD file modifications (e.g., OS-level file watchers, polling with checksums, background process). Consider real-time vs. periodic checks.",
+          "dependencies": [],
+          "details": "Research `inotify` (Linux), `FSEvents` (macOS), `ReadDirectoryChangesW` (Windows) for real-time, or define a polling interval for periodic checks. Document pros and cons of each.",
+          "status": "pending"
+        },
+        {
+          "id": 2,
+          "title": "Implement File Hash Calculation",
+          "description": "Develop a utility function to calculate a cryptographic hash (e.g., SHA256) of a given PRD file's content.",
+          "dependencies": [],
+          "details": "The function should take a file path as input and return a string representing the file's hash. Handle potential file I/O errors.",
+          "status": "pending"
+        },
+        {
+          "id": 3,
+          "title": "Implement File Size Retrieval",
+          "description": "Develop a utility function to retrieve the size of a given PRD file.",
+          "dependencies": [],
+          "details": "The function should take a file path as input and return an integer representing the file size in bytes. Handle potential file I/O errors.",
+          "status": "pending"
+        },
+        {
+          "id": 4,
+          "title": "Define PRD Change Detection Logic",
+          "description": "Implement the core logic for detecting PRD file modifications based on `fileHash` and `fileSize` comparison.",
+          "dependencies": [
+            2,
+            3
+          ],
+          "details": "The logic should first compare `fileSize`. If different, a change is detected. If `fileSize` is the same, then compare `fileHash`. If `fileHash` is different, a change is detected. If both are the same, no change.",
+          "status": "pending"
+        },
+        {
+          "id": 5,
+          "title": "Integrate Monitoring Mechanism with Detection Logic",
+          "description": "Connect the chosen PRD file monitoring mechanism (from subtask 1) with the change detection logic (from subtask 4).",
+          "dependencies": [
+            1,
+            4
+          ],
+          "details": "If using real-time watchers, the callback should trigger the detection logic. If using polling, a scheduled job should periodically run the detection logic for all monitored PRD files.",
+          "status": "pending"
+        },
+        {
+          "id": 6,
+          "title": "Define Task Outdating Mechanism",
+          "description": "Design how tasks associated with a modified PRD file will be flagged as 'outdated' or 'requiring review'.",
+          "dependencies": [
+            5
+          ],
+          "details": "Specify the data model changes required to store the 'outdated' status for tasks. Consider how this status will be propagated or displayed in the UI.",
+          "status": "pending"
+        },
+        {
+          "id": 7,
+          "title": "Develop Unit Tests for Change Detection",
+          "description": "Write comprehensive unit tests for the file hash calculation, file size retrieval, and the core change detection logic.",
+          "dependencies": [
+            2,
+            3,
+            4
+          ],
+          "details": "Test cases should include: identical files, files with different content but same size, files with different size, empty files, and error handling (e.g., file not found).",
+          "status": "pending"
+        },
+        {
+          "id": 8,
+          "title": "Develop End-to-End Tests for Accurate Flagging",
+          "description": "Create end-to-end tests to verify that PRD file modifications correctly lead to associated tasks being flagged as outdated.",
+          "dependencies": [
+            5,
+            6
+          ],
+          "details": "Simulate PRD file changes (e.g., programmatically modify a test PRD file) and assert that the corresponding tasks in the system are correctly marked as outdated.",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "title": "Develop PRD Re-parsing and Update Logic",
+      "description": "Enable the system to re-parse updated PRD files, allowing for incremental updates to existing tasks or creation of new tasks based on the changes. This includes maintaining a history of PRD associations.",
+      "details": "Implement the `task-master reparse-prd --file=<path> --update-existing` command. This command should re-read the specified PRD file. If `--update-existing` is used, it should attempt to identify and update existing tasks that originated from this PRD. This might involve comparing task titles or descriptions to detect changes. New tasks identified in the updated PRD should be created. Maintain a `prd-history.json` to track parsing sessions and changes over time.",
+      "testStrategy": "Unit tests for the re-parsing logic, ensuring that existing tasks are updated correctly and new tasks are created as expected. Integration tests to verify that re-parsing a modified PRD correctly updates the task data and that the `prd-history.json` accurately reflects the parsing sessions.",
+      "priority": "medium",
+      "dependencies": [
+        25
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Define `reparse-prd` command structure and arguments",
+          "description": "Outline the command-line interface for `reparse-prd`, including the main command and the `--update-existing` flag. Specify argument parsing and basic validation.",
+          "dependencies": [],
+          "details": "Define `argparse` structure. Specify `--update-existing` as a boolean flag. Consider other potential flags like `--dry-run` for future expansion.",
+          "status": "pending"
+        },
+        {
+          "id": 2,
+          "title": "Implement PRD file reading and parsing",
+          "description": "Develop the core logic to read and parse PRD files (e.g., Markdown, YAML) into an in-memory data structure representing tasks, features, etc.",
+          "dependencies": [],
+          "details": "Choose a parsing library (e.g., `markdown-it`, `PyYAML`). Define the internal data model for parsed PRD content. Handle potential parsing errors.",
+          "status": "pending"
+        },
+        {
+          "id": 3,
+          "title": "Design `prd-history.json` structure",
+          "description": "Define the schema and content for `prd-history.json` to store historical versions of PRD data, including timestamps and version identifiers.",
+          "dependencies": [],
+          "details": "Consider storing full PRD content, diffs, or metadata. Include fields for timestamp, PRD file hash/checksum, and potentially a version number.",
+          "status": "pending"
+        },
+        {
+          "id": 4,
+          "title": "Implement logic for identifying existing tasks",
+          "description": "Develop algorithms to compare newly parsed tasks with existing tasks (from the current state or `prd-history.json`) to identify matches based on criteria like title, description, or unique identifiers.",
+          "dependencies": [
+            2
+          ],
+          "details": "Define matching heuristics (e.g., exact title match, fuzzy title match, content hash). Prioritize unique IDs if available. Handle cases where multiple matches are found.",
+          "status": "pending"
+        },
+        {
+          "id": 5,
+          "title": "Implement task update logic (`--update-existing` enabled)",
+          "description": "Develop the logic to update existing tasks in the system based on changes detected in the re-parsed PRD, specifically when `--update-existing` is true.",
+          "dependencies": [
+            4
+          ],
+          "details": "Determine which fields can be updated (e.g., description, status, assignee). Implement conflict resolution strategies if external changes occurred. Ensure atomicity of updates.",
+          "status": "pending"
+        },
+        {
+          "id": 6,
+          "title": "Implement new task creation logic",
+          "description": "Develop the logic to create new tasks in the system for items found in the re-parsed PRD that do not have a corresponding existing task.",
+          "dependencies": [
+            4
+          ],
+          "details": "Define default values for new tasks. Integrate with the task management system's API for creation. Handle potential errors during creation.",
+          "status": "pending"
+        },
+        {
+          "id": 7,
+          "title": "Implement `prd-history.json` management",
+          "description": "Develop the logic to read from and write to `prd-history.json`, including versioning, archiving previous states, and ensuring data integrity.",
+          "dependencies": [
+            3
+          ],
+          "details": "Implement read/write functions. Consider strategies for limiting history size (e.g., keeping N versions, or versions for X days). Use atomic writes to prevent corruption.",
+          "status": "pending"
+        },
+        {
+          "id": 8,
+          "title": "Develop unit tests for re-parsing and task identification logic",
+          "description": "Create comprehensive unit tests for the PRD parsing, task identification (matching), and update/creation decision-making components.",
+          "dependencies": [
+            2,
+            4,
+            5,
+            6
+          ],
+          "details": "Test various PRD formats, edge cases (empty files, malformed content). Test different scenarios for task matching (exact, partial, no match). Test update/create decisions based on `--update-existing` flag.",
+          "status": "pending"
+        },
+        {
+          "id": 9,
+          "title": "Develop integration tests for task data updates and history tracking",
+          "description": "Create end-to-end integration tests to verify that `reparse-prd` correctly updates/creates tasks in the system and accurately manages `prd-history.json`.",
+          "dependencies": [
+            1,
+            7,
+            8
+          ],
+          "details": "Simulate PRD changes over time. Verify task updates in a mock task management system. Verify `prd-history.json` content after multiple re-parsing runs. Test `--update-existing` flag behavior end-to-end.",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": 27,
+      "title": "Implement PRD Traceability Reporting",
+      "description": "Implement functionality to generate traceability reports, linking tasks back to their source PRDs. This is essential for audit and compliance requirements.",
+      "details": "Develop the `task-master prd-traceability-report --format=csv` command. This command should generate a report (e.g., CSV, JSON) that clearly maps tasks to their originating PRD files and relevant metadata. The report should include task ID, title, PRD file path, parsed date, and potentially other relevant PRD source fields. Ensure the report format is suitable for compliance auditing.",
+      "testStrategy": "Unit tests for the report generation logic, verifying that the output format is correct and contains all required data. Manual review of generated reports to ensure accuracy and completeness of traceability information.",
+      "priority": "low",
+      "dependencies": [
+        21
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Define `prd-traceability-report` Command Structure",
+          "description": "Design the command-line interface for `prd-traceability-report`, including arguments for output format (e.g., --format csv, --format json) and potential filtering options.",
+          "dependencies": [],
+          "details": "Specify command name, required and optional arguments, and help text. Consider using a library like `argparse`.",
+          "status": "pending"
+        },
+        {
+          "id": 2,
+          "title": "Identify Required Data Points for Report",
+          "description": "List all necessary data points to be included in the traceability report, such as task ID, title, PRD file path, parsed date, associated requirements, and linked code changes.",
+          "dependencies": [],
+          "details": "Brainstorm all relevant information that would contribute to PRD traceability. Consider data available from existing parsing and linking processes.",
+          "status": "pending"
+        },
+        {
+          "id": 3,
+          "title": "Implement Report Generation Logic",
+          "description": "Develop the core logic to gather data points identified in Subtask 2, process them, and format them according to the specified output format (CSV, JSON).",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "This involves querying the internal data structures (e.g., parsed PRD data, linked code changes) and preparing them for output. Create separate functions for CSV and JSON formatting.",
+          "status": "pending"
+        },
+        {
+          "id": 4,
+          "title": "Develop Unit Tests for Output Format",
+          "description": "Write unit tests to verify that the `prd-traceability-report` command generates output in the correct format (CSV and JSON) based on the `--format` argument.",
+          "dependencies": [
+            3
+          ],
+          "details": "Tests should check for correct delimiters, JSON structure, header rows, and data types for each format.",
+          "status": "pending"
+        },
+        {
+          "id": 5,
+          "title": "Develop Unit Tests for Data Accuracy",
+          "description": "Create unit tests to ensure the data points included in the report are accurate and complete, matching the expected values from the source data.",
+          "dependencies": [
+            3
+          ],
+          "details": "Tests should verify that task IDs, titles, file paths, parsed dates, and linked information are correctly extracted and presented in the report.",
+          "status": "pending"
+        },
+        {
+          "id": 6,
+          "title": "Outline Manual Review Steps for Report",
+          "description": "Define a set of manual review steps to validate the generated traceability report for overall correctness, readability, and completeness beyond automated tests.",
+          "dependencies": [
+            4,
+            5
+          ],
+          "details": "This includes spot-checking data, verifying links, and ensuring the report meets compliance or auditing requirements. Consider scenarios like missing data or incorrect associations.",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": 28,
+      "title": "Establish Comprehensive Testing Strategy",
+      "description": "Establish a robust testing strategy covering unit, integration, end-to-end, performance, and cross-platform compatibility for all new PRD source tracking features.",
+      "details": "Develop a detailed test plan encompassing unit tests for individual components (e.g., PRD metadata extraction, hash calculation), integration tests for command interactions and data flow, end-to-end tests for complete user workflows (e.g., parse PRD -> view tasks -> re-parse PRD), performance tests with large datasets, and cross-platform compatibility tests (Windows, macOS, Linux) to address file path handling and other OS-specific nuances. Automate as many tests as possible.",
+      "testStrategy": "Execution of all defined test cases. Monitoring of test coverage metrics. Documentation of test results and bug reports. Regular review of the test suite to ensure it remains comprehensive and effective as features evolve.",
+      "priority": "low",
+      "dependencies": [
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Define Scope and Features for Testing",
+          "description": "Identify all new PRD source tracking features that require testing. List specific functionalities, user flows, and data points associated with these features.",
+          "dependencies": [],
+          "details": "Review PRD documents, design specifications, and any existing feature breakdowns to create a definitive list of new source tracking features. This will form the basis for all subsequent testing activities.",
+          "status": "pending"
+        },
+        {
+          "id": 2,
+          "title": "Develop Unit Test Plan and Scenarios",
+          "description": "Outline the strategy for unit testing, including key test scenarios for individual components and functions of the new source tracking features.",
+          "dependencies": [
+            1
+          ],
+          "details": "For each identified feature, break down into smallest testable units. Define expected inputs, outputs, and edge cases. Specify mocking strategies for dependencies.",
+          "status": "pending"
+        },
+        {
+          "id": 3,
+          "title": "Develop Integration Test Plan and Scenarios",
+          "description": "Create a plan for integration testing, focusing on interactions between different modules and services related to source tracking.",
+          "dependencies": [
+            1
+          ],
+          "details": "Identify integration points between new source tracking features and existing systems (e.g., database, analytics, UI). Define scenarios for data flow, API calls, and error handling across integrated components.",
+          "status": "pending"
+        },
+        {
+          "id": 4,
+          "title": "Develop End-to-End Test Plan and Scenarios",
+          "description": "Design end-to-end test scenarios that simulate real user journeys involving the new source tracking features from start to finish.",
+          "dependencies": [
+            1
+          ],
+          "details": "Map out complete user flows involving source tracking, from initial input to final data persistence and reporting. Include positive, negative, and boundary test cases covering all user interactions.",
+          "status": "pending"
+        },
+        {
+          "id": 5,
+          "title": "Develop Performance Test Plan and Scenarios",
+          "description": "Outline the strategy for performance testing, including load, stress, and scalability tests for the new source tracking features.",
+          "dependencies": [
+            1
+          ],
+          "details": "Define performance objectives (e.g., response times, throughput, resource utilization). Specify test scenarios for concurrent users, data volume, and sustained load to identify bottlenecks and ensure scalability.",
+          "status": "pending"
+        },
+        {
+          "id": 6,
+          "title": "Develop Cross-Platform Compatibility Test Plan",
+          "description": "Create a plan for testing the new source tracking features across different browsers, operating systems, and devices.",
+          "dependencies": [
+            1
+          ],
+          "details": "Identify target platforms, browsers, and devices. Define test scenarios to ensure consistent functionality, UI rendering, and performance across all specified environments.",
+          "status": "pending"
+        },
+        {
+          "id": 7,
+          "title": "Define Automation Strategy and Test Coverage Metrics",
+          "description": "Specify the automation strategy for all test types and define key metrics for measuring test coverage.",
+          "dependencies": [
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "details": "Determine which test types will be automated (e.g., unit, integration, some E2E, performance). Select automation tools and frameworks. Define metrics such as code coverage, requirement coverage, and defect escape rate.",
+          "status": "pending"
+        },
+        {
+          "id": 8,
+          "title": "Outline Test Suite Review and Maintenance Plan",
+          "description": "Establish a process for regular review, update, and maintenance of the test suites for the new source tracking features.",
+          "dependencies": [
+            7
+          ],
+          "details": "Define frequency for test suite reviews (e.g., sprintly, release-based). Specify criteria for updating test cases, removing obsolete tests, and adding new ones based on feature changes or defect analysis. Assign ownership for maintenance.",
+          "status": "pending"
+        }
+      ]
     }
   ]
 }

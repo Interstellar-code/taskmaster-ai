@@ -321,7 +321,7 @@ registerCommands(tempProgram);
 
 // For each command in the temp instance, add a modified version to our actual program
 tempProgram.commands.forEach((cmd) => {
-	if (['dev'].includes(cmd.name())) {
+	if (['dev', 'menu'].includes(cmd.name())) {
 		// Skip commands we've already defined specially
 		return;
 	}
@@ -338,11 +338,10 @@ tempProgram.commands.forEach((cmd) => {
 	newCmd.action(createDevScriptAction(cmd.name()));
 });
 
-// Parse the command line arguments
-program.parse(process.argv);
+// Check for --menu flag before parsing to avoid help display
+const hasMenuFlag = process.argv.includes('--menu') || process.argv.includes('-m');
 
-// Handle --menu flag
-if (program.opts().menu) {
+if (hasMenuFlag) {
 	(async () => {
 		try {
 			const { initializeInteractiveMenu } = await import('../src/menu/index.js');
@@ -352,6 +351,16 @@ if (program.opts().menu) {
 			process.exit(1);
 		}
 	})();
+} else {
+	// Parse the command line arguments
+	program.parse(process.argv);
+
+	// Only show help if no command was provided
+	if (process.argv.length <= 2) {
+		displayBanner();
+		displayHelp();
+		process.exit(0);
+	}
 }
 
 // Add global error handling for unknown commands and options
@@ -395,13 +404,6 @@ process.on('uncaughtException', (err) => {
 	}
 	process.exit(1);
 });
-
-// Show help if no command was provided (just 'task-master' with no args)
-if (process.argv.length <= 2) {
-	displayBanner();
-	displayHelp();
-	process.exit(0);
-}
 
 // Add exports at the end of the file
 if (typeof module !== 'undefined') {

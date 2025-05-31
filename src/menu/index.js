@@ -1127,8 +1127,20 @@ async function showConfigurationHelp() {
     console.log(chalk.cyan('  .env') + chalk.gray(' - API keys (ANTHROPIC_API_KEY, etc.)'));
     console.log(chalk.cyan('  tasks/tasks.json') + chalk.gray(' - Task data'));
 
+    console.log(chalk.white('\nAI Integration Files:'));
+    console.log(chalk.cyan('  .cursor/rules/') + chalk.gray(' - Cursor AI workspace rules'));
+    console.log(chalk.cyan('  .augment-guidelines') + chalk.gray(' - Augment AI workspace guidelines'));
+    console.log(chalk.cyan('  .windsurfrules') + chalk.gray(' - Windsurf AI rules'));
+    console.log(chalk.cyan('  .roo/') + chalk.gray(' - Roo Code integration rules'));
+
     console.log(chalk.white('\nRequired Setup:'));
     console.log(chalk.yellow('  1. Set API keys in .env file'));
     console.log(chalk.yellow('  2. Run: task-master models --setup'));
     console.log(chalk.yellow('  3. Initialize project: task-master init'));
+
+    console.log(chalk.white('\nAI Editor Integration:'));
+    console.log(chalk.gray('  • Cursor: Uses .cursor/rules/ for context'));
+    console.log(chalk.gray('  • Augment: Uses .augment-guidelines for workspace context'));
+    console.log(chalk.gray('  • Windsurf: Uses .windsurfrules for AI assistance'));
+    console.log(chalk.gray('  • Roo Code: Uses .roo/ directory for mode-specific rules'));
 }

@@ -7,7 +7,7 @@
 [![Twitter Follow](https://img.shields.io/twitter/follow/eyaltoledano?style=flat)](https://x.com/eyaltoledano)
 [![Twitter Follow](https://img.shields.io/twitter/follow/RalphEcom?style=flat)](https://x.com/RalphEcom)
 
-A task management system for AI-driven development with Claude, designed to work seamlessly with Cursor AI.
+A task management system for AI-driven development with Claude, designed to work seamlessly with AI-powered editors like Cursor, Augment, Windsurf, and Roo Code.
 
 ## Requirements
 
@@ -158,6 +158,17 @@ npx task-master init
 
 This will prompt you for project details and set up a new project with the necessary files and structure.
 
+#### AI Editor Integration
+
+TaskMaster automatically sets up workspace guidelines and rules for popular AI-powered editors:
+
+- **🤖 Augment AI** - Creates `.augment-guidelines` with TaskMaster-specific context
+- **🎯 Cursor** - Generates comprehensive `.cursor/rules/` directory
+- **🌊 Windsurf** - Sets up `.windsurfrules` for AI assistance
+- **🦘 Roo Code** - Creates `.roo/` directory with mode-specific rules
+
+These files help AI assistants understand your project structure and provide more accurate, context-aware suggestions when working with TaskMaster projects.
+
 #### Interactive Menu (Recommended)
 
 For the best user experience, use the interactive menu system:
@@ -206,6 +217,7 @@ task-master generate
 For more detailed information, check out the documentation in the `docs` directory:
 
 - [Interactive Menu Guide](docs/interactive-menu.md) - Complete guide to the menu system
+- [Augment AI Integration](docs/augment-integration.md) - Using TaskMaster with Augment AI
 - [Configuration Guide](docs/configuration.md) - Set up environment variables and customize Task Master
 - [Tutorial](docs/tutorial.md) - Step-by-step guide to getting started with Task Master
 - [Command Reference](docs/command-reference.md) - Complete list of all available commands
