@@ -1,49 +1,43 @@
 # Task ID: 7
-# Title: Implement Task Expansion with Claude
-# Status: done
-# Dependencies: 3, 5
-# Priority: medium
-# Description: Create functionality to expand tasks into subtasks using Claude's AI capabilities.
+# Title: Implement Session Management and Context Awareness
+# Status: pending
+# Dependencies: 2
+# Priority: high
+# Description: Implement session management to maintain menu state, user preferences, and display relevant project information and status indicators in the menu header.
 # Details:
-Build task expansion functionality including:
-- Create subtask generation prompts
-- Implement workflow for expanding a task into subtasks
-- Add context-aware expansion capabilities
-- Implement parent-child relationship management
-- Allow specification of number of subtasks to generate
-- Provide mechanism to regenerate unsatisfactory subtasks
+Maintain the current menu path (breadcrumb navigation) throughout the session. Implement logic to display current project information (e.g., 'Project: taskmaster-ai'), task counts ('Tasks: 15 total (3 pending)'), and system status ('Status: ✓ Configured') in the menu header. This will require integrating with the existing project and task management core functionalities to retrieve real-time data. Consider how to remember user preferences for future enhancements.
 
 # Test Strategy:
-Test expanding various types of tasks into subtasks. Verify that subtasks are properly linked to parent tasks. Check that context is properly incorporated into generated subtasks.
+Verify that breadcrumb navigation accurately reflects the current menu location. Check that project name, task counts, and status indicators in the header update dynamically and accurately based on the project's state. Test navigating through multiple levels and returning to ensure state is maintained.
 
 # Subtasks:
-## 1. Design and Implement Subtask Generation Prompts [done]
+## 1. Define Session State Structure and Persistence [pending]
 ### Dependencies: None
-### Description: Create optimized prompt templates for Claude to generate subtasks from parent tasks. Design the prompts to include task context, project information, and formatting instructions that ensure consistent, high-quality subtask generation. Implement a prompt template system that allows for dynamic insertion of task details, configurable number of subtasks, and additional context parameters.
+### Description: Design and implement the data structure for storing session-specific information, including current menu path (breadcrumbs) and placeholders for user preferences. Establish a mechanism for persisting this state across user interactions within a session.
 ### Details:
+Create a `SessionState` object or similar structure. For initial implementation, use in-memory storage (e.g., a singleton or application-scoped bean) for simplicity. Consider how this state will be accessed and updated by different parts of the application. Define clear getters and setters for menu path and preference placeholders.
 
-
-## 2. Develop Task Expansion Workflow and UI [done]
-### Dependencies: 7.5
-### Description: Implement the command-line interface and workflow for expanding tasks into subtasks. Create a new command that allows users to select a task, specify the number of subtasks, and add optional context. Design the interaction flow to handle the API request, process the response, and update the tasks.json file with the newly generated subtasks.
-### Details:
-
-
-## 3. Implement Context-Aware Expansion Capabilities [done]
+## 2. Implement Menu Path (Breadcrumb) Management [pending]
 ### Dependencies: 7.1
-### Description: Enhance the task expansion functionality to incorporate project context when generating subtasks. Develop a system to gather relevant information from the project, such as related tasks, dependencies, and previously completed work. Implement logic to include this context in the Claude prompts to improve the relevance and quality of generated subtasks.
+### Description: Develop the logic to capture and update the current menu path (breadcrumb navigation) within the defined session state as the user navigates through the application's menu structure.
 ### Details:
+Modify menu navigation handlers to push/pop menu items onto/from a stack or list within the `SessionState` object. Ensure the breadcrumb accurately reflects the user's current location. Consider how to handle direct URL access to specific pages (e.g., reset breadcrumbs or reconstruct them based on URL).
 
-
-## 4. Build Parent-Child Relationship Management [done]
-### Dependencies: 7.3
-### Description: Implement the data structure and operations for managing parent-child relationships between tasks and subtasks. Create functions to establish these relationships in the tasks.json file, update the task model to support subtask arrays, and develop utilities to navigate, filter, and display task hierarchies. Ensure all basic task operations (update, delete, etc.) properly handle subtask relationships.
+## 3. Integrate Project and Task Data Retrieval [pending]
+### Dependencies: 7.1
+### Description: Implement the necessary service calls or data access logic to retrieve real-time project information (name) and task counts (total, pending) from the existing project and task management core functionalities.
 ### Details:
+Identify or create specific API endpoints/methods within the project and task management modules that can provide: 1) The currently active project's name. 2) The total count of tasks associated with the active project. 3) The count of pending tasks for the active project. Ensure these calls are efficient and handle cases where no project is active or no tasks exist.
 
-
-## 5. Implement Subtask Regeneration Mechanism [done]
-### Dependencies: 7.1, 7.2, 7.4
-### Description: Create functionality that allows users to regenerate unsatisfactory subtasks. Implement a command that can target specific subtasks for regeneration, preserve satisfactory subtasks, and incorporate feedback to improve the new generation. Design the system to maintain proper parent-child relationships and task IDs during regeneration.
+## 4. Develop Menu Header Display Logic [pending]
+### Dependencies: 7.2, 7.3
+### Description: Implement the front-end logic to dynamically display the current project information, task counts, and a static system status ('Status: ✓ Configured') in the menu header, utilizing the data retrieved in previous steps.
 ### Details:
+Modify the menu header template or component to include placeholders for 'Project: [name]', 'Tasks: [total] total ([pending] pending)', and 'Status: ✓ Configured'. Bind these placeholders to the data retrieved from the session state (for breadcrumbs) and the project/task data retrieval logic. Ensure the header updates reactively to changes in the underlying data.
 
+## 5. Refine Session State and Prepare for Preferences [pending]
+### Dependencies: 7.4
+### Description: Review the session state implementation for robustness and extensibility. Add a placeholder for user preferences within the session state, even if the preference management logic isn't fully implemented yet, to prepare for future enhancements.
+### Details:
+Refactor the `SessionState` object if necessary to ensure it's well-structured and easily extendable. Add a dedicated field (e.g., a map or a nested object) within `SessionState` to hold user preferences. Document the intended use of this field for future preference management features. Ensure the current session management is stable and handles edge cases gracefully.
 

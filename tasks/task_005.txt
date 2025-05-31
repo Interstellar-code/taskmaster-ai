@@ -1,55 +1,43 @@
 # Task ID: 5
-# Title: Integrate Anthropic Claude API
-# Status: done
-# Dependencies: 1
-# Priority: high
-# Description: Set up the integration with Claude API for AI-powered task generation and expansion.
+# Title: Integrate Analysis, Help, and Settings Menus
+# Status: pending
+# Dependencies: 4
+# Priority: medium
+# Description: Implement the 'Analysis & Dependencies', 'Help & Information', and 'Settings' menu categories, integrating them with their respective functionalities and ensuring proper context awareness.
 # Details:
-Implement Claude API integration including:
-- API authentication using environment variables
-- Create prompt templates for various operations
-- Implement response handling and parsing
-- Add error management with retries and exponential backoff
-- Implement token usage tracking
-- Create configurable model parameters
+Create sub-menus for 'Analysis & Dependencies' (analyze-complexity, complexity-report, add-dependency, remove-dependency, validate-dependencies, fix-dependencies), 'Help & Information' (Command Reference, Quick Start Guide, Keyboard Shortcuts), and 'Settings' (Toggle Research Mode, Set Default File Paths, Debug Mode). For 'Settings', ensure integration with `.taskmasterconfig` for reading and updating settings. Implement contextual help and suggestions where appropriate.
 
 # Test Strategy:
-Test API connectivity with sample prompts. Verify authentication works correctly with different API keys. Test error handling by simulating API failures.
+Test navigation and functionality within 'Analysis & Dependencies', 'Help & Information', and 'Settings' menus. Verify that settings changes are reflected in `.taskmasterconfig`. Check for contextual information and suggestions where implemented.
 
 # Subtasks:
-## 1. Configure API Authentication System [done]
+## 1. Implement 'Analysis & Dependencies' Menu Structure and Basic Actions [pending]
 ### Dependencies: None
-### Description: Create a dedicated module for Anthropic API authentication. Implement a secure system to load API keys from environment variables using dotenv. Include validation to ensure API keys are properly formatted and present. Create a configuration object that will store all Claude-related settings including API keys, base URLs, and default parameters.
+### Description: Create the 'Analysis & Dependencies' top-level menu and its sub-items: 'Analyze Complexity', 'Complexity Report', 'Add Dependency', 'Remove Dependency', 'Validate Dependencies', and 'Fix Dependencies'. For this subtask, focus on the menu structure and placeholder actions that can be triggered (e.g., logging a message when an item is clicked), without implementing the full backend logic for each action.
 ### Details:
+Utilize the existing menu framework. Each menu item should have a basic event handler that, for now, simply logs the action to the console or displays a simple 'Not yet implemented' message. Ensure proper menu hierarchy and naming.
 
-
-## 2. Develop Prompt Template System [done]
+## 2. Implement 'Help & Information' Menu Structure and Basic Actions [pending]
 ### Dependencies: 5.1
-### Description: Create a flexible prompt template system for Claude API interactions. Implement a PromptTemplate class that can handle variable substitution, system and user messages, and proper formatting according to Claude's requirements. Include templates for different operations (task generation, task expansion, etc.) with appropriate instructions and constraints for each use case.
+### Description: Create the 'Help & Information' top-level menu and its sub-items: 'Command Reference', 'Quick Start Guide', and 'Keyboard Shortcuts'. Similar to the Analysis menu, focus on the menu structure and placeholder actions.
 ### Details:
+Integrate these menu items into the UI. For 'Command Reference' and 'Quick Start Guide', consider opening a simple modal or a new tab with placeholder content. For 'Keyboard Shortcuts', a simple display of common shortcuts (even if hardcoded for now) would suffice. Ensure proper menu hierarchy and naming.
 
-
-## 3. Implement Response Handling and Parsing [done]
-### Dependencies: 5.1, 5.2
-### Description: Create a response handling system that processes Claude API responses. Implement JSON parsing for structured outputs, error detection in responses, and extraction of relevant information. Build utility functions to transform Claude's responses into the application's data structures. Include validation to ensure responses meet expected formats.
+## 3. Implement 'Settings' Menu Structure and `.taskmasterconfig` Integration [pending]
+### Dependencies: 5.2
+### Description: Create the 'Settings' top-level menu and its sub-items: 'Toggle Research Mode', 'Set Default File Paths', and 'Debug Mode'. Implement the initial integration with `.taskmasterconfig` for reading and displaying current settings, and for saving basic changes (e.g., toggling a boolean setting).
 ### Details:
+The 'Settings' menu items should reflect the current state read from `.taskmasterconfig`. 'Toggle Research Mode' and 'Debug Mode' should be checkboxes or toggle switches that update the config file upon change. 'Set Default File Paths' can initially be a text input that reads/writes a path string. Implement robust error handling for config file operations.
 
-
-## 4. Build Error Management with Retry Logic [done]
-### Dependencies: 5.1, 5.3
-### Description: Implement a robust error handling system for Claude API interactions. Create middleware that catches API errors, network issues, and timeout problems. Implement exponential backoff retry logic that increases wait time between retries. Add configurable retry limits and timeout settings. Include detailed logging for troubleshooting API issues.
+## 4. Implement Contextual Help and Suggestions Framework [pending]
+### Dependencies: 5.3
+### Description: Develop a basic framework for providing contextual help and suggestions. This involves identifying key UI elements or states where help might be beneficial and implementing a mechanism to display relevant information (e.g., tooltips, status bar messages, or small pop-ups).
 ### Details:
+Identify at least 2-3 specific UI elements (e.g., a specific input field, a button, or a menu item) where contextual help would be useful. Implement a mechanism (e.g., on-hover tooltips, a dedicated help panel that updates based on focus, or status bar messages) to display pre-defined help text. This framework should be extensible for future additions.
 
-
-## 5. Implement Token Usage Tracking [done]
-### Dependencies: 5.1, 5.3
-### Description: Create a token tracking system to monitor Claude API usage. Implement functions to count tokens in prompts and responses. Build a logging system that records token usage per operation. Add reporting capabilities to show token usage trends and costs. Implement configurable limits to prevent unexpected API costs.
+## 5. Refine Menu Interactions and Integrate Placeholder Functionality [pending]
+### Dependencies: 5.4
+### Description: Review all implemented menus ('Analysis', 'Help', 'Settings') and refine their interactions. For 'Analysis' and 'Help' menus, replace simple console logs with more user-friendly placeholder actions (e.g., opening a simple modal with 'Feature coming soon' or a static help document). Ensure all menu items are responsive and provide basic user feedback.
 ### Details:
-
-
-## 6. Create Model Parameter Configuration System [done]
-### Dependencies: 5.1, 5.5
-### Description: Implement a flexible system for configuring Claude model parameters. Create a configuration module that manages model selection, temperature, top_p, max_tokens, and other parameters. Build functions to customize parameters based on operation type. Add validation to ensure parameters are within acceptable ranges. Include preset configurations for different use cases (creative, precise, etc.).
-### Details:
-
+For 'Analysis' menu items, instead of just logging, open a small modal indicating the feature is under development. For 'Help' menu items, open a simple static HTML page or a modal with the relevant (even if minimal) content. Ensure consistent styling and responsiveness across all menus. Add basic visual feedback on click (e.g., button press state).
 

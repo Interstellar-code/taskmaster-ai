@@ -16,7 +16,7 @@
 		"test:coverage": "node --experimental-vm-modules node_modules/.bin/jest --coverage",
 		"test:e2e": "./tests/e2e/run_e2e.sh",
 		"test:e2e-report": "./tests/e2e/run_e2e.sh --analyze-log",
-		"prepare": "chmod +x bin/task-master.js mcp-server/server.js",
+		"prepare": "node -e \"const fs = require('fs'); const files = ['bin/task-master.js', 'mcp-server/server.js']; files.forEach(f => { try { fs.chmodSync(f, '755'); } catch(e) { /* Windows doesn't need chmod */ } });\"",
 		"changeset": "changeset",
 		"release": "changeset publish",
 		"inspector": "npx @modelcontextprotocol/inspector node mcp-server/server.js",
@@ -67,6 +67,7 @@
 		"ollama-ai-provider": "^1.2.0",
 		"openai": "^4.89.0",
 		"ora": "^8.2.0",
+		"task-master-ai": "^0.15.0",
 		"uuid": "^11.1.0",
 		"zod": "^3.23.8"
 	},
