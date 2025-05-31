@@ -1,6 +1,6 @@
 # Task ID: 4
 # Title: Integrate Task Management and Subtask Operations Menus
-# Status: done
+# Status: pending
 # Dependencies: 3
 # Priority: medium
 # Description: Implement the 'Task Management' and 'Subtask Operations' menu categories, ensuring seamless integration with existing `task-hero` commands and handling of required parameters.

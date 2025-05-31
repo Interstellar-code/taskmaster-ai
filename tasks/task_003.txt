@@ -1,6 +1,6 @@
 # Task ID: 3
 # Title: Integrate Project Management and Task Operations Menus
-# Status: done
+# Status: pending
 # Dependencies: 2
 # Priority: medium
 # Description: Implement the 'Project Management' and 'Task Operations' menu categories, mapping their respective numbered options to the existing `task-hero` commands. This involves integrating the menu selections with the underlying command execution logic.

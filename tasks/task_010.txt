@@ -1,6 +1,6 @@
 # Task ID: 10
 # Title: Update User Documentation
-# Status: done
+# Status: pending
 # Dependencies: 9
 # Priority: low
 # Description: Update documentation to include instructions for using the new interactive menu system, including entry points, navigation, and key features.

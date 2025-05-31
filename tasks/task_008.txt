@@ -1,6 +1,6 @@
 # Task ID: 8
 # Title: Optimize Performance and Responsiveness
-# Status: done
+# Status: pending
 # Dependencies: 5, 7
 # Priority: medium
 # Description: Optimize menu rendering and command execution performance to meet the specified non-functional requirements, ensuring a responsive and efficient user experience.
