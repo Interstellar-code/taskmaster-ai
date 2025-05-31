@@ -1,20 +1,3 @@
-<context>
-# Overview  
-[Provide a high-level overview of your product here. Explain what problem it solves, who it's for, and why it's valuable.]
-
-# Core Features  
-[List and describe the main features of your product. For each feature, include:
-- What it does
-- Why it's important
-- How it works at a high level]
-
-# User Experience  
-[Describe the user journey and experience. Include:
-- User personas
-- Key user flows
-- UI/UX considerations]
-</context>
-<PRD>
 # Task: Rebrand TaskMaster AI to TaskHero AI
 
 ## Task Information
@@ -125,4 +108,3 @@ This task covers the comprehensive rebranding effort to change all instances of 
 - Tests passing
 - No broken links or references
 - Package ready for publication with new name
-</PRD>

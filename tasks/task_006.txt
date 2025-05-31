@@ -1,55 +1,43 @@
 # Task ID: 6
-# Title: Build PRD Parsing System
-# Status: done
-# Dependencies: 1, 5
-# Priority: high
-# Description: Create the system for parsing Product Requirements Documents into structured task lists.
+# Title: Update Dependencies & External References
+# Status: pending
+# Dependencies: 5
+# Priority: medium
+# Description: Rebrand npm package and external references to TaskHero.
 # Details:
-Implement PRD parsing functionality including:
-- PRD file reading from specified path
-- Prompt engineering for effective PRD parsing
-- Convert PRD content to task structure via Claude API
-- Implement intelligent dependency inference
-- Add priority assignment logic
-- Handle large PRDs by chunking if necessary
+Update the npm package name in package.json from 'task-master-ai' to 'task-hero-ai', update any hardcoded URLs or references, and update MCP configuration examples.
 
 # Test Strategy:
-Test with sample PRDs of varying complexity. Verify that generated tasks accurately reflect the requirements in the PRD. Check that dependencies and priorities are logically assigned.
+Verify that the npm package can be published with the new name and that all external references are functional.
 
 # Subtasks:
-## 1. Implement PRD File Reading Module [done]
+## 1. Update npm package name [pending]
 ### Dependencies: None
-### Description: Create a module that can read PRD files from a specified file path. The module should handle different file formats (txt, md, docx) and extract the text content. Implement error handling for file not found, permission issues, and invalid file formats. Add support for encoding detection and proper text extraction to ensure the content is correctly processed regardless of the source format.
+### Description: Change the npm package name in the package.json file from 'task-master-ai' to 'task-hero-ai'.
 ### Details:
+Open the package.json file in the project root directory. Locate the 'name' field and replace 'task-master-ai' with 'task-hero-ai'. Save the changes.
 
-
-## 2. Design and Engineer Effective PRD Parsing Prompts [done]
-### Dependencies: None
-### Description: Create a set of carefully engineered prompts for Claude API that effectively extract structured task information from PRD content. Design prompts that guide Claude to identify tasks, dependencies, priorities, and implementation details from unstructured PRD text. Include system prompts, few-shot examples, and output format specifications to ensure consistent results.
-### Details:
-
-
-## 3. Implement PRD to Task Conversion System [done]
+## 2. Update hardcoded URLs [pending]
 ### Dependencies: 6.1
-### Description: Develop the core functionality that sends PRD content to Claude API and converts the response into the task data structure. This includes sending the engineered prompts with PRD content to Claude, parsing the structured response, and transforming it into valid task objects that conform to the task model. Implement validation to ensure the generated tasks meet all requirements.
+### Description: Search through the codebase for any hardcoded URLs that reference 'task-master-ai' and update them to 'task-hero'.
 ### Details:
+Use a code editor's search functionality to find instances of 'task-master-ai'. Replace each occurrence with 'task-hero', ensuring that the context of the URL remains valid.
 
-
-## 4. Build Intelligent Dependency Inference System [done]
-### Dependencies: 6.1, 6.3
-### Description: Create an algorithm that analyzes the generated tasks and infers logical dependencies between them. The system should identify which tasks must be completed before others based on the content and context of each task. Implement both explicit dependency detection (from Claude's output) and implicit dependency inference (based on task relationships and logical ordering).
+## 3. Update MCP configuration examples [pending]
+### Dependencies: 6.2
+### Description: Locate and update any MCP configuration examples that reference 'task-master-ai' to reflect the new branding 'task-hero'.
 ### Details:
+Identify all configuration files and documentation that include 'task-master-ai'. Modify these files to replace the old branding with 'task-hero', ensuring that examples are clear and accurate.
 
-
-## 5. Implement Priority Assignment Logic [done]
-### Dependencies: 6.1, 6.3
-### Description: Develop a system that assigns appropriate priorities (high, medium, low) to tasks based on their content, dependencies, and position in the PRD. Create algorithms that analyze task descriptions, identify critical path tasks, and consider factors like technical risk and business value. Implement both automated priority assignment and manual override capabilities.
+## 4. Update README and documentation [pending]
+### Dependencies: 6.3
+### Description: Revise the README file and any other relevant documentation to reflect the new package name and branding.
 ### Details:
+Open the README.md file and any other documentation files. Update all mentions of 'task-master-ai' to 'task-hero', ensuring that all instructions and examples are consistent with the new branding.
 
-
-## 6. Implement PRD Chunking for Large Documents [done]
-### Dependencies: 6.1, 6.5, 6.3
-### Description: Create a system that can handle large PRDs by breaking them into manageable chunks for processing. Implement intelligent document segmentation that preserves context across chunks, tracks section relationships, and maintains coherence in the generated tasks. Develop a mechanism to reassemble and deduplicate tasks generated from different chunks into a unified task list.
+## 5. Publish updated package [pending]
+### Dependencies: 6.4
+### Description: Publish the updated npm package with the new name 'task-hero-ai' to the npm registry.
 ### Details:
-
+Run 'npm publish' in the terminal to publish the package. Ensure you are logged into the correct npm account and that the package name is available.
 
