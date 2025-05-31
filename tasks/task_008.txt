@@ -1,11 +1,11 @@
 # Task ID: 8
-# Title: Verify MCP Server Configurations
+# Title: Conduct Functional Testing
 # Status: pending
 # Dependencies: 7
 # Priority: high
-# Description: Ensure that MCP server configurations are updated for TaskHero.
+# Description: Verify that all CLI commands work with the new names and branding.
 # Details:
-Check all MCP server configurations to ensure they are compatible with the new branding and that there are no broken references.
+Perform functional testing on all CLI commands to ensure they operate correctly with the new 'task-hero' command name.
 
 # Test Strategy:
-Test the MCP server to confirm it operates correctly with the updated configurations.
+Execute each CLI command and confirm that they return the expected results.

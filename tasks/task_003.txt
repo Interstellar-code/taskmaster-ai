@@ -2,10 +2,10 @@
 # Title: Update Configuration & Scripts
 # Status: pending
 # Dependencies: 2
-# Priority: high
-# Description: Update configuration files and scripts to reflect the new branding.
+# Priority: medium
+# Description: Revise configuration files and scripts to reflect the new branding.
 # Details:
-Modify all script files in the scripts/ directory, MCP server configurations, source code comments, and .env.example to replace 'TaskMaster' with 'TaskHero'.
+Update all script files in the scripts/ directory, MCP server configurations in mcp-server/, source code comments and string literals in src/, and comments in .env.example to replace 'TaskMaster' with 'TaskHero'.
 
 # Test Strategy:
-Run all scripts to ensure they execute without errors and validate that configurations are correct.
+Check that all configurations load correctly and that scripts execute without errors.

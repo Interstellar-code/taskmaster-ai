@@ -5,7 +5,7 @@
 # Priority: medium
 # Description: Revise test descriptions and build files to reflect the new branding.
 # Details:
-Update test descriptions and assertions in the tests/ directory, and modify jest.config.js if the project name is referenced. Ensure build and deployment scripts are updated accordingly.
+Update test descriptions and assertions in the tests/ directory to replace 'TaskMaster' with 'TaskHero'. Modify jest.config.js if the project name is referenced. Ensure build and deployment scripts are updated accordingly.
 
 # Test Strategy:
-Run all tests to ensure they pass with the updated branding.
+Run all tests to confirm that they pass with the updated branding.

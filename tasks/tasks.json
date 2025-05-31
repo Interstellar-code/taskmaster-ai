@@ -4,8 +4,8 @@
       "id": 1,
       "title": "Setup Project Repository",
       "description": "Initialize the project repository for TaskHero AI with the necessary configurations.",
-      "details": "Create a new Git repository for TaskHero AI. Initialize with a README.md file and set up the main branch. Ensure that the repository is linked to the appropriate remote repository on GitHub or similar platform.",
-      "testStrategy": "Verify that the repository is created successfully and is accessible via the remote URL.",
+      "details": "Create a new Git repository for TaskHero AI. Ensure that the initial commit includes the updated package.json, README.md, and other essential files. Set up branch protection rules and CI/CD pipelines if necessary.",
+      "testStrategy": "Verify that the repository is correctly initialized and that all essential files are present.",
       "priority": "medium",
       "dependencies": [],
       "status": "pending",
@@ -14,9 +14,9 @@
     {
       "id": 2,
       "title": "Update Core Application Files",
-      "description": "Update all core application files to reflect the new branding of TaskHero AI.",
-      "details": "Modify package.json to change the name, description, keywords, and repository URLs. Update README.md and README-task-master.md to replace all instances of TaskMaster with TaskHero. Rename index.js and bin/task-master.js to reflect the new branding.",
-      "testStrategy": "Run a search for 'TaskMaster' in the codebase to ensure all instances are replaced. Validate that the application starts without errors after changes.",
+      "description": "Change all instances of 'TaskMaster' to 'TaskHero' in core application files.",
+      "details": "Perform a global search and replace for 'TaskMaster' with 'TaskHero' in package.json, README.md, README-task-master.md, index.js, and bin/task-master.js. Rename README-task-master.md to README-task-hero.md and update internal references accordingly.",
+      "testStrategy": "Run the application to ensure that all references are updated and functional.",
       "priority": "high",
       "dependencies": [
         1
@@ -27,9 +27,9 @@
     {
       "id": 3,
       "title": "Update Configuration & Scripts",
-      "description": "Revise all configuration files and scripts to incorporate TaskHero branding.",
-      "details": "Update all script files in the scripts/ directory to replace TaskMaster references. Modify MCP server configurations in mcp-server/ and update source code comments and string literals in src/.",
-      "testStrategy": "Run all scripts to ensure they execute correctly and verify that no TaskMaster references remain.",
+      "description": "Revise configuration files and scripts to reflect the new branding.",
+      "details": "Update all script files in the scripts/ directory, MCP server configurations in mcp-server/, source code comments and string literals in src/, and comments in .env.example to replace 'TaskMaster' with 'TaskHero'.",
+      "testStrategy": "Check that all configurations load correctly and that scripts execute without errors.",
       "priority": "medium",
       "dependencies": [
         2
@@ -39,10 +39,10 @@
     },
     {
       "id": 4,
-      "title": "Update Documentation",
-      "description": "Revise all documentation files to reflect the new TaskHero branding.",
-      "details": "Update all documentation files in the docs/ directory, including CHANGELOG.md and LICENSE, to replace TaskMaster references. Ensure that all asset files in assets/ are updated with the new branding.",
-      "testStrategy": "Conduct a thorough review of all documentation to ensure consistency and accuracy in branding.",
+      "title": "Revise Documentation",
+      "description": "Ensure all documentation files reflect the new branding of TaskHero AI.",
+      "details": "Update all documentation files in the docs/ directory, including CHANGELOG.md and LICENSE, to replace 'TaskMaster' with 'TaskHero'.",
+      "testStrategy": "Review documentation for consistency and accuracy, ensuring all references are updated.",
       "priority": "medium",
       "dependencies": [
         3
@@ -53,10 +53,10 @@
     {
       "id": 5,
       "title": "Update CLI Commands & Help Text",
-      "description": "Revise CLI command descriptions and help text to reflect TaskHero branding.",
-      "details": "Update all CLI command descriptions, help text, error messages, and user-facing strings to replace TaskMaster with TaskHero. Update banner/logo text in UI modules as necessary.",
-      "testStrategy": "Test all CLI commands to ensure they function correctly with the new branding and that help text is accurate.",
-      "priority": "medium",
+      "description": "Modify CLI command descriptions and help text to reflect the new branding.",
+      "details": "Update all CLI command descriptions, help text, error messages, and user-facing strings to replace 'TaskMaster' with 'TaskHero'. Update banner/logo text in UI modules as well.",
+      "testStrategy": "Test all CLI commands to ensure they function correctly with the new branding.",
+      "priority": "high",
       "dependencies": [
         4
       ],
@@ -65,10 +65,10 @@
     },
     {
       "id": 6,
-      "title": "Update Dependencies & External References",
-      "description": "Revise all dependencies and external references to reflect TaskHero branding.",
-      "details": "Update npm package name in package.json from 'task-master-ai' to 'task-hero-ai'. Modify any hardcoded URLs or references in the codebase and update MCP configuration examples accordingly.",
-      "testStrategy": "Ensure that the package can be installed with the new name and that all external references are functional.",
+      "title": "Revise Dependencies & External References",
+      "description": "Update npm package name and any external references to TaskHero AI.",
+      "details": "Change the npm package name in package.json from 'task-master-ai' to 'task-hero-ai'. Update any hardcoded URLs or references in the codebase and MCP configuration examples.",
+      "testStrategy": "Publish the package to npm and verify that it is accessible under the new name.",
       "priority": "medium",
       "dependencies": [
         5
@@ -79,9 +79,9 @@
     {
       "id": 7,
       "title": "Update Testing & Build Files",
-      "description": "Revise testing and build files to reflect TaskHero branding.",
-      "details": "Update test descriptions and assertions in the tests/ directory. Modify jest.config.js if the project name is referenced. Ensure that any build or deployment scripts are updated accordingly.",
-      "testStrategy": "Run all tests to confirm that they pass with the updated branding and that build processes complete successfully.",
+      "description": "Revise test descriptions and build files to reflect the new branding.",
+      "details": "Update test descriptions and assertions in the tests/ directory to replace 'TaskMaster' with 'TaskHero'. Modify jest.config.js if the project name is referenced. Ensure build and deployment scripts are updated accordingly.",
+      "testStrategy": "Run all tests to confirm that they pass with the updated branding.",
       "priority": "medium",
       "dependencies": [
         6
@@ -92,9 +92,9 @@
     {
       "id": 8,
       "title": "Conduct Functional Testing",
-      "description": "Perform functional testing to ensure all CLI commands work with the new branding.",
-      "details": "Verify that all CLI commands function correctly with the new names and that there are no errors in execution.",
-      "testStrategy": "Execute each CLI command and confirm that the expected output is produced without errors.",
+      "description": "Verify that all CLI commands work with the new names and branding.",
+      "details": "Perform functional testing on all CLI commands to ensure they operate correctly with the new 'task-hero' command name.",
+      "testStrategy": "Execute each CLI command and confirm that they return the expected results.",
       "priority": "high",
       "dependencies": [
         7
@@ -104,11 +104,11 @@
     },
     {
       "id": 9,
-      "title": "Conduct Integration Testing",
-      "description": "Perform integration testing to ensure MCP server works with the new branding.",
-      "details": "Test the integration of the MCP server with the updated configurations to ensure it operates correctly with the new branding.",
-      "testStrategy": "Run integration tests and monitor the MCP server for any issues or errors during operation.",
-      "priority": "high",
+      "title": "Perform Integration Testing",
+      "description": "Test the integration of the MCP server with the new branding.",
+      "details": "Conduct integration testing to ensure that the MCP server functions correctly with the updated configurations and branding.",
+      "testStrategy": "Check the server logs for errors and verify that all integrations work as expected.",
+      "priority": "medium",
       "dependencies": [
         8
       ],
@@ -118,9 +118,9 @@
     {
       "id": 10,
       "title": "Finalize Documentation Review",
-      "description": "Conduct a final review of all documentation to ensure consistency and accuracy post-rebranding.",
-      "details": "Review all documentation files for consistency in branding and ensure that no references to TaskMaster remain. Update any migration guides if necessary.",
-      "testStrategy": "Perform a final check of all documentation and confirm that it is ready for publication.",
+      "description": "Ensure all documentation is consistent and accurately reflects TaskHero branding.",
+      "details": "Conduct a final review of all documentation to ensure that it is consistent and free of any references to 'TaskMaster'.",
+      "testStrategy": "Have a peer review the documentation for accuracy and completeness.",
       "priority": "medium",
       "dependencies": [
         9

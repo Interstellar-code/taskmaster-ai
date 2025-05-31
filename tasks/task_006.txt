@@ -1,11 +1,11 @@
 # Task ID: 6
-# Title: Update Dependencies & External References
+# Title: Revise Dependencies & External References
 # Status: pending
 # Dependencies: 5
 # Priority: medium
-# Description: Update npm package name and any external references to the new branding.
+# Description: Update npm package name and any external references to TaskHero AI.
 # Details:
-Change the npm package name in package.json from 'task-master-ai' to 'task-hero-ai'. Update any hardcoded URLs or references in the codebase.
+Change the npm package name in package.json from 'task-master-ai' to 'task-hero-ai'. Update any hardcoded URLs or references in the codebase and MCP configuration examples.
 
 # Test Strategy:
-Verify that the package can be published under the new name and that all external references are functioning.
+Publish the package to npm and verify that it is accessible under the new name.

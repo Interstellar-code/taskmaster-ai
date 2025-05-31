@@ -5,7 +5,7 @@
 # Priority: high
 # Description: Change all instances of 'TaskMaster' to 'TaskHero' in core application files.
 # Details:
-Perform a global search and replace in the following files: package.json, README.md, README-task-master.md, index.js, and bin/task-master.js. Ensure to rename files where applicable and update their content accordingly.
+Perform a global search and replace for 'TaskMaster' with 'TaskHero' in package.json, README.md, README-task-master.md, index.js, and bin/task-master.js. Rename README-task-master.md to README-task-hero.md and update internal references accordingly.
 
 # Test Strategy:
-Run a linter to check for any syntax errors and verify that the changes are correctly reflected in the application.
+Run the application to ensure that all references are updated and functional.

@@ -2,10 +2,10 @@
 # Title: Update CLI Commands & Help Text
 # Status: pending
 # Dependencies: 4
-# Priority: medium
-# Description: Revise CLI command descriptions and help text to reflect the new branding.
+# Priority: high
+# Description: Modify CLI command descriptions and help text to reflect the new branding.
 # Details:
-Update all CLI command descriptions, help text, error messages, and user-facing strings to replace 'TaskMaster' with 'TaskHero'.
+Update all CLI command descriptions, help text, error messages, and user-facing strings to replace 'TaskMaster' with 'TaskHero'. Update banner/logo text in UI modules as well.
 
 # Test Strategy:
 Test all CLI commands to ensure they function correctly with the new branding.
