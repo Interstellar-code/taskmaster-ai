@@ -3,41 +3,9 @@
 # Status: pending
 # Dependencies: 5
 # Priority: medium
-# Description: Rebrand npm package and external references to TaskHero.
+# Description: Update npm package name and any external references to the new branding.
 # Details:
-Update the npm package name in package.json from 'task-master-ai' to 'task-hero-ai', update any hardcoded URLs or references, and update MCP configuration examples.
+Change the npm package name in package.json from 'task-master-ai' to 'task-hero-ai'. Update any hardcoded URLs or references in the codebase.
 
 # Test Strategy:
-Verify that the npm package can be published with the new name and that all external references are functional.
-
-# Subtasks:
-## 1. Update npm package name [pending]
-### Dependencies: None
-### Description: Change the npm package name in the package.json file from 'task-master-ai' to 'task-hero-ai'.
-### Details:
-Open the package.json file in the project root directory. Locate the 'name' field and replace 'task-master-ai' with 'task-hero-ai'. Save the changes.
-
-## 2. Update hardcoded URLs [pending]
-### Dependencies: 6.1
-### Description: Search through the codebase for any hardcoded URLs that reference 'task-master-ai' and update them to 'task-hero'.
-### Details:
-Use a code editor's search functionality to find instances of 'task-master-ai'. Replace each occurrence with 'task-hero', ensuring that the context of the URL remains valid.
-
-## 3. Update MCP configuration examples [pending]
-### Dependencies: 6.2
-### Description: Locate and update any MCP configuration examples that reference 'task-master-ai' to reflect the new branding 'task-hero'.
-### Details:
-Identify all configuration files and documentation that include 'task-master-ai'. Modify these files to replace the old branding with 'task-hero', ensuring that examples are clear and accurate.
-
-## 4. Update README and documentation [pending]
-### Dependencies: 6.3
-### Description: Revise the README file and any other relevant documentation to reflect the new package name and branding.
-### Details:
-Open the README.md file and any other documentation files. Update all mentions of 'task-master-ai' to 'task-hero', ensuring that all instructions and examples are consistent with the new branding.
-
-## 5. Publish updated package [pending]
-### Dependencies: 6.4
-### Description: Publish the updated npm package with the new name 'task-hero-ai' to the npm registry.
-### Details:
-Run 'npm publish' in the terminal to publish the package. Ensure you are logged into the correct npm account and that the package name is available.
-
+Verify that the package can be published under the new name and that all external references are functioning.

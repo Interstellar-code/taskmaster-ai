@@ -3,41 +3,9 @@
 # Status: pending
 # Dependencies: 4
 # Priority: medium
-# Description: Modify CLI command descriptions and help text to reflect TaskHero branding.
+# Description: Revise CLI command descriptions and help text to reflect the new branding.
 # Details:
-Update CLI command descriptions, help text, error messages, user-facing strings, and banner/logo text in UI modules to use TaskHero branding.
+Update all CLI command descriptions, help text, error messages, and user-facing strings to replace 'TaskMaster' with 'TaskHero'.
 
 # Test Strategy:
-Run CLI commands to ensure that all descriptions and help texts are accurate and functional.
-
-# Subtasks:
-## 1. Audit Existing CLI Commands [pending]
-### Dependencies: None
-### Description: Review all existing CLI commands to identify which descriptions and help texts need to be updated to reflect TaskHero branding.
-### Details:
-Go through the codebase and list all CLI commands along with their current descriptions and help texts. Document the existing branding used.
-
-## 2. Draft Updated Descriptions and Help Texts [pending]
-### Dependencies: 5.1
-### Description: Create new descriptions and help texts for each CLI command that align with TaskHero branding.
-### Details:
-Based on the audit, write new descriptions and help texts that incorporate TaskHero branding. Ensure clarity and consistency across all texts.
-
-## 3. Implement Changes in Codebase [pending]
-### Dependencies: 5.2
-### Description: Update the CLI command implementations in the codebase with the new descriptions and help texts.
-### Details:
-Modify the relevant files in the codebase to replace old descriptions and help texts with the newly drafted ones. Ensure that the changes are committed to version control.
-
-## 4. Update Error Messages and User-Facing Strings [pending]
-### Dependencies: 5.3
-### Description: Revise error messages and other user-facing strings in the CLI to reflect TaskHero branding.
-### Details:
-Search for all error messages and user-facing strings in the codebase. Update them to align with the new branding guidelines established in the previous subtasks.
-
-## 5. Revise Banner/Logo Text in UI Modules [pending]
-### Dependencies: 5.4
-### Description: Change the banner and logo text in the UI modules to incorporate TaskHero branding.
-### Details:
-Locate the UI modules where the banner and logo text are defined. Update these texts to reflect TaskHero branding and ensure they are visually appealing.
-
+Test all CLI commands to ensure they function correctly with the new branding.
