@@ -93,7 +93,8 @@ import {
 	showPrdHistory,
 	trackPrdChanges,
 	comparePrdVersions,
-	syncPrdFileMetadataCommand
+	syncPrdFileMetadataCommand,
+	archivePrdCommand
 } from './prd-commands.js';
 
 /**
@@ -2950,6 +2951,21 @@ Examples:
 			comparePrdVersions(prdId, version1, version2, options);
 		});
 
+	// prd archive command
+	programInstance
+		.command('prd-archive [prd-id]')
+		.description('Archive a completed PRD and all associated tasks')
+		.option('-f, --force', 'Force archive even if tasks are not completed')
+		.option('-d, --dry-run', 'Show what would be archived without making changes')
+		.option('--no-interactive', 'Disable interactive mode (requires prd-id)')
+		.action(async (prdId, options) => {
+			await archivePrdCommand(prdId, {
+				force: options.force,
+				dryRun: options.dryRun,
+				interactive: options.interactive !== false
+			});
+		});
+
 	// prd sync-metadata command
 	programInstance
 		.command('prd-sync-metadata [prd-id]')
@@ -3024,6 +3040,24 @@ function setupCLI() {
 async function checkForUpdate() {
 	// Get current version from package.json ONLY
 	const currentVersion = getTaskMasterVersion();
+
+	// Skip update check for local installations (personal forks)
+	// Check if this is a local installation by looking for git repository
+	try {
+		const fs = await import('fs');
+		const path = await import('path');
+
+		// If .git directory exists, this is likely a local fork/development installation
+		if (fs.existsSync(path.join(process.cwd(), '.git'))) {
+			return {
+				currentVersion,
+				latestVersion: currentVersion,
+				needsUpdate: false
+			};
+		}
+	} catch (error) {
+		// If we can't check, proceed with normal update check
+	}
 
 	return new Promise((resolve) => {
 		// Get the latest version from npm registry

@@ -1,55 +1,6 @@
 {
   "prds": [
     {
-      "id": "prd_001",
-      "title": "TaskMaster AI PRD Lifecycle Tracking and Management System",
-      "fileName": "prd-tracking-meta.txt",
-      "status": "done",
-      "complexity": "high",
-      "createdDate": "2025-06-01T09:53:45.335Z",
-      "lastModified": "2025-06-01T11:03:12.485Z",
-      "filePath": "prd/done/prd-tracking-meta.txt",
-      "fileHash": "53ecce97f9bc04112843bd533d798ab370c391bbf3172c364369f601aac6d055",
-      "fileSize": 8619,
-      "description": "Comprehensive PRD lifecycle management system with automated status tracking, metadata management, and CLI integration",
-      "tags": [
-        "core-feature",
-        "automation",
-        "metadata",
-        "cli",
-        "ai-integration",
-        "lifecycle-management"
-      ],
-      "linkedTaskIds": [],
-      "taskStats": {
-        "totalTasks": 0,
-        "completedTasks": 0,
-        "pendingTasks": 0,
-        "inProgressTasks": 0,
-        "blockedTasks": 0,
-        "deferredTasks": 0,
-        "cancelledTasks": 0,
-        "completionPercentage": 0
-      },
-      "linkedTasks": [
-        39,
-        40,
-        41,
-        42,
-        43,
-        44,
-        45,
-        46,
-        47,
-        48
-      ],
-      "totalTasks": 10,
-      "completedTasks": 10,
-      "completion": 100,
-      "estimatedEffort": "50 hours",
-      "priority": "high"
-    },
-    {
       "id": "prd_002",
       "title": "Interactive Command-Line Menu System for TaskMaster AI",
       "fileName": "interactive-menu-prd.txt",
@@ -260,8 +211,8 @@
   ],
   "metadata": {
     "version": "1.0.0",
-    "lastUpdated": "2025-06-01T13:34:40.660Z",
-    "totalPrds": 6,
+    "lastUpdated": "2025-06-01T19:22:15.115Z",
+    "totalPrds": 5,
     "schema": {
       "version": "1.0.0",
       "description": "TaskMaster AI PRD Lifecycle Tracking Schema",

@@ -353,9 +353,15 @@ function getTasksLinkedToPrd(prdId, tasksPath = 'tasks/tasks.json', prdsPath = '
             return [];
         }
 
-        return tasksData.tasks.filter(task => 
-            prd.linkedTaskIds.includes(task.id) || 
-            prd.linkedTaskIds.includes(String(task.id))
+        // Check both linkedTaskIds and linkedTasks for compatibility
+        // Use linkedTasks if linkedTaskIds is empty or doesn't exist
+        const linkedIds = (prd.linkedTaskIds && prd.linkedTaskIds.length > 0)
+            ? prd.linkedTaskIds
+            : (prd.linkedTasks || []);
+
+        return tasksData.tasks.filter(task =>
+            linkedIds.includes(task.id) ||
+            linkedIds.includes(String(task.id))
         );
 
     } catch (error) {

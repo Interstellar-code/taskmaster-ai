@@ -40,6 +40,10 @@ import {
     generateMigrationReport
 } from './prd-manager/prd-migration.js';
 import {
+    archivePrd,
+    interactivePrdArchive
+} from './prd-manager/prd-archiving.js';
+import {
     trackFileChanges,
     getVersionHistory,
     compareVersions,
@@ -688,6 +692,90 @@ async function syncPrdFileMetadataCommand(prdId, options = {}) {
     }
 }
 
+/**
+ * Archive a completed PRD and all associated tasks
+ * @param {string} prdId - PRD ID to archive (optional for interactive mode)
+ * @param {Object} options - Command options
+ */
+async function archivePrdCommand(prdId, options = {}) {
+    try {
+        const { force = false, dryRun = false, interactive = true } = options;
+
+        if (!prdId && interactive) {
+            // Interactive mode - show selection interface
+            const result = await interactivePrdArchive({
+                prdsPath: 'prd/prds.json',
+                tasksPath: 'tasks/tasks.json',
+                archiveDir: 'prd/archived',
+                force,
+                dryRun
+            });
+
+            if (result.cancelled) {
+                console.log(chalk.yellow('📦 Archive operation cancelled.'));
+                return;
+            }
+
+            if (!result.success) {
+                console.error(chalk.red(`❌ Archive failed: ${result.error}`));
+                process.exit(1);
+            }
+
+            return;
+        }
+
+        if (!prdId) {
+            console.error(chalk.red('❌ PRD ID is required when not in interactive mode.'));
+            console.log(chalk.gray('Use --interactive flag for selection interface.'));
+            process.exit(1);
+        }
+
+        // Direct archive mode
+        console.log(chalk.blue(`📦 Archiving PRD ${prdId}...`));
+
+        const result = await archivePrd(prdId, {
+            prdsPath: 'prd/prds.json',
+            tasksPath: 'tasks/tasks.json',
+            archiveDir: 'prd/archived',
+            force,
+            dryRun
+        });
+
+        if (result.success) {
+            if (dryRun) {
+                console.log(chalk.blue('🔍 Dry Run Results:'));
+                console.log(chalk.gray(`PRD: ${result.data.prd.id} - ${result.data.prd.title}`));
+                console.log(chalk.gray(`Status: ${result.data.prd.status}`));
+                console.log(chalk.gray(`Associated Tasks: ${result.data.linkedTasks.length}`));
+
+                if (!result.data.taskValidation.isValid) {
+                    console.log(chalk.yellow(`⚠️  ${result.data.taskValidation.incompleteTasks.length} tasks are not completed`));
+                }
+            } else {
+                console.log(chalk.green('✅ Archive completed successfully!'));
+                console.log(chalk.blue(`📦 Archive: ${result.data.archivePath}`));
+                console.log(chalk.blue(`📋 Tasks archived: ${result.data.archivedTaskCount}`));
+            }
+        } else {
+            console.error(chalk.red(`❌ Archive failed: ${result.error}`));
+
+            if (result.data && result.data.incompleteTasks) {
+                console.log(chalk.yellow('\n⚠️  Incomplete tasks:'));
+                result.data.incompleteTasks.forEach(task => {
+                    console.log(chalk.gray(`  • Task ${task.id}: ${task.title} (${task.status})`));
+                });
+                console.log(chalk.gray('\nUse --force to archive anyway.'));
+            }
+
+            process.exit(1);
+        }
+
+    } catch (error) {
+        console.error(chalk.red('❌ Error archiving PRD:'), error.message);
+        process.exit(1);
+    }
+}
+
 export {
     listPrds,
     showPrd,
@@ -699,5 +787,6 @@ export {
     showPrdHistory,
     trackPrdChanges,
     comparePrdVersions,
-    syncPrdFileMetadataCommand
+    syncPrdFileMetadataCommand,
+    archivePrdCommand
 };

@@ -1607,6 +1607,14 @@ async function showConfigurationHelp() {
     console.log(chalk.cyan('  .env') + chalk.gray(' - API keys (ANTHROPIC_API_KEY, etc.)'));
     console.log(chalk.cyan('  tasks/tasks.json') + chalk.gray(' - Task data'));
 
+    console.log(chalk.white('\nPRD Management Files:'));
+    console.log(chalk.cyan('  prd/prds.json') + chalk.gray(' - PRD metadata and tracking'));
+    console.log(chalk.cyan('  prd/pending/') + chalk.gray(' - New or not-yet-started PRDs'));
+    console.log(chalk.cyan('  prd/in-progress/') + chalk.gray(' - PRDs with active tasks'));
+    console.log(chalk.cyan('  prd/done/') + chalk.gray(' - Completed PRDs (ready for archive)'));
+    console.log(chalk.cyan('  prd/archived/') + chalk.gray(' - Archived PRDs and task bundles'));
+    console.log(chalk.cyan('  prd/templates/') + chalk.gray(' - PRD templates for consistent creation'));
+
     console.log(chalk.white('\nAI Integration Files:'));
     console.log(chalk.cyan('  .cursor/rules/') + chalk.gray(' - Cursor AI workspace rules'));
     console.log(chalk.cyan('  .augment-guidelines') + chalk.gray(' - Augment AI workspace guidelines'));
@@ -1647,6 +1655,7 @@ async function handlePrdManagement(sessionState) {
                         { name: chalk.magenta('🔗 Sync with Tasks'), value: 'sync' },
                         { name: chalk.cyan('📁 Organize Files'), value: 'organize' },
                         { name: chalk.red('🔍 Check Integrity'), value: 'check' },
+                        { name: chalk.gray('📦 Archive PRD'), value: 'archive' },
                         new inquirer.Separator(),
                         { name: chalk.gray('← Back to Main Menu'), value: 'back' }
                     ]
@@ -1701,6 +1710,9 @@ async function handlePrdManagement(sessionState) {
                     break;
                 case 'check':
                     await executeCommand('prd-check', [], { projectRoot: sessionState.projectRoot });
+                    break;
+                case 'archive':
+                    await handlePrdArchive(sessionState);
                     break;
             }
 
@@ -1818,4 +1830,29 @@ async function handlePrdSync(sessionState) {
         projectRoot: sessionState.projectRoot,
         additionalFlags: flags
     });
+}
+
+/**
+ * Handle PRD Archive with selection and confirmation
+ */
+async function handlePrdArchive(sessionState) {
+    try {
+        // Import the interactive archive function
+        const { interactivePrdArchive } = await import('../../scripts/modules/prd-manager/prd-archiving.js');
+
+        // Run the interactive archive process
+        const result = await interactivePrdArchive({
+            prdsPath: 'prd/prds.json',
+            tasksPath: 'tasks/tasks.json',
+            archiveDir: 'prd/archived'
+        });
+
+        if (result.cancelled) {
+            console.log(chalk.yellow('\n📦 Archive operation cancelled.'));
+        } else if (!result.success && !result.cancelled) {
+            console.error(chalk.red(`\n❌ Archive failed: ${result.error}`));
+        }
+    } catch (error) {
+        console.error(chalk.red('\n❌ Error during archive operation:'), error.message);
+    }
 }
