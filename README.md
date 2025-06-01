@@ -1,13 +1,17 @@
-# Task Master [![GitHub stars](https://img.shields.io/github/stars/eyaltoledano/claude-task-master?style=social)](https://github.com/eyaltoledano/claude-task-master/stargazers)
+# Task Master AI - Personal Fork
 
-[![CI](https://github.com/eyaltoledano/claude-task-master/actions/workflows/ci.yml/badge.svg)](https://github.com/eyaltoledano/claude-task-master/actions/workflows/ci.yml) [![npm version](https://badge.fury.io/js/task-master-ai.svg)](https://badge.fury.io/js/task-master-ai) [![Discord](https://dcbadge.limes.pink/api/server/https://discord.gg/taskmasterai?style=flat)](https://discord.gg/taskmasterai) [![License: MIT with Commons Clause](https://img.shields.io/badge/license-MIT%20with%20Commons%20Clause-blue.svg)](LICENSE)
+> **Note**: This is a personal fork of TaskMaster AI with custom modifications. For the original project, visit [eyaltoledano/claude-task-master](https://github.com/eyaltoledano/claude-task-master).
 
-### By [@eyaltoledano](https://x.com/eyaltoledano) & [@RalphEcom](https://x.com/RalphEcom)
+[![License: MIT with Commons Clause](https://img.shields.io/badge/license-MIT%20with%20Commons%20Clause-blue.svg)](LICENSE)
+
+### Original Authors: [@eyaltoledano](https://x.com/eyaltoledano) & [@RalphEcom](https://x.com/RalphEcom)
 
 [![Twitter Follow](https://img.shields.io/twitter/follow/eyaltoledano?style=flat)](https://x.com/eyaltoledano)
 [![Twitter Follow](https://img.shields.io/twitter/follow/RalphEcom?style=flat)](https://x.com/RalphEcom)
 
 A task management system for AI-driven development with Claude, designed to work seamlessly with AI-powered editors like Cursor, Augment, Windsurf, and Roo Code.
+
+This fork includes personal customizations and modifications for enhanced functionality.
 
 ## Requirements
 
@@ -28,7 +32,48 @@ Using the research model is optional but highly recommended. You will need at le
 
 ## Quick Start
 
-### Option 1: MCP (Recommended)
+### Option 1: Local Installation (Recommended)
+
+This is a personal fork of TaskMaster AI with custom modifications. Install it locally to use your customized version.
+
+#### 1. Clone and Install Locally
+
+```bash
+# Clone this repository
+git clone https://github.com/Interstellar-code/taskmaster-ai.git
+cd taskmaster-ai
+
+# Install dependencies
+npm install
+
+# Link globally for system-wide access
+npm link
+```
+
+#### 2. Verify Installation
+
+```bash
+# Check version
+task-master --version
+
+# View help
+task-master --help
+
+# Launch interactive menu
+task-master menu
+```
+
+#### 3. Uninstalling (if needed)
+
+```bash
+# Unlink the global installation
+npm unlink
+
+# This removes the global task-master command
+# Your local repository remains unchanged
+```
+
+### Option 2: MCP Integration (For AI Editors)
 
 MCP (Model Control Protocol) lets you run Task Master directly from your editor.
 
@@ -47,8 +92,7 @@ MCP (Model Control Protocol) lets you run Task Master directly from your editor.
 {
 	"mcpServers": {
 		"taskmaster-ai": {
-			"command": "npx",
-			"args": ["-y", "--package=task-master-ai", "task-master-ai"],
+			"command": "task-master-mcp",
 			"env": {
 				"ANTHROPIC_API_KEY": "YOUR_ANTHROPIC_API_KEY_HERE",
 				"PERPLEXITY_API_KEY": "YOUR_PERPLEXITY_API_KEY_HERE",
@@ -73,8 +117,7 @@ MCP (Model Control Protocol) lets you run Task Master directly from your editor.
 {
 	"servers": {
 		"taskmaster-ai": {
-			"command": "npx",
-			"args": ["-y", "--package=task-master-ai", "task-master-ai"],
+			"command": "task-master-mcp",
 			"env": {
 				"ANTHROPIC_API_KEY": "YOUR_ANTHROPIC_API_KEY_HERE",
 				"PERPLEXITY_API_KEY": "YOUR_PERPLEXITY_API_KEY_HERE",
@@ -134,26 +177,14 @@ Use your AI assistant to:
 
 [More examples on how to use Task Master in chat](docs/examples.md)
 
-### Option 2: Using Command Line
+### Option 3: Command Line Usage
 
-#### Installation
-
-```bash
-# Install globally
-npm install -g task-master-ai
-
-# OR install locally within your project
-npm install task-master-ai
-```
+After installing locally (Option 1), you can use TaskMaster from the command line.
 
 #### Initialize a new project
 
 ```bash
-# If installed globally
 task-master init
-
-# If installed locally
-npx task-master init
 ```
 
 This will prompt you for project details and set up a new project with the necessary files and structure.
@@ -228,29 +259,36 @@ For more detailed information, check out the documentation in the `docs` directo
 
 ### If `task-master init` doesn't respond:
 
-Try running it with Node directly:
+Try running it with Node directly from your local installation:
 
 ```bash
-node node_modules/claude-task-master/scripts/init.js
+node scripts/init.js
 ```
 
-Or clone the repository and run:
+### If you need to reinstall:
 
 ```bash
-git clone https://github.com/eyaltoledano/claude-task-master.git
-cd claude-task-master
-node scripts/init.js
+# Unlink the current installation
+npm unlink
+
+# Reinstall dependencies
+npm install
+
+# Link again
+npm link
 ```
 
 ## Contributors
 
-<a href="https://github.com/eyaltoledano/claude-task-master/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=eyaltoledano/claude-task-master" alt="Task Master project contributors" />
+<a href="https://github.com/Interstellar-code/taskmaster-ai/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Interstellar-code/taskmaster-ai" alt="Task Master project contributors" />
 </a>
+
+*Original project contributors can be found at [eyaltoledano/claude-task-master](https://github.com/eyaltoledano/claude-task-master/graphs/contributors)*
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=eyaltoledano/claude-task-master&type=Timeline)](https://www.star-history.com/#eyaltoledano/claude-task-master&Timeline)
+[![Star History Chart](https://api.star-history.com/svg?repos=Interstellar-code/taskmaster-ai&type=Timeline)](https://www.star-history.com/#Interstellar-code/taskmaster-ai&Timeline)
 
 ## Licensing
 
