@@ -1206,21 +1206,40 @@ function registerCommands(programInstance) {
 		)
 		.option('-s, --status <status>', 'Filter by status')
 		.option('--with-subtasks', 'Show subtasks for each task')
+		.option('--prd <prd>', 'Filter by PRD source file (name or path)')
+		.option('--manual-only', 'Show only manually created tasks (no PRD source)')
+		.option('--prd-only', 'Show only tasks generated from PRD files')
 		.action(async (options) => {
 			const tasksPath = options.file;
 			const reportPath = options.report;
 			const statusFilter = options.status;
 			const withSubtasks = options.withSubtasks || false;
+			const prdFilter = options.prd;
+			const manualOnly = options.manualOnly || false;
+			const prdOnly = options.prdOnly || false;
 
 			console.log(chalk.blue(`Listing tasks from: ${tasksPath}`));
 			if (statusFilter) {
 				console.log(chalk.blue(`Filtering by status: ${statusFilter}`));
 			}
+			if (prdFilter) {
+				console.log(chalk.blue(`Filtering by PRD source: ${prdFilter}`));
+			}
+			if (manualOnly) {
+				console.log(chalk.blue('Showing only manually created tasks'));
+			}
+			if (prdOnly) {
+				console.log(chalk.blue('Showing only tasks from PRD files'));
+			}
 			if (withSubtasks) {
 				console.log(chalk.blue('Including subtasks in listing'));
 			}
 
-			await listTasks(tasksPath, statusFilter, reportPath, withSubtasks);
+			await listTasks(tasksPath, statusFilter, reportPath, withSubtasks, {
+				prdFilter,
+				manualOnly,
+				prdOnly
+			});
 		});
 
 	// expand command
@@ -2504,6 +2523,89 @@ Examples:
 			}
 			// --- IMPORTANT: Exit after displaying status ---
 			return; // Stop execution here
+		});
+
+	// list-prds command
+	programInstance
+		.command('list-prds')
+		.description('List all unique PRD files that have generated tasks')
+		.option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
+		.option('--format <format>', 'Output format (table, json)', 'table')
+		.action(async (options) => {
+			const { listPRDs } = await import('./task-manager/prd-queries.js');
+			await listPRDs(options.file, options.format);
+		});
+
+	// tasks-from-prd command
+	programInstance
+		.command('tasks-from-prd')
+		.description('Show all tasks generated from a specific PRD file')
+		.option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
+		.option('--prd <prd>', 'PRD file path or name to filter by (required)')
+		.option('--format <format>', 'Output format (table, json)', 'table')
+		.option('--status <status>', 'Filter tasks by status')
+		.action(async (options) => {
+			if (!options.prd) {
+				console.error(chalk.red('Error: --prd option is required'));
+				console.log(chalk.yellow('Usage: task-master tasks-from-prd --prd=<prd-file>'));
+				process.exit(1);
+			}
+			const { tasksFromPRD } = await import('./task-manager/prd-queries.js');
+			await tasksFromPRD(options.file, options.prd, options.format, options.status);
+		});
+
+	// show-prd-source command
+	programInstance
+		.command('show-prd-source')
+		.description('Display PRD source information for a specific task')
+		.option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
+		.option('--id <id>', 'Task ID to show PRD source for (required)')
+		.option('--format <format>', 'Output format (table, json)', 'table')
+		.action(async (options) => {
+			if (!options.id) {
+				console.error(chalk.red('Error: --id option is required'));
+				console.log(chalk.yellow('Usage: task-master show-prd-source --id=<task-id>'));
+				process.exit(1);
+			}
+			const { showPRDSource } = await import('./task-manager/prd-queries.js');
+			await showPRDSource(options.file, options.id, options.format);
+		});
+
+	// check-prd-changes command
+	programInstance
+		.command('check-prd-changes')
+		.description('Check if PRD files referenced in tasks have been modified')
+		.option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
+		.option('--format <format>', 'Output format (table, json)', 'table')
+		.action(async (options) => {
+			const { checkPRDChanges, displayPRDChanges } = await import('./task-manager/prd-monitor.js');
+			const results = await checkPRDChanges(options.file);
+			displayPRDChanges(results, options.format);
+		});
+
+	// update-prd-metadata command
+	programInstance
+		.command('update-prd-metadata')
+		.description('Update PRD metadata for tasks after a PRD file has been modified')
+		.option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
+		.option('--prd <prd>', 'Path to the modified PRD file (required)')
+		.action(async (options) => {
+			if (!options.prd) {
+				console.error(chalk.red('Error: --prd option is required'));
+				console.log(chalk.yellow('Usage: task-master update-prd-metadata --prd=<prd-file-path>'));
+				process.exit(1);
+			}
+			const { updatePRDMetadata } = await import('./task-manager/prd-monitor.js');
+			const result = await updatePRDMetadata(options.file, options.prd);
+
+			if (result.success) {
+				console.log(chalk.green(`✓ Updated PRD metadata for ${result.updatedTasks} task(s)`));
+				console.log(chalk.gray(`New hash: ${result.newMetadata.fileHash}`));
+				console.log(chalk.gray(`New size: ${result.newMetadata.fileSize} bytes`));
+			} else {
+				console.error(chalk.red(`Error: ${result.error}`));
+				process.exit(1);
+			}
 		});
 
 	// move-task command

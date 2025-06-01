@@ -3,6 +3,7 @@
 # Status: done
 # Dependencies: 4
 # Priority: medium
+# PRD Source: None (manually created)
 # Description: Implement the 'Analysis & Dependencies', 'Help & Information', and 'Settings' menu categories, integrating them with their respective functionalities and ensuring proper context awareness.
 # Details:
 Create sub-menus for 'Analysis & Dependencies' (analyze-complexity, complexity-report, add-dependency, remove-dependency, validate-dependencies, fix-dependencies), 'Help & Information' (Command Reference, Quick Start Guide, Keyboard Shortcuts), and 'Settings' (Toggle Research Mode, Set Default File Paths, Debug Mode). For 'Settings', ensure integration with `.taskmasterconfig` for reading and updating settings. Implement contextual help and suggestions where appropriate.

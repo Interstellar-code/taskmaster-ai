@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
 import chalk from 'chalk';
 import boxen from 'boxen';
 import { z } from 'zod';
@@ -19,6 +20,15 @@ import { getDebugFlag } from '../config-manager.js';
 import generateTaskFiles from './generate-task-files.js';
 import { displayAiUsageSummary } from '../ui.js';
 
+// Define the Zod schema for PRD source metadata
+const prdSourceSchema = z.object({
+	filePath: z.string().describe('Full path to the PRD file'),
+	fileName: z.string().describe('Name of the PRD file'),
+	parsedDate: z.string().describe('ISO timestamp when the PRD was parsed'),
+	fileHash: z.string().describe('SHA256 hash of the PRD file content'),
+	fileSize: z.number().int().positive().describe('Size of the PRD file in bytes')
+}).nullable().optional();
+
 // Define the Zod schema for a SINGLE task object
 const prdSingleTaskSchema = z.object({
 	id: z.number().int().positive(),
@@ -28,7 +38,8 @@ const prdSingleTaskSchema = z.object({
 	testStrategy: z.string().optional().default(''),
 	priority: z.enum(['high', 'medium', 'low']).default('medium'),
 	dependencies: z.array(z.number().int().positive()).optional().default([]),
-	status: z.string().optional().default('pending')
+	status: z.string().optional().default('pending'),
+	prdSource: prdSourceSchema
 });
 
 // Define the Zod schema for the ENTIRE expected AI response object
@@ -41,6 +52,69 @@ const prdResponseSchema = z.object({
 		generatedAt: z.string()
 	})
 });
+
+/**
+ * Normalize file path for cross-platform compatibility
+ * @param {string} filePath - Path to normalize
+ * @returns {string} Normalized absolute path
+ */
+function normalizePrdPath(filePath) {
+	try {
+		// Convert to absolute path and normalize separators
+		const absolutePath = path.resolve(filePath);
+		// Convert backslashes to forward slashes for consistency across platforms
+		return absolutePath.replace(/\\/g, '/');
+	} catch (error) {
+		log('warn', `Failed to normalize path ${filePath}: ${error.message}`);
+		return filePath;
+	}
+}
+
+/**
+ * Extract metadata from a PRD file
+ * @param {string} filePath - Path to the PRD file
+ * @param {string} fileContent - Content of the PRD file
+ * @returns {Object} PRD source metadata object
+ */
+function extractPrdMetadata(filePath, fileContent) {
+	try {
+		// Normalize the file path for cross-platform compatibility
+		const normalizedPath = normalizePrdPath(filePath);
+
+		// Get file stats
+		const stats = fs.statSync(filePath);
+
+		// Calculate file hash
+		const hash = crypto.createHash('sha256');
+		hash.update(fileContent, 'utf8');
+		const fileHash = hash.digest('hex');
+
+		// Extract file name from path
+		const fileName = path.basename(filePath);
+
+		// Get current timestamp
+		const parsedDate = new Date().toISOString();
+
+		return {
+			filePath: normalizedPath, // Use normalized path
+			fileName: fileName,
+			parsedDate: parsedDate,
+			fileHash: fileHash,
+			fileSize: stats.size
+		};
+	} catch (error) {
+		log('warn', `Failed to extract PRD metadata: ${error.message}`);
+		// Return minimal metadata if extraction fails
+		const fallbackPath = normalizePrdPath(filePath);
+		return {
+			filePath: fallbackPath,
+			fileName: path.basename(filePath),
+			parsedDate: new Date().toISOString(),
+			fileHash: 'unknown',
+			fileSize: fileContent.length
+		};
+	}
+}
 
 /**
  * Parse a PRD file and generate tasks
@@ -151,6 +225,10 @@ async function parsePRD(prdPath, tasksPath, numTasks, options = {}) {
 		if (!prdContent) {
 			throw new Error(`Input file ${prdPath} is empty or could not be read.`);
 		}
+
+		// Extract PRD metadata for task source tracking
+		report('Extracting PRD metadata for source tracking...', 'info');
+		const prdMetadata = extractPrdMetadata(prdPath, prdContent);
 
 		// Research-specific enhancements to the system prompt
 		const researchPromptAddition = research
@@ -292,7 +370,8 @@ Guidelines:
 				status: 'pending',
 				priority: task.priority || 'medium',
 				dependencies: Array.isArray(task.dependencies) ? task.dependencies : [],
-				subtasks: []
+				subtasks: [],
+				prdSource: prdMetadata // Add PRD source metadata to each task
 			};
 		});
 

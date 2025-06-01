@@ -15,6 +15,15 @@ import { generateTextService } from '../ai-services-unified.js';
 import { getDefaultSubtasks, getDebugFlag } from '../config-manager.js';
 import generateTaskFiles from './generate-task-files.js';
 
+// Define Zod schema for PRD source metadata (inherited from parent task)
+const prdSourceSchema = z.object({
+	filePath: z.string().describe('Full path to the PRD file'),
+	fileName: z.string().describe('Name of the PRD file'),
+	parsedDate: z.string().describe('ISO timestamp when the PRD was parsed'),
+	fileHash: z.string().describe('SHA256 hash of the PRD file content'),
+	fileSize: z.number().int().positive().describe('Size of the PRD file in bytes')
+}).nullable().optional();
+
 // --- Zod Schemas (Keep from previous step) ---
 const subtaskSchema = z
 	.object({
@@ -40,7 +49,8 @@ const subtaskSchema = z
 		testStrategy: z
 			.string()
 			.optional()
-			.describe('Approach for testing this subtask')
+			.describe('Approach for testing this subtask'),
+		prdSource: prdSourceSchema
 	})
 	.strict();
 const subtaskArraySchema = z.array(subtaskSchema);
@@ -186,7 +196,8 @@ function parseSubtasksFromText(
 	startId,
 	expectedCount,
 	parentTaskId,
-	logger
+	logger,
+	parentTask = null
 ) {
 	if (typeof text !== 'string') {
 		logger.error(
@@ -350,7 +361,8 @@ function parseSubtasksFromText(
 							(depId) => !isNaN(depId) && depId >= startId && depId < currentId
 						)
 				: [],
-			status: 'pending'
+			status: 'pending',
+			prdSource: parentTask?.prdSource || null // Inherit prdSource from parent task
 		};
 
 		const result = subtaskSchema.safeParse(correctedSubtask);
@@ -596,7 +608,8 @@ async function expandTask(
 				nextSubtaskId,
 				finalSubtaskCount,
 				task.id,
-				logger
+				logger,
+				task // Pass the parent task to inherit prdSource
 			);
 			logger.info(
 				`Successfully parsed ${generatedSubtasks.length} subtasks from AI response.`

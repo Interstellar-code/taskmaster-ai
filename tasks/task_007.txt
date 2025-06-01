@@ -3,6 +3,7 @@
 # Status: done
 # Dependencies: 2
 # Priority: high
+# PRD Source: None (manually created)
 # Description: Implement session management to maintain menu state, user preferences, and display relevant project information and status indicators in the menu header.
 # Details:
 Maintain the current menu path (breadcrumb navigation) throughout the session. Implement logic to display current project information (e.g., 'Project: taskmaster-ai'), task counts ('Tasks: 15 total (3 pending)'), and system status ('Status: ✓ Configured') in the menu header. This will require integrating with the existing project and task management core functionalities to retrieve real-time data. Consider how to remember user preferences for future enhancements.

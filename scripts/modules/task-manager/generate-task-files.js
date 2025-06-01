@@ -103,6 +103,22 @@ function generateTaskFiles(tasksPath, outputDir, options = {}) {
 			}
 
 			content += `# Priority: ${task.priority || 'medium'}\n`;
+
+			// Add PRD Source information if available
+			if (task.prdSource) {
+				content += `# PRD Source: ${task.prdSource.fileName || 'Unknown'}\n`;
+				content += `# PRD Path: ${task.prdSource.filePath || 'Unknown'}\n`;
+				content += `# Parsed Date: ${task.prdSource.parsedDate || 'Unknown'}\n`;
+				if (task.prdSource.fileHash) {
+					content += `# File Hash: ${task.prdSource.fileHash}\n`;
+				}
+				if (task.prdSource.fileSize) {
+					content += `# File Size: ${task.prdSource.fileSize} bytes\n`;
+				}
+			} else {
+				content += `# PRD Source: None (manually created)\n`;
+			}
+
 			content += `# Description: ${task.description || ''}\n`;
 
 			// Add more detailed sections

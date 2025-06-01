@@ -3,6 +3,7 @@
 # Status: done
 # Dependencies: 3
 # Priority: medium
+# PRD Source: None (manually created)
 # Description: Implement the 'Task Management' and 'Subtask Operations' menu categories, ensuring seamless integration with existing `task-hero` commands and handling of required parameters.
 # Details:
 Develop sub-menus for 'Task Management' (add-task, update-task, update, remove-task, move) and 'Subtask Operations' (add-subtask, update-subtask, remove-subtask, expand, clear-subtasks). For commands requiring parameters (e.g., `add-task <name>`), use `inquirer.js` to prompt the user for input. Implement smart defaults based on project context where applicable. Ensure command output is displayed within the menu interface.

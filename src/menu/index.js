@@ -72,6 +72,8 @@ async function getProjectInfo() {
         // Get task counts safely
         let totalTasks = 0;
         let pendingTasks = 0;
+        let tasksWithPrdSource = 0;
+        let uniquePrdSources = 0;
         try {
             const path = await import('path');
             const tasksPath = path.join(projectRoot, 'tasks', 'tasks.json');
@@ -79,6 +81,13 @@ async function getProjectInfo() {
             if (result && result.tasks && Array.isArray(result.tasks)) {
                 totalTasks = result.tasks.length;
                 pendingTasks = result.tasks.filter(task => task.status === 'pending').length;
+
+                // Calculate PRD source statistics
+                tasksWithPrdSource = result.tasks.filter(task => task.prdSource && task.prdSource.fileName).length;
+                const prdFileNames = [...new Set(result.tasks
+                    .filter(task => task.prdSource && task.prdSource.fileName)
+                    .map(task => task.prdSource.fileName))];
+                uniquePrdSources = prdFileNames.length;
             }
         } catch (err) {
             // Use default values if tasks can't be read
@@ -96,6 +105,8 @@ async function getProjectInfo() {
             name: projectName,
             totalTasks,
             pendingTasks,
+            tasksWithPrdSource,
+            uniquePrdSources,
             status
         };
     } catch (error) {
@@ -118,6 +129,7 @@ function renderMenuHeader(sessionState) {
         chalk.bold.blue(`📋 ${projectInfo.name}`),
         '',
         chalk.gray(`Tasks: ${projectInfo.totalTasks} total (${projectInfo.pendingTasks} pending)`),
+        chalk.gray(`PRD Sources: ${projectInfo.tasksWithPrdSource || 0} tasks from ${projectInfo.uniquePrdSources || 0} PRD files`),
         chalk.gray(`Status: ${projectInfo.status}`),
         '',
         chalk.yellow(`📍 ${menuPath.join(' > ')}`)
@@ -359,7 +371,7 @@ async function handleTaskOperations(sessionState) {
             // Handle the selected action
             switch (action) {
                 case 'list':
-                    await executeCommand('list', [], { projectRoot: sessionState.projectRoot });
+                    await handleListTasks(sessionState);
                     break;
                 case 'next':
                     await executeCommand('next', [], { projectRoot: sessionState.projectRoot });
@@ -1057,6 +1069,119 @@ async function browsePRDFiles() {
     }
 }
 
+async function handleListTasks(sessionState) {
+    try {
+        const { filterType } = await inquirer.prompt([
+            {
+                type: 'list',
+                name: 'filterType',
+                message: chalk.cyan('How would you like to filter the task list?'),
+                choices: [
+                    { name: chalk.blue('📋 Show All Tasks'), value: 'all' },
+                    { name: chalk.yellow('🔍 Filter by Status'), value: 'status' },
+                    { name: chalk.green('📄 Filter by PRD Source'), value: 'prd' },
+                    { name: chalk.gray('✋ Manual Tasks Only'), value: 'manual' },
+                    { name: chalk.magenta('🤖 PRD Tasks Only'), value: 'prd-only' },
+                    { name: chalk.cyan('🔧 Advanced Filters'), value: 'advanced' }
+                ]
+            }
+        ]);
+
+        let args = [];
+
+        switch (filterType) {
+            case 'all':
+                // No additional arguments needed
+                break;
+
+            case 'status':
+                const { status } = await inquirer.prompt([
+                    {
+                        type: 'list',
+                        name: 'status',
+                        message: 'Select status to filter by:',
+                        choices: [
+                            { name: chalk.yellow('Pending'), value: 'pending' },
+                            { name: chalk.blue('In Progress'), value: 'in-progress' },
+                            { name: chalk.green('Done'), value: 'done' },
+                            { name: chalk.red('Blocked'), value: 'blocked' },
+                            { name: chalk.gray('Deferred'), value: 'deferred' },
+                            { name: chalk.gray('Cancelled'), value: 'cancelled' }
+                        ]
+                    }
+                ]);
+                args.push('--status', status);
+                break;
+
+            case 'prd':
+                const { prdFile } = await inquirer.prompt([
+                    {
+                        type: 'input',
+                        name: 'prdFile',
+                        message: 'Enter PRD file name or path to filter by:',
+                        validate: (input) => input.trim().length > 0 ? true : 'PRD file name cannot be empty'
+                    }
+                ]);
+                args.push('--prd', prdFile);
+                break;
+
+            case 'manual':
+                args.push('--manual-only');
+                break;
+
+            case 'prd-only':
+                args.push('--prd-only');
+                break;
+
+            case 'advanced':
+                const filters = await inquirer.prompt([
+                    {
+                        type: 'list',
+                        name: 'status',
+                        message: 'Filter by status (optional):',
+                        choices: [
+                            { name: 'No status filter', value: null },
+                            { name: chalk.yellow('Pending'), value: 'pending' },
+                            { name: chalk.blue('In Progress'), value: 'in-progress' },
+                            { name: chalk.green('Done'), value: 'done' },
+                            { name: chalk.red('Blocked'), value: 'blocked' },
+                            { name: chalk.gray('Deferred'), value: 'deferred' },
+                            { name: chalk.gray('Cancelled'), value: 'cancelled' }
+                        ]
+                    },
+                    {
+                        type: 'input',
+                        name: 'prd',
+                        message: 'Filter by PRD file (optional, leave empty for no filter):',
+                        default: ''
+                    },
+                    {
+                        type: 'confirm',
+                        name: 'withSubtasks',
+                        message: 'Include subtasks in the listing?',
+                        default: false
+                    }
+                ]);
+
+                if (filters.status) {
+                    args.push('--status', filters.status);
+                }
+                if (filters.prd && filters.prd.trim()) {
+                    args.push('--prd', filters.prd.trim());
+                }
+                if (filters.withSubtasks) {
+                    args.push('--with-subtasks');
+                }
+                break;
+        }
+
+        await executeCommand('list', args, { projectRoot: sessionState.projectRoot });
+    } catch (error) {
+        console.error(chalk.red('❌ Failed to list tasks:'), error.message);
+        logError('List tasks failed', error);
+    }
+}
+
 /**
  * Help functions
  */
@@ -1072,7 +1197,10 @@ async function showCommandReference() {
         { cmd: 'task-master set-status --id=<id> --status=<status>', desc: 'Update task status' },
         { cmd: 'task-master add-task --prompt="<text>"', desc: 'Add a new task' },
         { cmd: 'task-master parse-prd --input=<file>', desc: 'Generate tasks from PRD' },
-        { cmd: 'task-master models --setup', desc: 'Configure AI models' }
+        { cmd: 'task-master models --setup', desc: 'Configure AI models' },
+        { cmd: 'task-master list-prds', desc: 'List all PRD files' },
+        { cmd: 'task-master tasks-from-prd --prd=<file>', desc: 'Show tasks from specific PRD' },
+        { cmd: 'task-master check-prd-changes', desc: 'Check for PRD file changes' }
     ];
 
     commands.forEach(({ cmd, desc }) => {

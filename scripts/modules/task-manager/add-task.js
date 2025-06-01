@@ -17,6 +17,15 @@ import { generateObjectService } from '../ai-services-unified.js';
 import { getDefaultPriority } from '../config-manager.js';
 import generateTaskFiles from './generate-task-files.js';
 
+// Define Zod schema for PRD source metadata (optional for manually added tasks)
+const prdSourceSchema = z.object({
+	filePath: z.string().describe('Full path to the PRD file'),
+	fileName: z.string().describe('Name of the PRD file'),
+	parsedDate: z.string().describe('ISO timestamp when the PRD was parsed'),
+	fileHash: z.string().describe('SHA256 hash of the PRD file content'),
+	fileSize: z.number().int().positive().describe('Size of the PRD file in bytes')
+}).nullable().optional();
+
 // Define Zod schema for the expected AI output object
 const AiTaskDataSchema = z.object({
 	title: z.string().describe('Clear, concise title for the task'),
@@ -34,7 +43,8 @@ const AiTaskDataSchema = z.object({
 		.optional()
 		.describe(
 			'Array of task IDs that this task depends on (must be completed before this task can start)'
-		)
+		),
+	prdSource: prdSourceSchema
 });
 
 /**
@@ -1001,7 +1011,8 @@ async function addTask(
 				? taskData.dependencies
 				: numericDependencies, // Use AI-suggested dependencies if available, fallback to manually specified
 			priority: effectivePriority,
-			subtasks: [] // Initialize with empty subtasks array
+			subtasks: [], // Initialize with empty subtasks array
+			prdSource: taskData.prdSource || null // Include prdSource field (null for manually added tasks)
 		};
 
 		// Additional check: validate all dependencies in the AI response

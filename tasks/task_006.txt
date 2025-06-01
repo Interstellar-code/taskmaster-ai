@@ -3,6 +3,7 @@
 # Status: done
 # Dependencies: 2
 # Priority: high
+# PRD Source: None (manually created)
 # Description: Implement robust error handling mechanisms for user input validation and command execution failures, ensuring graceful recovery and clear feedback to the user.
 # Details:
 Integrate input validation for all menu selections and command parameters using `inquirer.js` validation features. Provide clear, actionable error messages for invalid input. Implement `try-catch` blocks or similar mechanisms around command executions to gracefully handle failures. Ensure that after an error, the user is returned to the relevant menu with options for recovery. Log errors for debugging purposes.

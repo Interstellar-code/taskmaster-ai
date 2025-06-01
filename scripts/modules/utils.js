@@ -173,6 +173,38 @@ function log(level, ...args) {
 }
 
 /**
+ * Ensures backward compatibility for task objects by adding missing prdSource field
+ * @param {Object} taskData - The task data object containing tasks array
+ * @returns {Object} Task data with prdSource field added to tasks that don't have it
+ */
+function ensureTaskBackwardCompatibility(taskData) {
+	if (!taskData || !taskData.tasks || !Array.isArray(taskData.tasks)) {
+		return taskData;
+	}
+
+	// Add prdSource field to tasks that don't have it
+	taskData.tasks = taskData.tasks.map(task => {
+		if (!task.hasOwnProperty('prdSource')) {
+			task.prdSource = null; // Set to null for existing tasks without PRD source
+		}
+
+		// Also ensure subtasks have prdSource field
+		if (task.subtasks && Array.isArray(task.subtasks)) {
+			task.subtasks = task.subtasks.map(subtask => {
+				if (!subtask.hasOwnProperty('prdSource')) {
+					subtask.prdSource = task.prdSource; // Inherit from parent task
+				}
+				return subtask;
+			});
+		}
+
+		return task;
+	});
+
+	return taskData;
+}
+
+/**
  * Reads and parses a JSON file
  * @param {string} filepath - Path to the JSON file
  * @returns {Object|null} Parsed JSON data or null if error occurs
@@ -182,7 +214,14 @@ function readJSON(filepath) {
 	const isDebug = getDebugFlag();
 	try {
 		const rawData = fs.readFileSync(filepath, 'utf8');
-		return JSON.parse(rawData);
+		const parsedData = JSON.parse(rawData);
+
+		// Apply backward compatibility for tasks.json files
+		if (filepath.includes('tasks.json')) {
+			return ensureTaskBackwardCompatibility(parsedData);
+		}
+
+		return parsedData;
 	} catch (error) {
 		log('error', `Error reading JSON file ${filepath}:`, error.message);
 		if (isDebug) {
@@ -607,6 +646,7 @@ export {
 	log,
 	readJSON,
 	writeJSON,
+	ensureTaskBackwardCompatibility,
 	sanitizePrompt,
 	readComplexityReport,
 	findTaskInComplexityReport,

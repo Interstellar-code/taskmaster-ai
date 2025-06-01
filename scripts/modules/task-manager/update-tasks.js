@@ -24,6 +24,15 @@ import generateTaskFiles from './generate-task-files.js';
 import { generateTextService } from '../ai-services-unified.js';
 import { getModelConfiguration } from './models.js';
 
+// Define Zod schema for PRD source metadata (optional for existing tasks)
+const prdSourceSchema = z.object({
+	filePath: z.string().describe('Full path to the PRD file'),
+	fileName: z.string().describe('Name of the PRD file'),
+	parsedDate: z.string().describe('ISO timestamp when the PRD was parsed'),
+	fileHash: z.string().describe('SHA256 hash of the PRD file content'),
+	fileSize: z.number().int().positive().describe('Size of the PRD file in bytes')
+}).nullable().optional();
+
 // Zod schema for validating the structure of tasks AFTER parsing
 const updatedTaskSchema = z
 	.object({
@@ -35,7 +44,8 @@ const updatedTaskSchema = z
 		priority: z.string().optional(),
 		details: z.string().optional(),
 		testStrategy: z.string().optional(),
-		subtasks: z.array(z.any()).optional() // Keep subtasks flexible for now
+		subtasks: z.array(z.any()).optional(), // Keep subtasks flexible for now
+		prdSource: prdSourceSchema
 	})
 	.strip(); // Allow potential extra fields during parsing if needed, then validate structure
 const updatedTaskArraySchema = z.array(updatedTaskSchema);

@@ -3,6 +3,7 @@
 # Status: done
 # Dependencies: None
 # Priority: high
+# PRD Source: None (manually created)
 # Description: Implement the core command-line interface entry point for the interactive menu system, allowing users to launch it using `task-hero --menu`, `task-hero -m`, or `task-hero menu`.
 # Details:
 Utilize Commander.js to define the `--menu`, `-m`, and `menu` options. This should trigger the initialization of the interactive menu system. Ensure backward compatibility with existing commands. The entry point should call a main menu rendering function.

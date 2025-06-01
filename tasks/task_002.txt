@@ -3,6 +3,7 @@
 # Status: done
 # Dependencies: 1
 # Priority: high
+# PRD Source: None (manually created)
 # Description: Develop the foundational framework for the interactive menu using `inquirer.js` for prompts and `chalk` and `boxen` for visual styling. This includes rendering the main menu structure, handling user input for navigation, and displaying basic project status.
 # Details:
 Design the main menu interface as specified in the PRD, including the header with project name, task counts, and status. Use `inquirer.js` for numbered menu options and input handling. Implement `chalk` for colors and `boxen` for borders to achieve the specified visual hierarchy. Ensure the menu persists after an action and returns to the main menu. Implement a basic loop for menu interaction.

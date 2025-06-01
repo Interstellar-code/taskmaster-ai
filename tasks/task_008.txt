@@ -3,6 +3,7 @@
 # Status: done
 # Dependencies: 5, 7
 # Priority: medium
+# PRD Source: None (manually created)
 # Description: Optimize menu rendering and command execution performance to meet the specified non-functional requirements, ensuring a responsive and efficient user experience.
 # Details:
 Profile menu rendering time and command execution time. Implement optimizations such as lazy loading for menu options or command details that are not immediately needed. Minimize unnecessary re-renders of the menu. Ensure that memory usage remains within acceptable limits (< 50MB additional overhead) and startup time is fast (< 500ms).

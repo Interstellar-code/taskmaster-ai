@@ -3,6 +3,7 @@
 # Status: done
 # Dependencies: 9
 # Priority: low
+# PRD Source: None (manually created)
 # Description: Update documentation to include instructions for using the new interactive menu system, including entry points, navigation, and key features.
 # Details:
 Create or update relevant sections in the TaskHero AI documentation to explain how to launch and navigate the interactive menu. Include examples of common workflows, keyboard shortcuts, and any new features introduced by the menu system. Ensure the documentation is clear, concise, and easy to understand for new and experienced users.

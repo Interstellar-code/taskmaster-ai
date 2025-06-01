@@ -2,6 +2,9 @@ export default {
 	// Use Node.js environment for testing
 	testEnvironment: 'node',
 
+	// Enable ES modules support
+	preset: null,
+
 	// Automatically clear mock calls between every test
 	clearMocks: true,
 

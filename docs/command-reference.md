@@ -2,6 +2,47 @@
 
 Here's a comprehensive reference of all available commands:
 
+## PRD Source Tracking Commands
+
+### List PRD Files
+```bash
+# List all PRD files that have generated tasks
+task-master list-prds
+
+# Output in JSON format
+task-master list-prds --format=json
+```
+
+### Query Tasks by PRD Source
+```bash
+# Show all tasks from a specific PRD file
+task-master tasks-from-prd --prd=requirements.txt
+
+# Filter by status
+task-master tasks-from-prd --prd=api-spec.md --status=pending
+
+# Output in JSON format
+task-master tasks-from-prd --prd=requirements.txt --format=json
+```
+
+### Show PRD Source Information
+```bash
+# Display PRD source info for a specific task
+task-master show-prd-source --id=5
+
+# Output in JSON format
+task-master show-prd-source --id=5 --format=json
+```
+
+### PRD Change Detection
+```bash
+# Check if PRD files have been modified
+task-master check-prd-changes
+
+# Update PRD metadata after file changes
+task-master update-prd-metadata --prd=requirements.txt
+```
+
 ## Parse PRD
 
 ```bash
@@ -26,6 +67,18 @@ task-master list --with-subtasks
 
 # List tasks with a specific status and include subtasks
 task-master list --status=<status> --with-subtasks
+
+# Filter by PRD source
+task-master list --prd=requirements.txt
+
+# Show only manually created tasks (no PRD source)
+task-master list --manual-only
+
+# Show only tasks generated from PRD files
+task-master list --prd-only
+
+# Combine PRD and status filters
+task-master list --prd=api-spec.md --status=pending
 ```
 
 ## Show Next Task

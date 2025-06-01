@@ -25,7 +25,8 @@ import {
  * @param {string} statusFilter - Filter by status
  * @param {string} reportPath - Path to the complexity report
  * @param {boolean} withSubtasks - Whether to show subtasks
- * @param {string} outputFormat - Output format (text or json)
+ * @param {Object|string} prdFiltersOrOutputFormat - PRD filter options or output format for backward compatibility
+ * @param {string} outputFormat - Output format (text or json) when prdFiltersOrOutputFormat is an object
  * @returns {Object} - Task list result for json format
  */
 function listTasks(
@@ -33,11 +34,25 @@ function listTasks(
 	statusFilter,
 	reportPath = null,
 	withSubtasks = false,
+	prdFiltersOrOutputFormat = 'text',
 	outputFormat = 'text'
 ) {
+	// Handle backward compatibility - if prdFiltersOrOutputFormat is a string, it's the old outputFormat parameter
+	let prdFilters = {};
+	let actualOutputFormat = outputFormat;
+
+	if (typeof prdFiltersOrOutputFormat === 'string') {
+		// Old function signature - prdFiltersOrOutputFormat is actually outputFormat
+		actualOutputFormat = prdFiltersOrOutputFormat;
+		prdFilters = {};
+	} else if (typeof prdFiltersOrOutputFormat === 'object' && prdFiltersOrOutputFormat !== null) {
+		// New function signature - prdFiltersOrOutputFormat contains PRD filter options
+		prdFilters = prdFiltersOrOutputFormat;
+		actualOutputFormat = outputFormat;
+	}
 	try {
 		// Only display banner for text output
-		if (outputFormat === 'text') {
+		if (actualOutputFormat === 'text') {
 			displayBanner();
 		}
 
@@ -54,7 +69,7 @@ function listTasks(
 		}
 
 		// Filter tasks by status if specified
-		const filteredTasks =
+		let filteredTasks =
 			statusFilter && statusFilter.toLowerCase() !== 'all' // <-- Added check for 'all'
 				? data.tasks.filter(
 						(task) =>
@@ -62,6 +77,27 @@ function listTasks(
 							task.status.toLowerCase() === statusFilter.toLowerCase()
 					)
 				: data.tasks; // Default to all tasks if no filter or filter is 'all'
+
+		// Apply PRD source filters
+		if (prdFilters.prdFilter) {
+			// Filter by specific PRD file
+			const prdFilterLower = prdFilters.prdFilter.toLowerCase();
+			filteredTasks = filteredTasks.filter(task => {
+				if (!task.prdSource || !task.prdSource.fileName) {
+					return false;
+				}
+				const fileName = task.prdSource.fileName.toLowerCase();
+				const filePath = task.prdSource.filePath.toLowerCase();
+				return fileName.includes(prdFilterLower) || filePath.includes(prdFilterLower) ||
+					   fileName === prdFilterLower || filePath.endsWith(prdFilterLower);
+			});
+		} else if (prdFilters.manualOnly) {
+			// Show only manually created tasks (no PRD source)
+			filteredTasks = filteredTasks.filter(task => !task.prdSource || !task.prdSource.fileName);
+		} else if (prdFilters.prdOnly) {
+			// Show only tasks from PRD files
+			filteredTasks = filteredTasks.filter(task => task.prdSource && task.prdSource.fileName);
+		}
 
 		// Calculate completion statistics
 		const totalTasks = data.tasks.length;
@@ -126,7 +162,7 @@ function listTasks(
 			totalSubtasks > 0 ? (completedSubtasks / totalSubtasks) * 100 : 0;
 
 		// For JSON output, return structured data
-		if (outputFormat === 'json') {
+		if (actualOutputFormat === 'json') {
 			// *** Modification: Remove 'details' field for JSON output ***
 			const tasksWithoutDetails = filteredTasks.map((task) => {
 				// <-- USES filteredTasks!
@@ -291,6 +327,11 @@ function listTasks(
 		// Ensure terminal width is at least a minimum value to prevent layout issues
 		terminalWidth = Math.max(terminalWidth, 80);
 
+		// Calculate PRD source statistics
+		const tasksWithPrdSource = data.tasks.filter(task => task.prdSource && task.prdSource.fileName);
+		const manualTasks = data.tasks.filter(task => !task.prdSource || !task.prdSource.fileName);
+		const uniquePrdSources = [...new Set(tasksWithPrdSource.map(task => task.prdSource.fileName))];
+
 		// Create dashboard content
 		const projectDashboardContent =
 			chalk.white.bold('Project Dashboard') +
@@ -303,7 +344,13 @@ function listTasks(
 			'\n' +
 			`${chalk.red('•')} ${chalk.white('High priority:')} ${data.tasks.filter((t) => t.priority === 'high').length}\n` +
 			`${chalk.yellow('•')} ${chalk.white('Medium priority:')} ${data.tasks.filter((t) => t.priority === 'medium').length}\n` +
-			`${chalk.green('•')} ${chalk.white('Low priority:')} ${data.tasks.filter((t) => t.priority === 'low').length}`;
+			`${chalk.green('•')} ${chalk.white('Low priority:')} ${data.tasks.filter((t) => t.priority === 'low').length}\n\n` +
+			chalk.cyan.bold('PRD Source Breakdown:') +
+			'\n' +
+			`${chalk.blue('•')} ${chalk.white('Tasks from PRDs:')} ${tasksWithPrdSource.length}\n` +
+			`${chalk.gray('•')} ${chalk.white('Manual tasks:')} ${manualTasks.length}\n` +
+			`${chalk.magenta('•')} ${chalk.white('Unique PRD files:')} ${uniquePrdSources.length}` +
+			(uniquePrdSources.length > 0 ? `\n${chalk.dim('   ' + uniquePrdSources.slice(0, 3).join(', ') + (uniquePrdSources.length > 3 ? '...' : ''))}` : '');
 
 		const dependencyDashboardContent =
 			chalk.white.bold('Dependency Status & Next Task') +
@@ -417,33 +464,38 @@ function listTasks(
 
 		// COMPLETELY REVISED TABLE APPROACH
 		// Define percentage-based column widths and calculate actual widths
-		// Adjust percentages based on content type and user requirements
+		// Optimized for 7 columns including the new PRD Source column
 
 		// Adjust ID width if showing subtasks (subtask IDs are longer: e.g., "1.2")
-		const idWidthPct = withSubtasks ? 10 : 7;
+		const idWidthPct = withSubtasks ? 8 : 6;
 
-		// Calculate max status length to accommodate "in-progress"
-		const statusWidthPct = 15;
+		// Reduce status width since longest status is "in-progress" (11 chars)
+		const statusWidthPct = 10;
 
-		// Increase priority column width as requested
-		const priorityWidthPct = 12;
+		// Reduce priority column width
+		const priorityWidthPct = 8;
 
-		// Make dependencies column smaller as requested (-20%)
-		const depsWidthPct = 20;
+		// Reduce dependencies column width
+		const depsWidthPct = 15;
 
-		const complexityWidthPct = 10;
+		// Reduce complexity column width
+		const complexityWidthPct = 8;
 
-		// Calculate title/description width as remaining space (+20% from dependencies reduction)
+		// Add PRD Source column width
+		const prdSourceWidthPct = 12;
+
+		// Calculate title/description width as remaining space
 		const titleWidthPct =
 			100 -
 			idWidthPct -
 			statusWidthPct -
 			priorityWidthPct -
 			depsWidthPct -
-			complexityWidthPct;
+			complexityWidthPct -
+			prdSourceWidthPct;
 
-		// Allow 10 characters for borders and padding
-		const availableWidth = terminalWidth - 10;
+		// Allow more space for borders and padding with 7 columns
+		const availableWidth = terminalWidth - 15;
 
 		// Calculate actual column widths based on percentages
 		const idWidth = Math.floor(availableWidth * (idWidthPct / 100));
@@ -453,6 +505,7 @@ function listTasks(
 		const complexityWidth = Math.floor(
 			availableWidth * (complexityWidthPct / 100)
 		);
+		const prdSourceWidth = Math.floor(availableWidth * (prdSourceWidthPct / 100));
 		const titleWidth = Math.floor(availableWidth * (titleWidthPct / 100));
 
 		// Create a table with correct borders and spacing
@@ -463,7 +516,8 @@ function listTasks(
 				chalk.cyan.bold('Status'),
 				chalk.cyan.bold('Priority'),
 				chalk.cyan.bold('Dependencies'),
-				chalk.cyan.bold('Complexity')
+				chalk.cyan.bold('Complexity'),
+				chalk.cyan.bold('PRD Source')
 			],
 			colWidths: [
 				idWidth,
@@ -471,7 +525,8 @@ function listTasks(
 				statusWidth,
 				priorityWidth,
 				depsWidth,
-				complexityWidth // Added complexity column width
+				complexityWidth,
+				prdSourceWidth
 			],
 			style: {
 				head: [], // No special styling for header
@@ -512,6 +567,12 @@ function listTasks(
 			// Format status
 			const status = getStatusWithColor(task.status, true);
 
+			// Format PRD Source
+			let prdSourceText = chalk.gray('Manual');
+			if (task.prdSource && task.prdSource.fileName) {
+				prdSourceText = chalk.blue(truncate(task.prdSource.fileName, prdSourceWidth - 3));
+			}
+
 			// Add the row without truncating dependencies
 			table.push([
 				task.id.toString(),
@@ -521,7 +582,8 @@ function listTasks(
 				depText,
 				task.complexityScore
 					? getComplexityWithColor(task.complexityScore)
-					: chalk.gray('N/A')
+					: chalk.gray('N/A'),
+				prdSourceText
 			]);
 
 			// Add subtasks if requested
@@ -578,6 +640,15 @@ function listTasks(
 						subtaskDepText = formattedDeps || chalk.gray('None');
 					}
 
+					// Format subtask PRD Source (inherit from parent)
+					let subtaskPrdSourceText = chalk.gray('Manual');
+					if (subtask.prdSource && subtask.prdSource.fileName) {
+						subtaskPrdSourceText = chalk.blue(truncate(subtask.prdSource.fileName, prdSourceWidth - 3));
+					} else if (task.prdSource && task.prdSource.fileName) {
+						// Inherit from parent task if subtask doesn't have its own
+						subtaskPrdSourceText = chalk.dim(chalk.blue(truncate(task.prdSource.fileName, prdSourceWidth - 3)));
+					}
+
 					// Add the subtask row without truncating dependencies
 					table.push([
 						`${task.id}.${subtask.id}`,
@@ -587,7 +658,8 @@ function listTasks(
 						subtaskDepText,
 						subtask.complexityScore
 							? chalk.gray(`${subtask.complexityScore}`)
-							: chalk.gray('N/A')
+							: chalk.gray('N/A'),
+						subtaskPrdSourceText
 					]);
 				});
 			}

@@ -827,6 +827,16 @@ async function displayNextTask(tasksPath, complexityReportPath = null) {
 	const priorityColor =
 		priorityColors[nextTask.priority || 'medium'] || chalk.white;
 
+	// Format PRD Source information for next task
+	let nextTaskPrdSourceInfo = chalk.gray('None (manually created)');
+	if (nextTask.prdSource) {
+		nextTaskPrdSourceInfo = `${chalk.blue(nextTask.prdSource.fileName || 'Unknown')}`;
+		if (nextTask.prdSource.parsedDate) {
+			const parsedDate = new Date(nextTask.prdSource.parsedDate).toLocaleDateString();
+			nextTaskPrdSourceInfo += chalk.gray(` (${parsedDate})`);
+		}
+	}
+
 	// Add task details to table
 	taskTable.push(
 		[chalk.cyan.bold('ID:'), nextTask.id.toString()],
@@ -850,6 +860,7 @@ async function displayNextTask(tasksPath, complexityReportPath = null) {
 				? getComplexityWithColor(nextTask.complexityScore)
 				: chalk.gray('N/A')
 		],
+		[chalk.cyan.bold('PRD Source:'), nextTaskPrdSourceInfo],
 		[chalk.cyan.bold('Description:'), nextTask.description]
 	);
 
@@ -1096,6 +1107,24 @@ async function displayTaskById(
 			colWidths: [15, Math.min(75, process.stdout.columns - 20 || 60)],
 			wordWrap: true
 		});
+		// Format PRD Source information for subtask
+		let subtaskPrdSourceInfo = chalk.gray('None (manually created)');
+		if (task.prdSource) {
+			subtaskPrdSourceInfo = `${chalk.blue(task.prdSource.fileName || 'Unknown')}`;
+			if (task.prdSource.parsedDate) {
+				const parsedDate = new Date(task.prdSource.parsedDate).toLocaleDateString();
+				subtaskPrdSourceInfo += chalk.gray(` (${parsedDate})`);
+			}
+		} else if (task.parentTask && task.parentTask.prdSource) {
+			// Inherit from parent task
+			subtaskPrdSourceInfo = `${chalk.blue(task.parentTask.prdSource.fileName || 'Unknown')}`;
+			if (task.parentTask.prdSource.parsedDate) {
+				const parsedDate = new Date(task.parentTask.prdSource.parsedDate).toLocaleDateString();
+				subtaskPrdSourceInfo += chalk.gray(` (${parsedDate})`);
+			}
+			subtaskPrdSourceInfo = chalk.dim(subtaskPrdSourceInfo + ' (inherited)');
+		}
+
 		subtaskTable.push(
 			[chalk.cyan.bold('ID:'), `${task.parentTask.id}.${task.id}`],
 			[
@@ -1113,6 +1142,7 @@ async function displayTaskById(
 					? getComplexityWithColor(task.complexityScore)
 					: chalk.gray('N/A')
 			],
+			[chalk.cyan.bold('PRD Source:'), subtaskPrdSourceInfo],
 			[
 				chalk.cyan.bold('Description:'),
 				task.description || 'No description provided.'
@@ -1181,6 +1211,16 @@ async function displayTaskById(
 	};
 	const priorityColor =
 		priorityColors[task.priority || 'medium'] || chalk.white;
+	// Format PRD Source information
+	let prdSourceInfo = chalk.gray('None (manually created)');
+	if (task.prdSource) {
+		prdSourceInfo = `${chalk.blue(task.prdSource.fileName || 'Unknown')}`;
+		if (task.prdSource.parsedDate) {
+			const parsedDate = new Date(task.prdSource.parsedDate).toLocaleDateString();
+			prdSourceInfo += chalk.gray(` (${parsedDate})`);
+		}
+	}
+
 	taskTable.push(
 		[chalk.cyan.bold('ID:'), task.id.toString()],
 		[chalk.cyan.bold('Title:'), task.title],
@@ -1204,6 +1244,7 @@ async function displayTaskById(
 				? getComplexityWithColor(task.complexityScore)
 				: chalk.gray('N/A')
 		],
+		[chalk.cyan.bold('PRD Source:'), prdSourceInfo],
 		[chalk.cyan.bold('Description:'), task.description]
 	);
 	console.log(taskTable.toString());
