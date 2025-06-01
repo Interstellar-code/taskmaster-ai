@@ -30,6 +30,13 @@ This is a TaskMaster AI project - an AI-driven task management system designed f
 - `tasks/tasks.json` - Main task data file
 - `tasks/task_XXX.txt` - Individual task markdown files
 - `scripts/` - PRD files and utilities
+- `prd/` - PRD lifecycle tracking system
+  - `prd/prds.json` - PRD metadata and tracking
+  - `prd/pending/` - PRDs in pending status
+  - `prd/in-progress/` - PRDs currently being worked on
+  - `prd/done/` - Completed PRDs
+  - `prd/archived/` - Archived PRDs
+  - `prd/templates/` - PRD templates
 - `.cursor/rules/` - Cursor AI integration rules
 - `mcp-server/` - Model Context Protocol server
 - `src/menu/` - Interactive menu system
@@ -90,6 +97,48 @@ This is a TaskMaster AI project - an AI-driven task management system designed f
 - `task-master models --setup` - Configure AI models
 - `task-master add-dependency --id=<id> --depends-on=<id>` - Add dependencies
 
+### PRD Management Commands
+- `task-master prd` - List all PRDs with filtering options
+- `task-master prd-show <prd-id>` - Show detailed PRD information (e.g., prd_001, prd_002)
+- `task-master prd-status <prd-id> <status>` - Update PRD status (e.g., prd_001 pending)
+- `task-master prd-sync [prd-id]` - Sync PRD status with linked tasks (e.g., prd_001 or all)
+- `task-master prd-organize` - Organize PRD files into status directories
+- `task-master prd-check` - Check PRD integrity and consistency
+- `task-master prd-migrate` - Migrate existing PRD files into tracking system
+- `task-master prd-history <prd-id>` - Show PRD version history (e.g., prd_001)
+- `task-master prd-track <prd-id>` - Track changes and create new version (e.g., prd_001)
+- `task-master prd-compare <prd-id> <v1> <v2>` - Compare PRD versions (e.g., prd_001 1.0.0 1.1.0)
+
+## PRD Lifecycle Management
+
+### PRD Structure and Metadata
+- PRDs are tracked in `prd/prds.json` with comprehensive metadata
+- Each PRD has unique sequential ID (prd_001, prd_002, etc.), status, priority, complexity, and version history
+- PRD files are automatically organized into status-based directories
+- Bidirectional linking between PRDs and tasks maintains traceability
+- Version control tracks all changes with timestamps and authors
+
+### PRD Status Workflow
+- **pending**: Initial state for new PRDs
+- **in-progress**: Automatically set when first linked task starts
+- **done**: Automatically set when ALL linked tasks are completed
+- **archived**: Manual archiving of completed PRDs
+- Status transitions are automated based on task completion
+
+### PRD-Task Linking Best Practices
+- Tasks generated from PRDs automatically include PRD source references
+- Use `task-master prd-sync` to keep PRD status aligned with task progress
+- PRD completion percentage is calculated from linked task statuses
+- Orphaned links are detected and reported during integrity checks
+- Manual linking/unlinking is supported for edge cases
+
+### PRD Version Control
+- File changes are automatically detected via hash comparison
+- Version history includes snapshots of metadata and file state
+- Compare versions to see what changed between iterations
+- Track who made changes and when for audit trails
+- Support for major, minor, and patch version increments
+
 ## Best Practices for TaskMaster Development
 
 ### When Working with Tasks
@@ -98,6 +147,13 @@ This is a TaskMaster AI project - an AI-driven task management system designed f
 - Use subtasks to break down complex implementations
 - Update task status regularly to track progress
 - Add dependencies to ensure proper execution order
+
+### When Working with PRDs
+- Use `task-master prd-migrate` to import existing PRD files
+- Run `task-master prd-check` regularly to ensure data integrity
+- Organize PRD files with `task-master prd-organize` for clean structure
+- Track PRD changes with `task-master prd-track` after modifications
+- Use PRD filtering options to find relevant documents quickly
 
 ### When Modifying TaskMaster Code
 - Test changes with the interactive menu system
@@ -128,10 +184,13 @@ This is a TaskMaster AI project - an AI-driven task management system designed f
 
 ## Common Anti-Patterns to Avoid
 - Don't manually edit `tasks.json` - use TaskMaster commands
+- Don't manually edit `prd/prds.json` - use PRD management commands
 - Don't skip dependency validation when adding tasks
 - Don't ignore error handling in AI operations
 - Don't hardcode file paths - use path resolution utilities
 - Don't forget to regenerate task files after JSON changes
+- Don't move PRD files manually - use `prd-organize` command
+- Don't ignore PRD integrity warnings from `prd-check`
 
 ## When Implementing New Features
 - Follow the existing command pattern (CLI + MCP + interactive menu)

@@ -1,3 +1,19 @@
+# PRD ID: prd_003
+# Title: PRD Source Tracking and Traceability System
+# Status: done
+# Priority: high
+# Complexity: high
+# Total Tasks: 0
+# Completed Tasks: 0
+# Completion: 0%
+# PRD Path: prd\done\prd-source-tracking.txt
+# File Hash: 45dc8a70177d3ffd8891b584dfbd3f42510442b5fd5012791a4ccad3eb22774a
+# File Size: 15943 bytes
+# Created Date: 2025-05-31T21:50:10.540Z
+# Last Modified: 2025-06-01T11:59:49.148Z
+# Tags: traceability, metadata, task-enhancement, prd-linking
+# Estimated Effort: 35 hours
+# Description: Enhanced task schema with PRD source tracking, metadata capture, and traceability reporting
 Product Requirements Document: PRD Source Tracking and Traceability for TaskMaster AI
 
 Document Information

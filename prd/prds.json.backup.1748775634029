@@ -1,0 +1,415 @@
+{
+  "prds": [
+    {
+      "id": "prd-tracking-meta-20250106",
+      "title": "TaskMaster AI PRD Lifecycle Tracking and Management System",
+      "fileName": "prd-tracking-meta.txt",
+      "status": "done",
+      "complexity": "high",
+      "createdDate": "2025-06-01T09:53:45.335Z",
+      "lastModified": "2025-06-01T09:53:45.335Z",
+      "filePath": "prd/done/prd-tracking-meta.txt",
+      "fileHash": "53ecce97f9bc04112843bd533d798ab370c391bbf3172c364369f601aac6d055",
+      "fileSize": 8619,
+      "description": "Comprehensive PRD lifecycle management system with automated status tracking, metadata management, and CLI integration",
+      "tags": [
+        "core-feature",
+        "automation",
+        "metadata",
+        "cli",
+        "ai-integration",
+        "lifecycle-management"
+      ],
+      "linkedTaskIds": [
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48
+      ],
+      "taskStats": {
+        "totalTasks": 10,
+        "completedTasks": 10,
+        "pendingTasks": 0,
+        "inProgressTasks": 0,
+        "completionPercentage": 100
+      },
+      "estimatedEffort": "50 hours",
+      "priority": "high",
+      "versionHistory": [
+        {
+          "version": "1.0.0",
+          "timestamp": "2025-06-01T09:53:45.335Z",
+          "changeType": "created",
+          "author": "system",
+          "fileHash": "53ecce97f9bc04112843bd533d798ab370c391bbf3172c364369f601aac6d055",
+          "fileSize": 8619,
+          "changeDetails": {
+            "action": "initial_registration",
+            "source": "manual_migration"
+          },
+          "snapshot": {
+            "status": "done",
+            "priority": "high",
+            "complexity": "high",
+            "tags": [
+              "core-feature",
+              "automation",
+              "metadata",
+              "cli",
+              "ai-integration",
+              "lifecycle-management"
+            ],
+            "linkedTaskIds": [
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48
+            ],
+            "taskStats": {
+              "totalTasks": 10,
+              "completedTasks": 10,
+              "pendingTasks": 0,
+              "inProgressTasks": 0,
+              "completionPercentage": 100
+            }
+          }
+        }
+      ],
+      "currentVersion": "1.0.0"
+    },
+    {
+      "id": "interactive-menu-prd-20250531",
+      "title": "Interactive Command-Line Menu System for TaskMaster AI",
+      "fileName": "interactive-menu-prd.txt",
+      "status": "done",
+      "complexity": "high",
+      "createdDate": "2025-05-31T16:29:45.971Z",
+      "lastModified": "2025-05-31T16:30:02.816Z",
+      "filePath": "prd/done/interactive-menu-prd.txt",
+      "fileHash": "86f62e6c0b4d51cfeb4e78e56310fcbd0342ba7433545ca783d9f3d493ed537a",
+      "fileSize": 15499,
+      "description": "Transform TaskMaster from individual command execution to an interactive menu-driven interface",
+      "tags": [
+        "ui-ux",
+        "cli",
+        "menu-system",
+        "user-experience",
+        "navigation"
+      ],
+      "linkedTaskIds": [],
+      "taskStats": {
+        "totalTasks": 0,
+        "completedTasks": 0,
+        "pendingTasks": 0,
+        "inProgressTasks": 0,
+        "completionPercentage": 0
+      },
+      "estimatedEffort": "40 hours",
+      "priority": "high",
+      "versionHistory": [
+        {
+          "version": "1.0.0",
+          "timestamp": "2025-05-31T16:29:45.971Z",
+          "changeType": "created",
+          "author": "system",
+          "fileHash": "86f62e6c0b4d51cfeb4e78e56310fcbd0342ba7433545ca783d9f3d493ed537a",
+          "fileSize": 15499,
+          "changeDetails": {
+            "action": "initial_registration",
+            "source": "manual_migration"
+          },
+          "snapshot": {
+            "status": "done",
+            "priority": "high",
+            "complexity": "high",
+            "tags": [
+              "ui-ux",
+              "cli",
+              "menu-system",
+              "user-experience",
+              "navigation"
+            ],
+            "linkedTaskIds": [],
+            "taskStats": {
+              "totalTasks": 0,
+              "completedTasks": 0,
+              "pendingTasks": 0,
+              "inProgressTasks": 0,
+              "completionPercentage": 0
+            }
+          }
+        }
+      ],
+      "currentVersion": "1.0.0"
+    },
+    {
+      "id": "prd-source-tracking-20250106",
+      "title": "PRD Source Tracking and Traceability System",
+      "fileName": "prd-source-tracking.txt",
+      "status": "done",
+      "complexity": "high",
+      "createdDate": "2025-05-31T21:50:10.540Z",
+      "lastModified": "2025-05-31T21:50:23.663Z",
+      "filePath": "prd/done/prd-source-tracking.txt",
+      "fileHash": "23b326ee80f83246ed57831a8aea90c5d609f9f5fa20b48ed7de95ea30808451",
+      "fileSize": 15334,
+      "description": "Enhanced task schema with PRD source tracking, metadata capture, and traceability reporting",
+      "tags": [
+        "traceability",
+        "metadata",
+        "task-enhancement",
+        "prd-linking"
+      ],
+      "linkedTaskIds": [],
+      "taskStats": {
+        "totalTasks": 0,
+        "completedTasks": 0,
+        "pendingTasks": 0,
+        "inProgressTasks": 0,
+        "completionPercentage": 0
+      },
+      "estimatedEffort": "35 hours",
+      "priority": "high",
+      "versionHistory": [
+        {
+          "version": "1.0.0",
+          "timestamp": "2025-05-31T21:50:10.540Z",
+          "changeType": "created",
+          "author": "system",
+          "fileHash": "23b326ee80f83246ed57831a8aea90c5d609f9f5fa20b48ed7de95ea30808451",
+          "fileSize": 15334,
+          "changeDetails": {
+            "action": "initial_registration",
+            "source": "manual_migration"
+          },
+          "snapshot": {
+            "status": "done",
+            "priority": "high",
+            "complexity": "high",
+            "tags": [
+              "traceability",
+              "metadata",
+              "task-enhancement",
+              "prd-linking"
+            ],
+            "linkedTaskIds": [],
+            "taskStats": {
+              "totalTasks": 0,
+              "completedTasks": 0,
+              "pendingTasks": 0,
+              "inProgressTasks": 0,
+              "completionPercentage": 0
+            }
+          }
+        }
+      ],
+      "currentVersion": "1.0.0"
+    },
+    {
+      "id": "append-expand-prd-option-20250106",
+      "title": "Append + Auto-Expand PRD Option",
+      "fileName": "append-expand-prd-option.txt",
+      "status": "done",
+      "complexity": "medium",
+      "createdDate": "2025-06-01T06:03:44.377Z",
+      "lastModified": "2025-06-01T06:03:44.377Z",
+      "filePath": "prd/done/append-expand-prd-option.txt",
+      "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+      "fileSize": 11286,
+      "description": "Intelligent append with auto-expansion feature for PRD parsing with complexity-based subtask generation",
+      "tags": [
+        "automation",
+        "prd-parsing",
+        "subtask-generation",
+        "ai-enhancement"
+      ],
+      "linkedTaskIds": [
+        29,
+        30,
+        31,
+        32,
+        33
+      ],
+      "taskStats": {
+        "totalTasks": 5,
+        "completedTasks": 5,
+        "pendingTasks": 0,
+        "inProgressTasks": 0,
+        "completionPercentage": 100
+      },
+      "estimatedEffort": "25 hours",
+      "priority": "medium",
+      "versionHistory": [
+        {
+          "version": "1.0.0",
+          "timestamp": "2025-06-01T06:03:44.377Z",
+          "changeType": "created",
+          "author": "system",
+          "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+          "fileSize": 11286,
+          "changeDetails": {
+            "action": "initial_registration",
+            "source": "manual_migration"
+          },
+          "snapshot": {
+            "status": "done",
+            "priority": "medium",
+            "complexity": "medium",
+            "tags": [
+              "automation",
+              "prd-parsing",
+              "subtask-generation",
+              "ai-enhancement"
+            ],
+            "linkedTaskIds": [
+              29,
+              30,
+              31,
+              32,
+              33
+            ],
+            "taskStats": {
+              "totalTasks": 5,
+              "completedTasks": 5,
+              "pendingTasks": 0,
+              "inProgressTasks": 0,
+              "completionPercentage": 100
+            }
+          }
+        }
+      ],
+      "currentVersion": "1.0.0"
+    },
+    {
+      "id": "kanban-view-prd-20250106",
+      "title": "Terminal Kanban Board View for TaskMaster",
+      "fileName": "kanban-view-prd.txt",
+      "status": "done",
+      "complexity": "high",
+      "createdDate": "2025-06-01T07:11:30.963Z",
+      "lastModified": "2025-06-01T07:25:42.801Z",
+      "filePath": "prd/done/kanban-view-prd.txt",
+      "fileHash": "12f0f1db4cda4f5ad8a71c57a66d919f3e4b97458b4505e3b1b700180108c880",
+      "fileSize": 18300,
+      "description": "ASCII-based terminal Kanban board with drag-and-drop functionality and visual task management",
+      "tags": [
+        "ui-ux",
+        "kanban",
+        "terminal",
+        "visualization",
+        "task-management"
+      ],
+      "linkedTaskIds": [
+        34,
+        35,
+        36,
+        37,
+        38
+      ],
+      "taskStats": {
+        "totalTasks": 5,
+        "completedTasks": 5,
+        "pendingTasks": 0,
+        "inProgressTasks": 0,
+        "completionPercentage": 100
+      },
+      "estimatedEffort": "45 hours",
+      "priority": "medium",
+      "versionHistory": [
+        {
+          "version": "1.0.0",
+          "timestamp": "2025-06-01T07:11:30.963Z",
+          "changeType": "created",
+          "author": "system",
+          "fileHash": "12f0f1db4cda4f5ad8a71c57a66d919f3e4b97458b4505e3b1b700180108c880",
+          "fileSize": 18300,
+          "changeDetails": {
+            "action": "initial_registration",
+            "source": "manual_migration"
+          },
+          "snapshot": {
+            "status": "done",
+            "priority": "medium",
+            "complexity": "high",
+            "tags": [
+              "ui-ux",
+              "kanban",
+              "terminal",
+              "visualization",
+              "task-management"
+            ],
+            "linkedTaskIds": [
+              34,
+              35,
+              36,
+              37,
+              38
+            ],
+            "taskStats": {
+              "totalTasks": 5,
+              "completedTasks": 5,
+              "pendingTasks": 0,
+              "inProgressTasks": 0,
+              "completionPercentage": 100
+            }
+          }
+        }
+      ],
+      "currentVersion": "1.0.0"
+    }
+  ],
+  "metadata": {
+    "version": "1.0.0",
+    "lastUpdated": "2025-06-01T10:51:25.808Z",
+    "totalPrds": 5,
+    "schema": {
+      "version": "1.0.0",
+      "description": "TaskMaster AI PRD Lifecycle Tracking Schema",
+      "fields": {
+        "id": "Unique PRD identifier",
+        "title": "Human-readable PRD title",
+        "fileName": "Original PRD filename",
+        "status": "Current PRD status (pending|in-progress|done|archived)",
+        "complexity": "PRD complexity level (low|medium|high)",
+        "createdDate": "ISO 8601 creation timestamp",
+        "lastModified": "ISO 8601 last modification timestamp",
+        "filePath": "Current file path relative to project root",
+        "fileHash": "SHA256 hash for change detection",
+        "fileSize": "File size in bytes",
+        "description": "Brief PRD description",
+        "tags": "Array of categorization tags",
+        "linkedTaskIds": "Array of task IDs generated from this PRD",
+        "taskStats": "Task completion statistics",
+        "estimatedEffort": "Estimated effort for completion",
+        "priority": "PRD priority level (low|medium|high)"
+      }
+    },
+    "statusDirectories": {
+      "pending": "prd/pending",
+      "in-progress": "prd/in-progress",
+      "done": "prd/done",
+      "archived": "prd/archived",
+      "templates": "prd/templates"
+    },
+    "automationRules": {
+      "statusTransitions": {
+        "pending_to_inprogress": "When first linked task changes to 'in-progress'",
+        "inprogress_to_done": "When ALL linked tasks reach 'done' status (100% completion)",
+        "manual_override": "Allow manual status changes with validation and audit trail",
+        "rollback_protection": "Prevent status regression without explicit user confirmation"
+      }
+    }
+  }
+}

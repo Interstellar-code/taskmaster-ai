@@ -1,6 +1,6 @@
 # Task ID: 44
 # Title: Extend CLI with PRD Management Commands
-# Status: pending
+# Status: done
 # Dependencies: 43
 # Priority: high
 # PRD Source: prd-tracking-meta.txt

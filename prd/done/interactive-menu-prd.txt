@@ -1,3 +1,19 @@
+# PRD ID: prd_002
+# Title: Interactive Command-Line Menu System for TaskMaster AI
+# Status: done
+# Priority: high
+# Complexity: high
+# Total Tasks: 0
+# Completed Tasks: 0
+# Completion: 0%
+# PRD Path: prd\done\interactive-menu-prd.txt
+# File Hash: 7de5f51a9a4d4e86e31d70287aaf8ad7962267dddf5b6d708977a55b53eaa6c5
+# File Size: 16122 bytes
+# Created Date: 2025-05-31T16:29:45.971Z
+# Last Modified: 2025-06-01T11:59:49.145Z
+# Tags: ui-ux, cli, menu-system, user-experience, navigation
+# Estimated Effort: 40 hours
+# Description: Transform TaskMaster from individual command execution to an interactive menu-driven interface
 Product Requirements Document: Interactive Command-Line Menu System for TaskHero AI
 
 Document Information

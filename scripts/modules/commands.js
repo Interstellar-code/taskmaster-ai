@@ -82,6 +82,19 @@ import {
 	TASK_STATUS_OPTIONS
 } from '../../src/constants/task-status.js';
 import { getTaskMasterVersion } from '../../src/utils/getVersion.js';
+import {
+	listPrds,
+	showPrd,
+	updatePrdStatusCommand,
+	syncPrdStatus,
+	organizePrds,
+	checkPrdIntegrity,
+	migratePrds,
+	showPrdHistory,
+	trackPrdChanges,
+	comparePrdVersions,
+	syncPrdFileMetadataCommand
+} from './prd-commands.js';
 /**
  * Runs the interactive setup process for model configuration.
  * @param {string|null} projectRoot - The resolved project root directory.
@@ -2755,6 +2768,137 @@ Examples:
 					process.exit(1);
 				}
 			}
+		});
+
+	// PRD Management Commands
+
+	// prd list command
+	programInstance
+		.command('prd')
+		.alias('prds')
+		.description('List PRDs with optional filtering')
+		.option('-s, --status <status>', 'Filter by status (pending|in-progress|done|archived)')
+		.option('-p, --priority <priority>', 'Filter by priority (low|medium|high)')
+		.option('-c, --complexity <complexity>', 'Filter by complexity (low|medium|high)')
+		.option('-f, --format <format>', 'Output format (table|json)', 'table')
+		.option('-t, --include-tasks', 'Include linked task information')
+		.action((options) => {
+			listPrds(options);
+		});
+
+	// prd show command
+	programInstance
+		.command('prd-show <prd-id>')
+		.description('Show detailed PRD information (e.g., prd_001, prd_002)')
+		.option('-t, --include-tasks', 'Include linked task details')
+		.option('-h, --include-history', 'Include status change history')
+		.action((prdId, options) => {
+			showPrd(prdId, options);
+		});
+
+	// prd status command
+	programInstance
+		.command('prd-status <prd-id> <status>')
+		.description('Update PRD status (e.g., prd_001 pending)')
+		.option('-f, --force', 'Force status update even if validation fails')
+		.action((prdId, status, options) => {
+			updatePrdStatusCommand(prdId, status, options);
+		});
+
+	// prd sync command
+	programInstance
+		.command('prd-sync [prd-id]')
+		.description('Sync PRD status with linked tasks (e.g., prd_001 or all PRDs if no ID)')
+		.option('-f, --force', 'Force status sync even if no changes detected')
+		.option('-d, --dry-run', 'Show what would be changed without making changes')
+		.action((prdId, options) => {
+			syncPrdStatus(prdId, options);
+		});
+
+	// prd organize command
+	programInstance
+		.command('prd-organize')
+		.description('Organize PRD files into status-based directories')
+		.option('-d, --dry-run', 'Show what would be organized without making changes')
+		.action((options) => {
+			organizePrds(options);
+		});
+
+	// prd check command
+	programInstance
+		.command('prd-check')
+		.description('Check PRD integrity and consistency')
+		.action((options) => {
+			checkPrdIntegrity(options);
+		});
+
+	// prd migrate command
+	programInstance
+		.command('prd-migrate')
+		.description('Migrate existing PRD files into tracking system')
+		.option('-d, --directory <dir>', 'Directory to scan for PRD files', '.')
+		.option('--dry-run', 'Show what would be migrated without making changes')
+		.option('-e, --extensions <exts>', 'File extensions to scan (comma-separated)', '.txt,.md')
+		.option('-s, --status <status>', 'Target status for migrated PRDs', 'pending')
+		.option('--no-move', 'Do not move files to status directories')
+		.option('--no-link', 'Do not link existing tasks')
+		.action((options) => {
+			const extensions = options.extensions.split(',').map(ext => ext.trim());
+			migratePrds({
+				directory: options.directory,
+				dryRun: options.dryRun,
+				extensions: extensions,
+				targetStatus: options.status,
+				moveFiles: !options.noMove,
+				linkTasks: !options.noLink
+			});
+		});
+
+	// PRD Version Control Commands
+
+	// prd history command
+	programInstance
+		.command('prd-history <prd-id>')
+		.description('Show PRD version history (e.g., prd_001)')
+		.option('-l, --limit <num>', 'Limit number of versions to show', '10')
+		.option('-t, --type <type>', 'Filter by change type')
+		.option('-a, --author <author>', 'Filter by author')
+		.action((prdId, options) => {
+			const limit = parseInt(options.limit);
+			showPrdHistory(prdId, {
+				limit: isNaN(limit) ? 10 : limit,
+				changeType: options.type,
+				author: options.author
+			});
+		});
+
+	// prd track command
+	programInstance
+		.command('prd-track <prd-id>')
+		.description('Track changes to PRD file and create new version if changed (e.g., prd_001)')
+		.option('-a, --author <author>', 'Author of the changes', 'user')
+		.action((prdId, options) => {
+			trackPrdChanges(prdId, {
+				author: options.author
+			});
+		});
+
+	// prd compare command
+	programInstance
+		.command('prd-compare <prd-id> <version1> <version2>')
+		.description('Compare two versions of a PRD (e.g., prd_001 1.0.0 1.1.0)')
+		.action((prdId, version1, version2, options) => {
+			comparePrdVersions(prdId, version1, version2, options);
+		});
+
+	// prd sync-metadata command
+	programInstance
+		.command('prd-sync-metadata [prd-id]')
+		.description('Sync PRD file metadata headers with prds.json data (e.g., prd_001 or all PRDs)')
+		.option('-f, --force', 'Force metadata sync even if no changes detected')
+		.option('-b, --backup', 'Create backup files before updating')
+		.action((prdId, options) => {
+			syncPrdFileMetadataCommand(prdId, options);
 		});
 
 	return programInstance;

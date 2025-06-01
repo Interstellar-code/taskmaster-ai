@@ -18,14 +18,7 @@
           "details": "Install Commander.js. In the main CLI file, import Commander and initialize `program`. Set the program's name and version. Ensure `program.parse(process.argv)` is called at the end of the file.",
           "status": "done",
           "testStrategy": "Run `node your-cli-file.js --version` and `node your-cli-file.js --help` to verify Commander.js is active and displays basic info.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.904Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 2,
@@ -37,14 +30,7 @@
           "details": "Use `program.command('menu')` or `program.option('-m, --menu', 'Launch interactive menu')`. If using `program.command('menu')`, ensure it has a description. If using `program.option`, its action should be defined to trigger the menu logic. Ensure it doesn't conflict with existing commands.",
           "status": "done",
           "testStrategy": "Run `task-hero menu --help` and `task-hero --help` to confirm the 'menu' command/option is listed correctly. Verify `task-hero --menu` and `task-hero -m` don't throw immediate errors.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.904Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 3,
@@ -56,14 +42,7 @@
           "details": "Create a new file (e.g., `src/menu/index.js`) or a function within the main CLI file. This function should simply `console.log('Initializing interactive menu...')`. Call this function from the action handler of the `menu` command/option defined in subtask 2.",
           "status": "done",
           "testStrategy": "Run `task-hero menu`, `task-hero --menu`, and `task-hero -m`. Verify that 'Initializing interactive menu...' is printed to the console for each invocation.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.904Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 4,
@@ -75,14 +54,7 @@
           "details": "Review the existing Commander.js setup for other commands. Ensure that `program.parse()` correctly dispatches to existing command handlers when the `menu` command/option is not present. No changes should be required for existing commands, but their functionality must be confirmed.",
           "status": "done",
           "testStrategy": "Execute a few existing commands (e.g., `task-hero add 'Test task'`, `task-hero list`). Confirm they function exactly as before, without any interference from the new menu logic.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.904Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 5,
@@ -94,24 +66,10 @@
           "details": "If `initializeInteractiveMenu` was in the main CLI file, move it to a dedicated module (e.g., `src/menu/index.js`) and import it. Ensure the `menu` command/option's action handler correctly calls this imported function. Add comments for clarity. The entry point should be robust and ready to call the actual menu rendering logic in future tasks.",
           "status": "done",
           "testStrategy": "Perform a comprehensive test: run `task-hero menu`, `task-hero --menu`, `task-hero -m`, and several existing commands. All should execute successfully and produce the expected output, confirming both new and old functionalities are intact and integrated cleanly.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.904Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         }
       ],
-      "prdSource": {
-        "filePath": "prd/done/interactive-menu-prd.txt",
-        "fileName": "interactive-menu-prd.txt",
-        "parsedDate": "2025-06-01T11:48:22.904Z",
-        "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-        "fileSize": 16119,
-        "prdId": "prd_002"
-      }
+      "prdSource": null
     },
     {
       "id": 2,
@@ -133,14 +91,7 @@
           "details": "Create a new Node.js project. Install `inquirer`, `chalk`, and `boxen` as production dependencies. Create an `index.js` or `app.js` file. Add a simple 'Hello World' console log to verify execution.",
           "status": "done",
           "testStrategy": "Run `node index.js` and verify 'Hello World' output. Check `package.json` for installed dependencies.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.905Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 2,
@@ -152,14 +103,7 @@
           "details": "Create a function, e.g., `renderMainMenuHeader()`, that takes project name, total tasks, and completed tasks as arguments. Use `chalk` to colorize text (e.g., project name, status). Use `boxen` to draw a border around the header content. For initial testing, hardcode placeholder values for project name and task counts.",
           "status": "done",
           "testStrategy": "Call `renderMainMenuHeader()` with sample data. Visually inspect the console output to ensure correct colors, borders, and layout as per PRD.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.905Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 3,
@@ -171,14 +115,7 @@
           "details": "Create a function, e.g., `promptMainMenu()`, that uses `inquirer.prompt` with a `list` type. Define at least 3-4 placeholder menu options (e.g., 'View Tasks', 'Add Task', 'Exit'). Ensure the prompt is displayed below the header rendered in the previous step. Capture the user's choice.",
           "status": "done",
           "testStrategy": "Run the application. Verify that the menu options are displayed correctly. Select an option and confirm that the choice is logged to the console.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.905Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 4,
@@ -190,14 +127,7 @@
           "details": "Wrap the menu rendering and prompting logic within an asynchronous `while` loop. Implement a `switch` or `if/else if` statement to handle different user choices. For non-exit choices, simply log a message indicating the selected action (e.g., 'Viewing tasks...') and then re-render the menu. The loop should break when the 'Exit' option is chosen.",
           "status": "done",
           "testStrategy": "Run the application. Select various options and verify that the corresponding action message is displayed, and the menu reappears. Select 'Exit' and confirm the application terminates.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.905Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 5,
@@ -209,24 +139,10 @@
           "details": "Review the PRD for specific color schemes, padding, and border styles for both the header and potentially the menu options. Adjust `chalk` and `boxen` parameters accordingly. Create simple placeholder variables for 'project name', 'total tasks', and 'completed tasks' (e.g., `const projectName = 'My Project'; const totalTasks = 10; const completedTasks = 3;`). Pass these variables to the `renderMainMenuHeader()` function.",
           "status": "done",
           "testStrategy": "Run the application. Visually inspect the entire menu for adherence to design specifications. Change the placeholder task counts and verify that the header updates correctly on subsequent menu renders.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.905Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         }
       ],
-      "prdSource": {
-        "filePath": "prd/done/interactive-menu-prd.txt",
-        "fileName": "interactive-menu-prd.txt",
-        "parsedDate": "2025-06-01T11:48:22.905Z",
-        "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-        "fileSize": 16119,
-        "prdId": "prd_002"
-      }
+      "prdSource": null
     },
     {
       "id": 3,
@@ -248,14 +164,7 @@
           "details": "Define a clear, maintainable data structure, possibly in a new module like `scripts/modules/menu_definitions.js`. Each menu item should include its display text, the associated command name, and potentially a short description. Ensure the command names precisely match those expected by `task-hero`.",
           "status": "done",
           "testStrategy": "Manually inspect the defined data structure to ensure correctness and completeness of menu items and command mappings.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.906Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 2,
@@ -267,14 +176,7 @@
           "details": "Create a function, perhaps `displayMenu(menuStructure)`, that iterates through the menu categories and their options, printing them in a user-friendly format. Use `console.log` for output. Ensure clear numbering for each option.",
           "status": "done",
           "testStrategy": "Run the menu display function and visually verify that all categories and options are displayed correctly and are properly numbered according to the defined structure.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.906Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 3,
@@ -287,14 +189,7 @@
           "details": "Use `readline` or similar module for input. Implement a loop that repeatedly prompts the user until valid input (a number corresponding to an existing menu option) is received. Map the selected number back to the command name using the data structure defined in subtask 1. Handle invalid input gracefully.",
           "status": "done",
           "testStrategy": "Manually test by entering valid numbers for various options, invalid numbers, and non-numeric input. Verify that the correct command name is identified for valid inputs and that error messages are displayed for invalid inputs.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.906Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 4,
@@ -306,14 +201,7 @@
           "details": "Call the appropriate function from `scripts/modules/commands.js` with the identified command name and any necessary arguments. Wrap the command execution in a `try-catch` block for error handling. After execution (or error), re-display the menu (calling the function from subtask 2) to allow further selections.",
           "status": "done",
           "testStrategy": "Select various menu options (e.g., 'list', 'next', 'init'). Verify that the corresponding `task-hero` command executes as expected and that the menu is redisplayed immediately after the command finishes.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.906Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 5,
@@ -325,24 +213,10 @@
           "details": "Add clear instructions for menu navigation. Implement specific error messages for command failures, perhaps by catching exceptions from `scripts/modules/commands.js`. Consider adding a 'back' or 'exit' option to the menu. Ensure consistent formatting for all console output.",
           "status": "done",
           "testStrategy": "Test edge cases: try to execute commands that might fail (e.g., `set-status` with an invalid ID). Verify that user prompts are clear, error messages are informative, and the application remains stable. Test the 'exit' functionality if implemented.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.906Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         }
       ],
-      "prdSource": {
-        "filePath": "prd/done/interactive-menu-prd.txt",
-        "fileName": "interactive-menu-prd.txt",
-        "parsedDate": "2025-06-01T11:48:22.906Z",
-        "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-        "fileSize": 16119,
-        "prdId": "prd_002"
-      }
+      "prdSource": null
     },
     {
       "id": 4,
@@ -364,14 +238,7 @@
           "details": "Create a JavaScript object or array structure that maps menu categories to an array of command objects. Each command object should specify its `command` (e.g., 'add-task'), `description`, and an array of `parameters` (e.g., `[{ name: 'name', type: 'string', required: true }]`). This structure will be used by the menu rendering logic.",
           "status": "done",
           "testStrategy": "Verify that the data structure correctly defines all specified commands and their parameters for both 'Task Management' and 'Subtask Operations' categories.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.906Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 2,
@@ -383,14 +250,7 @@
           "details": "Create a function, e.g., `promptForParameters(parametersArray)`, that takes an array of parameter definitions (from Subtask 1's data structure) and uses `inquirer.js` to generate appropriate prompts (e.g., input, list, confirm). It should return a promise resolving with an object containing the user's inputs. Handle different parameter types (string, number, boolean) and implement basic validation for required fields.",
           "status": "done",
           "testStrategy": "Test the utility with various parameter configurations (e.g., single required string, multiple mixed types, optional parameters) to ensure correct prompting and input capture. Simulate user input for automated testing.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.906Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 3,
@@ -403,14 +263,7 @@
           "details": "Use `inquirer.js` to present the main menu categories. Upon category selection, present the list of commands within that category. When a command is selected, check its parameter requirements. If parameters are needed, call the utility from Subtask 2. Once parameters are gathered (or if none are needed), dynamically construct and execute the `task-hero` command (e.g., `task-hero add-task 'Task Name'`). Ensure command output is captured and displayed back to the user within the menu interface.",
           "status": "done",
           "testStrategy": "Manually test navigation through both menu categories, selecting various commands. Verify that parameter prompts appear correctly and that the underlying `task-hero` commands are executed with the provided inputs. Check that command output is displayed.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.906Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 4,
@@ -422,14 +275,7 @@
           "details": "For commands like `add-task` or `add-subtask`, consider implementing smart defaults. For example, if a project is currently active, default the project name. For `update` commands, pre-fill current values if available. This might involve querying the `task-hero` state or maintaining a simple context store. Modify the `promptForParameters` utility to accept and utilize default values for prompts.",
           "status": "done",
           "testStrategy": "Test commands with smart defaults (e.g., `add-task` when a project is active, `update-task` for an existing task). Verify that default values are correctly pre-filled in prompts and can be overridden by the user.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.906Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 5,
@@ -441,24 +287,10 @@
           "details": "Implement `try-catch` blocks around command executions to gracefully handle errors returned by `task-hero` or during parameter prompting. Display user-friendly error messages instead of raw exceptions. Provide clear success messages after command completion. Ensure a 'Back' or 'Exit' option is available at appropriate menu levels to allow users to navigate or quit the application cleanly. Consider adding input validation beyond just 'required' checks (e.g., format validation for IDs).",
           "status": "done",
           "testStrategy": "Test error scenarios (e.g., attempting to remove a non-existent task, providing invalid input format). Verify that error messages are clear and that the application doesn't crash. Test navigation back through menus and the exit functionality.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.906Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         }
       ],
-      "prdSource": {
-        "filePath": "prd/done/interactive-menu-prd.txt",
-        "fileName": "interactive-menu-prd.txt",
-        "parsedDate": "2025-06-01T11:48:22.906Z",
-        "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-        "fileSize": 16119,
-        "prdId": "prd_002"
-      }
+      "prdSource": null
     },
     {
       "id": 5,
@@ -480,14 +312,7 @@
           "details": "Utilize the existing menu framework. Each menu item should have a basic event handler that, for now, simply logs the action to the console or displays a simple 'Not yet implemented' message. Ensure proper menu hierarchy and naming.",
           "status": "done",
           "testStrategy": "Verify that the 'Analysis & Dependencies' menu appears correctly in the UI and that all its sub-items are present and clickable. Check console logs for placeholder action triggers.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.907Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 2,
@@ -499,14 +324,7 @@
           "details": "Integrate these menu items into the UI. For 'Command Reference' and 'Quick Start Guide', consider opening a simple modal or a new tab with placeholder content. For 'Keyboard Shortcuts', a simple display of common shortcuts (even if hardcoded for now) would suffice. Ensure proper menu hierarchy and naming.",
           "status": "done",
           "testStrategy": "Verify that the 'Help & Information' menu appears correctly and all its sub-items are present and clickable. Check that placeholder content or modals appear as expected.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.907Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 3,
@@ -518,14 +336,7 @@
           "details": "The 'Settings' menu items should reflect the current state read from `.taskmasterconfig`. 'Toggle Research Mode' and 'Debug Mode' should be checkboxes or toggle switches that update the config file upon change. 'Set Default File Paths' can initially be a text input that reads/writes a path string. Implement robust error handling for config file operations.",
           "status": "done",
           "testStrategy": "Verify the 'Settings' menu appears correctly. Test toggling 'Research Mode' and 'Debug Mode' to ensure they read from and write to `.taskmasterconfig` correctly. Verify 'Set Default File Paths' can display and update a path. Check for error messages on invalid config operations.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.907Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 4,
@@ -537,14 +348,7 @@
           "details": "Identify at least 2-3 specific UI elements (e.g., a specific input field, a button, or a menu item) where contextual help would be useful. Implement a mechanism (e.g., on-hover tooltips, a dedicated help panel that updates based on focus, or status bar messages) to display pre-defined help text. This framework should be extensible for future additions.",
           "status": "done",
           "testStrategy": "Verify that contextual help appears for the selected UI elements. Test different interaction methods (e.g., hovering, focusing) to ensure the help text is displayed correctly and is relevant to the context.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.907Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 5,
@@ -556,24 +360,10 @@
           "details": "For 'Analysis' menu items, instead of just logging, open a small modal indicating the feature is under development. For 'Help' menu items, open a simple static HTML page or a modal with the relevant (even if minimal) content. Ensure consistent styling and responsiveness across all menus. Add basic visual feedback on click (e.g., button press state).",
           "status": "done",
           "testStrategy": "Verify that all menu items across 'Analysis', 'Help', and 'Settings' are fully functional in terms of UI interaction. Check that placeholder modals or content appear as expected for 'Analysis' and 'Help' items. Ensure consistent user experience and responsiveness.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.907Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         }
       ],
-      "prdSource": {
-        "filePath": "prd/done/interactive-menu-prd.txt",
-        "fileName": "interactive-menu-prd.txt",
-        "parsedDate": "2025-06-01T11:48:22.907Z",
-        "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-        "fileSize": 16119,
-        "prdId": "prd_002"
-      }
+      "prdSource": null
     },
     {
       "id": 6,
@@ -595,14 +385,7 @@
           "details": "For each Inquirer.js prompt used for menu selections (e.g., list, rawlist, expand), add a `validate` function. This function should check if the user's input is one of the expected options. Provide clear, user-friendly error messages for invalid selections. Consider using a helper function to centralize common validation logic.",
           "status": "done",
           "testStrategy": "Manually test each menu by entering invalid options (e.g., non-numeric, out-of-range numbers, text) and verifying that the correct error message is displayed and the prompt re-appears until valid input is provided.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.907Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 2,
@@ -614,14 +397,7 @@
           "details": "For each Inquirer.js prompt used to gather command parameters (e.g., input, number), add a `validate` function. This function should enforce specific rules such as non-emptiness, correct data type (e.g., numeric, string), specific format (e.g., valid file path pattern), or range constraints. Provide specific, actionable error messages for each validation failure.",
           "status": "done",
           "testStrategy": "For each command requiring parameters, test with various invalid inputs: empty strings, incorrect data types (e.g., text for a number field), out-of-range values, and malformed inputs (e.g., invalid file paths). Verify that appropriate error messages are shown and the prompt re-appears.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.907Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 3,
@@ -633,14 +409,7 @@
           "details": "Implement a simple logging utility (e.g., using `console.error` or a dedicated logging library like Winston/Pino if scope allows) that can record error details such as timestamp, error type, stack trace, and relevant context (e.g., command executed, input provided). Ensure logs are written to a file or displayed prominently in the console for development. Define a standard error object or structure.",
           "status": "done",
           "testStrategy": "Trigger known errors (e.g., intentionally cause a file not found error, or a parsing error) and verify that the error details are correctly logged to the console or a designated log file. Check for completeness of logged information.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.907Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 4,
@@ -652,14 +421,7 @@
           "details": "Identify all points where external commands are executed or potentially failing operations occur (e.g., file system operations, external API calls). Enclose these operations in `try-catch` blocks. Within the `catch` block, log the error using the mechanism from subtask 3, provide a user-friendly error message to the console, and ensure the application returns to the relevant menu or a stable state, rather than crashing.",
           "status": "done",
           "testStrategy": "Simulate various command execution failures (e.g., attempt to delete a non-existent file, write to a read-only directory, or trigger an internal logic error). Verify that the application does not crash, an appropriate error message is displayed to the user, the error is logged, and the user is returned to the main menu or the previous stable state.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.907Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 5,
@@ -671,24 +433,10 @@
           "details": "Review all error paths. For input validation errors, ensure the prompt re-appears with the error message. For command execution errors, after displaying the error message and logging, ensure the control flow returns to the main menu or the specific sub-menu from which the command was initiated, allowing the user to choose another action or retry. Avoid infinite loops or dead ends.",
           "status": "done",
           "testStrategy": "Perform end-to-end tests for various error scenarios. After an error, confirm that the user is always presented with clear options to proceed (e.g., return to main menu, retry input). Verify that the application state is consistent and not corrupted after an error.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.907Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         }
       ],
-      "prdSource": {
-        "filePath": "prd/done/interactive-menu-prd.txt",
-        "fileName": "interactive-menu-prd.txt",
-        "parsedDate": "2025-06-01T11:48:22.907Z",
-        "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-        "fileSize": 16119,
-        "prdId": "prd_002"
-      }
+      "prdSource": null
     },
     {
       "id": 7,
@@ -710,14 +458,7 @@
           "details": "Create a `SessionState` object or similar structure. For initial implementation, use in-memory storage (e.g., a singleton or application-scoped bean) for simplicity. Consider how this state will be accessed and updated by different parts of the application. Define clear getters and setters for menu path and preference placeholders.",
           "status": "done",
           "testStrategy": "Unit tests to verify `SessionState` object creation, data storage, and retrieval. Integration tests to ensure the state persists across multiple simulated user actions within a single session.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.908Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 2,
@@ -729,14 +470,7 @@
           "details": "Modify menu navigation handlers to push/pop menu items onto/from a stack or list within the `SessionState` object. Ensure the breadcrumb accurately reflects the user's current location. Consider how to handle direct URL access to specific pages (e.g., reset breadcrumbs or reconstruct them based on URL).",
           "status": "done",
           "testStrategy": "Manual testing by navigating through various menu paths and verifying the breadcrumb display. Automated UI tests to simulate navigation and assert the correctness of the displayed breadcrumbs.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.908Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 3,
@@ -748,14 +482,7 @@
           "details": "Identify or create specific API endpoints/methods within the project and task management modules that can provide: 1) The currently active project's name. 2) The total count of tasks associated with the active project. 3) The count of pending tasks for the active project. Ensure these calls are efficient and handle cases where no project is active or no tasks exist.",
           "status": "done",
           "testStrategy": "Unit tests for the data retrieval methods, mocking the underlying data sources. Integration tests to ensure correct data is fetched from the actual project/task services.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.908Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 4,
@@ -768,14 +495,7 @@
           "details": "Modify the menu header template or component to include placeholders for 'Project: [name]', 'Tasks: [total] total ([pending] pending)', and 'Status: ✓ Configured'. Bind these placeholders to the data retrieved from the session state (for breadcrumbs) and the project/task data retrieval logic. Ensure the header updates reactively to changes in the underlying data.",
           "status": "done",
           "testStrategy": "Manual UI testing to verify correct display of all header elements under various scenarios (e.g., project active, no project, tasks present, no tasks). Visual regression tests if applicable.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.908Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 5,
@@ -787,24 +507,10 @@
           "details": "Refactor the `SessionState` object if necessary to ensure it's well-structured and easily extendable. Add a dedicated field (e.g., a map or a nested object) within `SessionState` to hold user preferences. Document the intended use of this field for future preference management features. Ensure the current session management is stable and handles edge cases gracefully.",
           "status": "done",
           "testStrategy": "Code review of the `SessionState` structure. Unit tests to confirm the presence and accessibility of the new preference placeholder. End-to-end testing to ensure the entire session management and header display remains stable after refinements.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.908Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         }
       ],
-      "prdSource": {
-        "filePath": "prd/done/interactive-menu-prd.txt",
-        "fileName": "interactive-menu-prd.txt",
-        "parsedDate": "2025-06-01T11:48:22.908Z",
-        "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-        "fileSize": 16119,
-        "prdId": "prd_002"
-      }
+      "prdSource": null
     },
     {
       "id": 8,
@@ -827,14 +533,7 @@
           "details": "Use browser developer tools (e.g., Chrome DevTools Performance tab) for profiling rendering and execution times. For memory, use the Memory tab. For startup time, measure the time from application launch to full interactivity. Integrate a simple logging mechanism or a dedicated performance monitoring library if available to capture these metrics programmatically.",
           "status": "done",
           "testStrategy": "Run automated scripts to launch the application, navigate through menus, execute common commands, and record the specified metrics. Compare against initial non-functional requirements (e.g., startup < 500ms, memory < 50MB additional).",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.908Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 2,
@@ -846,14 +545,7 @@
           "details": "Identify parts of the menu structure or command details that can be loaded asynchronously. For example, if a submenu has many items, only load the first few and fetch more as the user scrolls or hovers. For command details, load comprehensive descriptions or complex parameters only when a command is selected or about to be executed. Use techniques like React.lazy() and Suspense if applicable, or custom component-level lazy loading logic.",
           "status": "done",
           "testStrategy": "Verify that initial menu load times are reduced. Observe network requests to confirm that lazy-loaded content is fetched only when needed. Test user experience to ensure no noticeable lag when content is loaded on demand.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.908Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 3,
@@ -866,14 +558,7 @@
           "details": "Analyze component re-renders using profiling tools (e.g., React DevTools Profiler). Implement memoization techniques (e.g., React.memo, useCallback, useMemo) for functional components and PureComponent/shouldComponentUpdate for class components. Ensure that state updates are granular and only trigger re-renders for affected components. Avoid passing new object/array references as props unnecessarily.",
           "status": "done",
           "testStrategy": "Use profiling tools to confirm a significant reduction in re-renders for menu components when unrelated state changes occur. Verify that menu interactions remain smooth and responsive.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.908Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 4,
@@ -886,14 +571,7 @@
           "details": "Identify computationally intensive parts of command execution. If possible, offload heavy computations to web workers or process them asynchronously. Minimize synchronous operations that could block the main thread. Review data structures and algorithms used in command processing for efficiency. Cache results of frequently executed commands or expensive computations where appropriate.",
           "status": "done",
           "testStrategy": "Measure command execution times for various commands, especially complex ones, to ensure they meet performance targets. Verify that the UI remains responsive during command execution, without freezing or noticeable delays.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.908Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 5,
@@ -908,24 +586,10 @@
           "details": "Re-run all performance baseline tests established in Subtask 1. Compare current metrics against baselines and target non-functional requirements. Document all findings, including improvements, any regressions, and remaining areas for optimization. Ensure memory usage is within limits and startup time is fast. Provide a summary report with recommendations for future performance monitoring.",
           "status": "done",
           "testStrategy": "Automated performance tests covering all key metrics (startup, rendering, execution, memory). Manual verification of user experience responsiveness. Generate a final report detailing compliance with NFRs and comparing 'before' and 'after' metrics.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.908Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         }
       ],
-      "prdSource": {
-        "filePath": "prd/done/interactive-menu-prd.txt",
-        "fileName": "interactive-menu-prd.txt",
-        "parsedDate": "2025-06-01T11:48:22.908Z",
-        "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-        "fileSize": 16119,
-        "prdId": "prd_002"
-      }
+      "prdSource": null
     },
     {
       "id": 9,
@@ -947,14 +611,7 @@
           "details": "The test plan should cover functional, integration, error handling, and compatibility testing. Test cases should include preconditions, steps, expected results, and post-conditions. Utilize a test management tool if available to organize and track test cases.",
           "status": "done",
           "testStrategy": "Review test plan and test cases with development and product teams to ensure coverage and accuracy before execution.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.909Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 2,
@@ -966,14 +623,7 @@
           "details": "Systematically go through each menu path and command, ensuring that all options are accessible and function as expected. Document any deviations from expected behavior as bugs. Pay close attention to edge cases in navigation.",
           "status": "done",
           "testStrategy": "Perform manual execution of all functional and navigation test cases. Log defects with clear steps to reproduce, actual results, and expected results.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.909Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 3,
@@ -985,14 +635,7 @@
           "details": "For command integration, test with valid, invalid, and boundary parameters. Verify that outputs are correctly formatted and displayed. For error handling, simulate various error conditions (e.g., network issues, file not found, permission denied) and confirm that the application handles them robustly without crashing, providing user-friendly feedback.",
           "status": "done",
           "testStrategy": "Automate command integration tests where possible. Manually test a wide range of error scenarios, focusing on user experience and system stability under duress.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.909Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 4,
@@ -1004,14 +647,7 @@
           "details": "Set up test environments for each target terminal and OS. Execute a subset of critical functional and integration test cases on each platform. For backward compatibility, test the new version with configurations and data generated by previous versions of the application.",
           "status": "done",
           "testStrategy": "Manual testing on different terminal emulators and OS environments. Use a matrix to track compatibility results. Ensure that old commands still function as expected in the new environment.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.909Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 5,
@@ -1023,24 +659,10 @@
           "details": "Monitor resource usage (CPU, memory) during heavy command execution or long sessions. Use a bug tracking system to log, assign, and manage defects. Ensure all critical and major bugs are resolved and retested before final sign-off. The test report should include test coverage, executed test cases, defects found, and overall quality assessment.",
           "status": "done",
           "testStrategy": "Use system monitoring tools for performance checks. Implement a clear bug lifecycle in the tracking system. Conduct regression testing after bug fixes to ensure no new issues are introduced.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.909Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         }
       ],
-      "prdSource": {
-        "filePath": "prd/done/interactive-menu-prd.txt",
-        "fileName": "interactive-menu-prd.txt",
-        "parsedDate": "2025-06-01T11:48:22.909Z",
-        "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-        "fileSize": 16119,
-        "prdId": "prd_002"
-      }
+      "prdSource": null
     },
     {
       "id": 10,
@@ -1062,14 +684,7 @@
           "details": "Access the current TaskHero AI documentation. Map out where the new interactive menu system information best fits. Consider creating a dedicated 'Interactive Menu System' section or integrating into existing 'Getting Started' or 'User Interface' sections. Outline sub-sections for 'Launching the Menu', 'Navigating Options', 'Common Workflows', and 'Key Features'.",
           "status": "done",
           "testStrategy": "Review the proposed outline with a product owner or subject matter expert to ensure all critical aspects are covered and logically organized.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.910Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 2,
@@ -1081,14 +696,7 @@
           "details": "Based on the outline from subtask 1, focus on the 'Launching the Menu' and 'Navigating Options' sections. Describe all methods to open the menu (e.g., hotkey, command line). Detail how to move between options (e.g., arrow keys, mouse clicks) and select items. Include specific keyboard shortcuts for common actions.",
           "status": "done",
           "testStrategy": "Perform a walkthrough of the drafted instructions using the actual interactive menu system to verify accuracy and clarity. Ensure all steps are reproducible.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.910Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 3,
@@ -1100,14 +708,7 @@
           "details": "Expand on the 'Key Features' and 'Common Workflows' sections. Describe the purpose and usage of each significant feature accessible via the menu. Provide step-by-step examples for typical user scenarios (e.g., 'How to create a new task using the menu', 'How to filter tasks'). Use clear, concise language and avoid jargon where possible.",
           "status": "done",
           "testStrategy": "Test each documented workflow and feature example against the live interactive menu system to confirm accuracy and completeness. Solicit feedback from a new user to assess clarity.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.910Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 4,
@@ -1119,14 +720,7 @@
           "details": "Proofread the entire document for grammatical errors, typos, and awkward phrasing. Ensure consistent terminology and formatting. Capture high-quality screenshots of the interactive menu at various stages (e.g., open menu, selected option, confirmation dialog) and embed them appropriately. Add alt text to all images.",
           "status": "done",
           "testStrategy": "Perform a final read-through focusing on user experience. Check that all images are correctly placed and enhance the text. Have a peer review the entire document for any missed errors or areas of confusion.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.910Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         },
         {
           "id": 5,
@@ -1138,24 +732,10 @@
           "details": "Upload the updated documentation files to the designated documentation repository (e.g., Confluence, ReadTheDocs, internal wiki). Ensure proper linking and navigation within the documentation portal. Draft an announcement (e.g., email, release notes, internal chat message) highlighting the new documentation and its benefits for users.",
           "status": "done",
           "testStrategy": "Verify that the published documentation is accessible, searchable, and correctly rendered on the live platform. Confirm that the announcement reaches the intended audience and clearly communicates the update.",
-          "prdSource": {
-            "filePath": "prd/done/interactive-menu-prd.txt",
-            "fileName": "interactive-menu-prd.txt",
-            "parsedDate": "2025-06-01T11:48:22.910Z",
-            "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-            "fileSize": 16119,
-            "prdId": "prd_002"
-          }
+          "prdSource": null
         }
       ],
-      "prdSource": {
-        "filePath": "prd/done/interactive-menu-prd.txt",
-        "fileName": "interactive-menu-prd.txt",
-        "parsedDate": "2025-06-01T11:48:22.910Z",
-        "fileHash": "6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622",
-        "fileSize": 16119,
-        "prdId": "prd_002"
-      }
+      "prdSource": null
     },
     {
       "id": 21,
@@ -1174,14 +754,7 @@
           "dependencies": [],
           "details": "This step involves updating the core data structure that represents a task. For example, if using a class, add a new property `prdSource` with its own nested properties. If using a JSON schema, update the schema definition accordingly. Ensure data types and constraints for each sub-field are clearly defined.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.916Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 2,
@@ -1192,14 +765,7 @@
           ],
           "details": "When loading `tasks.json`, if `prdSource` is missing, the parsing logic should not fail. It should either assign a default empty/null object to `prdSource` or ensure that subsequent code gracefully handles its absence. This might involve conditional parsing or default value assignment during deserialization.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.916Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 3,
@@ -1210,14 +776,7 @@
           ],
           "details": "Similar to `tasks.json`, the parsing logic for `task_xxx.txt` files needs to be updated. If `prdSource` information is not present in the text file, the parser should not throw an error. It should either ignore the missing field or initialize it to a default value when constructing the task object from the text file.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.916Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 4,
@@ -1229,14 +788,7 @@
           ],
           "details": "Unit tests should cover: 1. Loading an old `tasks.json` and verifying `prdSource` is handled correctly (e.g., null/default). 2. Loading a new `tasks.json` and verifying `prdSource` is parsed correctly. 3. Loading an old `task_xxx.txt` and verifying `prdSource` is handled correctly. 4. Loading a new `task_xxx.txt` and verifying `prdSource` is parsed correctly. 5. Serializing a task without `prdSource` and verifying the output. 6. Serializing a task with `prdSource` and verifying the output.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.916Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 5,
@@ -1247,24 +799,10 @@
           ],
           "details": "Integration tests should simulate: 1. Starting the application with an existing `tasks.json` (old format) and `task_xxx.txt` files (old format). 2. Modifying an existing task (which might not have `prdSource`) and saving it. 3. Creating a new task with `prdSource` and saving it. 4. Verifying that all tasks (old and new) are displayed correctly and that no data corruption occurs. 5. Testing edge cases like malformed `prdSource` data if applicable.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.916Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         }
       ],
-      "prdSource": {
-        "filePath": "prd/done/prd-source-tracking.txt",
-        "fileName": "prd-source-tracking.txt",
-        "parsedDate": "2025-06-01T11:48:22.916Z",
-        "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-        "fileSize": 15940,
-        "prdId": "prd_003"
-      }
+      "prdSource": null
     },
     {
       "id": 22,
@@ -1285,14 +823,7 @@
           "dependencies": [],
           "details": "Examine the `parse-prd` function, its input parameters, and how it currently processes PRD files. Pinpoint the exact location where `prdSource` data should be extracted and populated within the command's output structure.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.920Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 2,
@@ -1303,14 +834,7 @@
           ],
           "details": "Define the structure for `prdSource` fields (e.g., `sourcePath`, `fileHash`, `lastModified`). Implement logic to read these values from the PRD file's metadata or content and assign them to the `prdSource` object.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.920Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 3,
@@ -1321,14 +845,7 @@
           ],
           "details": "Choose an appropriate hashing algorithm (e.g., SHA256). Implement the file reading and hashing process, ensuring efficient handling of file I/O and accurate hash generation. Integrate this calculation into the `prdSource` population.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.920Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 4,
@@ -1339,14 +856,7 @@
           ],
           "details": "Determine whether to store absolute or relative paths for `sourcePath`. Implement logic to normalize paths and ensure they are correctly resolved regardless of the operating system or execution environment.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.920Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 5,
@@ -1357,14 +867,7 @@
           ],
           "details": "Develop test cases that cover various PRD file structures, including cases with missing or malformed `prdSource` data. Assert that `sourcePath`, `fileHash`, and other `prdSource` fields are populated accurately.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.920Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 6,
@@ -1375,14 +878,7 @@
           ],
           "details": "Create test files with known content and pre-calculated hashes. Verify that the implemented `fileHash` function produces the expected hash values for these files. Test edge cases like empty files or very large files.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.920Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 7,
@@ -1394,24 +890,10 @@
           ],
           "details": "Set up a test environment, run the `parse-prd` command on sample PRD files, and then inspect the generated task files to confirm that the `prdSource` object and its fields are correctly persisted.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.920Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         }
       ],
-      "prdSource": {
-        "filePath": "prd/done/prd-source-tracking.txt",
-        "fileName": "prd-source-tracking.txt",
-        "parsedDate": "2025-06-01T11:48:22.920Z",
-        "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-        "fileSize": 15940,
-        "prdId": "prd_003"
-      }
+      "prdSource": null
     },
     {
       "id": 23,
@@ -1432,14 +914,7 @@
           "dependencies": [],
           "details": "The prompt explicitly mentions 'task list, task details, project dashboard, interactive menu'. These should be confirmed as the target components.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.920Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 2,
@@ -1450,14 +925,7 @@
           ],
           "details": "For each view, consider where `prdSource` will be displayed, its label, and how it will be formatted (e.g., as a link, text, etc.).",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.920Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 3,
@@ -1468,14 +936,7 @@
           ],
           "details": "Similar to subtask 2, define how `prdSource` will be integrated into these views, considering their specific layouts and functionalities.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.920Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 4,
@@ -1487,14 +948,7 @@
           ],
           "details": "The plan should include test cases for each modified view, covering different scenarios (e.g., `prdSource` present, `prdSource` absent, different `prdSource` formats).",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.920Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 5,
@@ -1506,24 +960,10 @@
           ],
           "details": "This could involve using existing UI testing frameworks (e.g., Selenium, Cypress) to verify the presence, position, and content of the `prdSource` element after changes.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.920Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         }
       ],
-      "prdSource": {
-        "filePath": "prd/done/prd-source-tracking.txt",
-        "fileName": "prd-source-tracking.txt",
-        "parsedDate": "2025-06-01T11:48:22.920Z",
-        "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-        "fileSize": 15940,
-        "prdId": "prd_003"
-      }
+      "prdSource": null
     },
     {
       "id": 24,
@@ -1544,14 +984,7 @@
           "dependencies": [],
           "details": "This command should allow users to view a summary of all PRDs, potentially filtered by their current status (e.g., 'draft', 'approved', 'in-progress') or assigned owner. The output should be concise, showing key identifiers and a brief description.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.921Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 2,
@@ -1562,14 +995,7 @@
           ],
           "details": "This command will take a PRD identifier as input and display all tasks that are linked to that PRD. The output should include task ID, description, and current status. Consider options for filtering tasks (e.g., by status).",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.921Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 3,
@@ -1580,14 +1006,7 @@
           ],
           "details": "This command will retrieve and display the complete, raw content of a specified PRD. This is useful for debugging or reviewing the full document as it exists in the data store.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.921Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 4,
@@ -1600,14 +1019,7 @@
           ],
           "details": "Focus on optimizing queries for performance, especially when dealing with large datasets. Implement indexing strategies if applicable. Ensure robust error handling for invalid inputs or missing data.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.921Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 5,
@@ -1618,14 +1030,7 @@
           ],
           "details": "Each command handler (`list-prds`, `tasks-from-prd`, `show-prd-source`) will be responsible for interpreting user input, invoking the appropriate data access methods, and presenting the results in a user-friendly format.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.921Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 6,
@@ -1636,14 +1041,7 @@
           ],
           "details": "These tests should isolate the command logic from the actual data store, using mock data where necessary. Cover various scenarios, including valid inputs, invalid inputs, and edge cases.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.921Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 7,
@@ -1655,24 +1053,10 @@
           ],
           "details": "These tests will involve a real or simulated data store to verify that data retrieval, filtering, and display work as expected end-to-end. Test data should be set up to cover different scenarios (e.g., PRDs with no tasks, PRDs with many tasks, filtered results).",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.921Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         }
       ],
-      "prdSource": {
-        "filePath": "prd/done/prd-source-tracking.txt",
-        "fileName": "prd-source-tracking.txt",
-        "parsedDate": "2025-06-01T11:48:22.921Z",
-        "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-        "fileSize": 15940,
-        "prdId": "prd_003"
-      }
+      "prdSource": null
     },
     {
       "id": 25,
@@ -1693,14 +1077,7 @@
           "dependencies": [],
           "details": "Research `inotify` (Linux), `FSEvents` (macOS), `ReadDirectoryChangesW` (Windows) for real-time, or define a polling interval for periodic checks. Document pros and cons of each.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.922Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 2,
@@ -1709,14 +1086,7 @@
           "dependencies": [],
           "details": "The function should take a file path as input and return a string representing the file's hash. Handle potential file I/O errors.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.922Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 3,
@@ -1725,14 +1095,7 @@
           "dependencies": [],
           "details": "The function should take a file path as input and return an integer representing the file size in bytes. Handle potential file I/O errors.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.922Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 4,
@@ -1744,14 +1107,7 @@
           ],
           "details": "The logic should first compare `fileSize`. If different, a change is detected. If `fileSize` is the same, then compare `fileHash`. If `fileHash` is different, a change is detected. If both are the same, no change.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.922Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 5,
@@ -1763,14 +1119,7 @@
           ],
           "details": "If using real-time watchers, the callback should trigger the detection logic. If using polling, a scheduled job should periodically run the detection logic for all monitored PRD files.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.922Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 6,
@@ -1781,14 +1130,7 @@
           ],
           "details": "Specify the data model changes required to store the 'outdated' status for tasks. Consider how this status will be propagated or displayed in the UI.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.922Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 7,
@@ -1801,14 +1143,7 @@
           ],
           "details": "Test cases should include: identical files, files with different content but same size, files with different size, empty files, and error handling (e.g., file not found).",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.922Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 8,
@@ -1820,24 +1155,10 @@
           ],
           "details": "Simulate PRD file changes (e.g., programmatically modify a test PRD file) and assert that the corresponding tasks in the system are correctly marked as outdated.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.922Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         }
       ],
-      "prdSource": {
-        "filePath": "prd/done/prd-source-tracking.txt",
-        "fileName": "prd-source-tracking.txt",
-        "parsedDate": "2025-06-01T11:48:22.922Z",
-        "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-        "fileSize": 15940,
-        "prdId": "prd_003"
-      }
+      "prdSource": null
     },
     {
       "id": 26,
@@ -1858,14 +1179,7 @@
           "dependencies": [],
           "details": "Define `argparse` structure. Specify `--update-existing` as a boolean flag. Consider other potential flags like `--dry-run` for future expansion.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.922Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 2,
@@ -1874,14 +1188,7 @@
           "dependencies": [],
           "details": "Choose a parsing library (e.g., `markdown-it`, `PyYAML`). Define the internal data model for parsed PRD content. Handle potential parsing errors.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.922Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 3,
@@ -1890,14 +1197,7 @@
           "dependencies": [],
           "details": "Consider storing full PRD content, diffs, or metadata. Include fields for timestamp, PRD file hash/checksum, and potentially a version number.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.922Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 4,
@@ -1908,14 +1208,7 @@
           ],
           "details": "Define matching heuristics (e.g., exact title match, fuzzy title match, content hash). Prioritize unique IDs if available. Handle cases where multiple matches are found.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.922Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 5,
@@ -1926,14 +1219,7 @@
           ],
           "details": "Determine which fields can be updated (e.g., description, status, assignee). Implement conflict resolution strategies if external changes occurred. Ensure atomicity of updates.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.922Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 6,
@@ -1944,14 +1230,7 @@
           ],
           "details": "Define default values for new tasks. Integrate with the task management system's API for creation. Handle potential errors during creation.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.922Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 7,
@@ -1962,14 +1241,7 @@
           ],
           "details": "Implement read/write functions. Consider strategies for limiting history size (e.g., keeping N versions, or versions for X days). Use atomic writes to prevent corruption.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.922Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 8,
@@ -1983,14 +1255,7 @@
           ],
           "details": "Test various PRD formats, edge cases (empty files, malformed content). Test different scenarios for task matching (exact, partial, no match). Test update/create decisions based on `--update-existing` flag.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.922Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 9,
@@ -2003,24 +1268,10 @@
           ],
           "details": "Simulate PRD changes over time. Verify task updates in a mock task management system. Verify `prd-history.json` content after multiple re-parsing runs. Test `--update-existing` flag behavior end-to-end.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.922Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         }
       ],
-      "prdSource": {
-        "filePath": "prd/done/prd-source-tracking.txt",
-        "fileName": "prd-source-tracking.txt",
-        "parsedDate": "2025-06-01T11:48:22.922Z",
-        "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-        "fileSize": 15940,
-        "prdId": "prd_003"
-      }
+      "prdSource": null
     },
     {
       "id": 27,
@@ -2041,14 +1292,7 @@
           "dependencies": [],
           "details": "Specify command name, required and optional arguments, and help text. Consider using a library like `argparse`.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.923Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 2,
@@ -2057,14 +1301,7 @@
           "dependencies": [],
           "details": "Brainstorm all relevant information that would contribute to PRD traceability. Consider data available from existing parsing and linking processes.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.923Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 3,
@@ -2076,14 +1313,7 @@
           ],
           "details": "This involves querying the internal data structures (e.g., parsed PRD data, linked code changes) and preparing them for output. Create separate functions for CSV and JSON formatting.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.923Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 4,
@@ -2094,14 +1324,7 @@
           ],
           "details": "Tests should check for correct delimiters, JSON structure, header rows, and data types for each format.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.923Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 5,
@@ -2112,14 +1335,7 @@
           ],
           "details": "Tests should verify that task IDs, titles, file paths, parsed dates, and linked information are correctly extracted and presented in the report.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.923Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 6,
@@ -2131,24 +1347,10 @@
           ],
           "details": "This includes spot-checking data, verifying links, and ensuring the report meets compliance or auditing requirements. Consider scenarios like missing data or incorrect associations.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.923Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         }
       ],
-      "prdSource": {
-        "filePath": "prd/done/prd-source-tracking.txt",
-        "fileName": "prd-source-tracking.txt",
-        "parsedDate": "2025-06-01T11:48:22.923Z",
-        "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-        "fileSize": 15940,
-        "prdId": "prd_003"
-      }
+      "prdSource": null
     },
     {
       "id": 28,
@@ -2175,14 +1377,7 @@
           "dependencies": [],
           "details": "Review PRD documents, design specifications, and any existing feature breakdowns to create a definitive list of new source tracking features. This will form the basis for all subsequent testing activities.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.923Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 2,
@@ -2193,14 +1388,7 @@
           ],
           "details": "For each identified feature, break down into smallest testable units. Define expected inputs, outputs, and edge cases. Specify mocking strategies for dependencies.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.923Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 3,
@@ -2211,14 +1399,7 @@
           ],
           "details": "Identify integration points between new source tracking features and existing systems (e.g., database, analytics, UI). Define scenarios for data flow, API calls, and error handling across integrated components.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.923Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 4,
@@ -2229,14 +1410,7 @@
           ],
           "details": "Map out complete user flows involving source tracking, from initial input to final data persistence and reporting. Include positive, negative, and boundary test cases covering all user interactions.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.923Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 5,
@@ -2247,14 +1421,7 @@
           ],
           "details": "Define performance objectives (e.g., response times, throughput, resource utilization). Specify test scenarios for concurrent users, data volume, and sustained load to identify bottlenecks and ensure scalability.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.923Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 6,
@@ -2265,14 +1432,7 @@
           ],
           "details": "Identify target platforms, browsers, and devices. Define test scenarios to ensure consistent functionality, UI rendering, and performance across all specified environments.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.923Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 7,
@@ -2287,14 +1447,7 @@
           ],
           "details": "Determine which test types will be automated (e.g., unit, integration, some E2E, performance). Select automation tools and frameworks. Define metrics such as code coverage, requirement coverage, and defect escape rate.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.923Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         },
         {
           "id": 8,
@@ -2305,24 +1458,10 @@
           ],
           "details": "Define frequency for test suite reviews (e.g., sprintly, release-based). Specify criteria for updating test cases, removing obsolete tests, and adding new ones based on feature changes or defect analysis. Assign ownership for maintenance.",
           "status": "done",
-          "prdSource": {
-            "filePath": "prd/done/prd-source-tracking.txt",
-            "fileName": "prd-source-tracking.txt",
-            "parsedDate": "2025-06-01T11:48:22.923Z",
-            "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-            "fileSize": 15940,
-            "prdId": "prd_003"
-          }
+          "prdSource": null
         }
       ],
-      "prdSource": {
-        "filePath": "prd/done/prd-source-tracking.txt",
-        "fileName": "prd-source-tracking.txt",
-        "parsedDate": "2025-06-01T11:48:22.923Z",
-        "fileHash": "25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4",
-        "fileSize": 15940,
-        "prdId": "prd_003"
-      }
+      "prdSource": null
     },
     {
       "id": 29,
@@ -2343,11 +1482,11 @@
           "status": "done",
           "testStrategy": "Manually test the `parse-prd` command with and without existing tasks to ensure the original menu options are still displayed correctly and that the new conditional logic can be integrated without breaking existing functionality.",
           "prdSource": {
-            "filePath": "prd/done/append-expand-prd-option.txt",
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
             "fileName": "append-expand-prd-option.txt",
-            "parsedDate": "2025-06-01T11:48:22.924Z",
-            "fileHash": "70eee9a84f4eea54ef67f2ec161fbc020d37d2b290179e6131aa20fe976028ab",
-            "fileSize": 11834,
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286,
             "prdId": "prd_004"
           }
         },
@@ -2362,11 +1501,11 @@
           "status": "done",
           "testStrategy": "Create test cases: one where the target has existing tasks, and one where it does not. Verify that the boolean flag correctly reflects the presence or absence of tasks.",
           "prdSource": {
-            "filePath": "prd/done/append-expand-prd-option.txt",
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
             "fileName": "append-expand-prd-option.txt",
-            "parsedDate": "2025-06-01T11:48:22.924Z",
-            "fileHash": "70eee9a84f4eea54ef67f2ec161fbc020d37d2b290179e6131aa20fe976028ab",
-            "fileSize": 11834,
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286,
             "prdId": "prd_004"
           }
         },
@@ -2382,11 +1521,11 @@
           "status": "done",
           "testStrategy": "Run `parse-prd` command: 1) With no existing tasks - verify the new option is NOT shown. 2) With existing tasks - verify the new option IS shown alongside 'Append new tasks' and other existing options.",
           "prdSource": {
-            "filePath": "prd/done/append-expand-prd-option.txt",
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
             "fileName": "append-expand-prd-option.txt",
-            "parsedDate": "2025-06-01T11:48:22.924Z",
-            "fileHash": "70eee9a84f4eea54ef67f2ec161fbc020d37d2b290179e6131aa20fe976028ab",
-            "fileSize": 11834,
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286,
             "prdId": "prd_004"
           }
         },
@@ -2401,11 +1540,11 @@
           "status": "done",
           "testStrategy": "Create a PRD with new tasks, some of which are complex. Run `parse-prd`, select the new option. Verify that new tasks are appended and that complex tasks are automatically expanded (e.g., by checking the generated task structure or output).",
           "prdSource": {
-            "filePath": "prd/done/append-expand-prd-option.txt",
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
             "fileName": "append-expand-prd-option.txt",
-            "parsedDate": "2025-06-01T11:48:22.924Z",
-            "fileHash": "70eee9a84f4eea54ef67f2ec161fbc020d37d2b290179e6131aa20fe976028ab",
-            "fileSize": 11834,
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286,
             "prdId": "prd_004"
           }
         },
@@ -2420,21 +1559,21 @@
           "status": "done",
           "testStrategy": "Review the command-line output for the `parse-prd` menu. Check the updated documentation for accuracy and completeness regarding the new option. Conduct a final end-to-end test to ensure all options function as expected and the user flow is intuitive.",
           "prdSource": {
-            "filePath": "prd/done/append-expand-prd-option.txt",
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
             "fileName": "append-expand-prd-option.txt",
-            "parsedDate": "2025-06-01T11:48:22.924Z",
-            "fileHash": "70eee9a84f4eea54ef67f2ec161fbc020d37d2b290179e6131aa20fe976028ab",
-            "fileSize": 11834,
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286,
             "prdId": "prd_004"
           }
         }
       ],
       "prdSource": {
-        "filePath": "prd/done/append-expand-prd-option.txt",
+        "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
         "fileName": "append-expand-prd-option.txt",
-        "parsedDate": "2025-06-01T11:48:22.924Z",
-        "fileHash": "70eee9a84f4eea54ef67f2ec161fbc020d37d2b290179e6131aa20fe976028ab",
-        "fileSize": 11834,
+        "parsedDate": "2025-06-01T06:23:00.242Z",
+        "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+        "fileSize": 11286,
         "prdId": "prd_004"
       }
     },
@@ -2459,11 +1598,11 @@
           "status": "pending",
           "testStrategy": "Run `parse-prd --help` to verify the new option is listed. Execute `parse-prd` with and without the new option to ensure it doesn't break existing functionality when not selected.",
           "prdSource": {
-            "filePath": "prd/done/append-expand-prd-option.txt",
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
             "fileName": "append-expand-prd-option.txt",
-            "parsedDate": "2025-06-01T11:48:22.924Z",
-            "fileHash": "70eee9a84f4eea54ef67f2ec161fbc020d37d2b290179e6131aa20fe976028ab",
-            "fileSize": 11834,
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286,
             "prdId": "prd_004"
           }
         },
@@ -2478,11 +1617,11 @@
           "status": "pending",
           "testStrategy": "Prepare PRD examples with tasks of varying complexity (short descriptions, long descriptions, keywords, no keywords). Run `parse-prd --auto-expand` and verify that only the intended tasks are marked as complex candidates (e.g., by logging or inspecting an intermediate data structure).",
           "prdSource": {
-            "filePath": "prd/done/append-expand-prd-option.txt",
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
             "fileName": "append-expand-prd-option.txt",
-            "parsedDate": "2025-06-01T11:48:22.924Z",
-            "fileHash": "70eee9a84f4eea54ef67f2ec161fbc020d37d2b290179e6131aa20fe976028ab",
-            "fileSize": 11834,
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286,
             "prdId": "prd_004"
           }
         },
@@ -2497,11 +1636,11 @@
           "status": "pending",
           "testStrategy": "Use a PRD with a known complex task that expands predictably with the standalone `expand` command. Run `parse-prd --auto-expand` on this PRD and verify that the complex task is correctly replaced by its expected subtasks, maintaining their structure and content.",
           "prdSource": {
-            "filePath": "prd/done/append-expand-prd-option.txt",
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
             "fileName": "append-expand-prd-option.txt",
-            "parsedDate": "2025-06-01T11:48:22.924Z",
-            "fileHash": "70eee9a84f4eea54ef67f2ec161fbc020d37d2b290179e6131aa20fe976028ab",
-            "fileSize": 11834,
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286,
             "prdId": "prd_004"
           }
         },
@@ -2516,11 +1655,11 @@
           "status": "pending",
           "testStrategy": "Run `parse-prd --auto-expand` on a PRD with several complex tasks. Observe the console output to ensure progress messages are displayed correctly and provide meaningful feedback during the expansion process.",
           "prdSource": {
-            "filePath": "prd/done/append-expand-prd-option.txt",
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
             "fileName": "append-expand-prd-option.txt",
-            "parsedDate": "2025-06-01T11:48:22.924Z",
-            "fileHash": "70eee9a84f4eea54ef67f2ec161fbc020d37d2b290179e6131aa20fe976028ab",
-            "fileSize": 11834,
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286,
             "prdId": "prd_004"
           }
         },
@@ -2535,21 +1674,21 @@
           "status": "pending",
           "testStrategy": "Develop a suite of integration tests covering various PRD scenarios. Automate these tests if possible. Manually review the output of expanded tasks for accuracy, relevance, and completeness. Conduct performance profiling to identify and address any bottlenecks.",
           "prdSource": {
-            "filePath": "prd/done/append-expand-prd-option.txt",
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
             "fileName": "append-expand-prd-option.txt",
-            "parsedDate": "2025-06-01T11:48:22.924Z",
-            "fileHash": "70eee9a84f4eea54ef67f2ec161fbc020d37d2b290179e6131aa20fe976028ab",
-            "fileSize": 11834,
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286,
             "prdId": "prd_004"
           }
         }
       ],
       "prdSource": {
-        "filePath": "prd/done/append-expand-prd-option.txt",
+        "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
         "fileName": "append-expand-prd-option.txt",
-        "parsedDate": "2025-06-01T11:48:22.924Z",
-        "fileHash": "70eee9a84f4eea54ef67f2ec161fbc020d37d2b290179e6131aa20fe976028ab",
-        "fileSize": 11834,
+        "parsedDate": "2025-06-01T06:23:00.242Z",
+        "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+        "fileSize": 11286,
         "prdId": "prd_004"
       }
     },
@@ -2566,11 +1705,11 @@
       "status": "done",
       "subtasks": [],
       "prdSource": {
-        "filePath": "prd/done/append-expand-prd-option.txt",
+        "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
         "fileName": "append-expand-prd-option.txt",
-        "parsedDate": "2025-06-01T11:48:22.924Z",
-        "fileHash": "70eee9a84f4eea54ef67f2ec161fbc020d37d2b290179e6131aa20fe976028ab",
-        "fileSize": 11834,
+        "parsedDate": "2025-06-01T06:23:00.242Z",
+        "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+        "fileSize": 11286,
         "prdId": "prd_004"
       }
     },
@@ -2595,11 +1734,11 @@
           "status": "pending",
           "testStrategy": "Review documented criteria with stakeholders for alignment and completeness.",
           "prdSource": {
-            "filePath": "prd/done/append-expand-prd-option.txt",
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
             "fileName": "append-expand-prd-option.txt",
-            "parsedDate": "2025-06-01T11:48:22.925Z",
-            "fileHash": "70eee9a84f4eea54ef67f2ec161fbc020d37d2b290179e6131aa20fe976028ab",
-            "fileSize": 11834,
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286,
             "prdId": "prd_004"
           }
         },
@@ -2614,11 +1753,11 @@
           "status": "pending",
           "testStrategy": "Unit tests for the extraction module, ensuring it correctly extracts attributes for various task inputs (e.g., long/short descriptions, descriptions with/without keywords, tasks with/without complexity estimates).",
           "prdSource": {
-            "filePath": "prd/done/append-expand-prd-option.txt",
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
             "fileName": "append-expand-prd-option.txt",
-            "parsedDate": "2025-06-01T11:48:22.925Z",
-            "fileHash": "70eee9a84f4eea54ef67f2ec161fbc020d37d2b290179e6131aa20fe976028ab",
-            "fileSize": 11834,
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286,
             "prdId": "prd_004"
           }
         },
@@ -2633,11 +1772,11 @@
           "status": "pending",
           "testStrategy": "Unit tests for the rule engine with various rule configurations and attribute sets, ensuring correct expansion decisions. Test edge cases for each rule type.",
           "prdSource": {
-            "filePath": "prd/done/append-expand-prd-option.txt",
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
             "fileName": "append-expand-prd-option.txt",
-            "parsedDate": "2025-06-01T11:48:22.925Z",
-            "fileHash": "70eee9a84f4eea54ef67f2ec161fbc020d37d2b290179e6131aa20fe976028ab",
-            "fileSize": 11834,
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286,
             "prdId": "prd_004"
           }
         },
@@ -2652,11 +1791,11 @@
           "status": "pending",
           "testStrategy": "Integration tests simulating task creation/update with different task data, verifying that tasks meeting expansion criteria are flagged for expansion and those that don't are not. Manual end-to-end testing of the workflow.",
           "prdSource": {
-            "filePath": "prd/done/append-expand-prd-option.txt",
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
             "fileName": "append-expand-prd-option.txt",
-            "parsedDate": "2025-06-01T11:48:22.925Z",
-            "fileHash": "70eee9a84f4eea54ef67f2ec161fbc020d37d2b290179e6131aa20fe976028ab",
-            "fileSize": 11834,
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286,
             "prdId": "prd_004"
           }
         },
@@ -2671,21 +1810,21 @@
           "status": "pending",
           "testStrategy": "Manual testing of the admin interface to ensure criteria can be updated and saved correctly. Verify that changes to criteria reflect in the expansion behavior. Review logs/metrics to confirm monitoring is functional.",
           "prdSource": {
-            "filePath": "prd/done/append-expand-prd-option.txt",
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
             "fileName": "append-expand-prd-option.txt",
-            "parsedDate": "2025-06-01T11:48:22.925Z",
-            "fileHash": "70eee9a84f4eea54ef67f2ec161fbc020d37d2b290179e6131aa20fe976028ab",
-            "fileSize": 11834,
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286,
             "prdId": "prd_004"
           }
         }
       ],
       "prdSource": {
-        "filePath": "prd/done/append-expand-prd-option.txt",
+        "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
         "fileName": "append-expand-prd-option.txt",
-        "parsedDate": "2025-06-01T11:48:22.925Z",
-        "fileHash": "70eee9a84f4eea54ef67f2ec161fbc020d37d2b290179e6131aa20fe976028ab",
-        "fileSize": 11834,
+        "parsedDate": "2025-06-01T06:23:00.242Z",
+        "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+        "fileSize": 11286,
         "prdId": "prd_004"
       }
     },
@@ -2710,11 +1849,11 @@
           "status": "pending",
           "testStrategy": "Unit tests to ensure counters increment correctly under various scenarios (e.g., empty PRD, PRD with new tasks, PRD with expandable tasks, PRD with errors).",
           "prdSource": {
-            "filePath": "prd/done/append-expand-prd-option.txt",
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
             "fileName": "append-expand-prd-option.txt",
-            "parsedDate": "2025-06-01T11:48:22.925Z",
-            "fileHash": "70eee9a84f4eea54ef67f2ec161fbc020d37d2b290179e6131aa20fe976028ab",
-            "fileSize": 11834,
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286,
             "prdId": "prd_004"
           }
         },
@@ -2729,11 +1868,11 @@
           "status": "pending",
           "testStrategy": "Manual testing to observe the CLI output during execution, ensuring spinners/progress bars appear, update, and disappear correctly. Verify no console clutter.",
           "prdSource": {
-            "filePath": "prd/done/append-expand-prd-option.txt",
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
             "fileName": "append-expand-prd-option.txt",
-            "parsedDate": "2025-06-01T11:48:22.925Z",
-            "fileHash": "70eee9a84f4eea54ef67f2ec161fbc020d37d2b290179e6131aa20fe976028ab",
-            "fileSize": 11834,
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286,
             "prdId": "prd_004"
           }
         },
@@ -2748,11 +1887,11 @@
           "status": "pending",
           "testStrategy": "Unit tests for the report generation function, providing various metric inputs (e.g., all zeros, positive numbers, numbers with errors) and asserting the correctness of the generated report string.",
           "prdSource": {
-            "filePath": "prd/done/append-expand-prd-option.txt",
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
             "fileName": "append-expand-prd-option.txt",
-            "parsedDate": "2025-06-01T11:48:22.925Z",
-            "fileHash": "70eee9a84f4eea54ef67f2ec161fbc020d37d2b290179e6131aa20fe976028ab",
-            "fileSize": 11834,
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286,
             "prdId": "prd_004"
           }
         },
@@ -2768,11 +1907,11 @@
           "status": "pending",
           "testStrategy": "End-to-end integration tests via CLI commands. Run the 'Append + Auto-Expand' command with various PRD inputs (empty, simple, complex, erroneous) and verify that both real-time progress is shown and the final summary report is accurate and displayed correctly.",
           "prdSource": {
-            "filePath": "prd/done/append-expand-prd-option.txt",
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
             "fileName": "append-expand-prd-option.txt",
-            "parsedDate": "2025-06-01T11:48:22.925Z",
-            "fileHash": "70eee9a84f4eea54ef67f2ec161fbc020d37d2b290179e6131aa20fe976028ab",
-            "fileSize": 11834,
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286,
             "prdId": "prd_004"
           }
         },
@@ -2787,21 +1926,21 @@
           "status": "pending",
           "testStrategy": "Manual review of all CLI output during various execution paths, specifically focusing on the clarity and helpfulness of messages, warnings, and errors. Verify consistent formatting and tone.",
           "prdSource": {
-            "filePath": "prd/done/append-expand-prd-option.txt",
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
             "fileName": "append-expand-prd-option.txt",
-            "parsedDate": "2025-06-01T11:48:22.925Z",
-            "fileHash": "70eee9a84f4eea54ef67f2ec161fbc020d37d2b290179e6131aa20fe976028ab",
-            "fileSize": 11834,
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286,
             "prdId": "prd_004"
           }
         }
       ],
       "prdSource": {
-        "filePath": "prd/done/append-expand-prd-option.txt",
+        "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
         "fileName": "append-expand-prd-option.txt",
-        "parsedDate": "2025-06-01T11:48:22.925Z",
-        "fileHash": "70eee9a84f4eea54ef67f2ec161fbc020d37d2b290179e6131aa20fe976028ab",
-        "fileSize": 11834,
+        "parsedDate": "2025-06-01T06:23:00.242Z",
+        "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+        "fileSize": 11286,
         "prdId": "prd_004"
       }
     },

@@ -21,6 +21,9 @@ import generateTaskFiles from './generate-task-files.js';
 import { displayAiUsageSummary } from '../ui.js';
 import expandTask from './expand-task.js';
 import analyzeTaskComplexity from './analyze-task-complexity.js';
+import { updatePrdFileOnParse } from '../prd-manager/prd-file-metadata.js';
+import { findPrdById, readPrdsMetadata, generatePrdId } from '../prd-manager/prd-utils.js';
+import { createPrdFromFile } from '../prd-manager/prd-write-operations.js';
 
 // Define the Zod schema for PRD source metadata
 const prdSourceSchema = z.object({
@@ -883,6 +886,53 @@ Guidelines:
 
 		// Generate markdown task files after writing tasks.json
 		await generateTaskFiles(tasksPath, path.dirname(tasksPath), { mcpLog });
+
+		// Update PRD file metadata and register in tracking system after successful parsing
+		try {
+			const prdId = prdMetadata.prdId || generatePrdId(); // Use existing or generate new PRD ID
+			const parseInfo = {
+				id: prdId,
+				status: 'pending', // Default status after parsing
+				totalTasks: processedNewTasks.length,
+				lastParsed: new Date().toISOString()
+			};
+
+			// Update PRD file metadata
+			const updateSuccess = updatePrdFileOnParse(prdPath, parseInfo);
+			if (updateSuccess) {
+				report('✅ Updated PRD file metadata with parsing information', 'info');
+			} else {
+				report('⚠️ Failed to update PRD file metadata', 'warn');
+			}
+
+			// Register PRD in tracking system if not already registered
+			try {
+				const existingPrd = findPrdById(prdId, 'prd/prds.json');
+				if (!existingPrd) {
+					const registrationResult = createPrdFromFile(prdPath, {
+						title: prdMetadata.title || path.basename(prdPath, path.extname(prdPath)),
+						description: `PRD parsed and registered automatically during task generation`,
+						priority: 'medium',
+						complexity: 'medium',
+						tags: ['auto-generated', 'parsed'],
+						estimatedEffort: '2-4 hours'
+					});
+
+					if (registrationResult.success) {
+						report(`✅ Registered PRD ${prdId} in tracking system`, 'info');
+					} else {
+						report(`⚠️ Failed to register PRD in tracking system: ${registrationResult.error}`, 'warn');
+					}
+				} else {
+					report(`ℹ️ PRD ${prdId} already registered in tracking system`, 'info');
+				}
+			} catch (registrationError) {
+				report(`⚠️ Error registering PRD in tracking system: ${registrationError.message}`, 'warn');
+			}
+
+		} catch (metadataError) {
+			report(`⚠️ Error updating PRD file metadata: ${metadataError.message}`, 'warn');
+		}
 
 		// Handle auto-expansion if enabled
 		if (autoExpand && append) {

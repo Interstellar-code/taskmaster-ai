@@ -1,6 +1,6 @@
 # Task ID: 41
 # Title: Enhance Task-to-PRD Linking
-# Status: pending
+# Status: done
 # Dependencies: 40
 # Priority: high
 # PRD Source: prd-tracking-meta.txt

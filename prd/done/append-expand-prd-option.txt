@@ -1,5 +1,19 @@
-# Product Requirements Document - Enhanced PRD Parsing with Auto-Expansion
-
+# PRD ID: prd_004
+# Title: Append + Auto-Expand PRD Option
+# Status: done
+# Priority: medium
+# Complexity: medium
+# Total Tasks: 25
+# Completed Tasks: 10
+# Completion: 40%
+# PRD Path: prd\done\append-expand-prd-option.txt
+# File Hash: d73291c77cefa2bd2a1570a6e318fc12ec749906c41fbf3adbecc5d049f849c6
+# File Size: 11834 bytes
+# Created Date: 2025-06-01T06:03:44.377Z
+# Last Modified: 2025-06-01T11:59:49.154Z
+# Tags: automation, prd-parsing, subtask-generation, ai-enhancement
+# Estimated Effort: 25 hours
+# Description: Intelligent append with auto-expansion feature for PRD parsing with complexity-based subtask generation
 **Project Name:** Enhanced PRD Parsing with Append + Auto-Expand Option
 **Version:** 1.0
 **Date:** 2025-06-01

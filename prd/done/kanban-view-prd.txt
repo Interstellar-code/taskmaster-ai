@@ -1,5 +1,19 @@
-# Product Requirements Document - Kanban Board View for TaskMaster AI
-
+# PRD ID: prd_005
+# Title: Terminal Kanban Board View for TaskMaster
+# Status: done
+# Priority: medium
+# Complexity: high
+# Total Tasks: 20
+# Completed Tasks: 20
+# Completion: 100%
+# PRD Path: prd/done/kanban-view-prd.txt
+# File Hash: 4637924261ee92604c1128621f98264b2c1b658a2f156944a36b725ef35fb745
+# File Size: 18839 bytes
+# Created Date: 2025-06-01T07:11:30.963Z
+# Last Modified: 2025-06-01T11:59:49.168Z
+# Tags: ui-ux, kanban, terminal, visualization, task-management
+# Estimated Effort: 45 hours
+# Description: ASCII-based terminal Kanban board with drag-and-drop functionality and visual task management
 **Project Name:** Interactive Kanban Board Visualization for TaskMaster AI
 **Version:** 1.0
 **Date:** 2025-01-06

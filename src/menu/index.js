@@ -307,6 +307,7 @@ async function handleProjectManagement(sessionState) {
                     choices: [
                         { name: chalk.blue('🚀 Initialize Project'), value: 'init' },
                         { name: chalk.green('📄 Parse PRD'), value: 'parse-prd' },
+                        { name: chalk.magenta('📄 PRD Management'), value: 'prd-mgmt' },
                         { name: chalk.yellow('🤖 Configure Models'), value: 'models' },
                         new inquirer.Separator(),
                         { name: chalk.gray('← Back to Main Menu'), value: 'back' }
@@ -325,6 +326,9 @@ async function handleProjectManagement(sessionState) {
                     break;
                 case 'parse-prd':
                     await handleParsePRD(sessionState);
+                    break;
+                case 'prd-mgmt':
+                    await handlePrdManagement(sessionState);
                     break;
                 case 'models':
                     await executeCommand('models', ['--setup'], { projectRoot: sessionState.projectRoot });
@@ -1585,4 +1589,199 @@ async function showConfigurationHelp() {
     console.log(chalk.gray('  • Augment: Uses .augment-guidelines for workspace context'));
     console.log(chalk.gray('  • Windsurf: Uses .windsurfrules for AI assistance'));
     console.log(chalk.gray('  • Roo Code: Uses .roo/ directory for mode-specific rules'));
+}
+
+/**
+ * Handle PRD Management menu
+ */
+async function handlePrdManagement(sessionState) {
+    sessionState.menuPath.push('PRD Management');
+
+    try {
+        while (true) {
+            renderMenuHeader(sessionState);
+
+            const { action } = await inquirer.prompt([
+                {
+                    type: 'list',
+                    name: 'action',
+                    message: chalk.cyan('Select a PRD management action:'),
+                    choices: [
+                        { name: chalk.green('📋 List PRDs'), value: 'list' },
+                        { name: chalk.blue('👁️ Show PRD Details'), value: 'show' },
+                        { name: chalk.yellow('🔄 Update PRD Status'), value: 'status' },
+                        { name: chalk.magenta('🔗 Sync with Tasks'), value: 'sync' },
+                        { name: chalk.cyan('📁 Organize Files'), value: 'organize' },
+                        { name: chalk.red('🔍 Check Integrity'), value: 'check' },
+                        new inquirer.Separator(),
+                        { name: chalk.gray('← Back to Main Menu'), value: 'back' }
+                    ]
+                }
+            ]);
+
+            if (action === 'back') {
+                break;
+            }
+
+            // Handle the selected action
+            switch (action) {
+                case 'list':
+                    await handleListPrds(sessionState);
+                    break;
+                case 'show':
+                    await executeCommandWithParams('prd-show', [
+                        {
+                            name: 'prdId',
+                            type: 'input',
+                            message: 'Enter PRD ID (e.g., prd_001, prd_002):',
+                            validate: (input) => input.trim().length > 0 ? true : 'PRD ID cannot be empty'
+                        }
+                    ], { projectRoot: sessionState.projectRoot });
+                    break;
+                case 'status':
+                    await executeCommandWithParams('prd-status', [
+                        {
+                            name: 'prdId',
+                            type: 'input',
+                            message: 'Enter PRD ID (e.g., prd_001, prd_002):',
+                            validate: (input) => input.trim().length > 0 ? true : 'PRD ID cannot be empty'
+                        },
+                        {
+                            name: 'status',
+                            type: 'list',
+                            message: 'Select new status:',
+                            choices: [
+                                { name: 'Pending', value: 'pending' },
+                                { name: 'In Progress', value: 'in-progress' },
+                                { name: 'Done', value: 'done' },
+                                { name: 'Archived', value: 'archived' }
+                            ]
+                        }
+                    ], { projectRoot: sessionState.projectRoot });
+                    break;
+                case 'sync':
+                    await handlePrdSync(sessionState);
+                    break;
+                case 'organize':
+                    await executeCommand('prd-organize', [], { projectRoot: sessionState.projectRoot });
+                    break;
+                case 'check':
+                    await executeCommand('prd-check', [], { projectRoot: sessionState.projectRoot });
+                    break;
+            }
+
+            await inquirer.prompt([{
+                type: 'input',
+                name: 'continue',
+                message: chalk.dim('Press Enter to continue...')
+            }]);
+        }
+    } finally {
+        sessionState.menuPath.pop();
+    }
+}
+
+/**
+ * Handle List PRDs with filtering options
+ */
+async function handleListPrds(sessionState) {
+    const { filters } = await inquirer.prompt([
+        {
+            type: 'checkbox',
+            name: 'filters',
+            message: 'Select filters (optional):',
+            choices: [
+                { name: 'Filter by Status', value: 'status' },
+                { name: 'Filter by Priority', value: 'priority' },
+                { name: 'Filter by Complexity', value: 'complexity' },
+                { name: 'Include Task Details', value: 'include-tasks' }
+            ]
+        }
+    ]);
+
+    const params = [];
+
+    if (filters.includes('status')) {
+        params.push({
+            name: 'status',
+            type: 'list',
+            message: 'Select status filter:',
+            choices: [
+                { name: 'Pending', value: 'pending' },
+                { name: 'In Progress', value: 'in-progress' },
+                { name: 'Done', value: 'done' },
+                { name: 'Archived', value: 'archived' }
+            ]
+        });
+    }
+
+    if (filters.includes('priority')) {
+        params.push({
+            name: 'priority',
+            type: 'list',
+            message: 'Select priority filter:',
+            choices: [
+                { name: 'Low', value: 'low' },
+                { name: 'Medium', value: 'medium' },
+                { name: 'High', value: 'high' }
+            ]
+        });
+    }
+
+    if (filters.includes('complexity')) {
+        params.push({
+            name: 'complexity',
+            type: 'list',
+            message: 'Select complexity filter:',
+            choices: [
+                { name: 'Low', value: 'low' },
+                { name: 'Medium', value: 'medium' },
+                { name: 'High', value: 'high' }
+            ]
+        });
+    }
+
+    await executeCommandWithParams('prd', params, {
+        projectRoot: sessionState.projectRoot,
+        additionalFlags: filters.includes('include-tasks') ? ['--include-tasks'] : []
+    });
+}
+
+/**
+ * Handle PRD Sync with options
+ */
+async function handlePrdSync(sessionState) {
+    const { syncType } = await inquirer.prompt([
+        {
+            type: 'list',
+            name: 'syncType',
+            message: 'Select sync type:',
+            choices: [
+                { name: 'Sync All PRDs', value: 'all' },
+                { name: 'Sync Specific PRD', value: 'specific' },
+                { name: 'Dry Run (Preview Changes)', value: 'dry-run' }
+            ]
+        }
+    ]);
+
+    const params = [];
+    const flags = [];
+
+    if (syncType === 'specific') {
+        params.push({
+            name: 'prdId',
+            type: 'input',
+            message: 'Enter PRD ID (e.g., prd_001, prd_002):',
+            validate: (input) => input.trim().length > 0 ? true : 'PRD ID cannot be empty'
+        });
+    }
+
+    if (syncType === 'dry-run') {
+        flags.push('--dry-run');
+    }
+
+    await executeCommandWithParams('prd-sync', params, {
+        projectRoot: sessionState.projectRoot,
+        additionalFlags: flags
+    });
 }
