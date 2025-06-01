@@ -1927,7 +1927,7 @@
       "testStrategy": "Verify that the terminal board displays three distinct columns with correct headers and task counts. Test dynamic resizing by changing terminal window dimensions. Confirm 'No tasks' message appears in empty columns. Visually inspect for consistent ASCII art and styling across different terminal environments (Windows PowerShell, macOS Terminal, Linux terminals).",
       "priority": "high",
       "dependencies": [],
-      "status": "pending",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
@@ -1935,7 +1935,7 @@
           "description": "Set up the chosen terminal UI framework (Blessed.js or Ink.js) to create a basic interactive terminal application.",
           "dependencies": [],
           "details": "This involves installing the framework, setting up the main application instance, and creating a basic screen or app component.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
             "fileName": "kanban-view-prd.txt",
@@ -1952,7 +1952,7 @@
             1
           ],
           "details": "Each column should have a distinct visual boundary. Consider using borders or background colors to differentiate them.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
             "fileName": "kanban-view-prd.txt",
@@ -1969,7 +1969,7 @@
             2
           ],
           "details": "This will involve listening for terminal resize events and recalculating column widths to distribute space evenly or proportionally.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
             "fileName": "kanban-view-prd.txt",
@@ -1986,7 +1986,7 @@
             3
           ],
           "details": "The task count should be updated as tasks are added or moved. The 'No tasks' message should appear centrally within an empty column.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
             "fileName": "kanban-view-prd.txt",
@@ -2003,7 +2003,7 @@
             4
           ],
           "details": "This involves parsing the JSON data and mapping tasks to their corresponding 'pending', 'in-progress', or 'done' columns, updating task counts accordingly.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
             "fileName": "kanban-view-prd.txt",
@@ -2031,7 +2031,7 @@
       "dependencies": [
         34
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
@@ -2039,7 +2039,7 @@
           "description": "Design the basic ASCII box drawing structure for an individual task card, including borders and internal divisions for different data fields.",
           "dependencies": [],
           "details": "This involves sketching out the ASCII characters for corners, horizontal and vertical lines to form the card's outline and internal sections.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
             "fileName": "kanban-view-prd.txt",
@@ -2056,7 +2056,7 @@
             1
           ],
           "details": "This subtask will involve mapping task data fields to specific positions within the ASCII card and implementing conditional rendering for priority (e.g., '!!!' for high, '!!' for medium, '!' for low) and a specific ASCII character for PRD source.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
             "fileName": "kanban-view-prd.txt",
@@ -2073,7 +2073,7 @@
             2
           ],
           "details": "This requires calculating available space for the title within the ASCII card and applying truncation logic. Consideration should be given to how the full title will be revealed.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
             "fileName": "kanban-view-prd.txt",
@@ -2092,7 +2092,7 @@
             3
           ],
           "details": "This involves testing the rendering with various data lengths and ensuring that the ASCII art remains intact and visually appealing within the specified column width. It also includes reviewing character alignment and spacing for consistency.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
             "fileName": "kanban-view-prd.txt",
@@ -2121,7 +2121,7 @@
         34,
         35
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": [],
       "prdSource": {
         "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
@@ -2141,7 +2141,7 @@
       "dependencies": [
         35
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": [],
       "prdSource": {
         "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
@@ -2161,7 +2161,7 @@
       "dependencies": [
         34
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
@@ -2169,7 +2169,7 @@
           "description": "Develop a global keyboard event listener to capture 'F', '/', 'S', 'H', and 'Q' key presses and trigger corresponding actions. This includes mapping keys to specific functions (filter, search, statistics, help, exit).",
           "dependencies": [],
           "details": "This subtask involves setting up the core mechanism for keyboard navigation. It needs to be robust enough to avoid conflicts with other inputs and handle different states of the application.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
             "fileName": "kanban-view-prd.txt",
@@ -2186,7 +2186,7 @@
             1
           ],
           "details": "This subtask requires designing intuitive filter options (e.g., by assignee, status, due date) and implementing the filtering algorithm. It should integrate with the keyboard shortcut for 'F'.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
             "fileName": "kanban-view-prd.txt",
@@ -2203,7 +2203,7 @@
             1
           ],
           "details": "This subtask involves creating a search input field and implementing a search algorithm (e.g., fuzzy search, keyword matching). It should integrate with the keyboard shortcut for '/'.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
             "fileName": "kanban-view-prd.txt",
@@ -2220,7 +2220,7 @@
             1
           ],
           "details": "This subtask involves calculating and presenting relevant board metrics. The help overlay should be easily accessible and informative, integrating with 'S' and 'H' keyboard shortcuts respectively.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
             "fileName": "kanban-view-prd.txt",
@@ -2235,7 +2235,7 @@
           "description": "Modify the existing TaskMaster menu structure to include the Kanban board view under the 'Task Operations' submenu. Ensure proper menu navigation and state management when entering and exiting the Kanban interface.",
           "dependencies": [],
           "details": "This subtask requires understanding the existing menu system and seamlessly embedding the new Kanban view. It involves updating menu configurations and potentially routing logic.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
             "fileName": "kanban-view-prd.txt",
@@ -2255,7 +2255,7 @@
             5
           ],
           "details": "This subtask focuses on user experience, ensuring that switching between modes (e.g., filter, search) and entering/exiting the Kanban board is fluid. It also involves updating the status bar to provide contextual feedback to the user.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
             "fileName": "kanban-view-prd.txt",

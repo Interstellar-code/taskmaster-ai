@@ -9,6 +9,7 @@ import inquirer from 'inquirer';
 import { findProjectRoot } from '../../scripts/modules/utils.js';
 import { getConfig } from '../../scripts/modules/config-manager.js';
 import { listTasks } from '../../scripts/modules/task-manager.js';
+import { launchKanbanBoard } from '../kanban/kanban-board.js';
 import {
     executeCommand,
     executeCommandWithParams,
@@ -358,6 +359,7 @@ async function handleTaskOperations(sessionState) {
                         { name: chalk.yellow('👁️ Show Task'), value: 'show' },
                         { name: chalk.magenta('✅ Set Status'), value: 'set-status' },
                         { name: chalk.cyan('🔄 Generate Files'), value: 'generate' },
+                        { name: chalk.magenta('📊 Kanban Board View'), value: 'kanban' },
                         new inquirer.Separator(),
                         { name: chalk.gray('← Back to Main Menu'), value: 'back' }
                     ]
@@ -389,6 +391,9 @@ async function handleTaskOperations(sessionState) {
                     break;
                 case 'generate':
                     await executeCommand('generate', [], { projectRoot: sessionState.projectRoot });
+                    break;
+                case 'kanban':
+                    await handleKanbanBoard(sessionState);
                     break;
             }
 
@@ -1398,6 +1403,32 @@ async function handleListTasks(sessionState) {
     } catch (error) {
         console.error(chalk.red('❌ Failed to list tasks:'), error.message);
         logError('List tasks failed', error);
+    }
+}
+
+/**
+ * Handle Kanban board view
+ */
+async function handleKanbanBoard(sessionState) {
+    try {
+        console.log(chalk.blue('Launching Kanban board...'));
+        console.log(chalk.gray('Use arrow keys to navigate, 1-3 to move tasks, Q to quit'));
+
+        // Give user a moment to read the instructions
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        // Launch the Kanban board
+        await launchKanbanBoard();
+
+    } catch (error) {
+        console.error(chalk.red('❌ Failed to launch Kanban board:'), error.message);
+        logError('Kanban board launch failed', error);
+
+        await inquirer.prompt([{
+            type: 'input',
+            name: 'continue',
+            message: chalk.dim('Press Enter to continue...')
+        }]);
     }
 }
 
