@@ -467,10 +467,54 @@ function promptQuestion(rl, question) {
 	});
 }
 
+// Function to manage gitignore for TaskMaster installations
+function manageProjectGitignore(targetDir) {
+	const projectRoot = path.dirname(targetDir);
+	const taskMasterDirName = path.basename(targetDir);
+	const projectGitignore = path.join(projectRoot, '.gitignore');
+
+	// Check if we're installing TaskMaster as a subdirectory in another project
+	const isSubdirectoryInstall = projectRoot !== targetDir && fs.existsSync(projectGitignore);
+
+	if (isSubdirectoryInstall) {
+		log('info', 'Detected installation in existing project, managing parent .gitignore...');
+
+		// Read existing gitignore
+		let gitignoreContent = '';
+		if (fs.existsSync(projectGitignore)) {
+			gitignoreContent = fs.readFileSync(projectGitignore, 'utf8');
+		}
+
+		// Define the gitignore rules for TaskMaster subdirectory
+		const taskMasterRules = `
+# TaskMaster AI - Ignore everything in ${taskMasterDirName}/ except prd/ and tasks/
+${taskMasterDirName}/
+!${taskMasterDirName}/prd/
+!${taskMasterDirName}/tasks/
+!${taskMasterDirName}/prd/**
+!${taskMasterDirName}/tasks/**
+`;
+
+		// Check if TaskMaster rules already exist
+		if (!gitignoreContent.includes(`# TaskMaster AI - Ignore everything in ${taskMasterDirName}/`)) {
+			// Append TaskMaster rules
+			const updatedContent = gitignoreContent.trim() + '\n' + taskMasterRules;
+			fs.writeFileSync(projectGitignore, updatedContent);
+			log('success', `Updated ${projectGitignore} with TaskMaster-specific rules`);
+			log('info', `TaskMaster directory will be ignored except for prd/ and tasks/ folders`);
+		} else {
+			log('info', 'TaskMaster gitignore rules already exist in parent project');
+		}
+	}
+}
+
 // Function to create the project structure
 function createProjectStructure(addAliases, dryRun) {
 	const targetDir = process.cwd();
 	log('info', `Initializing project in ${targetDir}`);
+
+	// Manage parent project's gitignore if we're in a subdirectory
+	manageProjectGitignore(targetDir);
 
 	// Create directories
 	ensureDirectoryExists(path.join(targetDir, '.cursor', 'rules'));

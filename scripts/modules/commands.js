@@ -95,6 +95,65 @@ import {
 	comparePrdVersions,
 	syncPrdFileMetadataCommand
 } from './prd-commands.js';
+
+/**
+ * Setup gitignore rules for TaskMaster in parent project
+ * @param {Object} options - Command options
+ */
+function setupGitignoreCommand(options) {
+	const targetDir = process.cwd();
+	const projectRoot = path.dirname(targetDir);
+	const taskMasterDirName = options.directory || path.basename(targetDir);
+	const projectGitignore = path.join(projectRoot, '.gitignore');
+
+	// Check if we're in a subdirectory of another project
+	const isSubdirectoryInstall = projectRoot !== targetDir && fs.existsSync(projectGitignore);
+
+	if (!isSubdirectoryInstall) {
+		console.log(chalk.yellow('No parent project detected or no .gitignore found in parent directory.'));
+		console.log(chalk.blue(`Current directory: ${targetDir}`));
+		console.log(chalk.blue(`Parent directory: ${projectRoot}`));
+		return;
+	}
+
+	// Read existing gitignore
+	let gitignoreContent = '';
+	if (fs.existsSync(projectGitignore)) {
+		gitignoreContent = fs.readFileSync(projectGitignore, 'utf8');
+	}
+
+	// Define the gitignore rules for TaskMaster subdirectory
+	const taskMasterRules = `
+# TaskMaster AI - Ignore everything in ${taskMasterDirName}/ except prd/ and tasks/
+${taskMasterDirName}/
+!${taskMasterDirName}/prd/
+!${taskMasterDirName}/tasks/
+!${taskMasterDirName}/prd/**
+!${taskMasterDirName}/tasks/**
+`;
+
+	// Check if TaskMaster rules already exist
+	if (gitignoreContent.includes(`# TaskMaster AI - Ignore everything in ${taskMasterDirName}/`)) {
+		console.log(chalk.green('TaskMaster gitignore rules already exist in parent project.'));
+		return;
+	}
+
+	if (options.dryRun) {
+		console.log(chalk.blue('DRY RUN: Would add the following to parent .gitignore:'));
+		console.log(chalk.gray(taskMasterRules));
+		return;
+	}
+
+	// Append TaskMaster rules
+	const updatedContent = gitignoreContent.trim() + '\n' + taskMasterRules;
+	fs.writeFileSync(projectGitignore, updatedContent);
+
+	console.log(chalk.green(`✅ Updated ${projectGitignore} with TaskMaster-specific rules`));
+	console.log(chalk.blue(`📁 TaskMaster directory will be ignored except for prd/ and tasks/ folders`));
+	console.log(chalk.gray('Rules added:'));
+	console.log(chalk.gray(taskMasterRules));
+}
+
 /**
  * Runs the interactive setup process for model configuration.
  * @param {string|null} projectRoot - The resolved project root directory.
@@ -2899,6 +2958,16 @@ Examples:
 		.option('-b, --backup', 'Create backup files before updating')
 		.action((prdId, options) => {
 			syncPrdFileMetadataCommand(prdId, options);
+		});
+
+	// gitignore management command
+	programInstance
+		.command('setup-gitignore')
+		.description('Setup gitignore rules for TaskMaster in parent project')
+		.option('-d, --directory <dir>', 'TaskMaster directory name', path.basename(process.cwd()))
+		.option('--dry-run', 'Show what would be added without making changes')
+		.action((options) => {
+			setupGitignoreCommand(options);
 		});
 
 	return programInstance;

@@ -24,6 +24,10 @@ node_modules/
 # OS specific
 .DS_Store
 
-# Task files
-tasks.json
-tasks/ 
+# TaskMaster temporary files
+init-debug.log
+*.backup.*
+
+# Note: tasks/ and prd/ directories are intentionally NOT ignored
+# These contain your project's task definitions and PRD files
+# and should be tracked in version control
