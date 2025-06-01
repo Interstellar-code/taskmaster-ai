@@ -1,0 +1,36 @@
+# Task ID: 39
+# Title: Implement Core PRD Directory Structure
+# Status: pending
+# Dependencies: None
+# Priority: high
+# PRD Source: prd-tracking-meta.txt
+# PRD Path: C:/laragon/www/taskmaster-ai/scripts/prd-tracking-meta.txt
+# Parsed Date: 2025-06-01T09:56:53.019Z
+# File Hash: 53ecce97f9bc04112843bd533d798ab370c391bbf3172c364369f601aac6d055
+# File Size: 8619 bytes
+# Description: Establish the core directory structure for PRD management, including 'pending', 'in-progress', 'done', 'archived', and 'templates' folders, along with the central 'prds.json' file.
+# Details:
+Create the `/prd/` root directory. Inside, create subdirectories: `/prd/pending`, `/prd/in-progress`, `/prd/done`, `/prd/archived`, and `/prd/templates`. Initialize an empty `prds.json` file at `/prd/prds.json` with the base metadata structure as defined in the PRD.
+
+# Test Strategy:
+Verify that all specified directories are created and `prds.json` exists and is accessible. Check initial content of `prds.json` for correct structure.
+
+# Subtasks:
+## 1. Create Core PRD Directory Structure [pending]
+### Dependencies: None
+### Description: Create the main 'prd' directory and its immediate subdirectories: 'specs', 'assets', and 'docs'.
+### Details:
+This involves using `mkdir` or equivalent commands to establish the foundational directory structure for the PRD.
+
+## 2. Initialize Main PRD File [pending]
+### Dependencies: 39.1
+### Description: Create an empty 'main.md' file within the 'prd' directory.
+### Details:
+This file will serve as the primary entry point for the Product Requirements Document. Use `touch` or similar to create the empty file.
+
+## 3. Verify PRD Directory Structure and File [pending]
+### Dependencies: 39.1, 39.2
+### Description: Confirm that all specified directories and the 'main.md' file have been created correctly.
+### Details:
+This step involves listing the contents of the 'prd' directory and its subdirectories to ensure everything is in place as expected. Use `ls -R prd` or similar commands.
+

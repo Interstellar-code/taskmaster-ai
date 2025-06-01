@@ -22,12 +22,13 @@ import path from 'path';
  * Main Kanban Board class
  */
 export class KanbanBoard {
-    constructor() {
+    constructor(prdFilter = null) {
         this.boardLayout = new BoardLayout();
         this.tasks = [];
         this.projectRoot = findProjectRoot();
         this.tasksPath = path.join(this.projectRoot, 'tasks', 'tasks.json');
         this.isRunning = false;
+        this.prdFilter = prdFilter;
 
         // Initialize handlers
         this.keyboardHandler = createKeyboardHandler(this);
@@ -48,10 +49,14 @@ export class KanbanBoard {
      */
     async start() {
         try {
-            console.log(chalk.blue('Loading Kanban board...'));
+            if (this.prdFilter) {
+                console.log(chalk.blue(`Loading Kanban board (filtered by PRD: ${this.prdFilter})...`));
+            } else {
+                console.log(chalk.blue('Loading Kanban board...'));
+            }
 
-            // Load tasks from JSON
-            await this.loadTasks();
+            // Load tasks from JSON with optional PRD filter
+            await this.loadTasks(this.prdFilter);
 
             // Start keyboard handler
             this.keyboardHandler.start();
@@ -62,25 +67,51 @@ export class KanbanBoard {
 
             console.log(chalk.green('Kanban board started. Press Q to quit.'));
 
+            // Return a promise that resolves when the board is quit
+            return new Promise((resolve) => {
+                this.onQuitCallback = resolve;
+            });
+
         } catch (error) {
             console.error(chalk.red('Error starting Kanban board:'), error.message);
             this.cleanup();
+            throw error;
         }
     }
 
     /**
      * Load tasks from tasks.json
+     * @param {string} prdFilter - Optional PRD filter to apply
      */
-    async loadTasks() {
+    async loadTasks(prdFilter = null) {
         try {
             const data = readJSON(this.tasksPath);
-            this.tasks = data.tasks || [];
-            
+            let allTasks = data.tasks || [];
+
+            // Apply PRD filter if specified
+            if (prdFilter) {
+                this.tasks = allTasks.filter(task => {
+                    // Check main task
+                    if (task.prdSource && task.prdSource.fileName === prdFilter) return true;
+
+                    // Check subtasks
+                    if (task.subtasks && Array.isArray(task.subtasks)) {
+                        return task.subtasks.some(subtask =>
+                            subtask.prdSource && subtask.prdSource.fileName === prdFilter
+                        );
+                    }
+
+                    return false;
+                });
+                console.log(chalk.green(`Loaded ${this.tasks.length} tasks filtered by PRD: ${prdFilter}`));
+            } else {
+                this.tasks = allTasks;
+                console.log(chalk.green(`Loaded ${this.tasks.length} tasks`));
+            }
+
             // Load tasks into board layout
             this.boardLayout.loadTasks(this.tasks);
-            
-            console.log(chalk.green(`Loaded ${this.tasks.length} tasks`));
-            
+
         } catch (error) {
             console.error(chalk.red('Error loading tasks:'), error.message);
             this.tasks = [];
@@ -284,17 +315,18 @@ export class KanbanBoard {
     }
 
     /**
-     * Quit the Kanban board and return to main menu
+     * Quit the Kanban board and return to calling context
      */
     quit() {
         this.isRunning = false;
         this.cleanup();
-        console.log(chalk.blue('\n🔄 Returning to TaskMaster main menu...'));
+        console.log(chalk.blue('\n🔄 Returning to menu...'));
 
-        // Set a flag to indicate we should return to menu
-        this.shouldReturnToMenu = true;
+        // Resolve the promise from start() to allow menu to continue
+        if (this.onQuitCallback) {
+            this.onQuitCallback();
+        }
 
-        // Don't exit the process, just stop the board
         return true;
     }
 
@@ -313,24 +345,48 @@ export class KanbanBoard {
 }
 
 /**
- * Launch the Kanban board
+ * Extract unique PRD references from tasks
+ * @param {string} tasksPath - Path to tasks.json file
+ * @returns {Array} Array of unique PRD file names
+ */
+export function getUniquePRDReferences(tasksPath) {
+    try {
+        const data = readJSON(tasksPath);
+        const tasks = data.tasks || [];
+        const prdReferences = new Set();
+
+        tasks.forEach(task => {
+            // Check main task
+            if (task.prdSource && task.prdSource.fileName) {
+                prdReferences.add(task.prdSource.fileName);
+            }
+
+            // Check subtasks
+            if (task.subtasks && Array.isArray(task.subtasks)) {
+                task.subtasks.forEach(subtask => {
+                    if (subtask.prdSource && subtask.prdSource.fileName) {
+                        prdReferences.add(subtask.prdSource.fileName);
+                    }
+                });
+            }
+        });
+
+        return Array.from(prdReferences).sort();
+    } catch (error) {
+        console.error(chalk.red('Error reading tasks for PRD extraction:'), error.message);
+        return [];
+    }
+}
+
+/**
+ * Launch the Kanban board (standalone mode)
  */
 export async function launchKanbanBoard() {
     const board = new KanbanBoard();
     await board.start();
 
-    // Check if we should return to menu instead of exiting
-    if (board.shouldReturnToMenu) {
-        try {
-            // Import and launch the main menu
-            const { initializeInteractiveMenu } = await import('../menu/index.js');
-            await initializeInteractiveMenu();
-        } catch (error) {
-            console.error(chalk.red('Error returning to main menu:'), error.message);
-            console.log(chalk.yellow('Please restart TaskMaster manually.'));
-            process.exit(0);
-        }
-    }
+    // In standalone mode, just exit when done
+    return;
 }
 
 /**

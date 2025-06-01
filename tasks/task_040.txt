@@ -1,0 +1,54 @@
+# Task ID: 40
+# Title: Develop PRD Metadata Schema and Management
+# Status: pending
+# Dependencies: 39
+# Priority: high
+# PRD Source: prd-tracking-meta.txt
+# PRD Path: C:/laragon/www/taskmaster-ai/scripts/prd-tracking-meta.txt
+# Parsed Date: 2025-06-01T09:56:53.019Z
+# File Hash: 53ecce97f9bc04112843bd533d798ab370c391bbf3172c364369f601aac6d055
+# File Size: 8619 bytes
+# Description: Design and implement the `prds.json` schema to store comprehensive metadata for each PRD, including ID, title, status, file paths, linked tasks, and task statistics.
+# Details:
+Create a Python class or data structure representing the PRD metadata as per the `prds.json` schema in the PRD. Implement functions to read from and write to `prds.json` ensuring data integrity and thread-safe operations. Include fields for `id`, `title`, `fileName`, `status`, `complexity`, `createdDate`, `lastModified`, `filePath`, `fileHash`, `fileSize`, `description`, `tags`, `linkedTaskIds`, `taskStats`, `estimatedEffort`, and `priority`. The `taskStats` object should include `totalTasks`, `completedTasks`, `pendingTasks`, `inProgressTasks`, and `completionPercentage`.
+
+# Test Strategy:
+Create dummy PRD metadata and save it to `prds.json`. Read the data back and assert that all fields are correctly stored and retrieved. Test concurrent read/write operations to ensure data consistency.
+
+# Subtasks:
+## 1. Define Core PRD Metadata Schema [pending]
+### Dependencies: None
+### Description: Establish the initial structure and data types for the PRD metadata schema, including mandatory and optional fields, their types (string, integer, date, enum, etc.), and any initial constraints.
+### Details:
+Identify key PRD attributes like ID, Title, Version, Status, Author, CreationDate, LastModifiedDate, etc. Consider using a schema definition language (e.g., JSON Schema, Protobuf IDL).
+
+## 2. Implement Schema Management and Validation [pending]
+### Dependencies: 40.1
+### Description: Develop mechanisms to manage schema versions, validate incoming PRD metadata against the defined schema, and handle schema evolution (e.g., adding new fields, modifying existing ones).
+### Details:
+Include functions for schema registration, retrieval, and validation. Consider backward and forward compatibility for schema changes.
+
+## 3. Develop PRD Metadata Read Functions [pending]
+### Dependencies: 40.1
+### Description: Implement functions for reading PRD metadata from the persistent storage. This includes functions for retrieving single records, lists, and potentially filtered or paginated results.
+### Details:
+Focus on efficient data retrieval and deserialization into the defined schema structure. Consider indexing strategies for performance.
+
+## 4. Develop PRD Metadata Write Functions [pending]
+### Dependencies: 40.1, 40.2
+### Description: Implement functions for writing (creating, updating, deleting) PRD metadata to the persistent storage. Ensure data integrity constraints are enforced during write operations.
+### Details:
+Include validation before write operations. Implement atomic operations where necessary to prevent partial updates. Handle error conditions gracefully.
+
+## 5. Implement Data Integrity and Consistency Checks [pending]
+### Dependencies: 40.4
+### Description: Develop and integrate mechanisms to ensure the integrity and consistency of PRD metadata, including referential integrity, uniqueness constraints, and data type enforcement.
+### Details:
+This might involve database-level constraints, application-level validation rules, and periodic data audits. Define rollback strategies for failed transactions.
+
+## 6. Implement Thread Safety for Metadata Operations [pending]
+### Dependencies: 40.3, 40.4
+### Description: Ensure that all read and write operations on the PRD metadata are thread-safe to prevent race conditions and data corruption in concurrent environments.
+### Details:
+Utilize appropriate synchronization primitives (e.g., locks, mutexes, semaphores) or concurrent data structures. Design for high concurrency where possible.
+

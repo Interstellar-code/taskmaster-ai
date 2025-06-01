@@ -1,0 +1,44 @@
+# Task ID: 21
+# Title: Enhance Task Schema with PRD Source Field
+# Status: done
+# Dependencies: None
+# Priority: high
+# PRD Source: None (manually created)
+# Description: Enhance the existing task data structure to include a new 'prdSource' field. This field will be an object containing metadata about the PRD file from which the task was generated. This is a foundational change for all subsequent features.
+# Details:
+Modify the task object schema to include the 'prdSource' field as specified in the PRD. The 'prdSource' object should contain 'filePath', 'fileName', 'parsedDate', 'fileHash', and 'fileSize'. Ensure backward compatibility for existing tasks by setting 'prdSource' to null or an empty object for tasks not yet associated with a PRD. This will likely involve updating `tasks.json` and potentially `task_xxx.txt` file formats.
+
+# Test Strategy:
+Unit tests to verify the new schema can be parsed and serialized correctly. Integration tests to ensure existing tasks without the new field are handled gracefully without errors. Verify that new tasks created with the 'prdSource' field correctly store the data.
+
+# Subtasks:
+## 1. Define `prdSource` Field and Sub-fields in Task Object Schema [done]
+### Dependencies: None
+### Description: Precisely define the new `prdSource` field within the task object schema, including its specified sub-fields (e.g., `type`, `url`, `id`). This involves updating the internal data structure definition.
+### Details:
+This step involves updating the core data structure that represents a task. For example, if using a class, add a new property `prdSource` with its own nested properties. If using a JSON schema, update the schema definition accordingly. Ensure data types and constraints for each sub-field are clearly defined.
+
+## 2. Implement Backward Compatibility for `tasks.json` [done]
+### Dependencies: 21.1
+### Description: Develop logic to gracefully handle existing `tasks.json` files that do not contain the `prdSource` field. This includes ensuring the application can read and process these files without errors, potentially initializing `prdSource` to a default or null value.
+### Details:
+When loading `tasks.json`, if `prdSource` is missing, the parsing logic should not fail. It should either assign a default empty/null object to `prdSource` or ensure that subsequent code gracefully handles its absence. This might involve conditional parsing or default value assignment during deserialization.
+
+## 3. Implement Backward Compatibility for `task_xxx.txt` [done]
+### Dependencies: 21.1
+### Description: Develop logic to gracefully handle existing `task_xxx.txt` files that do not contain the `prdSource` field. This involves updating the parsing mechanism for these files to avoid errors and ensure existing data remains accessible.
+### Details:
+Similar to `tasks.json`, the parsing logic for `task_xxx.txt` files needs to be updated. If `prdSource` information is not present in the text file, the parser should not throw an error. It should either ignore the missing field or initialize it to a default value when constructing the task object from the text file.
+
+## 4. Develop Unit Tests for Schema Parsing and Serialization [done]
+### Dependencies: 21.2, 21.3
+### Description: Create comprehensive unit tests to verify correct parsing of both old (without `prdSource`) and new (with `prdSource`) schema versions from `tasks.json` and `task_xxx.txt`. Also, test serialization of tasks with and without `prdSource` to ensure correct output.
+### Details:
+Unit tests should cover: 1. Loading an old `tasks.json` and verifying `prdSource` is handled correctly (e.g., null/default). 2. Loading a new `tasks.json` and verifying `prdSource` is parsed correctly. 3. Loading an old `task_xxx.txt` and verifying `prdSource` is handled correctly. 4. Loading a new `task_xxx.txt` and verifying `prdSource` is parsed correctly. 5. Serializing a task without `prdSource` and verifying the output. 6. Serializing a task with `prdSource` and verifying the output.
+
+## 5. Develop Integration Tests for Graceful Handling of Existing Data [done]
+### Dependencies: 21.4
+### Description: Create integration tests to simulate real-world scenarios, including loading a mix of old and new task data, performing operations (e.g., editing, saving), and verifying data integrity and application stability.
+### Details:
+Integration tests should simulate: 1. Starting the application with an existing `tasks.json` (old format) and `task_xxx.txt` files (old format). 2. Modifying an existing task (which might not have `prdSource`) and saving it. 3. Creating a new task with `prdSource` and saving it. 4. Verifying that all tasks (old and new) are displayed correctly and that no data corruption occurs. 5. Testing edge cases like malformed `prdSource` data if applicable.
+

@@ -1,0 +1,60 @@
+# Task ID: 46
+# Title: Develop PRD Migration System
+# Status: pending
+# Dependencies: 40, 43
+# Priority: high
+# PRD Source: prd-tracking-meta.txt
+# PRD Path: C:/laragon/www/taskmaster-ai/scripts/prd-tracking-meta.txt
+# Parsed Date: 2025-06-01T09:56:53.019Z
+# File Hash: 53ecce97f9bc04112843bd533d798ab370c391bbf3172c364369f601aac6d055
+# File Size: 8619 bytes
+# Description: Develop a migration system to onboard existing PRDs into the new structured directory and metadata management system without data loss.
+# Details:
+Implement the `task-master prd migrate [--dry-run] [--source <path>] [--backup]` command. This system should scan a specified source path for existing PRD files, parse their content to extract relevant metadata, create corresponding entries in `prds.json`, and move the files to the appropriate initial status directory (e.g., `/prd/pending`). Include a dry-run mode and a backup option to prevent data loss.
+
+# Test Strategy:
+Create a set of mock existing PRD files in a separate directory. Run the migration command with `--dry-run` to verify parsing and proposed changes. Then, run without `--dry-run` and with `--backup` to ensure successful migration, correct `prds.json` updates, and backup creation. Verify no data loss.
+
+# Subtasks:
+## 1. Define PRD File Parsing Strategy [pending]
+### Dependencies: None
+### Description: Determine the approach for parsing existing PRD files, considering various formats (e.g., Markdown, plain text) and potential inconsistencies. Identify key sections and data points to extract.
+### Details:
+Research common PRD structures. Outline regular expressions or parsing libraries to use. Consider edge cases for missing or malformed data.
+
+## 2. Implement Metadata Extraction Logic [pending]
+### Dependencies: 46.1
+### Description: Develop code to extract relevant metadata (e.g., title, version, author, date, status) from the parsed PRD files based on the defined strategy.
+### Details:
+Write functions to identify and extract specific metadata fields. Handle cases where metadata might be implicit or require inference.
+
+## 3. Design `prds.json` Schema [pending]
+### Dependencies: 46.2
+### Description: Define the structure and fields for the new `prds.json` file, ensuring it can accommodate all extracted metadata and future requirements.
+### Details:
+Specify data types, required/optional fields, and relationships within the JSON schema. Consider how to link to the actual PRD file.
+
+## 4. Develop `prds.json` Entry Creation [pending]
+### Dependencies: 46.2, 46.3
+### Description: Implement the logic to transform extracted metadata into entries conforming to the `prds.json` schema and append them to the `prds.json` file.
+### Details:
+Write functions to map extracted data to the `prds.json` fields. Ensure proper serialization and handling of existing `prds.json` content.
+
+## 5. Implement File Movement Logic [pending]
+### Dependencies: 46.4
+### Description: Develop the functionality to move the original PRD files to their new, organized locations within the system.
+### Details:
+Define the new file naming convention and directory structure. Implement file system operations for moving files, including error handling.
+
+## 6. Add `--dry-run` Functionality [pending]
+### Dependencies: 46.5
+### Description: Integrate a `--dry-run` option to simulate the migration process without making any actual changes to files or `prds.json`.
+### Details:
+Modify file movement and `prds.json` update logic to print intended actions instead of executing them when `--dry-run` is active.
+
+## 7. Add `--backup` Functionality [pending]
+### Dependencies: 46.5
+### Description: Implement a `--backup` option to create a backup of original PRD files and the `prds.json` file before performing the migration.
+### Details:
+Develop logic to copy original files and `prds.json` to a designated backup directory before any modifications occur.
+

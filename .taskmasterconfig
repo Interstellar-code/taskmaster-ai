@@ -13,8 +13,8 @@
       "temperature": 0.1
     },
     "fallback": {
-      "provider": "openrouter",
-      "modelId": "deepseek/deepseek-r1-0528-qwen3-8b:free",
+      "provider": "anthropic",
+      "modelId": "claude-sonnet-4-20250514",
       "maxTokens": 128000,
       "temperature": 0.2
     }

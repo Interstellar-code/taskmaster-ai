@@ -1,78 +1,14 @@
 {
   "meta": {
-    "generatedAt": "2025-06-01T07:29:24.957Z",
-    "tasksAnalyzed": 5,
-    "totalTasks": 28,
-    "analysisCount": 62,
-    "thresholdScore": 1,
+    "generatedAt": "2025-06-01T09:57:29.474Z",
+    "tasksAnalyzed": 10,
+    "totalTasks": 38,
+    "analysisCount": 64,
+    "thresholdScore": 5,
     "projectName": "Taskmaster",
     "usedResearch": false
   },
   "complexityAnalysis": [
-    {
-      "taskId": 40,
-      "taskTitle": "Implement 'plan' Command for Task Implementation Planning",
-      "complexityScore": 5,
-      "recommendedSubtasks": 4,
-      "expansionPrompt": "The current 4 subtasks for implementing the 'plan' command appear well-structured. Consider if any additional subtasks are needed for testing, documentation, or integration with existing task management workflows.",
-      "reasoning": "This task involves creating a new command that leverages AI to generate implementation plans. The existing 4 subtasks cover the main implementation areas (retrieving task content, generating plans with AI, formatting in XML, and error handling). The complexity is moderate as it builds on existing patterns for task updates but requires careful AI integration."
-    },
-    {
-      "taskId": 41,
-      "taskTitle": "Implement Visual Task Dependency Graph in Terminal",
-      "complexityScore": 8,
-      "recommendedSubtasks": 10,
-      "expansionPrompt": "The current 10 subtasks for implementing the visual task dependency graph appear comprehensive. Consider if any additional subtasks are needed for performance optimization with large graphs or additional visualization options.",
-      "reasoning": "This task involves creating a sophisticated visualization system for terminal display, which is inherently complex due to layout algorithms, ASCII/Unicode rendering, and handling complex dependency relationships. The 10 existing subtasks cover all major aspects of implementation, from CLI interface to accessibility features."
-    },
-    {
-      "taskId": 42,
-      "taskTitle": "Implement MCP-to-MCP Communication Protocol",
-      "complexityScore": 9,
-      "recommendedSubtasks": 8,
-      "expansionPrompt": "The current 8 subtasks for implementing the MCP-to-MCP communication protocol appear well-structured. Consider if any additional subtasks are needed for security hardening, performance optimization, or comprehensive documentation.",
-      "reasoning": "This task involves designing and implementing a complex communication protocol between different MCP tools and servers. It requires sophisticated adapter patterns, client-server architecture, and handling of multiple operational modes. The complexity is very high due to the need for standardization, security, and backward compatibility."
-    },
-    {
-      "taskId": 44,
-      "taskTitle": "Implement Task Automation with Webhooks and Event Triggers",
-      "complexityScore": 8,
-      "recommendedSubtasks": 7,
-      "expansionPrompt": "The current 7 subtasks for implementing task automation with webhooks appear comprehensive. Consider if any additional subtasks are needed for security testing, rate limiting implementation, or webhook monitoring tools.",
-      "reasoning": "This task involves creating a sophisticated event system with webhooks for integration with external services. The complexity is high due to the need for secure authentication, reliable delivery mechanisms, and handling of various webhook formats and protocols. The existing subtasks cover the main implementation areas but security and monitoring could be emphasized more."
-    },
-    {
-      "taskId": 45,
-      "taskTitle": "Implement GitHub Issue Import Feature",
-      "complexityScore": 6,
-      "recommendedSubtasks": 5,
-      "expansionPrompt": "The current 5 subtasks for implementing the GitHub issue import feature appear well-structured. Consider if any additional subtasks are needed for handling GitHub API rate limiting, caching, or supporting additional issue metadata.",
-      "reasoning": "This task involves integrating with the GitHub API to import issues as tasks. The complexity is moderate as it requires API authentication, data mapping, and error handling. The existing 5 subtasks cover the main implementation areas from design to end-to-end implementation."
-    },
-    {
-      "taskId": 46,
-      "taskTitle": "Implement ICE Analysis Command for Task Prioritization",
-      "complexityScore": 7,
-      "recommendedSubtasks": 5,
-      "expansionPrompt": "The current 5 subtasks for implementing the ICE analysis command appear comprehensive. Consider if any additional subtasks are needed for visualization of ICE scores or integration with other prioritization methods.",
-      "reasoning": "This task involves creating an AI-powered analysis system for task prioritization using the ICE methodology. The complexity is high due to the need for sophisticated scoring algorithms, AI integration, and report generation. The existing subtasks cover the main implementation areas from algorithm design to integration with existing systems."
-    },
-    {
-      "taskId": 47,
-      "taskTitle": "Enhance Task Suggestion Actions Card Workflow",
-      "complexityScore": 6,
-      "recommendedSubtasks": 6,
-      "expansionPrompt": "The current 6 subtasks for enhancing the task suggestion actions card workflow appear well-structured. Consider if any additional subtasks are needed for user testing, accessibility improvements, or performance optimization.",
-      "reasoning": "This task involves redesigning the UI workflow for task expansion and management. The complexity is moderate as it requires careful UX design and state management but builds on existing components. The 6 existing subtasks cover the main implementation areas from design to testing."
-    },
-    {
-      "taskId": 48,
-      "taskTitle": "Refactor Prompts into Centralized Structure",
-      "complexityScore": 4,
-      "recommendedSubtasks": 3,
-      "expansionPrompt": "The current 3 subtasks for refactoring prompts into a centralized structure appear appropriate. Consider if any additional subtasks are needed for prompt versioning, documentation, or testing.",
-      "reasoning": "This task involves a straightforward refactoring to improve code organization. The complexity is relatively low as it primarily involves moving code rather than creating new functionality. The 3 existing subtasks cover the main implementation areas from directory structure to integration."
-    },
     {
       "taskId": 49,
       "taskTitle": "Implement Code Quality Analysis Command",
@@ -504,6 +440,86 @@
       "recommendedSubtasks": 6,
       "expansionPrompt": "Detail the subtasks for implementing board navigation, controls, and menu integration: 1. Implementing keyboard shortcuts for 'F' (filter), '/' (search), 'S' (statistics), 'H' (help overlay), and 'Q' (exit). 2. Developing the UI and logic for the filter mode. 3. Developing the UI and logic for the search mode. 4. Implementing the display of board statistics and help overlay. 5. Integrating the Kanban board view into the existing TaskMaster 'Task Operations' submenu. 6. Ensuring smooth transitions into and out of the Kanban interface and consistent status bar updates.",
       "reasoning": "This task is complex due to the variety of features (filtering, searching, statistics, help) and the need for seamless integration with an existing menu system. Each control requires its own UI and logic, and the overall state management for these modes adds significant complexity."
+    },
+    {
+      "taskId": 39,
+      "taskTitle": "Implement Core PRD Directory Structure",
+      "complexityScore": 2,
+      "recommendedSubtasks": 3,
+      "expansionPrompt": "Break down the implementation of the core PRD directory structure into distinct steps, including directory creation, file initialization, and verification.",
+      "reasoning": "This task is straightforward, involving basic file system operations. The complexity comes from ensuring all specified directories and the file are correctly created and initialized."
+    },
+    {
+      "taskId": 40,
+      "taskTitle": "Develop PRD Metadata Schema and Management",
+      "complexityScore": 7,
+      "recommendedSubtasks": 6,
+      "expansionPrompt": "Detail the development of the PRD metadata schema and management, including schema definition, read/write functions, data integrity, thread safety, and specific field implementations.",
+      "reasoning": "This task involves designing a robust data schema, implementing read/write operations, ensuring data integrity, and handling potential concurrency issues (thread-safety), which adds significant complexity."
+    },
+    {
+      "taskId": 41,
+      "taskTitle": "Enhance Task-to-PRD Linking",
+      "complexityScore": 5,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Outline the enhancement of task-to-PRD linking, focusing on modifying the task data structure, populating `prdSource` during creation/update, and ensuring data consistency.",
+      "reasoning": "This task requires modifying an existing data structure and ensuring proper data population and maintenance across different operations, which can be moderately complex depending on the existing codebase."
+    },
+    {
+      "taskId": 42,
+      "taskTitle": "Implement Automated PRD Status Management",
+      "complexityScore": 8,
+      "recommendedSubtasks": 7,
+      "expansionPrompt": "Elaborate on the implementation of automated PRD status management, covering the background process/trigger design, logic for status transitions based on task completion, `taskStats` updates, and consideration of efficiency mechanisms like file watching.",
+      "reasoning": "This task involves complex logic for monitoring task statuses, calculating completion percentages, updating PRD status dynamically, and potentially implementing a background process or efficient triggering mechanism. Edge cases and performance need careful consideration."
+    },
+    {
+      "taskId": 43,
+      "taskTitle": "Develop Automated PRD File Movement",
+      "complexityScore": 7,
+      "recommendedSubtasks": 6,
+      "expansionPrompt": "Detail the development of automated PRD file movement, including module design, atomic file operations, filename preservation, and implementation of a robust backup mechanism.",
+      "reasoning": "This task involves critical file system operations that must be atomic and robust to prevent data loss. Implementing a reliable backup mechanism and ensuring correct file path updates adds to the complexity."
+    },
+    {
+      "taskId": 44,
+      "taskTitle": "Extend CLI with PRD Management Commands",
+      "complexityScore": 6,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Break down the extension of the CLI with PRD management commands, specifying each command's implementation, argument parsing, data retrieval, output formatting, and validation logic.",
+      "reasoning": "This task involves implementing multiple CLI commands, each with different functionalities (list, show, status update, sync). It requires careful handling of arguments, data retrieval, and output formatting, but the core logic for each command is relatively contained."
+    },
+    {
+      "taskId": 45,
+      "taskTitle": "Integrate PRD Features with Kanban and Interactive Menu",
+      "complexityScore": 6,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Outline the integration of PRD features into the Kanban board and interactive menu, detailing the modifications required for Kanban filtering options and the structure/options of the new 'PRD Management' menu section.",
+      "reasoning": "This task involves modifying existing UI components (Kanban board and interactive menu) to incorporate new features. It requires understanding the existing UI framework and ensuring seamless integration and user experience."
+    },
+    {
+      "taskId": 46,
+      "taskTitle": "Develop PRD Migration System",
+      "complexityScore": 8,
+      "recommendedSubtasks": 7,
+      "expansionPrompt": "Detail the development of the PRD migration system, including parsing existing PRD files, extracting metadata, creating `prds.json` entries, moving files, and implementing `--dry-run` and `--backup` functionalities.",
+      "reasoning": "This task is complex due to the need to parse potentially unstructured existing PRD files, extract metadata, correctly populate the new `prds.json` schema, and perform file system operations with robust error handling, dry-run, and backup capabilities."
+    },
+    {
+      "taskId": 47,
+      "taskTitle": "Implement PRD Version Control and History",
+      "complexityScore": 9,
+      "recommendedSubtasks": 8,
+      "expansionPrompt": "Elaborate on the implementation of PRD version control and history, covering snapshot creation logic (triggers, timestamping, descriptions), storage strategy in `archived/versions`, and the detailed steps for implementing a reliable rollback mechanism.",
+      "reasoning": "Implementing version control requires careful design of snapshot triggers, storage, and a robust rollback mechanism that can restore both file content and associated metadata. This involves significant state management and file system interaction."
+    },
+    {
+      "taskId": 48,
+      "taskTitle": "Update AI Agent Guidelines for PRD Management",
+      "complexityScore": 3,
+      "recommendedSubtasks": 3,
+      "expansionPrompt": "Break down the update of AI agent guidelines for PRD management, specifying which files need modification and the key instructions to be added regarding PRD organization, status tracking, linking, and creation.",
+      "reasoning": "This task is primarily documentation-based, involving updating existing guideline files. While important, it doesn't involve complex code development or system integration."
     }
   ]
 }

@@ -1,0 +1,16 @@
+# Task ID: 41
+# Title: Enhance Task-to-PRD Linking
+# Status: pending
+# Dependencies: 40
+# Priority: high
+# PRD Source: prd-tracking-meta.txt
+# PRD Path: C:/laragon/www/taskmaster-ai/scripts/prd-tracking-meta.txt
+# Parsed Date: 2025-06-01T09:56:53.019Z
+# File Hash: 53ecce97f9bc04112843bd533d798ab370c391bbf3172c364369f601aac6d055
+# File Size: 8619 bytes
+# Description: Enhance the existing task structure to include a `prdSource` field, linking tasks directly to their associated PRDs with detailed metadata.
+# Details:
+Modify the existing task data structure to incorporate the `prdSource` object. This object should contain `prdId`, `fileName`, `filePath`, `fileHash`, and `parsedDate`. Ensure that when a task is created or updated, this `prdSource` information is correctly populated and maintained.
+
+# Test Strategy:
+Create new tasks and link them to existing PRDs. Verify that the `prdSource` field in the task object is correctly populated with the PRD's metadata. Update linked tasks and confirm `prdSource` remains consistent.

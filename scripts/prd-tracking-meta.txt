@@ -1,0 +1,224 @@
+# PRD: TaskMaster AI - PRD Lifecycle Tracking and Management System
+
+## Document Metadata
+- **PRD ID**: `prd-tracking-meta-20250106`
+- **Title**: TaskMaster AI PRD Lifecycle Tracking and Management System
+- **Version**: 1.0.0
+- **Created**: 2025-01-06T16:00:00.000Z
+- **Status**: pending
+- **Priority**: high
+- **Complexity**: high
+- **Estimated Effort**: 40-60 hours
+- **Tags**: ["core-feature", "automation", "metadata", "cli", "ai-integration", "lifecycle-management"]
+- **Assignee**: null
+- **Due Date**: null
+
+## Executive Summary
+
+This PRD defines the implementation of a comprehensive PRD lifecycle tracking and management system for TaskMaster AI. The system will provide automated PRD status management based on linked task completion, following TaskMaster's established patterns for JSON-based metadata storage, file organization, and CLI command structure. This enhancement will transform TaskMaster from a task-only management tool into a complete project lifecycle management system.
+
+## Problem Statement
+
+Currently, TaskMaster AI lacks systematic PRD management capabilities:
+- PRD files are scattered across directories without organization or status tracking
+- No automated tracking of PRD completion status based on linked task progress
+- Missing centralized metadata management for PRD files and their relationships
+- No integration between PRD lifecycle and task management workflows
+- AI agents lack comprehensive guidelines for PRD organization and maintenance
+- Users cannot easily track project progress at the PRD level
+- No historical tracking of PRD changes and evolution over time
+
+## Solution Overview
+
+Implement a comprehensive PRD lifecycle management system that:
+1. Organizes PRDs in status-based directory structure (`/prd/pending`, `/prd/in-progress`, `/prd/done`)
+2. Maintains detailed metadata in centralized `prds.json` file with bidirectional task linking
+3. Automatically updates PRD status based on linked task completion percentages
+4. Provides comprehensive CLI commands for PRD management and reporting
+5. Integrates seamlessly with existing TaskMaster features (Kanban board, interactive menu)
+6. Updates AI agent guidelines for automated PRD organization and maintenance
+7. Includes migration system for existing PRDs with zero data loss
+
+## Detailed Requirements
+
+### 1. Directory Structure & File Organization
+
+#### 1.1 Core Directory Structure
+Create organized `/prd/` directory with status-based organization:
+```
+/prd/
+├── pending/           # New or not-yet-started PRDs
+├── in-progress/       # PRDs with active tasks
+├── done/             # Completed PRDs (100% task completion)
+├── archived/         # Archived/historical PRDs
+├── templates/        # PRD templates for consistent creation
+└── prds.json         # Central metadata file
+```
+
+#### 1.2 Automated File Movement
+- PRDs automatically move between status folders based on linked task completion
+- Original filenames preserved across all moves
+- Atomic file operations to prevent data loss
+- Backup creation before any file movement operations
+
+#### 1.3 Version Control & History
+- Maintain PRD version snapshots in `/prd/archived/versions/`
+- Track all modifications with timestamps and change descriptions
+- Provide rollback capability to restore previous PRD versions
+
+### 2. PRD Metadata Schema
+
+#### 2.1 Central Metadata File (`prds.json`)
+Comprehensive metadata structure tracking all PRD information:
+```json
+{
+  "prds": [
+    {
+      "id": "prd-tracking-meta-20250106",
+      "title": "PRD Lifecycle Tracking System",
+      "fileName": "prd-tracking-meta.txt",
+      "status": "pending",
+      "complexity": "high",
+      "createdDate": "2025-01-06T16:00:00.000Z",
+      "lastModified": "2025-01-06T16:00:00.000Z",
+      "filePath": "prd/pending/prd-tracking-meta.txt",
+      "fileHash": "sha256-calculated-hash",
+      "fileSize": 15420,
+      "description": "Comprehensive PRD lifecycle management system",
+      "tags": ["core-feature", "automation", "metadata"],
+      "linkedTaskIds": [],
+      "taskStats": {
+        "totalTasks": 0,
+        "completedTasks": 0,
+        "pendingTasks": 0,
+        "inProgressTasks": 0,
+        "completionPercentage": 0
+      },
+      "estimatedEffort": "50 hours",
+      "priority": "high"
+    }
+  ],
+  "metadata": {
+    "version": "1.0.0",
+    "lastUpdated": "2025-01-06T16:00:00.000Z",
+    "totalPrds": 1
+  }
+}
+```
+
+### 3. Automated Status Management System
+
+#### 3.1 Task-to-PRD Linking Enhancement
+Enhance existing task structure to include comprehensive PRD references:
+```javascript
+// Enhanced task.prdSource structure
+{
+  "prdId": "prd-tracking-meta-20250106",
+  "fileName": "prd-tracking-meta.txt", 
+  "filePath": "prd/pending/prd-tracking-meta.txt",
+  "fileHash": "sha256-hash",
+  "parsedDate": "2025-01-06T16:00:00.000Z"
+}
+```
+
+#### 3.2 Automatic Status Transition Rules
+- **Pending → In-Progress**: When first linked task changes to 'in-progress'
+- **In-Progress → Done**: When ALL linked tasks reach 'done' status (100% completion)
+- **Manual Override**: Allow manual status changes with validation and audit trail
+- **Rollback Protection**: Prevent status regression without explicit user confirmation
+
+### 4. CLI Command Extensions
+
+#### 4.1 PRD List Command
+```bash
+task-master prd list [--status pending|in-progress|done] [--format table|json]
+```
+
+#### 4.2 PRD Status Management
+```bash
+task-master prd status --id <prd-id> --status <new-status> [--force]
+```
+
+#### 4.3 PRD Details and Reporting
+```bash
+task-master prd show --id <prd-id> [--include-tasks] [--include-history]
+```
+
+#### 4.4 PRD Synchronization
+```bash
+task-master prd sync [--id <prd-id>] [--force]
+```
+
+#### 4.5 PRD Migration System
+```bash
+task-master prd migrate [--dry-run] [--source <path>] [--backup]
+```
+
+### 5. Integration with Existing Features
+
+#### 5.1 Kanban Board Enhancement
+Add PRD filtering options to existing Kanban board:
+- "View All Tasks" (current behavior)
+- "View Tasks by PRD" (filter by specific PRD)
+- "View Tasks by PRD Status" (show tasks from pending/in-progress/done PRDs)
+
+#### 5.2 Interactive Menu Integration
+Add new "📄 PRD Management" section to main menu with:
+- List PRDs with status overview
+- Show PRD details and linked task progress
+- Update PRD status manually
+- Sync PRD status with task completion
+- Archive completed PRDs
+
+### 6. AI Agent Integration
+
+#### 6.1 Enhanced Guidelines
+Update `.augment-guidelines`, `.cursor/rules/`, and `.roo/` rules to include:
+- PRD organization patterns and file management rules
+- Automated status tracking based on task completion
+- Bidirectional task-to-PRD reference maintenance
+- PRD creation and template usage guidelines
+
+## Acceptance Criteria
+
+1. **Directory Organization**: All PRDs organized in status-based `/prd/` structure
+2. **Metadata Management**: Complete `prds.json` tracking all PRD information
+3. **Automatic Status Updates**: PRD status automatically updates based on task completion
+4. **CLI Commands**: All specified CLI commands functional and tested
+5. **Integration**: Seamless integration with Kanban board and interactive menu
+6. **Migration**: Successful migration of existing PRDs without data loss
+7. **AI Agent Rules**: Updated guidelines for all supported AI editors
+8. **Backward Compatibility**: Existing task management functionality unchanged
+
+## Task Breakdown
+[Will be populated by parse-prd command]
+
+## Dependencies
+- Existing TaskMaster task management system
+- JSON-based metadata storage patterns
+- CLI command infrastructure
+- Interactive menu system
+- Kanban board implementation
+
+## Risks and Mitigation
+- **Data Loss Risk**: Comprehensive backup system before any file operations
+- **Performance Impact**: Efficient file watching and lazy loading mechanisms
+- **Migration Complexity**: Phased migration approach with rollback capability
+- **Concurrent Access**: Thread-safe operations for simultaneous updates
+
+## Success Metrics
+- 100% migration of existing PRDs without data loss
+- Real-time PRD status updates based on task completion
+- Zero disruption to existing TaskMaster functionality
+- Complete AI agent integration across all supported editors
+- User adoption of PRD management features
+
+## Implementation Notes
+- Follow TaskMaster's existing code patterns and module structure
+- Use same error handling and logging mechanisms as task management
+- Implement file watching for automatic PRD change detection
+- Ensure thread-safe operations for concurrent task/PRD updates
+- Maintain backward compatibility with existing workflows
+
+## Change Log
+- 2025-01-06T16:00:00.000Z: Initial PRD creation

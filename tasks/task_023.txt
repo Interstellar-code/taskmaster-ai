@@ -1,0 +1,44 @@
+# Task ID: 23
+# Title: Display PRD Source in Task Views and Reports
+# Status: done
+# Dependencies: 22
+# Priority: medium
+# PRD Source: None (manually created)
+# Description: Update all relevant UI components (task list, task details, project dashboard, interactive menu) to display the PRD source information for each task. This provides immediate visual traceability to users.
+# Details:
+Modify `scripts/modules/ui.js` and other display functions to show the `prdSource.fileName` in the task list view (e.g., as a new column). Enhance the individual task details view to display all `prdSource` fields (filePath, parsedDate, version, etc.). Update the project dashboard to include a summary of PRD sources (e.g., number of PRD files processed, total tasks generated per PRD). Ensure interactive menu displays also reflect this information.
+
+# Test Strategy:
+Manual UI testing to confirm PRD source information is correctly displayed across all specified views (task list, task details, dashboard, interactive menu). Automated screenshot comparisons or UI element checks could be implemented for regression testing.
+
+# Subtasks:
+## 1. Identify UI Components for Modification [done]
+### Dependencies: None
+### Description: List all specific UI components that will be affected by the integration of `prdSource` information, based on the provided context.
+### Details:
+The prompt explicitly mentions 'task list, task details, project dashboard, interactive menu'. These should be confirmed as the target components.
+
+## 2. Detail Changes for Task List and Task Details Views [done]
+### Dependencies: 23.1
+### Description: Specify the exact modifications required for the 'task list' and 'task details' UI components to display `prdSource` information. This includes layout, formatting, and data presentation.
+### Details:
+For each view, consider where `prdSource` will be displayed, its label, and how it will be formatted (e.g., as a link, text, etc.).
+
+## 3. Detail Changes for Project Dashboard and Interactive Menu Views [done]
+### Dependencies: 23.1
+### Description: Specify the exact modifications required for the 'project dashboard' and 'interactive menu' UI components to display `prdSource` information. This includes layout, formatting, and data presentation.
+### Details:
+Similar to subtask 2, define how `prdSource` will be integrated into these views, considering their specific layouts and functionalities.
+
+## 4. Outline Manual UI Testing Plan [done]
+### Dependencies: 23.2, 23.3
+### Description: Develop a comprehensive plan for manually testing the UI changes across all modified components to ensure correct display and functionality of `prdSource` information.
+### Details:
+The plan should include test cases for each modified view, covering different scenarios (e.g., `prdSource` present, `prdSource` absent, different `prdSource` formats).
+
+## 5. Consider Automated UI Element Checks for Regression [done]
+### Dependencies: 23.2, 23.3
+### Description: Investigate and propose strategies for implementing automated UI element checks to prevent regression issues related to the `prdSource` display.
+### Details:
+This could involve using existing UI testing frameworks (e.g., Selenium, Cypress) to verify the presence, position, and content of the `prdSource` element after changes.
+

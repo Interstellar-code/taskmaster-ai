@@ -1,0 +1,20 @@
+# Task ID: 44
+# Title: Extend CLI with PRD Management Commands
+# Status: pending
+# Dependencies: 43
+# Priority: high
+# PRD Source: prd-tracking-meta.txt
+# PRD Path: C:/laragon/www/taskmaster-ai/scripts/prd-tracking-meta.txt
+# Parsed Date: 2025-06-01T09:56:53.019Z
+# File Hash: 53ecce97f9bc04112843bd533d798ab370c391bbf3172c364369f601aac6d055
+# File Size: 8619 bytes
+# Description: Extend the TaskMaster CLI with new commands for listing, managing status, showing details, and synchronizing PRDs.
+# Details:
+Implement the following CLI commands: 
+- `task-master prd list [--status pending|in-progress|done] [--format table|json]` to display PRDs based on status and format.
+- `task-master prd status --id <prd-id> --status <new-status> [--force]` to manually update PRD status with validation and audit trail.
+- `task-master prd show --id <prd-id> [--include-tasks] [--include-history]` to display detailed PRD information, including linked tasks and version history.
+- `task-master prd sync [--id <prd-id>] [--force]` to force synchronization of PRD status with linked tasks.
+
+# Test Strategy:
+Execute each new CLI command with various parameters. Verify correct output for `list` and `show` commands. Test `status` command for valid and invalid status transitions, and `sync` for correct status updates. Ensure `--force` flag behaves as expected.

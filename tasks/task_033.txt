@@ -1,0 +1,48 @@
+# Task ID: 33
+# Title: Implement User Feedback and Progress Indication
+# Status: done
+# Dependencies: 30
+# Priority: medium
+# PRD Source: append-expand-prd-option.txt
+# PRD Path: C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt
+# Parsed Date: 2025-06-01T06:23:00.242Z
+# File Hash: f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442
+# File Size: 11286 bytes
+# Description: Provide clear and informative feedback to the user during the 'Append + Auto-Expand' process, including progress indicators and a summary of the results (e.g., number of tasks appended, number of tasks expanded, number of subtasks generated).
+# Details:
+Integrate progress indicators (e.g., spinners, percentage complete) into the CLI output during the PRD parsing and auto-expansion phases. Upon completion, display a summary report to the user. This report should include: the total number of new tasks appended, the number of complex tasks identified for expansion, the number of subtasks generated, and any relevant warnings or errors. This feedback should enhance the user experience by providing visibility into the enhanced parsing process.
+
+# Test Strategy:
+Manual testing to observe the progress indicators during the parsing and expansion process. Automated tests to verify the content and format of the summary report. Test with both small and large PRDs to ensure consistent and accurate feedback. Verify that error messages are displayed appropriately if any issues occur during the process.
+
+# Subtasks:
+## 1. Define and Capture Key Metrics for Feedback [pending]
+### Dependencies: None
+### Description: Identify and instrument the 'Append + Auto-Expand' process to capture all necessary metrics for user feedback and the final summary report. This includes counts for appended tasks, expanded tasks, generated subtasks, and any warnings/errors.
+### Details:
+Modify the existing 'Append + Auto-Expand' logic to increment counters for: 1. New tasks appended from PRD. 2. Complex tasks identified for auto-expansion. 3. Subtasks successfully generated during expansion. 4. Any warnings or errors encountered during parsing or expansion. These metrics should be stored in an accessible data structure.
+
+## 2. Implement Real-time Progress Indicators in CLI [pending]
+### Dependencies: 33.1
+### Description: Integrate dynamic progress indicators (e.g., spinners, percentage) into the CLI output during the 'Append + Auto-Expand' process to provide immediate user feedback.
+### Details:
+Utilize a suitable CLI library (e.g., 'ora' for spinners, 'cli-progress' for progress bars) to display progress during the distinct phases: PRD parsing/appending and task auto-expansion. The indicators should update as the process runs, giving the user a sense of activity and preventing perceived freezes. Consider displaying 'Parsing PRD...' and 'Expanding tasks...' messages.
+
+## 3. Develop Final Summary Report Generation Logic [pending]
+### Dependencies: 33.1
+### Description: Create the logic to compile and format the captured metrics into a clear, concise summary report to be displayed upon completion of the 'Append + Auto-Expand' process.
+### Details:
+After the 'Append + Auto-Expand' process concludes, retrieve the metrics captured in Subtask 1. Format these into a user-friendly report string. The report should explicitly state: 'Total new tasks appended: X', 'Tasks identified for expansion: Y', 'Subtasks generated: Z', and 'Warnings/Errors: W'.
+
+## 4. Integrate Progress and Summary Output into CLI Workflow [pending]
+### Dependencies: 33.2, 33.3
+### Description: Hook the real-time progress indicators and the final summary report into the main 'Append + Auto-Expand' CLI command workflow.
+### Details:
+Modify the main CLI command handler for 'Append + Auto-Expand' to: 1. Start the progress indicator before initiating the parsing/expansion. 2. Update or switch indicators as phases change. 3. Stop the progress indicator upon completion. 4. Print the generated summary report to the console after the process finishes.
+
+## 5. Refine User Messaging and Error Handling Display [pending]
+### Dependencies: 33.4
+### Description: Review and refine all user-facing messages, including progress updates, warnings, and error displays, to ensure clarity, consistency, and helpfulness.
+### Details:
+Standardize the language used in progress messages, warning messages, and error reports. Ensure that warnings and errors captured in Subtask 1 are clearly presented in the final summary or immediately after they occur, providing actionable information to the user. Consider color-coding for warnings/errors if supported by the CLI library.
+

@@ -6,6 +6,7 @@
 import chalk from 'chalk';
 import boxen from 'boxen';
 import inquirer from 'inquirer';
+import path from 'path';
 import { findProjectRoot } from '../../scripts/modules/utils.js';
 import { getConfig } from '../../scripts/modules/config-manager.js';
 import { listTasks } from '../../scripts/modules/task-manager.js';
@@ -1411,14 +1412,77 @@ async function handleListTasks(sessionState) {
  */
 async function handleKanbanBoard(sessionState) {
     try {
+        // First, ask user if they want to filter by PRD
+        const { viewType } = await inquirer.prompt([{
+            type: 'list',
+            name: 'viewType',
+            message: chalk.cyan('How would you like to view the Kanban board?'),
+            choices: [
+                { name: chalk.green('📋 View All Tasks'), value: 'all' },
+                { name: chalk.blue('📄 View Tasks by PRD'), value: 'prd' },
+                new inquirer.Separator(),
+                { name: chalk.gray('← Back to Task Operations'), value: 'back' }
+            ]
+        }]);
+
+        if (viewType === 'back') {
+            return;
+        }
+
+        let prdFilter = null;
+
+        if (viewType === 'prd') {
+            // Import the function to get unique PRD references
+            const { getUniquePRDReferences } = await import('../kanban/kanban-board.js');
+            const projectRoot = sessionState.projectRoot;
+            const tasksPath = path.join(projectRoot, 'tasks', 'tasks.json');
+            const prdReferences = getUniquePRDReferences(tasksPath);
+
+            if (prdReferences.length === 0) {
+                console.log(chalk.yellow('⚠️ No PRD references found in tasks. Showing all tasks instead.'));
+                await inquirer.prompt([{
+                    type: 'input',
+                    name: 'continue',
+                    message: chalk.dim('Press Enter to continue...')
+                }]);
+            } else {
+                const { selectedPRD } = await inquirer.prompt([{
+                    type: 'list',
+                    name: 'selectedPRD',
+                    message: chalk.cyan('Select a PRD to filter by:'),
+                    choices: [
+                        ...prdReferences.map(prd => ({ name: chalk.white(prd), value: prd })),
+                        new inquirer.Separator(),
+                        { name: chalk.gray('← Back to view options'), value: 'back' }
+                    ]
+                }]);
+
+                if (selectedPRD === 'back') {
+                    return handleKanbanBoard(sessionState); // Recursive call to show view options again
+                }
+
+                prdFilter = selectedPRD;
+            }
+        }
+
         console.log(chalk.blue('Launching Kanban board...'));
-        console.log(chalk.gray('Use arrow keys to navigate, 1-3 to move tasks, Q to quit'));
+        console.log(chalk.gray('Use arrow keys to navigate, 1-3 to move tasks, Q to return to menu'));
 
         // Give user a moment to read the instructions
         await new Promise(resolve => setTimeout(resolve, 2000));
 
-        // Launch the Kanban board
-        await launchKanbanBoard();
+        // Import and create a Kanban board instance with optional PRD filter
+        const { KanbanBoard } = await import('../kanban/kanban-board.js');
+        const board = new KanbanBoard(prdFilter);
+
+        // Start the board and wait for it to finish
+        await board.start();
+
+        // Give a moment for cleanup to complete
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        // Board has finished, show completion message
+        console.log(chalk.green('\n✅ Kanban board session completed'));
 
     } catch (error) {
         console.error(chalk.red('❌ Failed to launch Kanban board:'), error.message);
