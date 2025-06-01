@@ -14,6 +14,8 @@ import { generateTextService } from '../ai-services-unified.js';
 
 import { getDefaultSubtasks, getDebugFlag } from '../config-manager.js';
 import generateTaskFiles from './generate-task-files.js';
+import analyzeTaskComplexity from './analyze-task-complexity.js';
+import inquirer from 'inquirer';
 
 // Define Zod schema for PRD source metadata (inherited from parent task)
 const prdSourceSchema = z.object({
@@ -398,6 +400,76 @@ function parseSubtasksFromText(
 }
 
 /**
+ * Prompt user for complexity analysis if not available
+ * @param {Object} task - The task to analyze
+ * @param {string} tasksPath - Path to tasks.json
+ * @param {Object} context - Context object with session and logging
+ * @param {boolean} outputFormat - Output format (text/json)
+ * @returns {Promise<Object|null>} Complexity analysis result or null if declined
+ */
+async function promptForComplexityAnalysis(task, tasksPath, context, outputFormat) {
+	const { session, mcpLog, projectRoot } = context;
+
+	// Skip prompt for MCP calls (non-interactive)
+	if (mcpLog) {
+		return null;
+	}
+
+	console.log(`\n🤔 No complexity analysis found for task ${task.id}: "${task.title}"`);
+	console.log('💡 Complexity analysis helps determine the optimal number of subtasks and provides better context for expansion.');
+
+	const { shouldAnalyze } = await inquirer.prompt([{
+		type: 'confirm',
+		name: 'shouldAnalyze',
+		message: 'Would you like to perform complexity analysis first? (Recommended)',
+		default: true
+	}]);
+
+	if (!shouldAnalyze) {
+		console.log('⏭️  Proceeding without complexity analysis...');
+		return null;
+	}
+
+	console.log('🔍 Performing complexity analysis...');
+
+	try {
+		// Run complexity analysis for this specific task
+		const result = await analyzeTaskComplexity({
+			file: tasksPath,
+			output: path.join(projectRoot || path.dirname(path.dirname(tasksPath)), 'scripts/task-complexity-report.json'),
+			threshold: 1, // Analyze all tasks
+			research: false // Use standard analysis for speed
+		}, { session, mcpLog });
+
+		if (result && result.success) {
+			console.log('✅ Complexity analysis completed!');
+
+			// Read the generated report to get analysis for this task
+			const reportPath = path.join(projectRoot || path.dirname(path.dirname(tasksPath)), 'scripts/task-complexity-report.json');
+			if (fs.existsSync(reportPath)) {
+				const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
+				const taskAnalysis = report.complexityAnalysis?.find(a => a.taskId === task.id);
+
+				if (taskAnalysis) {
+					console.log(`📊 Task ${task.id} complexity score: ${taskAnalysis.complexityScore}/10`);
+					console.log(`🎯 Recommended subtasks: ${taskAnalysis.recommendedSubtasks}`);
+					console.log(`💭 Reasoning: ${taskAnalysis.reasoning}`);
+					return taskAnalysis;
+				}
+			}
+		}
+
+		console.log('⚠️  Complexity analysis completed but no specific analysis found for this task.');
+		return null;
+
+	} catch (error) {
+		console.log(`❌ Complexity analysis failed: ${error.message}`);
+		console.log('⏭️  Proceeding without complexity analysis...');
+		return null;
+	}
+}
+
+/**
  * Expand a task into subtasks using the unified AI service (generateTextService).
  * Appends new subtasks by default. Replaces existing subtasks if force=true.
  * Integrates complexity report to determine subtask count and prompt if available,
@@ -507,6 +579,25 @@ async function expandTask(
 			logger.warn(
 				`Could not read or parse complexity report: ${reportError.message}. Proceeding without it.`
 			);
+		}
+
+		// --- Prompt for Complexity Analysis if Not Available ---
+		if (!taskAnalysis && outputFormat === 'text') {
+			logger.info('No complexity analysis available. Prompting user...');
+			const promptedAnalysis = await promptForComplexityAnalysis(
+				task,
+				tasksPath,
+				{ session, mcpLog, projectRoot },
+				outputFormat
+			);
+
+			if (promptedAnalysis) {
+				taskAnalysis = promptedAnalysis;
+				if (taskAnalysis.reasoning) {
+					complexityReasoningContext = `\nComplexity Analysis Reasoning: ${taskAnalysis.reasoning}`;
+				}
+				logger.info(`Using prompted complexity analysis for task ${task.id}: Score ${taskAnalysis.complexityScore}`);
+			}
 		}
 
 		// Determine final subtask count

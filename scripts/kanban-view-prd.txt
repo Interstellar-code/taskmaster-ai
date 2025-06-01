@@ -1,0 +1,384 @@
+# Product Requirements Document - Kanban Board View for TaskMaster AI
+
+**Project Name:** Interactive Kanban Board Visualization for TaskMaster AI
+**Version:** 1.0
+**Date:** 2025-01-06
+**Author(s):** Development Team
+**Stakeholders:** TaskMaster Users, Development Team, Project Managers
+
+---
+
+## 📋 Executive Summary
+
+**Problem Statement:**
+TaskMaster AI currently provides excellent CLI and text-based task management capabilities, but lacks visual task management interfaces that many users expect from modern project management tools. Users must rely on text-based commands and lists to understand project status, task distribution, and workflow progress, which can be inefficient for quick overviews and status updates.
+
+**Solution Overview:**
+Implement a terminal-based Kanban board view within TaskMaster's existing CLI interface that provides visual task management capabilities using ASCII art and terminal UI components. The Kanban board will display tasks as text cards organized by status columns, support keyboard navigation for status updates, and integrate seamlessly with the existing interactive menu system.
+
+**Business Impact:**
+- Enhanced user experience with terminal-based visual task management
+- Faster project status assessment without leaving the CLI environment
+- Improved workflow efficiency for CLI-focused users and developers
+- Better task overview capabilities within familiar terminal interface
+- Zero additional dependencies or external tools required
+
+**Success Metrics:**
+- Terminal Kanban board successfully displays all tasks organized by TaskMaster's 3 status columns
+- Keyboard navigation allows efficient task status updates between pending/in-progress/done
+- ASCII task cards display comprehensive TaskMaster metadata
+- Integration with existing interactive menu system is seamless
+- Terminal UI remains responsive and visually clear
+- User adoption measured through menu usage analytics
+
+---
+
+## 🎯 Project Objectives
+
+### Primary Goals
+1. Implement terminal-based Kanban board view within 3-4 days
+2. Provide ASCII visual task management using TaskMaster's existing status values
+3. Enable keyboard navigation for task status updates and operations
+4. Integrate seamlessly with existing TaskMaster interactive menu system
+
+### Secondary Goals
+- Improve user experience for CLI users who want visual task overview
+- Provide quick project status assessment without leaving terminal
+- Enable efficient task navigation and status updates through keyboard shortcuts
+- Maintain consistent terminal UI styling with existing TaskMaster interface
+
+### Non-Goals (Out of Scope)
+- Web-based or GUI interfaces
+- Mouse/drag-and-drop functionality
+- New status columns or custom task statuses
+- Advanced Kanban features (swimlanes, WIP limits, custom columns)
+- Real-time collaboration features
+- External dependencies or frameworks
+
+---
+
+## 👥 Target Users & Use Cases
+
+### Primary Users
+**Project Managers**
+- **Profile:** Users who oversee multiple projects and need quick status overviews
+- **Goals:** Visualize project progress, identify bottlenecks, manage task distribution
+- **Pain Points:** Text-based interfaces require more cognitive load for status assessment
+
+**Development Team Leads**
+- **Profile:** Technical leads who prefer CLI tools and manage development tasks
+- **Goals:** Track development progress, manage task assignments, identify blockers
+- **Pain Points:** Need visual overview while staying in terminal environment
+
+**CLI-Focused Users**
+- **Profile:** Developers and system administrators who work primarily in terminal
+- **Goals:** Get visual task overview without leaving command-line environment
+- **Pain Points:** Switching between terminal and GUI tools disrupts workflow
+
+### Key Use Cases
+1. **Developer Reviewing Sprint Progress**
+   - **Actor:** Development Team Lead
+   - **Scenario:** Access Kanban view from TaskMaster menu to assess current sprint status
+   - **Expected Outcome:** Terminal-based visual overview of task distribution across status columns
+
+2. **CLI User Updating Task Status**
+   - **Actor:** CLI-Focused User
+   - **Scenario:** Navigate to task in Kanban view and use keyboard shortcuts to update status
+   - **Expected Outcome:** Task status updated in TaskMaster data with immediate visual feedback
+
+3. **Project Manager Getting Quick Overview**
+   - **Actor:** Project Manager
+   - **Scenario:** Launch Kanban view to quickly assess project progress without leaving terminal
+   - **Expected Outcome:** Clear ASCII-based view of all tasks organized by status
+
+---
+
+## ⚙️ Functional Requirements
+
+### Core Features
+
+#### Feature 1: Terminal Kanban Board Layout and Display
+**Description:** Implement ASCII-based board layout with status columns displaying task cards in terminal
+**Priority:** High
+**User Story:** As a CLI user, I want to see all my tasks organized in terminal columns by status so that I can quickly assess project progress
+
+**Acceptance Criteria:**
+- [ ] Terminal board displays 3 status columns using ASCII art and box drawing characters
+- [ ] Columns represent TaskMaster's existing statuses: "pending", "in-progress", "done"
+- [ ] Each column shows task count in header (e.g., "📋 IN PROGRESS (3)")
+- [ ] Task cards display as text boxes within appropriate status columns based on task.status
+- [ ] Empty columns display "No tasks" placeholder message
+- [ ] Board adapts to terminal width and height dynamically
+- [ ] Column headers use consistent TaskMaster styling with emojis and colors
+- [ ] Board scrolls vertically if tasks exceed terminal height
+
+**Dependencies:** None
+
+#### Feature 2: ASCII Task Card Design and Metadata Display
+**Description:** Design informative ASCII task cards showing essential TaskMaster metadata
+**Priority:** High
+**User Story:** As a CLI user, I want task cards to show relevant information in text format so that I can understand task details at a glance
+
+**Acceptance Criteria:**
+- [ ] ASCII task cards display: ID, title, priority, dependencies count, PRD source indicator
+- [ ] Priority indicated with colored text and symbols (🔴 High, 🟡 Medium, 🟢 Low)
+- [ ] Dependencies shown as text badge (e.g., "Deps: 2")
+- [ ] PRD source indicated with 📄 icon when task has prdSource
+- [ ] Cards use box drawing characters for clean visual separation
+- [ ] Long titles are truncated with "..." and full title shown in status bar when selected
+- [ ] Cards fit within terminal column width constraints
+
+**Dependencies:** Feature 1 (Terminal Kanban Board Layout)
+
+#### Feature 3: Keyboard Navigation and Status Updates
+**Description:** Enable keyboard navigation to move tasks between status columns
+**Priority:** High
+**User Story:** As a CLI user, I want to use keyboard shortcuts to move tasks between columns so that I can efficiently manage task workflow
+
+**Acceptance Criteria:**
+- [ ] Arrow keys navigate between tasks and columns
+- [ ] Enter key selects/highlights a task for operations
+- [ ] Number keys (1-3) move selected task to corresponding status column (1=pending, 2=in-progress, 3=done)
+- [ ] Visual feedback shows currently selected task with highlighting
+- [ ] Task status updated in tasks.json when moved to new column
+- [ ] Column task counts update immediately after successful move
+- [ ] Status bar shows available keyboard shortcuts and current selection
+
+**Dependencies:** Feature 1 (Terminal Kanban Board Layout), Feature 2 (ASCII Task Card Design)
+
+#### Feature 4: Quick Task Operations via Keyboard
+**Description:** Provide quick access to common task operations using keyboard shortcuts
+**Priority:** Medium
+**User Story:** As a CLI user, I want to perform common task operations from the Kanban view using keyboard shortcuts so that I can stay efficient
+
+**Acceptance Criteria:**
+- [ ] 'V' key shows detailed task information in bottom panel
+- [ ] 'D' key deletes selected task with confirmation prompt
+- [ ] 'E' key opens inline edit mode for task title
+- [ ] 'I' key shows task ID and metadata in status bar
+- [ ] 'R' key refreshes board from tasks.json
+- [ ] All operations update tasks.json and refresh board display immediately
+- [ ] Operations maintain data consistency with existing TaskMaster commands
+
+**Dependencies:** Feature 2 (ASCII Task Card Design)
+
+#### Feature 5: Terminal Board Navigation and Controls
+**Description:** Implement terminal-based navigation controls and board management features
+**Priority:** Medium
+**User Story:** As a CLI user, I want terminal-based board controls and navigation so that I can efficiently use the Kanban interface
+
+**Acceptance Criteria:**
+- [ ] 'F' key toggles filter mode (priority, PRD source, status)
+- [ ] '/' key opens search mode to find specific tasks
+- [ ] 'S' key shows board statistics in status bar (total tasks, completion %)
+- [ ] 'H' key shows help overlay with all keyboard shortcuts
+- [ ] 'Q' key exits Kanban view and returns to TaskMaster menu
+- [ ] Tab key cycles through different board sections (columns, filters, help)
+- [ ] Status bar always shows current mode and available shortcuts
+
+**Dependencies:** Feature 1 (Terminal Kanban Board Layout)
+
+### Supporting Features
+
+#### Feature 6: TaskMaster Menu Integration
+**Description:** Seamless integration with existing TaskMaster interactive menu system
+**Priority:** High
+**Rationale:** Ensures Kanban view is easily accessible from existing Task Operations menu
+
+#### Feature 7: Terminal UI Consistency
+**Description:** Maintain consistent styling and behavior with existing TaskMaster terminal interface
+**Priority:** Medium
+**Rationale:** Provides familiar user experience and maintains TaskMaster's visual identity
+
+---
+
+## 🔧 Technical Requirements
+
+### System Architecture
+**Technology Stack:**
+- **Terminal UI Framework:** Blessed.js or Ink.js for rich terminal interfaces
+- **Keyboard Handling:** Built-in Node.js readline or blessed keyboard events
+- **Styling:** Chalk.js for colors and terminal styling (consistent with TaskMaster)
+- **Data Management:** Direct JSON file reading/writing using existing TaskMaster utilities
+- **Layout Engine:** Custom ASCII art and box drawing characters for board layout
+
+**Architecture Patterns:**
+- Event-driven terminal UI with keyboard event handling
+- Modular component structure for board sections (columns, cards, status bar)
+- Direct integration with existing TaskMaster utilities and data structures
+- State management using simple JavaScript objects for board state
+
+### Performance Requirements
+- **Load Time:** Board should load and display tasks within 1 second for projects with 100+ tasks
+- **Keyboard Response:** Keyboard navigation should have <50ms response time
+- **Memory Usage:** Terminal UI should handle projects with 500+ tasks without performance degradation
+- **Terminal Refresh:** Screen updates should be smooth without flickering
+
+### Integration Requirements
+- **Menu Integration:** Add "📊 Kanban Board View" option to Task Operations submenu
+- **Data Compatibility:** Read/write existing tasks.json format without modifications
+- **Utility Integration:** Use existing TaskMaster utilities (readJSON, writeJSON, etc.)
+- **Styling Consistency:** Match existing TaskMaster terminal styling and color schemes
+
+### Terminal UI Requirements
+- **Cross-platform Compatibility:** Work on Windows PowerShell, macOS Terminal, Linux terminals
+- **Terminal Size Adaptation:** Dynamically adjust layout based on terminal dimensions
+- **Color Support:** Graceful degradation for terminals with limited color support
+- **Keyboard Compatibility:** Support standard terminal keyboard input methods
+
+### TaskMaster Status Compatibility Requirements
+- **Existing Status Values Only:** Use only TaskMaster's current status values: "pending", "in-progress", "done"
+- **No New Status Creation:** Do not introduce new status columns or values (e.g., review, blocked, deferred, cancelled)
+- **Status Validation:** Ensure all status updates use TaskMaster's existing status validation logic
+- **Data Consistency:** Maintain full compatibility with existing tasks.json structure and status field
+
+---
+
+## 🚀 Implementation Plan
+
+### Phase 1: Terminal UI Foundation (Timeline: Day 1)
+**Scope:** Basic terminal board layout and ASCII rendering
+**Key Deliverables:**
+- Terminal UI framework setup (Blessed.js or Ink.js)
+- Basic ASCII Kanban board layout with status columns
+- Task card rendering using box drawing characters
+- Integration with existing TaskMaster utilities for JSON reading
+
+**Success Criteria:** Static terminal board displays all tasks in correct columns
+
+### Phase 2: Keyboard Navigation (Timeline: Day 2)
+**Scope:** Interactive keyboard navigation and task selection
+**Key Deliverables:**
+- Arrow key navigation between tasks and columns
+- Task selection and highlighting system
+- Status bar showing current selection and available shortcuts
+- Basic keyboard event handling
+
+**Success Criteria:** Users can navigate board and select tasks using keyboard
+
+### Phase 3: Status Updates and Operations (Timeline: Day 3)
+**Scope:** Task status updates using TaskMaster's existing status values and basic operations
+**Key Deliverables:**
+- Number key shortcuts (1-3) for moving tasks between TaskMaster's 3 status columns
+- Task status update logic using only "pending", "in-progress", "done" values
+- Integration with existing TaskMaster status validation
+- Quick operations (view details, delete, edit)
+- Column count updates and board refresh
+
+**Success Criteria:** Tasks can be moved between columns with persistent status updates using existing TaskMaster status values
+
+### Phase 4: Menu Integration and Polish (Timeline: Day 4)
+**Scope:** TaskMaster menu integration and enhanced features
+**Key Deliverables:**
+- Integration with TaskMaster Task Operations submenu
+- Filtering and search functionality
+- Help system with keyboard shortcut overlay
+- Terminal UI polish and error handling
+
+**Success Criteria:** Kanban board accessible from TaskMaster menu with full feature set
+
+---
+
+## ⚠️ Risks & Mitigation
+
+### Technical Risks
+**Risk 1:** Terminal compatibility issues across different platforms
+- **Impact:** Medium
+- **Probability:** Medium
+- **Mitigation:** Extensive testing on Windows PowerShell, macOS Terminal, and Linux terminals
+
+**Risk 2:** Performance issues with terminal rendering for large task datasets
+- **Impact:** Medium
+- **Probability:** Low
+- **Mitigation:** Implement efficient rendering and virtual scrolling for large boards
+
+### User Experience Risks
+**Risk 1:** Keyboard navigation not intuitive for users unfamiliar with terminal UIs
+- **Impact:** Medium
+- **Probability:** Medium
+- **Mitigation:** Comprehensive help system and clear visual indicators for available shortcuts
+
+**Risk 2:** Limited visual appeal compared to modern GUI Kanban boards
+- **Impact:** Low
+- **Probability:** High
+- **Mitigation:** Focus on functionality and efficiency rather than visual aesthetics
+
+---
+
+## 📋 Testing Strategy
+
+### Testing Approach
+- **Unit Testing:** Terminal UI component testing with Node.js test frameworks
+- **Integration Testing:** File system operations and TaskMaster menu integration
+- **Cross-platform Testing:** Terminal compatibility testing on Windows, macOS, Linux
+- **User Acceptance Testing:** Workflow testing with CLI-focused user personas
+- **Performance Testing:** Terminal rendering performance with large task datasets
+
+### Test Scenarios
+1. **Basic Board Functionality:** Verify ASCII task display and column organization
+2. **Keyboard Navigation:** Test arrow key navigation and task selection
+3. **Status Update Operations:** Test number key shortcuts and data persistence
+4. **TaskMaster Menu Integration:** Verify seamless integration with Task Operations submenu
+5. **Terminal Compatibility:** Ensure consistent behavior across different terminal environments
+
+---
+
+## 📚 Documentation Requirements
+
+### User Documentation
+- [ ] Updated TaskMaster interactive menu documentation
+- [ ] User guide for terminal Kanban board navigation and keyboard shortcuts
+- [ ] Keyboard shortcuts reference card
+- [ ] Integration guide showing menu access and workflow
+
+### Technical Documentation
+- [ ] Terminal UI architecture documentation for Kanban board implementation
+- [ ] Integration documentation for TaskMaster menu system
+- [ ] Development setup guide for terminal UI modifications
+- [ ] Cross-platform compatibility guide
+
+---
+
+## ✅ Acceptance Criteria Summary
+
+**Definition of Done:**
+- Terminal Kanban board displays all tasks organized by TaskMaster's 3 status columns (pending, in-progress, done)
+- Keyboard navigation allows efficient task status updates in tasks.json using existing status values
+- Board accessible through TaskMaster Task Operations submenu
+- ASCII task cards show comprehensive metadata (ID, title, priority, dependencies, PRD source)
+- Quick task operations available through keyboard shortcuts
+- Board integrates seamlessly with existing TaskMaster terminal interface
+- All existing TaskMaster functionality remains intact
+- No new status values introduced - uses only pending/in-progress/done
+- Performance acceptable for projects with 100+ tasks in terminal environment
+- User documentation updated with terminal Kanban board usage and keyboard shortcuts
+
+---
+
+## 💡 TaskMaster AI Integration Notes
+
+**Implementation Commands:**
+```bash
+# Launch TaskMaster interactive menu
+task-master menu
+
+# Navigate to Task Operations submenu
+# Select: "📊 Kanban Board View"
+```
+
+**Expected Workflow:**
+1. User launches TaskMaster interactive menu
+2. User navigates to Task Operations submenu
+3. User selects "📊 Kanban Board View" option
+4. Terminal Kanban board displays with ASCII columns and task cards
+5. User navigates with arrow keys and updates task status with number keys
+6. Changes automatically sync to tasks.json
+7. User presses 'Q' to exit back to TaskMaster menu
+8. Board reflects any external changes to tasks.json when reopened
+
+**Technical Integration Points:**
+- Board reads tasks.json using existing TaskMaster readJSON utility
+- Status updates use same validation as existing TaskMaster commands
+- Terminal UI integrates with existing menu system architecture
+- Keyboard event handling follows TaskMaster's interactive menu patterns
+- ASCII styling matches existing TaskMaster terminal interface design

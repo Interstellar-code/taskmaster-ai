@@ -834,6 +834,44 @@ async function handleSettings(sessionState) {
 }
 
 /**
+ * Generate menu choices for PRD parsing based on whether existing tasks are present
+ * @param {boolean} hasExistingTasks - Whether existing tasks are detected
+ * @returns {Array} Array of Inquirer.js choice objects
+ */
+function generatePRDMenuChoices(hasExistingTasks) {
+    const choices = [
+        {
+            name: chalk.green('➕ Append new tasks (recommended)'),
+            value: 'append',
+            short: 'Append'
+        },
+        {
+            name: chalk.yellow('🔄 Replace all tasks'),
+            value: 'replace',
+            short: 'Replace'
+        }
+    ];
+
+    // Add the new "Append + Auto-Expand" option only when existing tasks are detected
+    if (hasExistingTasks) {
+        choices.splice(1, 0, {
+            name: chalk.cyan('➕ Append new tasks + Auto-expand complex tasks'),
+            value: 'appendAndAutoExpand',
+            short: 'Append + Expand'
+        });
+    }
+
+    // Add cancel option at the end
+    choices.push({
+        name: chalk.gray('❌ Cancel'),
+        value: 'cancel',
+        short: 'Cancel'
+    });
+
+    return choices;
+}
+
+/**
  * Specialized handlers for complex operations
  */
 async function handleParsePRD(sessionState) {
@@ -866,23 +904,7 @@ async function handleParsePRD(sessionState) {
                 type: 'list',
                 name: 'action',
                 message: 'How would you like to proceed?',
-                choices: [
-                    {
-                        name: chalk.green('➕ Append new tasks (recommended)'),
-                        value: 'append',
-                        short: 'Append'
-                    },
-                    {
-                        name: chalk.yellow('🔄 Replace all tasks'),
-                        value: 'replace',
-                        short: 'Replace'
-                    },
-                    {
-                        name: chalk.gray('❌ Cancel'),
-                        value: 'cancel',
-                        short: 'Cancel'
-                    }
-                ]
+                choices: generatePRDMenuChoices(hasExistingTasks)
             }]);
 
             if (action === 'cancel') {
@@ -896,11 +918,16 @@ async function handleParsePRD(sessionState) {
 
             // Build arguments based on user choice
             const args = [`--input=${params.filePath}`, `--num-tasks=${params.numTasks}`];
-            if (action === 'append') {
+            if (action === 'append' || action === 'appendAndAutoExpand') {
                 args.push('--append');
             }
 
-            await executeCommand('parse-prd', args, { projectRoot: sessionState.projectRoot });
+            // Handle the new append + auto-expand option
+            if (action === 'appendAndAutoExpand') {
+                await handleAppendAndAutoExpand(args, sessionState);
+            } else {
+                await executeCommand('parse-prd', args, { projectRoot: sessionState.projectRoot });
+            }
         } else {
             // No existing tasks, proceed normally
             const params = await promptForPRDParameters();
@@ -1067,6 +1094,198 @@ async function browsePRDFiles() {
         console.error(chalk.red('Error browsing PRD files:'), error.message);
         return null;
     }
+}
+
+/**
+ * Handle the "Append + Auto-Expand" option for PRD parsing
+ * This function first parses the PRD to append new tasks, then automatically expands complex tasks
+ * @param {Array} args - Command arguments for parse-prd
+ * @param {Object} sessionState - Current session state
+ */
+async function handleAppendAndAutoExpand(args, sessionState) {
+    try {
+        console.log(chalk.cyan('\n🚀 Starting Append + Auto-Expand process...'));
+
+        // Step 1: Parse PRD and append new tasks
+        console.log(chalk.blue('📝 Step 1: Parsing PRD and appending new tasks...'));
+        await executeCommand('parse-prd', args, { projectRoot: sessionState.projectRoot });
+
+        // Step 2: Perform complexity analysis
+        console.log(chalk.blue('🔍 Step 2: Performing comprehensive complexity analysis...'));
+
+        // Read the updated tasks to find newly added ones
+        const path = await import('path');
+        const fs = await import('fs');
+        const tasksPath = path.join(sessionState.projectRoot, 'tasks', 'tasks.json');
+
+        // Perform complexity analysis first
+        try {
+            await executeCommand('analyze-complexity', ['--file', tasksPath], { projectRoot: sessionState.projectRoot });
+            console.log(chalk.green('✅ Complexity analysis completed successfully!'));
+        } catch (analysisError) {
+            console.log(chalk.yellow(`⚠️  Complexity analysis failed: ${analysisError.message}. Using fallback criteria.`));
+        }
+
+        // Step 3: Identify complex tasks for expansion
+        console.log(chalk.blue('🔍 Step 3: Identifying tasks suitable for auto-expansion...'));
+
+        if (fs.existsSync(tasksPath)) {
+            const tasksData = JSON.parse(fs.readFileSync(tasksPath, 'utf8'));
+            const complexTasks = identifyComplexTasks(tasksData.tasks);
+
+            if (complexTasks.length > 0) {
+                console.log(chalk.yellow(`🎯 Found ${complexTasks.length} complex task(s) suitable for expansion:`));
+
+                // Try to read complexity analysis results for better display
+                const complexityReportPath = path.join(sessionState.projectRoot, 'scripts', 'task-complexity-report.json');
+                let complexityReport = null;
+                try {
+                    if (fs.existsSync(complexityReportPath)) {
+                        complexityReport = JSON.parse(fs.readFileSync(complexityReportPath, 'utf8'));
+                    }
+                } catch (error) {
+                    // Ignore errors, use fallback display
+                }
+
+                complexTasks.forEach((task, index) => {
+                    console.log(chalk.gray(`   ${index + 1}. Task ${task.id}: ${task.title}`));
+
+                    // Show complexity information if available
+                    if (complexityReport?.complexityAnalysis) {
+                        const analysis = complexityReport.complexityAnalysis.find(a => a.taskId === task.id);
+                        if (analysis) {
+                            console.log(chalk.gray(`      Complexity: ${analysis.complexityScore}/10, Recommended subtasks: ${analysis.recommendedSubtasks || 3}`));
+                        }
+                    }
+                });
+
+                // Step 4: Auto-expand each complex task
+                console.log(chalk.blue('⚡ Step 4: Auto-expanding complex tasks...'));
+                const startTime = Date.now();
+                let expandedCount = 0;
+
+                for (let i = 0; i < complexTasks.length; i++) {
+                    const task = complexTasks[i];
+                    const taskStartTime = Date.now();
+
+                    try {
+                        // Show progress
+                        const progressBar = '█'.repeat(i) + '░'.repeat(complexTasks.length - i);
+                        console.log(chalk.blue(`   📊 Progress: [${progressBar}] ${i}/${complexTasks.length}`));
+                        console.log(chalk.cyan(`   ${i + 1}/${complexTasks.length} Expanding task ${task.id}...`));
+
+                        await executeCommand('expand', [`--id=${task.id}`], { projectRoot: sessionState.projectRoot });
+
+                        const taskDuration = Date.now() - taskStartTime;
+                        console.log(chalk.green(`   ✅ Successfully expanded task ${task.id} (${taskDuration}ms)`));
+                        expandedCount++;
+                    } catch (error) {
+                        const taskDuration = Date.now() - taskStartTime;
+                        console.log(chalk.red(`   ❌ Failed to expand task ${task.id} after ${taskDuration}ms: ${error.message}`));
+                    }
+                }
+
+                // Final progress
+                const finalProgressBar = '█'.repeat(complexTasks.length);
+                console.log(chalk.green(`   📊 Progress: [${finalProgressBar}] ${complexTasks.length}/${complexTasks.length} - Complete!`));
+
+                // Step 4: Display enhanced summary
+                const totalDuration = Date.now() - startTime;
+                const avgTimePerTask = expandedCount > 0 ? Math.round(totalDuration / expandedCount) : 0;
+
+                console.log(chalk.green(`\n✅ Append + Auto-Expand completed in ${totalDuration}ms!`));
+                console.log(chalk.white(`📊 Detailed Summary:`));
+                console.log(chalk.gray(`   • Tasks appended from PRD`));
+                console.log(chalk.gray(`   • ${complexTasks.length} complex tasks identified using intelligent criteria`));
+                console.log(chalk.gray(`   • ${expandedCount} tasks successfully expanded`));
+                console.log(chalk.gray(`   • Total processing time: ${totalDuration}ms`));
+
+                if (expandedCount > 0) {
+                    console.log(chalk.gray(`   • Average time per expansion: ${avgTimePerTask}ms`));
+                }
+
+                if (expandedCount < complexTasks.length) {
+                    console.log(chalk.yellow(`   ⚠️  ${complexTasks.length - expandedCount} tasks failed to expand`));
+                }
+
+                // Performance insights
+                if (totalDuration > 30000) { // > 30 seconds
+                    console.log(chalk.blue(`   💡 Performance note: Expansion took ${Math.round(totalDuration/1000)}s. Consider using smaller batches for large PRDs.`));
+                }
+            } else {
+                console.log(chalk.green('✅ PRD parsing completed. No complex tasks identified for auto-expansion.'));
+            }
+        } else {
+            console.log(chalk.red('❌ Could not find tasks file after PRD parsing.'));
+        }
+
+    } catch (error) {
+        console.error(chalk.red('❌ Error in Append + Auto-Expand process:'), error.message);
+        throw error;
+    }
+}
+
+/**
+ * Identify complex tasks that should be automatically expanded using intelligent criteria
+ * This is a simplified version of the intelligent complexity analysis for the menu system
+ * @param {Array} tasks - Array of task objects
+ * @returns {Array} Array of complex tasks suitable for expansion
+ */
+function identifyComplexTasks(tasks) {
+    if (!Array.isArray(tasks)) return [];
+
+    // Use a simplified version of the intelligent criteria for the menu
+    const MENU_COMPLEXITY_THRESHOLD = 60;
+
+    return tasks.filter(task => {
+        // Skip tasks that already have subtasks
+        if (task.subtasks && task.subtasks.length > 0) return false;
+
+        const description = task.description || '';
+        const title = task.title || '';
+        const details = task.details || '';
+        const combinedText = `${title} ${description} ${details}`.toLowerCase();
+
+        let score = 0;
+
+        // Length scoring (simplified)
+        if (combinedText.length > 500) score += 30;
+        else if (combinedText.length > 250) score += 20;
+        else if (combinedText.length > 100) score += 10;
+
+        // High complexity keywords
+        const highComplexityKeywords = [
+            'architecture', 'framework', 'infrastructure', 'microservice',
+            'distributed', 'scalable', 'enterprise', 'integration',
+            'authentication', 'authorization', 'security', 'encryption'
+        ];
+        const highMatches = highComplexityKeywords.filter(k => combinedText.includes(k));
+        score += highMatches.length * 15;
+
+        // Medium complexity keywords
+        const mediumComplexityKeywords = [
+            'implement', 'develop', 'design', 'create', 'build',
+            'configure', 'setup', 'establish', 'database', 'api',
+            'interface', 'component', 'module', 'service', 'system'
+        ];
+        const mediumMatches = mediumComplexityKeywords.filter(k => combinedText.includes(k));
+        score += mediumMatches.length * 10;
+
+        // Technical indicators
+        const technicalIndicators = [
+            'algorithm', 'optimization', 'performance', 'caching', 'queue',
+            'async', 'concurrent', 'parallel', 'real-time', 'streaming'
+        ];
+        const techMatches = technicalIndicators.filter(k => combinedText.includes(k));
+        score += techMatches.length * 12;
+
+        // Multiple requirements
+        const scopeIndicators = [' and ', ' or ', 'including', 'such as', 'multiple'];
+        const scopeMatches = scopeIndicators.filter(k => combinedText.includes(k));
+        score += scopeMatches.length * 8;
+
+        return score >= MENU_COMPLEXITY_THRESHOLD;
+    });
 }
 
 async function handleListTasks(sessionState) {

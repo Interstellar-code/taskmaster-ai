@@ -619,6 +619,10 @@ function registerCommands(programInstance) {
 			'-r, --research',
 			'Use Perplexity AI for research-backed task generation, providing more comprehensive and accurate task breakdown'
 		)
+		.option(
+			'--auto-expand',
+			'Automatically expand complex tasks into subtasks after parsing (only works with --append)'
+		)
 		.action(async (file, options) => {
 			// Use input option if file argument not provided
 			const inputFile = file || options.input;
@@ -628,8 +632,20 @@ function registerCommands(programInstance) {
 			const force = options.force || false;
 			const append = options.append || false;
 			const research = options.research || false;
+			const autoExpand = options.autoExpand || false;
 			let useForce = force;
 			let useAppend = append;
+
+			// Validate auto-expand option
+			if (autoExpand && !append) {
+				console.error(
+					chalk.red('Error: --auto-expand can only be used with --append option')
+				);
+				console.log(
+					chalk.yellow('Usage: task-master parse-prd --append --auto-expand')
+				);
+				process.exit(1);
+			}
 
 			// Helper function to check if tasks.json exists and confirm overwrite
 			async function confirmOverwriteIfNeeded() {
@@ -661,7 +677,8 @@ function registerCommands(programInstance) {
 						await parsePRD(defaultPrdPath, outputPath, numTasks, {
 							append: useAppend, // Changed key from useAppend to append
 							force: useForce, // Changed key from useForce to force
-							research: research
+							research: research,
+							autoExpand: autoExpand
 						});
 						spinner.succeed('Tasks generated successfully!');
 						return;
@@ -686,6 +703,7 @@ function registerCommands(programInstance) {
 								'  -n, --num-tasks <number> Number of tasks to generate (default: 10)\n' +
 								'  -f, --force              Skip confirmation when overwriting existing tasks\n' +
 								'  --append                 Append new tasks to existing tasks.json instead of overwriting\n' +
+								'  --auto-expand            Automatically expand complex tasks into subtasks (requires --append)\n' +
 								'  -r, --research           Use Perplexity AI for research-backed task generation\n\n' +
 								chalk.cyan('Example:') +
 								'\n' +
@@ -693,6 +711,7 @@ function registerCommands(programInstance) {
 								'  task-master parse-prd --input=requirements.txt\n' +
 								'  task-master parse-prd --force\n' +
 								'  task-master parse-prd requirements_v2.txt --append\n' +
+								'  task-master parse-prd requirements.txt --append --auto-expand\n' +
 								'  task-master parse-prd requirements.txt --research\n\n' +
 								chalk.yellow('Note: This command will:') +
 								'\n' +
@@ -733,7 +752,8 @@ function registerCommands(programInstance) {
 				await parsePRD(inputFile, outputPath, numTasks, {
 					append: useAppend,
 					force: useForce,
-					research: research
+					research: research,
+					autoExpand: autoExpand
 				});
 				spinner.succeed('Tasks generated successfully!');
 			} catch (error) {

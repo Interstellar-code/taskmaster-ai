@@ -1462,6 +1462,816 @@
         }
       ],
       "prdSource": null
+    },
+    {
+      "id": 29,
+      "title": "Implement 'Append + Auto-Expand' Menu Option",
+      "description": "Add a new menu option \"➕ Append new tasks + Auto-expand complex tasks\" to the existing PRD parsing menu in Commander.js and Inquirer.js. This option should appear when existing tasks are detected during PRD parsing and be clearly distinguishable from the existing \"Append new tasks\" option. Ensure backward compatibility with existing menu options.",
+      "details": "Extend the `parse-prd` command in Commander.js to include a new option. Use Inquirer.js to present this option to the user. The new option's label should be '➕ Append new tasks + Auto-expand complex tasks'. This option should only be visible if existing tasks are detected, indicating a scenario where appending is relevant. Ensure the existing 'Append new tasks' option remains available and functional. The implementation should maintain the current menu structure and navigation using arrow keys and enter.",
+      "testStrategy": "Unit tests for the Commander.js command and Inquirer.js prompt to ensure the new option is displayed correctly under the specified conditions and is selectable. Manual testing to verify the option's appearance and selection in the CLI, and to confirm existing options remain functional.",
+      "priority": "high",
+      "dependencies": [],
+      "status": "done",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Identify and Refactor Menu Option Generation Logic",
+          "description": "Locate the existing code responsible for generating the PRD parsing menu options in Commander.js and Inquirer.js. Refactor this logic to allow for conditional display of menu items based on whether existing tasks are detected.",
+          "dependencies": [],
+          "details": "Examine `commands/parse-prd.js` and related Inquirer.js prompt definitions. Identify the array or function that constructs the choices for the 'What do you want to do?' prompt. Create a helper function or modify the existing logic to accept a flag indicating the presence of existing tasks.",
+          "status": "done",
+          "testStrategy": "Manually test the `parse-prd` command with and without existing tasks to ensure the original menu options are still displayed correctly and that the new conditional logic can be integrated without breaking existing functionality.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
+            "fileName": "append-expand-prd-option.txt",
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286
+          }
+        },
+        {
+          "id": 2,
+          "title": "Implement Detection of Existing Tasks",
+          "description": "Add logic to the `parse-prd` command to determine if existing tasks are present in the target project/file before presenting the menu options. This detection will drive the conditional display of the new menu item.",
+          "dependencies": [
+            1
+          ],
+          "details": "Before the Inquirer.js prompt is displayed, implement a check (e.g., by reading the project's task list or a specific file) to ascertain if tasks already exist. Store this state in a boolean variable that can be passed to the menu generation logic identified in subtask 1.",
+          "status": "done",
+          "testStrategy": "Create test cases: one where the target has existing tasks, and one where it does not. Verify that the boolean flag correctly reflects the presence or absence of tasks.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
+            "fileName": "append-expand-prd-option.txt",
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286
+          }
+        },
+        {
+          "id": 3,
+          "title": "Add 'Append + Auto-Expand' Menu Option",
+          "description": "Integrate the new menu option '➕ Append new tasks + Auto-expand complex tasks' into the Inquirer.js prompt choices. This option should only be visible when existing tasks are detected.",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "Modify the menu option generation logic (refactored in subtask 1) to conditionally include the new choice. The choice object should have a `name` property set to '➕ Append new tasks + Auto-expand complex tasks' and a distinct `value` (e.g., 'appendAndAutoExpand'). Ensure its `when` property in Inquirer.js is linked to the boolean flag from subtask 2.",
+          "status": "done",
+          "testStrategy": "Run `parse-prd` command: 1) With no existing tasks - verify the new option is NOT shown. 2) With existing tasks - verify the new option IS shown alongside 'Append new tasks' and other existing options.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
+            "fileName": "append-expand-prd-option.txt",
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286
+          }
+        },
+        {
+          "id": 4,
+          "title": "Implement Logic for 'Append + Auto-Expand' Option",
+          "description": "Develop the backend logic that executes when the '➕ Append new tasks + Auto-expand complex tasks' option is selected. This logic should append new tasks and then automatically expand any complex tasks.",
+          "dependencies": [
+            3
+          ],
+          "details": "In the `parse-prd` command's action handler, add a new `case` or `if` condition for the 'appendAndAutoExpand' value. This logic should first call the existing 'append new tasks' functionality. Subsequently, it needs to identify newly appended complex tasks and trigger their auto-expansion (this might involve calling an existing 'expand' utility or implementing new logic).",
+          "status": "done",
+          "testStrategy": "Create a PRD with new tasks, some of which are complex. Run `parse-prd`, select the new option. Verify that new tasks are appended and that complex tasks are automatically expanded (e.g., by checking the generated task structure or output).",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
+            "fileName": "append-expand-prd-option.txt",
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286
+          }
+        },
+        {
+          "id": 5,
+          "title": "Refine User Experience and Documentation",
+          "description": "Ensure the new menu option is clearly distinguishable, and update any relevant documentation or help text for the `parse-prd` command.",
+          "dependencies": [
+            4
+          ],
+          "details": "Review the menu display for clarity. The '➕' prefix helps distinguish it, but consider if any additional spacing or formatting is needed. Update the `README.md` or any internal developer documentation that describes the `parse-prd` command and its options. Add a brief explanation of what 'auto-expand complex tasks' means.",
+          "status": "done",
+          "testStrategy": "Review the command-line output for the `parse-prd` menu. Check the updated documentation for accuracy and completeness regarding the new option. Conduct a final end-to-end test to ensure all options function as expected and the user flow is intuitive.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
+            "fileName": "append-expand-prd-option.txt",
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
+        "fileName": "append-expand-prd-option.txt",
+        "parsedDate": "2025-06-01T06:23:00.242Z",
+        "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+        "fileSize": 11286
+      }
+    },
+    {
+      "id": 30,
+      "title": "Integrate Auto-Expansion Logic into PRD Parsing",
+      "description": "Integrate the automatic task expansion logic into the PRD parsing workflow. When the 'Append + Auto-Expand' option is selected, the system should identify complex tasks suitable for expansion and automatically expand them into subtasks using existing AI models and expansion criteria. Only tasks meeting the defined expansion criteria (complexity, description length, feature scope) should be expanded.",
+      "details": "Modify the `parse-prd` command's logic to incorporate the auto-expansion step after initial task parsing when the new option is chosen. Reuse the existing task expansion logic and AI models that are currently used by the `expand` command. Implement a mechanism to identify 'complex' tasks based on criteria such as description length, presence of keywords indicating complexity, or predefined feature scope. This identification should precede the expansion process. Ensure that the expansion process maintains all existing functionality and quality standards of the standalone expansion command. Provide progress feedback to the user during this process.",
+      "testStrategy": "Unit tests for the integration of expansion logic within the parsing flow. Integration tests with various PRD examples (small, large, mixed complexity) to verify that complex tasks are correctly identified and expanded, while simple tasks are not. Performance testing to ensure the auto-expansion adds no more than 30% to the total parsing time. Verify that the progress feedback is displayed correctly.",
+      "priority": "high",
+      "dependencies": [
+        29
+      ],
+      "status": "done",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Add 'Append + Auto-Expand' Option to PRD Parsing Command",
+          "description": "Modify the `parse-prd` command-line interface (CLI) to include a new option, e.g., `--auto-expand` or `--append-auto-expand`. This option will trigger the auto-expansion logic during PRD parsing.",
+          "dependencies": [],
+          "details": "Update the `parse-prd` command's argument parser (e.g., `argparse` in Python) to recognize and store the state of this new option. Ensure it's mutually exclusive or appropriately combined with existing append options if necessary. The option should be a boolean flag.",
+          "status": "pending",
+          "testStrategy": "Run `parse-prd --help` to verify the new option is listed. Execute `parse-prd` with and without the new option to ensure it doesn't break existing functionality when not selected.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
+            "fileName": "append-expand-prd-option.txt",
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286
+          }
+        },
+        {
+          "id": 2,
+          "title": "Implement Task Complexity Identification Logic",
+          "description": "Develop a mechanism within the PRD parsing workflow to identify 'complex' tasks that are candidates for auto-expansion. This mechanism should be triggered only when the 'Append + Auto-Expand' option is enabled.",
+          "dependencies": [
+            1
+          ],
+          "details": "After initial task parsing, iterate through the generated tasks. Implement a function `is_complex_task(task)` that returns a boolean. Criteria for complexity should include: description length (e.g., > N characters), presence of keywords (e.g., 'integrate', 'implement', 'design', 'complex'), or predefined feature scope tags. This function will mark tasks for potential expansion.",
+          "status": "pending",
+          "testStrategy": "Prepare PRD examples with tasks of varying complexity (short descriptions, long descriptions, keywords, no keywords). Run `parse-prd --auto-expand` and verify that only the intended tasks are marked as complex candidates (e.g., by logging or inspecting an intermediate data structure).",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
+            "fileName": "append-expand-prd-option.txt",
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286
+          }
+        },
+        {
+          "id": 3,
+          "title": "Integrate Existing Task Expansion Logic",
+          "description": "Incorporate the existing task expansion logic (currently used by the `expand` command) into the `parse-prd` workflow. This integration should occur after initial parsing and complexity identification, and only for tasks marked as complex.",
+          "dependencies": [
+            2
+          ],
+          "details": "Refactor the existing expansion logic from the `expand` command into a reusable module or function. Call this function for each task identified as complex by the previous step. Ensure the expansion process uses the same AI models and criteria as the standalone `expand` command. Handle the output of the expansion (subtasks) by replacing the original complex task with its expanded subtasks in the parsed task list.",
+          "status": "pending",
+          "testStrategy": "Use a PRD with a known complex task that expands predictably with the standalone `expand` command. Run `parse-prd --auto-expand` on this PRD and verify that the complex task is correctly replaced by its expected subtasks, maintaining their structure and content.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
+            "fileName": "append-expand-prd-option.txt",
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286
+          }
+        },
+        {
+          "id": 4,
+          "title": "Implement User Progress Feedback",
+          "description": "Provide real-time progress feedback to the user during the auto-expansion process, especially when multiple complex tasks are being expanded, as AI model calls can be time-consuming.",
+          "dependencies": [
+            3
+          ],
+          "details": "Add logging or print statements to indicate: 1) when auto-expansion starts, 2) which task is currently being processed for expansion (e.g., 'Expanding task: 'Task Title''), and 3) when expansion for a task is complete. Consider using a progress bar or spinner for a better user experience if feasible.",
+          "status": "pending",
+          "testStrategy": "Run `parse-prd --auto-expand` on a PRD with several complex tasks. Observe the console output to ensure progress messages are displayed correctly and provide meaningful feedback during the expansion process.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
+            "fileName": "append-expand-prd-option.txt",
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286
+          }
+        },
+        {
+          "id": 5,
+          "title": "End-to-End Validation and Refinement",
+          "description": "Perform comprehensive end-to-end testing of the integrated auto-expansion feature. Refine the complexity identification criteria and expansion integration based on test results to ensure quality and adherence to requirements.",
+          "dependencies": [
+            4
+          ],
+          "details": "Test with a variety of PRD documents, including those with no complex tasks, a few complex tasks, and many complex tasks. Verify that: 1) non-complex tasks are not expanded, 2) complex tasks are expanded correctly, 3) the overall task hierarchy is maintained, 4) performance is acceptable, and 5) error handling is robust. Adjust complexity thresholds (e.g., description length, keyword list) and AI model parameters if necessary to optimize expansion quality.",
+          "status": "pending",
+          "testStrategy": "Develop a suite of integration tests covering various PRD scenarios. Automate these tests if possible. Manually review the output of expanded tasks for accuracy, relevance, and completeness. Conduct performance profiling to identify and address any bottlenecks.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
+            "fileName": "append-expand-prd-option.txt",
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
+        "fileName": "append-expand-prd-option.txt",
+        "parsedDate": "2025-06-01T06:23:00.242Z",
+        "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+        "fileSize": 11286
+      }
+    },
+    {
+      "id": 31,
+      "title": "Implement PRD Context Inheritance for Auto-Generated Subtasks",
+      "description": "Ensure that all subtasks automatically generated through the auto-expansion process inherit the complete PRD source metadata (filePath, fileName, fileHash, parsedDate) from their parent tasks. This is crucial for maintaining traceability of requirements from subtasks back to the original PRD.",
+      "details": "During the auto-expansion process, for each subtask generated, copy the `prdSource` metadata from its parent task. This includes `filePath`, `fileName`, `fileHash`, and `parsedDate`. The `prdSource` field for subtasks should be a direct copy of the parent's `prdSource`. Verify that existing traceability commands (e.g., `show-prd-source`, `tasks-from-prd`) correctly display and utilize this inherited information for subtasks. Ensure that change detection mechanisms also work properly with subtasks having inherited PRD context.",
+      "testStrategy": "Unit tests to confirm that subtasks are created with the correct inherited `prdSource` metadata. Integration tests using `task-master show-prd-source --id=<subtask_id>` and `task-master tasks-from-prd --prd=<prd_file>` to verify that the PRD source information is accurately displayed and traceable for auto-generated subtasks. Test with various PRDs to ensure consistent inheritance across different scenarios.",
+      "priority": "high",
+      "dependencies": [
+        30
+      ],
+      "status": "done",
+      "subtasks": [],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
+        "fileName": "append-expand-prd-option.txt",
+        "parsedDate": "2025-06-01T06:23:00.242Z",
+        "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+        "fileSize": 11286
+      }
+    },
+    {
+      "id": 32,
+      "title": "Refine and Implement Intelligent Expansion Criteria",
+      "description": "Refine and implement intelligent criteria for determining which tasks should be automatically expanded. This will prevent over-granular task structures and ensure only appropriate tasks are expanded based on their complexity, description length, and feature scope.",
+      "details": "Develop and implement a configurable set of rules or an algorithm to assess task complexity. This could involve analyzing the length of the task description, the presence of specific keywords (e.g., 'implement', 'integrate', 'design', 'develop'), the number of sub-requirements implied in the description, or a predefined feature scope. The criteria should be flexible enough to be adjusted if needed. The goal is to ensure that only tasks that genuinely benefit from further breakdown are automatically expanded, avoiding unnecessary subtask generation.",
+      "testStrategy": "Unit tests for the complexity assessment algorithm with various task descriptions. Integration tests with PRDs containing tasks of varying complexities to verify that the expansion criteria correctly identify and trigger expansion only for the intended tasks. User acceptance testing with different PRD types to validate the appropriateness of the generated subtask granularity.",
+      "priority": "medium",
+      "dependencies": [
+        30
+      ],
+      "status": "done",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Define Initial Expansion Criteria and Data Sources",
+          "description": "Identify and document the initial set of criteria for intelligent task expansion, including potential data sources within the task object (e.g., description length, keywords, estimated complexity field).",
+          "dependencies": [],
+          "details": "Collaborate with product/design to establish a baseline for what constitutes a 'complex' task warranting expansion. Focus on readily available task attributes. Document these criteria clearly, perhaps as a configuration schema or a simple rule set.",
+          "status": "pending",
+          "testStrategy": "Review documented criteria with stakeholders for alignment and completeness.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
+            "fileName": "append-expand-prd-option.txt",
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286
+          }
+        },
+        {
+          "id": 2,
+          "title": "Develop Task Attribute Extraction Module",
+          "description": "Implement a module responsible for extracting relevant attributes from a given task object based on the defined criteria (e.g., description length, keyword presence, estimated complexity value).",
+          "dependencies": [
+            1
+          ],
+          "details": "Create a utility function or class that takes a task object as input and returns a structured object containing extracted attributes. For keywords, use a predefined list. For description length, count characters or words. Consider using a simple NLP library if keyword matching needs to be more sophisticated (e.g., stemming).",
+          "status": "pending",
+          "testStrategy": "Unit tests for the extraction module, ensuring it correctly extracts attributes for various task inputs (e.g., long/short descriptions, descriptions with/without keywords, tasks with/without complexity estimates).",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
+            "fileName": "append-expand-prd-option.txt",
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286
+          }
+        },
+        {
+          "id": 3,
+          "title": "Implement Configurable Expansion Rule Engine",
+          "description": "Develop a configurable rule engine that evaluates the extracted task attributes against the defined expansion criteria to determine if a task should be automatically expanded.",
+          "dependencies": [
+            2
+          ],
+          "details": "Design a flexible rule engine that can load rules from a configuration. Rules could be simple boolean expressions (e.g., 'description_length > X AND has_keyword_Y'). The engine should take the output of the attribute extraction module and return a boolean indicating expansion necessity. Consider using a simple JSON-based rule configuration.",
+          "status": "pending",
+          "testStrategy": "Unit tests for the rule engine with various rule configurations and attribute sets, ensuring correct expansion decisions. Test edge cases for each rule type.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
+            "fileName": "append-expand-prd-option.txt",
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286
+          }
+        },
+        {
+          "id": 4,
+          "title": "Integrate Expansion Logic into Task Creation/Update Workflow",
+          "description": "Integrate the developed expansion rule engine into the existing task creation and update workflows to automatically trigger expansion based on the evaluation.",
+          "dependencies": [
+            3
+          ],
+          "details": "Identify the appropriate hooks in the task creation/update process where the expansion logic should be invoked. This might be a service layer call after a task is saved. Ensure that the expansion process is asynchronous if it involves significant computation or external calls, to avoid blocking the main workflow. Handle cases where expansion might fail gracefully.",
+          "status": "pending",
+          "testStrategy": "Integration tests simulating task creation/update with different task data, verifying that tasks meeting expansion criteria are flagged for expansion and those that don't are not. Manual end-to-end testing of the workflow.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
+            "fileName": "append-expand-prd-option.txt",
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286
+          }
+        },
+        {
+          "id": 5,
+          "title": "Develop Admin Interface for Criteria Management and Monitoring",
+          "description": "Create a basic administrative interface or configuration mechanism to allow non-developers to view and adjust the expansion criteria and monitor expansion activity.",
+          "dependencies": [
+            4
+          ],
+          "details": "Implement a simple UI or API endpoint that allows viewing and modifying the rule configuration (e.g., keyword lists, length thresholds). Also, consider adding logging or metrics to track how often tasks are expanded by the intelligent criteria, and which criteria are most frequently met. This will aid in future refinement.",
+          "status": "pending",
+          "testStrategy": "Manual testing of the admin interface to ensure criteria can be updated and saved correctly. Verify that changes to criteria reflect in the expansion behavior. Review logs/metrics to confirm monitoring is functional.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
+            "fileName": "append-expand-prd-option.txt",
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
+        "fileName": "append-expand-prd-option.txt",
+        "parsedDate": "2025-06-01T06:23:00.242Z",
+        "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+        "fileSize": 11286
+      }
+    },
+    {
+      "id": 33,
+      "title": "Implement User Feedback and Progress Indication",
+      "description": "Provide clear and informative feedback to the user during the 'Append + Auto-Expand' process, including progress indicators and a summary of the results (e.g., number of tasks appended, number of tasks expanded, number of subtasks generated).",
+      "details": "Integrate progress indicators (e.g., spinners, percentage complete) into the CLI output during the PRD parsing and auto-expansion phases. Upon completion, display a summary report to the user. This report should include: the total number of new tasks appended, the number of complex tasks identified for expansion, the number of subtasks generated, and any relevant warnings or errors. This feedback should enhance the user experience by providing visibility into the enhanced parsing process.",
+      "testStrategy": "Manual testing to observe the progress indicators during the parsing and expansion process. Automated tests to verify the content and format of the summary report. Test with both small and large PRDs to ensure consistent and accurate feedback. Verify that error messages are displayed appropriately if any issues occur during the process.",
+      "priority": "medium",
+      "dependencies": [
+        30
+      ],
+      "status": "done",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Define and Capture Key Metrics for Feedback",
+          "description": "Identify and instrument the 'Append + Auto-Expand' process to capture all necessary metrics for user feedback and the final summary report. This includes counts for appended tasks, expanded tasks, generated subtasks, and any warnings/errors.",
+          "dependencies": [],
+          "details": "Modify the existing 'Append + Auto-Expand' logic to increment counters for: 1. New tasks appended from PRD. 2. Complex tasks identified for auto-expansion. 3. Subtasks successfully generated during expansion. 4. Any warnings or errors encountered during parsing or expansion. These metrics should be stored in an accessible data structure.",
+          "status": "pending",
+          "testStrategy": "Unit tests to ensure counters increment correctly under various scenarios (e.g., empty PRD, PRD with new tasks, PRD with expandable tasks, PRD with errors).",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
+            "fileName": "append-expand-prd-option.txt",
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286
+          }
+        },
+        {
+          "id": 2,
+          "title": "Implement Real-time Progress Indicators in CLI",
+          "description": "Integrate dynamic progress indicators (e.g., spinners, percentage) into the CLI output during the 'Append + Auto-Expand' process to provide immediate user feedback.",
+          "dependencies": [
+            1
+          ],
+          "details": "Utilize a suitable CLI library (e.g., 'ora' for spinners, 'cli-progress' for progress bars) to display progress during the distinct phases: PRD parsing/appending and task auto-expansion. The indicators should update as the process runs, giving the user a sense of activity and preventing perceived freezes. Consider displaying 'Parsing PRD...' and 'Expanding tasks...' messages.",
+          "status": "pending",
+          "testStrategy": "Manual testing to observe the CLI output during execution, ensuring spinners/progress bars appear, update, and disappear correctly. Verify no console clutter.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
+            "fileName": "append-expand-prd-option.txt",
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286
+          }
+        },
+        {
+          "id": 3,
+          "title": "Develop Final Summary Report Generation Logic",
+          "description": "Create the logic to compile and format the captured metrics into a clear, concise summary report to be displayed upon completion of the 'Append + Auto-Expand' process.",
+          "dependencies": [
+            1
+          ],
+          "details": "After the 'Append + Auto-Expand' process concludes, retrieve the metrics captured in Subtask 1. Format these into a user-friendly report string. The report should explicitly state: 'Total new tasks appended: X', 'Tasks identified for expansion: Y', 'Subtasks generated: Z', and 'Warnings/Errors: W'.",
+          "status": "pending",
+          "testStrategy": "Unit tests for the report generation function, providing various metric inputs (e.g., all zeros, positive numbers, numbers with errors) and asserting the correctness of the generated report string.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
+            "fileName": "append-expand-prd-option.txt",
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286
+          }
+        },
+        {
+          "id": 4,
+          "title": "Integrate Progress and Summary Output into CLI Workflow",
+          "description": "Hook the real-time progress indicators and the final summary report into the main 'Append + Auto-Expand' CLI command workflow.",
+          "dependencies": [
+            2,
+            3
+          ],
+          "details": "Modify the main CLI command handler for 'Append + Auto-Expand' to: 1. Start the progress indicator before initiating the parsing/expansion. 2. Update or switch indicators as phases change. 3. Stop the progress indicator upon completion. 4. Print the generated summary report to the console after the process finishes.",
+          "status": "pending",
+          "testStrategy": "End-to-end integration tests via CLI commands. Run the 'Append + Auto-Expand' command with various PRD inputs (empty, simple, complex, erroneous) and verify that both real-time progress is shown and the final summary report is accurate and displayed correctly.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
+            "fileName": "append-expand-prd-option.txt",
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286
+          }
+        },
+        {
+          "id": 5,
+          "title": "Refine User Messaging and Error Handling Display",
+          "description": "Review and refine all user-facing messages, including progress updates, warnings, and error displays, to ensure clarity, consistency, and helpfulness.",
+          "dependencies": [
+            4
+          ],
+          "details": "Standardize the language used in progress messages, warning messages, and error reports. Ensure that warnings and errors captured in Subtask 1 are clearly presented in the final summary or immediately after they occur, providing actionable information to the user. Consider color-coding for warnings/errors if supported by the CLI library.",
+          "status": "pending",
+          "testStrategy": "Manual review of all CLI output during various execution paths, specifically focusing on the clarity and helpfulness of messages, warnings, and errors. Verify consistent formatting and tone.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
+            "fileName": "append-expand-prd-option.txt",
+            "parsedDate": "2025-06-01T06:23:00.242Z",
+            "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+            "fileSize": 11286
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt",
+        "fileName": "append-expand-prd-option.txt",
+        "parsedDate": "2025-06-01T06:23:00.242Z",
+        "fileHash": "f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442",
+        "fileSize": 11286
+      }
+    },
+    {
+      "id": 34,
+      "title": "Terminal Kanban Board Layout and Display",
+      "description": "Implement the foundational terminal-based Kanban board layout using ASCII art and box drawing characters. This includes setting up the chosen terminal UI framework (Blessed.js or Ink.js) and rendering the three status columns: 'pending', 'in-progress', and 'done'. Each column should display a task count in its header and a 'No tasks' placeholder if empty. The board must dynamically adapt to terminal width and height.",
+      "details": "Utilize Blessed.js or Ink.js for terminal UI rendering. Create a layout that divides the terminal into three main columns. Use ASCII art and box drawing characters to visually separate these columns. Implement logic to dynamically adjust column widths and heights based on the terminal's dimensions. For each column, display a header with the column name (e.g., '📋 IN PROGRESS') and the current task count. If a column has no tasks, display 'No tasks'. Ensure consistent styling with existing TaskMaster UI, including emojis and colors. Integrate with existing TaskMaster utilities for initial JSON reading to populate the board with tasks.",
+      "testStrategy": "Verify that the terminal board displays three distinct columns with correct headers and task counts. Test dynamic resizing by changing terminal window dimensions. Confirm 'No tasks' message appears in empty columns. Visually inspect for consistent ASCII art and styling across different terminal environments (Windows PowerShell, macOS Terminal, Linux terminals).",
+      "priority": "high",
+      "dependencies": [],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Initialize Terminal UI Framework",
+          "description": "Set up the chosen terminal UI framework (Blessed.js or Ink.js) to create a basic interactive terminal application.",
+          "dependencies": [],
+          "details": "This involves installing the framework, setting up the main application instance, and creating a basic screen or app component.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
+            "fileName": "kanban-view-prd.txt",
+            "parsedDate": "2025-06-01T07:27:35.658Z",
+            "fileHash": "12f0f1db4cda4f5ad8a71c57a66d919f3e4b97458b4505e3b1b700180108c880",
+            "fileSize": 18300
+          }
+        },
+        {
+          "id": 2,
+          "title": "Design and Render Kanban Columns",
+          "description": "Create and render the three main Kanban columns ('pending', 'in-progress', 'done') using ASCII art or the chosen UI framework's drawing capabilities.",
+          "dependencies": [
+            1
+          ],
+          "details": "Each column should have a distinct visual boundary. Consider using borders or background colors to differentiate them.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
+            "fileName": "kanban-view-prd.txt",
+            "parsedDate": "2025-06-01T07:27:35.658Z",
+            "fileHash": "12f0f1db4cda4f5ad8a71c57a66d919f3e4b97458b4505e3b1b700180108c880",
+            "fileSize": 18300
+          }
+        },
+        {
+          "id": 3,
+          "title": "Implement Dynamic Column Resizing",
+          "description": "Develop logic to dynamically resize the Kanban columns based on the current terminal dimensions, ensuring they always fit the screen.",
+          "dependencies": [
+            2
+          ],
+          "details": "This will involve listening for terminal resize events and recalculating column widths to distribute space evenly or proportionally.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
+            "fileName": "kanban-view-prd.txt",
+            "parsedDate": "2025-06-01T07:27:35.658Z",
+            "fileHash": "12f0f1db4cda4f5ad8a71c57a66d919f3e4b97458b4505e3b1b700180108c880",
+            "fileSize": 18300
+          }
+        },
+        {
+          "id": 4,
+          "title": "Display Column Headers and Task Counts",
+          "description": "Add headers to each Kanban column, displaying the column name and a dynamic count of tasks within that column. Include a 'No tasks' placeholder when a column is empty.",
+          "dependencies": [
+            3
+          ],
+          "details": "The task count should be updated as tasks are added or moved. The 'No tasks' message should appear centrally within an empty column.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
+            "fileName": "kanban-view-prd.txt",
+            "parsedDate": "2025-06-01T07:27:35.658Z",
+            "fileHash": "12f0f1db4cda4f5ad8a71c57a66d919f3e4b97458b4505e3b1b700180108c880",
+            "fileSize": 18300
+          }
+        },
+        {
+          "id": 5,
+          "title": "Integrate Initial JSON Data Loading",
+          "description": "Implement functionality to load initial task data from a JSON file and populate the respective Kanban columns on application startup.",
+          "dependencies": [
+            4
+          ],
+          "details": "This involves parsing the JSON data and mapping tasks to their corresponding 'pending', 'in-progress', or 'done' columns, updating task counts accordingly.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
+            "fileName": "kanban-view-prd.txt",
+            "parsedDate": "2025-06-01T07:27:35.658Z",
+            "fileHash": "12f0f1db4cda4f5ad8a71c57a66d919f3e4b97458b4505e3b1b700180108c880",
+            "fileSize": 18300
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
+        "fileName": "kanban-view-prd.txt",
+        "parsedDate": "2025-06-01T07:27:35.658Z",
+        "fileHash": "12f0f1db4cda4f5ad8a71c57a66d919f3e4b97458b4505e3b1b700180108c880",
+        "fileSize": 18300
+      }
+    },
+    {
+      "id": 35,
+      "title": "ASCII Task Card Design and Metadata Display",
+      "description": "Design and implement the ASCII task cards to display essential TaskMaster metadata within the Kanban board columns. Each card should clearly show the task's ID, title, priority, dependencies count, and a PRD source indicator. Priority should be visually represented with colored text and symbols, and long titles should be truncated with an ellipsis.",
+      "details": "Within the columns established in Task 34, render individual task cards using ASCII box drawing characters for visual separation. For each task, display its ID, title, priority (e.g., '🔴 High', '🟡 Medium', '🟢 Low' using Chalk.js for colors), dependencies count (e.g., 'Deps: 2'), and a '📄' icon if the task has a PRD source. Implement logic to truncate long task titles with '...' and ensure the full title is available for display in a status bar when the task is selected. Cards must fit within the defined column width constraints.",
+      "testStrategy": "Verify that all required metadata (ID, title, priority, dependencies count, PRD source indicator) is correctly displayed on each task card. Test priority color coding and symbol representation. Confirm title truncation with ellipsis and ensure the full title is accessible. Check that cards are properly formatted within column boundaries and use correct ASCII box drawing characters.",
+      "priority": "high",
+      "dependencies": [
+        34
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Define ASCII Task Card Structure",
+          "description": "Design the basic ASCII box drawing structure for an individual task card, including borders and internal divisions for different data fields.",
+          "dependencies": [],
+          "details": "This involves sketching out the ASCII characters for corners, horizontal and vertical lines to form the card's outline and internal sections.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
+            "fileName": "kanban-view-prd.txt",
+            "parsedDate": "2025-06-01T07:27:35.658Z",
+            "fileHash": "12f0f1db4cda4f5ad8a71c57a66d919f3e4b97458b4505e3b1b700180108c880",
+            "fileSize": 18300
+          }
+        },
+        {
+          "id": 2,
+          "title": "Implement Core Task Data Display Logic",
+          "description": "Develop the logic to display task ID, title, priority (with appropriate ASCII color/symbol representation), dependencies count, and a PRD source indicator within the defined ASCII card structure.",
+          "dependencies": [
+            1
+          ],
+          "details": "This subtask will involve mapping task data fields to specific positions within the ASCII card and implementing conditional rendering for priority (e.g., '!!!' for high, '!!' for medium, '!' for low) and a specific ASCII character for PRD source.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
+            "fileName": "kanban-view-prd.txt",
+            "parsedDate": "2025-06-01T07:27:35.658Z",
+            "fileHash": "12f0f1db4cda4f5ad8a71c57a66d919f3e4b97458b4505e3b1b700180108c880",
+            "fileSize": 18300
+          }
+        },
+        {
+          "id": 3,
+          "title": "Develop Title Truncation and Full Title Accessibility",
+          "description": "Implement a mechanism to truncate long task titles with an ellipsis (...) while ensuring the full title can be accessed (e.g., via a tooltip or hover effect in a terminal emulator if supported, or a separate display command).",
+          "dependencies": [
+            2
+          ],
+          "details": "This requires calculating available space for the title within the ASCII card and applying truncation logic. Consideration should be given to how the full title will be revealed.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
+            "fileName": "kanban-view-prd.txt",
+            "parsedDate": "2025-06-01T07:27:35.658Z",
+            "fileHash": "12f0f1db4cda4f5ad8a71c57a66d919f3e4b97458b4505e3b1b700180108c880",
+            "fileSize": 18300
+          }
+        },
+        {
+          "id": 4,
+          "title": "Ensure Card Column Width Compliance and Styling Consistency",
+          "description": "Verify that the rendered ASCII task cards fit within predefined column width constraints and maintain consistent styling across all elements.",
+          "dependencies": [
+            1,
+            2,
+            3
+          ],
+          "details": "This involves testing the rendering with various data lengths and ensuring that the ASCII art remains intact and visually appealing within the specified column width. It also includes reviewing character alignment and spacing for consistency.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
+            "fileName": "kanban-view-prd.txt",
+            "parsedDate": "2025-06-01T07:27:35.658Z",
+            "fileHash": "12f0f1db4cda4f5ad8a71c57a66d919f3e4b97458b4505e3b1b700180108c880",
+            "fileSize": 18300
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
+        "fileName": "kanban-view-prd.txt",
+        "parsedDate": "2025-06-01T07:27:35.658Z",
+        "fileHash": "12f0f1db4cda4f5ad8a71c57a66d919f3e4b97458b4505e3b1b700180108c880",
+        "fileSize": 18300
+      }
+    },
+    {
+      "id": 36,
+      "title": "Keyboard Navigation and Status Updates",
+      "description": "Enable keyboard navigation within the Kanban board to allow users to move between tasks and columns, select tasks, and update their status. Implement shortcuts for moving selected tasks between 'pending', 'in-progress', and 'done' columns, ensuring immediate visual feedback and persistent updates to tasks.json.",
+      "details": "Implement keyboard event handling using Blessed.js or Ink.js's built-in capabilities. Allow arrow keys to navigate between tasks within a column and between columns. The Enter key should select/highlight a task, providing clear visual feedback (e.g., a different background color). Implement number keys (1, 2, 3) to move the currently selected task to the 'pending', 'in-progress', or 'done' column respectively. Upon a status change, update the task's status in the in-memory data structure and persist the change to tasks.json using existing TaskMaster utilities. Immediately refresh the board display and update column task counts.",
+      "testStrategy": "Test arrow key navigation across tasks and columns. Verify task selection and highlighting. Confirm that pressing 1, 2, or 3 correctly moves the selected task to the corresponding column. Check that the task's status is updated in tasks.json and that the board visually reflects the change immediately, including updated column task counts. Test status updates for all three statuses.",
+      "priority": "high",
+      "dependencies": [
+        34,
+        35
+      ],
+      "status": "pending",
+      "subtasks": [],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
+        "fileName": "kanban-view-prd.txt",
+        "parsedDate": "2025-06-01T07:27:35.658Z",
+        "fileHash": "12f0f1db4cda4f5ad8a71c57a66d919f3e4b97458b4505e3b1b700180108c880",
+        "fileSize": 18300
+      }
+    },
+    {
+      "id": 37,
+      "title": "Quick Task Operations via Keyboard",
+      "description": "Implement quick task operations accessible via keyboard shortcuts from the Kanban view. This includes viewing detailed task information, deleting tasks with a confirmation prompt, entering inline edit mode for task titles, showing task ID and metadata, and refreshing the board. All operations must update tasks.json and refresh the display immediately.",
+      "details": "For a selected task, implement the following keyboard shortcuts: 'V' to show detailed task information in a bottom panel, 'D' to delete the selected task (with a confirmation prompt), 'E' to open an inline edit mode for the task title, 'I' to show task ID and metadata in the status bar, and 'R' to refresh the board from tasks.json. Ensure all operations that modify task data (delete, edit) use existing TaskMaster utilities to update tasks.json and trigger an immediate board refresh. Maintain data consistency with existing TaskMaster commands.",
+      "testStrategy": "Test each quick operation ('V', 'D', 'E', 'I', 'R') with a selected task. Verify that 'V' displays correct detailed information. Confirm 'D' prompts for confirmation and successfully deletes the task from tasks.json and the board. Test 'E' for inline title editing and persistence. Check 'I' for correct ID/metadata display. Verify 'R' refreshes the board with the latest data from tasks.json. Ensure all operations maintain data consistency and update the board visually.",
+      "priority": "medium",
+      "dependencies": [
+        35
+      ],
+      "status": "pending",
+      "subtasks": [],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
+        "fileName": "kanban-view-prd.txt",
+        "parsedDate": "2025-06-01T07:27:35.658Z",
+        "fileHash": "12f0f1db4cda4f5ad8a71c57a66d919f3e4b97458b4505e3b1b700180108c880",
+        "fileSize": 18300
+      }
+    },
+    {
+      "id": 38,
+      "title": "Terminal Board Navigation and Controls & Menu Integration",
+      "description": "Implement terminal-based navigation controls and board management features, including filtering, searching, displaying board statistics, showing a help overlay, and exiting the Kanban view. Also, ensure seamless integration with the existing TaskMaster interactive menu system.",
+      "details": "Implement the following keyboard shortcuts for board navigation and controls: 'F' to toggle filter mode (priority, PRD source, status), '/' to open search mode, 'S' to show board statistics (total tasks, completion %) in the status bar, 'H' to display a help overlay with all keyboard shortcuts, and 'Q' to exit the Kanban view and return to the TaskMaster menu. Implement Tab key functionality to cycle through different board sections (columns, filters, help). Ensure the status bar consistently displays the current mode and available shortcuts. Integrate the Kanban board view as a new option ('📊 Kanban Board View') within the existing TaskMaster 'Task Operations' submenu, ensuring a smooth transition into and out of the Kanban interface.",
+      "testStrategy": "Test each navigation and control shortcut ('F', '/', 'S', 'H', 'Q', Tab). Verify that 'F' toggles filter options, '/' activates search, 'S' displays correct statistics, and 'H' shows the help overlay. Confirm 'Q' exits the Kanban view and returns to the TaskMaster menu. Test Tab key cycling through board sections. Verify that the Kanban board option is correctly integrated into the TaskMaster 'Task Operations' submenu and that selecting it launches the board as expected. Ensure the status bar updates correctly with mode and shortcuts.",
+      "priority": "medium",
+      "dependencies": [
+        34
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Design and Implement Keyboard Shortcut Listener",
+          "description": "Develop a global keyboard event listener to capture 'F', '/', 'S', 'H', and 'Q' key presses and trigger corresponding actions. This includes mapping keys to specific functions (filter, search, statistics, help, exit).",
+          "dependencies": [],
+          "details": "This subtask involves setting up the core mechanism for keyboard navigation. It needs to be robust enough to avoid conflicts with other inputs and handle different states of the application.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
+            "fileName": "kanban-view-prd.txt",
+            "parsedDate": "2025-06-01T07:27:35.658Z",
+            "fileHash": "12f0f1db4cda4f5ad8a71c57a66d919f3e4b97458b4505e3b1b700180108c880",
+            "fileSize": 18300
+          }
+        },
+        {
+          "id": 2,
+          "title": "Develop Filter Mode UI and Logic",
+          "description": "Create the user interface for the filter mode, allowing users to apply various filters to the Kanban board. Implement the backend logic to process filter criteria and update the displayed tasks accordingly.",
+          "dependencies": [
+            1
+          ],
+          "details": "This subtask requires designing intuitive filter options (e.g., by assignee, status, due date) and implementing the filtering algorithm. It should integrate with the keyboard shortcut for 'F'.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
+            "fileName": "kanban-view-prd.txt",
+            "parsedDate": "2025-06-01T07:27:35.658Z",
+            "fileHash": "12f0f1db4cda4f5ad8a71c57a66d919f3e4b97458b4505e3b1b700180108c880",
+            "fileSize": 18300
+          }
+        },
+        {
+          "id": 3,
+          "title": "Develop Search Mode UI and Logic",
+          "description": "Design and implement the UI for the search mode, enabling users to search for tasks within the Kanban board. Develop the logic to perform efficient searches and highlight/display matching tasks.",
+          "dependencies": [
+            1
+          ],
+          "details": "This subtask involves creating a search input field and implementing a search algorithm (e.g., fuzzy search, keyword matching). It should integrate with the keyboard shortcut for '/'.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
+            "fileName": "kanban-view-prd.txt",
+            "parsedDate": "2025-06-01T07:27:35.658Z",
+            "fileHash": "12f0f1db4cda4f5ad8a71c57a66d919f3e4b97458b4505e3b1b700180108c880",
+            "fileSize": 18300
+          }
+        },
+        {
+          "id": 4,
+          "title": "Implement Statistics Display and Help Overlay",
+          "description": "Develop the UI and logic to display board statistics (e.g., task counts per column, completed tasks). Create a help overlay that provides information on keyboard shortcuts and board functionalities.",
+          "dependencies": [
+            1
+          ],
+          "details": "This subtask involves calculating and presenting relevant board metrics. The help overlay should be easily accessible and informative, integrating with 'S' and 'H' keyboard shortcuts respectively.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
+            "fileName": "kanban-view-prd.txt",
+            "parsedDate": "2025-06-01T07:27:35.658Z",
+            "fileHash": "12f0f1db4cda4f5ad8a71c57a66d919f3e4b97458b4505e3b1b700180108c880",
+            "fileSize": 18300
+          }
+        },
+        {
+          "id": 5,
+          "title": "Integrate Kanban Board into TaskMaster 'Task Operations' Submenu",
+          "description": "Modify the existing TaskMaster menu structure to include the Kanban board view under the 'Task Operations' submenu. Ensure proper menu navigation and state management when entering and exiting the Kanban interface.",
+          "dependencies": [],
+          "details": "This subtask requires understanding the existing menu system and seamlessly embedding the new Kanban view. It involves updating menu configurations and potentially routing logic.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
+            "fileName": "kanban-view-prd.txt",
+            "parsedDate": "2025-06-01T07:27:35.658Z",
+            "fileHash": "12f0f1db4cda4f5ad8a71c57a66d919f3e4b97458b4505e3b1b700180108c880",
+            "fileSize": 18300
+          }
+        },
+        {
+          "id": 6,
+          "title": "Ensure Smooth Transitions and Status Bar Updates",
+          "description": "Implement mechanisms to ensure smooth visual and functional transitions when entering and exiting the Kanban interface. Develop logic to update the application's status bar to reflect the current mode or relevant information.",
+          "dependencies": [
+            2,
+            3,
+            4,
+            5
+          ],
+          "details": "This subtask focuses on user experience, ensuring that switching between modes (e.g., filter, search) and entering/exiting the Kanban board is fluid. It also involves updating the status bar to provide contextual feedback to the user.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
+            "fileName": "kanban-view-prd.txt",
+            "parsedDate": "2025-06-01T07:27:35.658Z",
+            "fileHash": "12f0f1db4cda4f5ad8a71c57a66d919f3e4b97458b4505e3b1b700180108c880",
+            "fileSize": 18300
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt",
+        "fileName": "kanban-view-prd.txt",
+        "parsedDate": "2025-06-01T07:27:35.658Z",
+        "fileHash": "12f0f1db4cda4f5ad8a71c57a66d919f3e4b97458b4505e3b1b700180108c880",
+        "fileSize": 18300
+      }
     }
   ]
 }

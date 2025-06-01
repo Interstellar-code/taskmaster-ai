@@ -1,10 +1,10 @@
 {
   "meta": {
-    "generatedAt": "2025-05-31T22:11:37.827Z",
-    "tasksAnalyzed": 18,
+    "generatedAt": "2025-06-01T07:29:24.957Z",
+    "tasksAnalyzed": 5,
     "totalTasks": 28,
-    "analysisCount": 57,
-    "thresholdScore": 5,
+    "analysisCount": 62,
+    "thresholdScore": 1,
     "projectName": "Taskmaster",
     "usedResearch": false
   },
@@ -464,6 +464,46 @@
       "recommendedSubtasks": 6,
       "expansionPrompt": "Develop a detailed test plan covering unit, integration, end-to-end, performance, and cross-platform compatibility for all new PRD source tracking features. Specify key test scenarios for each type of testing. Outline the automation strategy and metrics for test coverage. Include steps for regular test suite review and maintenance.",
       "reasoning": "This is a meta-task that requires strategic planning and coordination across all new features. Designing a comprehensive testing strategy, including automation and performance considerations, is a significant undertaking that impacts the quality of the entire feature set."
+    },
+    {
+      "taskId": 34,
+      "taskTitle": "Terminal Kanban Board Layout and Display",
+      "complexityScore": 7,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Break down the implementation of the Kanban board layout into distinct subtasks, including: 1. Initializing the chosen terminal UI framework (Blessed.js/Ink.js). 2. Designing and rendering the three main columns ('pending', 'in-progress', 'done') with ASCII art. 3. Implementing dynamic resizing logic for columns based on terminal dimensions. 4. Displaying column headers with task counts and 'No tasks' placeholders. 5. Integrating initial JSON data loading to populate the board.",
+      "reasoning": "This task involves foundational UI setup, dynamic layout adjustments, and integration with existing data structures. The choice of UI framework and the need for responsive design add complexity. It's a critical dependency for subsequent tasks."
+    },
+    {
+      "taskId": 35,
+      "taskTitle": "ASCII Task Card Design and Metadata Display",
+      "complexityScore": 6,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Detail the subtasks for designing and rendering ASCII task cards: 1. Defining the structure and visual elements of an individual task card using ASCII box drawing. 2. Implementing logic to display task ID, title, priority (with color/symbols), dependencies count, and PRD source indicator. 3. Developing title truncation with ellipsis and ensuring full title accessibility. 4. Ensuring cards fit within column width constraints and maintain consistent styling.",
+      "reasoning": "This task builds directly on the previous one, focusing on the visual representation of individual tasks. It requires careful formatting, conditional rendering (priority colors, PRD icon), and text manipulation (truncation)."
+    },
+    {
+      "taskId": 36,
+      "taskTitle": "Keyboard Navigation and Status Updates",
+      "complexityScore": 8,
+      "recommendedSubtasks": 6,
+      "expansionPrompt": "Outline the subtasks for implementing keyboard navigation and status updates: 1. Setting up keyboard event listeners for arrow keys and number keys. 2. Implementing navigation logic for moving between tasks within a column and between columns. 3. Developing task selection/highlighting visual feedback. 4. Implementing logic for changing task status based on number key presses (1, 2, 3). 5. Integrating with TaskMaster utilities to persist status changes to tasks.json. 6. Ensuring immediate board refresh and column task count updates after status changes.",
+      "reasoning": "This task is highly interactive, requiring robust keyboard event handling, state management (selected task, task status), visual feedback, and persistent data updates. It's a core user interaction feature."
+    },
+    {
+      "taskId": 37,
+      "taskTitle": "Quick Task Operations via Keyboard",
+      "complexityScore": 7,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Break down the implementation of quick task operations: 1. Implementing 'V' for detailed task view (e.g., in a bottom panel). 2. Implementing 'D' for task deletion with confirmation and persistence. 3. Implementing 'E' for inline task title editing and persistence. 4. Implementing 'I' for displaying task ID/metadata in the status bar. 5. Implementing 'R' for refreshing the board from tasks.json. Ensure all operations use existing TaskMaster utilities for data persistence and trigger immediate board refreshes.",
+      "reasoning": "This task involves multiple distinct keyboard shortcuts, each triggering a different operation (display, delete, edit, refresh). Each operation requires specific UI handling, data manipulation, and persistence, adding to its complexity."
+    },
+    {
+      "taskId": 38,
+      "taskTitle": "Terminal Board Navigation and Controls & Menu Integration",
+      "complexityScore": 8,
+      "recommendedSubtasks": 6,
+      "expansionPrompt": "Detail the subtasks for implementing board navigation, controls, and menu integration: 1. Implementing keyboard shortcuts for 'F' (filter), '/' (search), 'S' (statistics), 'H' (help overlay), and 'Q' (exit). 2. Developing the UI and logic for the filter mode. 3. Developing the UI and logic for the search mode. 4. Implementing the display of board statistics and help overlay. 5. Integrating the Kanban board view into the existing TaskMaster 'Task Operations' submenu. 6. Ensuring smooth transitions into and out of the Kanban interface and consistent status bar updates.",
+      "reasoning": "This task is complex due to the variety of features (filtering, searching, statistics, help) and the need for seamless integration with an existing menu system. Each control requires its own UI and logic, and the overall state management for these modes adds significant complexity."
     }
   ]
 }
