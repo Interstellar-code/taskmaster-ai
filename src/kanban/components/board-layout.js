@@ -113,9 +113,10 @@ export class BoardLayout {
     /**
      * Render the entire board
      * @param {Object} statusBar - Optional status bar component
-     * @param {Object} popup - Optional popup component to render on top
+     * @param {Object} taskDetailsPopup - Optional task details popup component
+     * @param {Object} helpPopup - Optional help popup component
      */
-    render(statusBar = null, popup = null) {
+    render(statusBar = null, taskDetailsPopup = null, helpPopup = null) {
         if (!this.isInitialized) {
             this.initializeColumns();
         }
@@ -135,9 +136,13 @@ export class BoardLayout {
             // Render status bar at bottom
             this.renderStatusBar(statusBar);
 
-            // Render popup overlay if present
-            if (popup && popup.isOpen && popup.isOpen()) {
-                this.renderPopupOverlay(popup);
+            // Render popups overlay if present (task details popup first, then help popup on top)
+            if (taskDetailsPopup && taskDetailsPopup.isOpen && taskDetailsPopup.isOpen()) {
+                this.renderPopupOverlay(taskDetailsPopup);
+            }
+
+            if (helpPopup && helpPopup.isPopupOpen && helpPopup.isPopupOpen()) {
+                this.renderHelpPopupOverlay(helpPopup);
             }
 
         } catch (error) {
@@ -158,6 +163,23 @@ export class BoardLayout {
         // Render each line of the popup at the calculated position
         lines.forEach((line, index) => {
             moveCursor(startY + index, startX);
+            process.stdout.write(line);
+        });
+    }
+
+    /**
+     * Render help popup overlay on top of the board
+     * @param {Object} helpPopup - Help popup component to render
+     */
+    renderHelpPopupOverlay(helpPopup) {
+        const popupLines = helpPopup.render();
+        if (!popupLines || popupLines.length === 0) return;
+
+        const position = helpPopup.getPosition();
+
+        // Render each line of the help popup at the calculated position
+        popupLines.forEach((line, index) => {
+            moveCursor(position.y + index, position.x);
             process.stdout.write(line);
         });
     }

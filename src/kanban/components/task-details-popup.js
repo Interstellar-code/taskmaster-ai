@@ -151,6 +151,9 @@ export class TaskDetailsPopup {
             }
         ];
 
+        // Add subtasks section
+        this.addSubtasksSection(contentWidth);
+
         sections.forEach(section => {
             if (section.content) {
                 this.contentLines.push(chalk.white.bold(section.title));
@@ -161,6 +164,76 @@ export class TaskDetailsPopup {
                 this.contentLines.push(''); // Extra spacing between sections
             }
         });
+    }
+
+    /**
+     * Add subtasks section to content
+     * @param {number} contentWidth - Available content width
+     */
+    addSubtasksSection(contentWidth) {
+        // Check if the current task has subtasks property
+        const subtasks = this.task.subtasks || [];
+
+        if (subtasks.length > 0) {
+            this.contentLines.push(chalk.white.bold('🔗 SUBTASKS:'));
+            this.contentLines.push('');
+
+            subtasks.forEach(subtask => {
+                const statusIcon = this.getSubtaskStatusIcon(subtask.status);
+                const statusLabel = this.getStatusLabel(subtask.status);
+                const subtaskLine = `${statusIcon} ${subtask.id}: ${subtask.title} (${statusLabel})`;
+
+                // Left-justify the subtask line (no indentation)
+                const wrappedLines = this.wrapText(subtaskLine, contentWidth);
+                wrappedLines.forEach(line => this.contentLines.push(chalk.gray(line)));
+            });
+
+            this.contentLines.push('');
+            this.contentLines.push(''); // Extra spacing
+        } else {
+            this.contentLines.push(chalk.white.bold('🔗 SUBTASKS:'));
+            this.contentLines.push('');
+            this.contentLines.push(chalk.dim('   No subtasks defined'));
+            this.contentLines.push('');
+            this.contentLines.push(''); // Extra spacing
+        }
+    }
+
+
+
+    /**
+     * Get status icon for subtask
+     * @param {string} status - Subtask status
+     */
+    getSubtaskStatusIcon(status) {
+        const statusIcons = {
+            'pending': '📋',
+            'in-progress': '🔄',
+            'done': '✅',
+            'blocked': '🚫',
+            'deferred': '⏸️',
+            'cancelled': '❌',
+            'review': '👀'
+        };
+
+        return statusIcons[status] || '❓';
+    }
+
+    /**
+     * Get status label for subtask
+     * @param {string} status - Subtask status
+     */
+    getStatusLabel(status) {
+        const statusLabels = {
+            'pending': 'Pending',
+            'in-progress': 'In Progress',
+            'done': 'Done',
+            'review': 'Review',
+            'blocked': 'Blocked',
+            'deferred': 'Deferred',
+            'cancelled': 'Cancelled'
+        };
+        return statusLabels[status] || 'Unknown';
     }
 
     /**

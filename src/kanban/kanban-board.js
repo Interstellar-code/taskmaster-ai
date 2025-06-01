@@ -10,6 +10,7 @@ import { createStatusHandler } from './handlers/status-handler.js';
 import { createTaskOperationsHandler } from './handlers/task-operations.js';
 import { createBoardControlsHandler } from './handlers/board-controls.js';
 import { createHelpOverlay } from './components/help-overlay.js';
+import { createHelpPopup } from './components/help-popup.js';
 import { createStatusBar } from './components/status-bar.js';
 import { createTaskDetailsPopup } from './components/task-details-popup.js';
 import { readJSON } from '../../scripts/modules/utils.js';
@@ -37,6 +38,7 @@ export class KanbanBoard {
 
         // Initialize UI components
         this.helpOverlay = createHelpOverlay();
+        this.helpPopup = createHelpPopup();
         this.statusBar = createStatusBar();
         this.taskDetailsPopup = createTaskDetailsPopup();
     }
@@ -90,7 +92,7 @@ export class KanbanBoard {
      * Render the board
      */
     render() {
-        this.boardLayout.render(this.statusBar, this.taskDetailsPopup);
+        this.boardLayout.render(this.statusBar, this.taskDetailsPopup, this.helpPopup);
     }
 
     /**
@@ -179,23 +181,11 @@ export class KanbanBoard {
     }
 
     /**
-     * Show help overlay
+     * Show help popup
      */
     showHelp() {
-        const helpData = this.helpOverlay.show();
-        this.statusBar.setMode('help');
-
-        if (helpData) {
-            // In a full implementation, we'd render the help overlay on top of the board
-            console.clear();
-            helpData.lines.forEach(line => console.log(line));
-
-            setTimeout(() => {
-                this.helpOverlay.hide();
-                this.statusBar.setMode('normal');
-                this.render();
-            }, 8000);
-        }
+        this.helpPopup.open();
+        this.render();
     }
 
     /**
@@ -294,13 +284,18 @@ export class KanbanBoard {
     }
 
     /**
-     * Quit the Kanban board
+     * Quit the Kanban board and return to main menu
      */
     quit() {
         this.isRunning = false;
         this.cleanup();
-        console.log(chalk.green('\nReturning to TaskMaster menu...'));
-        process.exit(0);
+        console.log(chalk.blue('\n🔄 Returning to TaskMaster main menu...'));
+
+        // Set a flag to indicate we should return to menu
+        this.shouldReturnToMenu = true;
+
+        // Don't exit the process, just stop the board
+        return true;
     }
 
     /**
@@ -323,6 +318,19 @@ export class KanbanBoard {
 export async function launchKanbanBoard() {
     const board = new KanbanBoard();
     await board.start();
+
+    // Check if we should return to menu instead of exiting
+    if (board.shouldReturnToMenu) {
+        try {
+            // Import and launch the main menu
+            const { initializeInteractiveMenu } = await import('../menu/index.js');
+            await initializeInteractiveMenu();
+        } catch (error) {
+            console.error(chalk.red('Error returning to main menu:'), error.message);
+            console.log(chalk.yellow('Please restart TaskMaster manually.'));
+            process.exit(0);
+        }
+    }
 }
 
 /**

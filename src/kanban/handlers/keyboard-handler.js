@@ -121,7 +121,15 @@ export class KeyboardHandler {
         if (!this.isActive) return;
 
         try {
-            // Check if popup is open and handle popup input first
+            // Check if popups are open and handle popup input first
+            if (this.board.helpPopup && this.board.helpPopup.isPopupOpen()) {
+                const handled = this.board.helpPopup.handleKeyPress(key);
+                if (handled) {
+                    this.board.render();
+                    return;
+                }
+            }
+
             if (this.board.taskDetailsPopup && this.board.taskDetailsPopup.isOpen()) {
                 const handled = this.board.taskDetailsPopup.handleKeyPress(key);
                 if (handled) {
