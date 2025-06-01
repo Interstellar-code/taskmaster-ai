@@ -1,0 +1,49 @@
+# Task ID: 59
+# Title: Integrate v0.16.0 upstream changes selectively
+# Status: in-progress
+# Dependencies: None
+# Priority: high
+# PRD Source: None (manually created)
+# Description: Integrate bug fixes and improvements from upstream v0.16.0 release while preserving unique custom features including: Kanban board functionality, PRD lifecycle tracking, interactive menu systems, custom AI editor integrations (.augment-guidelines, .cursor/rules, .roo/rules, .windsurfrules), custom task templates and workflow, and enhanced project management features. Focus on: 1) New directory structure (.taskmaster/ consolidation), 2) AWS Bedrock support, 3) Google Vertex AI support, 4) Azure support, 5) Node.js version requirement update, 6) TASK_MASTER_PROJECT_ROOT env variable, 7) Bug fixes for max_tokens and add-task MCP command. Create integration branch dev_rohit for selective merging.
+# Details:
+
+
+v0.16.0 Changes to Integrate:
+Major Features:
+New Directory Structure - .taskmaster/ consolidation (Major change)
+AWS Bedrock Support - New AI provider
+Google Vertex AI Support - New AI provider
+Azure Support - New AI provider
+Node.js Version Requirement - Updated to >18 (was >14)
+TASK_MASTER_PROJECT_ROOT - New environment variable support
+Bug Fixes:
+max_tokens Error Fix - For Claude Sonnet 4 and Opus 4
+add-task MCP Command Fix - Resolved error in MCP tool
+Integration Strategy:
+Phase 1: Safe Infrastructure Updates
+Update Node.js version requirement in package.json
+Add TASK_MASTER_PROJECT_ROOT environment variable support
+Apply max_tokens bug fixes
+Apply add-task MCP command fixes
+Phase 2: New AI Provider Integration
+Add AWS Bedrock provider support
+Add Google Vertex AI provider support
+Add Azure provider support
+Update configuration management for new providers
+Phase 3: Directory Structure Migration (Optional)
+Implement backward compatibility for new .taskmaster/ structure
+Add migration command support
+Preserve existing file locations while supporting new structure
+Phase 4: Testing & Validation
+Test all existing unique features still work
+Test new AI providers
+Test directory structure compatibility
+Validate Kanban board functionality
+Validate PRD lifecycle tracking
+Would you like me to proceed with Phase 1 first? This involves the safest changes that are unlikely to conflict with your unique features. I'll start by:
+
+Checking out specific commits/files from upstream for the bug fixes
+Updating the Node.js version requirement
+Adding the new environment variable support
+Testing that everything still works
+

@@ -2986,6 +2986,66 @@ Examples:
 			setupGitignoreCommand(options);
 		});
 
+	// migrate command - Directory structure migration
+	programInstance
+		.command('migrate')
+		.description('Migrate from old directory structure to new .taskmaster/ structure')
+		.option('--check', 'Check if migration is needed without performing it')
+		.option('--clean', 'Remove old files after successful migration')
+		.option('--force', 'Force migration even if new structure already exists')
+		.action(async (options) => {
+			const { migrateDirectoryStructure, needsMigration } = await import('./directory-migration.js');
+			const { findProjectRoot } = await import('./utils.js');
+
+			try {
+				const projectRoot = findProjectRoot();
+				if (!projectRoot) {
+					console.error(chalk.red('Error: Could not find project root directory'));
+					process.exit(1);
+				}
+
+				if (options.check) {
+					const migrationNeeded = needsMigration(projectRoot);
+					if (migrationNeeded) {
+						console.log(chalk.yellow('Migration needed: Old directory structure detected'));
+						console.log(chalk.cyan('Run "task-master migrate" to perform migration'));
+					} else {
+						console.log(chalk.green('No migration needed: New directory structure already in use'));
+					}
+					return;
+				}
+
+				if (!options.force && !needsMigration(projectRoot)) {
+					console.log(chalk.green('No migration needed: New directory structure already in use'));
+					console.log(chalk.cyan('Use --force to migrate anyway'));
+					return;
+				}
+
+				console.log(chalk.cyan('Starting directory structure migration...'));
+				const success = migrateDirectoryStructure(projectRoot, !options.clean);
+
+				if (success) {
+					console.log(chalk.green('✅ Migration completed successfully!'));
+					console.log(chalk.cyan('New structure:'));
+					console.log('  .taskmaster/tasks/     - Task files');
+					console.log('  .taskmaster/prd/       - PRD files');
+					console.log('  .taskmaster/reports/   - Complexity reports');
+					console.log('  .taskmaster/templates/ - Template files');
+					console.log('  .taskmaster/config.json - Configuration');
+
+					if (!options.clean) {
+						console.log(chalk.yellow('\nOld files preserved. Use --clean to remove them after verification.'));
+					}
+				} else {
+					console.error(chalk.red('❌ Migration failed. Check logs for details.'));
+					process.exit(1);
+				}
+			} catch (error) {
+				console.error(chalk.red(`Migration error: ${error.message}`));
+				process.exit(1);
+			}
+		});
+
 	return programInstance;
 }
 

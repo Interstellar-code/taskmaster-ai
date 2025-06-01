@@ -1,0 +1,54 @@
+# Task ID: 55
+# Title: Implement Quick PRD Operations via Keyboard Shortcuts
+# Status: done
+# Dependencies: 52
+# Priority: medium
+# PRD Source: prd-kanban-view.txt
+# PRD Path: C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt
+# Parsed Date: 2025-06-01T12:39:51.399Z
+# File Hash: 6ad2b16f54193c55e6c60c0a8d4db261a353e5e6e2bd1e5788c179070612201a
+# File Size: 22432 bytes
+# Description: Implement quick PRD operations via keyboard shortcuts: 'V' for detailed view, 'T' for linked tasks, 'S' for statistics, 'I' for ID/file metadata, 'R' for refresh, and 'O' to open file location. All operations must maintain data consistency with existing TaskMaster PRD commands.
+# Details:
+Add event listeners for 'V', 'T', 'S', 'I', 'R', and 'O' keys. For 'V', display detailed PRD information (metadata, description, linked tasks) in a bottom panel or overlay. For 'T', show a list of linked tasks with status breakdown. For 'S', display PRD statistics (task completion, effort estimates, timeline). For 'I', show PRD ID and file metadata in the status bar. 'R' should re-read `prd/prds.json` and refresh the board. 'O' should attempt to open the PRD file location in the system file explorer (with graceful degradation if not supported). Ensure all operations use existing TaskMaster PRD utilities for data consistency.
+
+# Test Strategy:
+Select a PRD and test each shortcut ('V', 'T', 'S', 'I', 'R', 'O'). Verify that the correct information is displayed or the action is performed. For 'R', make an external change to `prd/prds.json` and confirm the board refreshes. For 'O', verify the file explorer attempts to open the PRD's directory.
+
+# Subtasks:
+## 1. Implement 'V' (View Details) Shortcut [done]
+### Dependencies: None
+### Description: Handle 'V' key press, retrieve PRD details using existing utilities, and display them in a detailed view overlay. Include error handling for missing PRD data.
+### Details:
+This involves setting up an event listener for 'V', calling a utility function like `getPrdDetails(currentPrdId)`, and then rendering a modal or overlay with the returned data. If `getPrdDetails` returns null or an error, display a user-friendly message.
+
+## 2. Implement 'T' (Task List) Shortcut [done]
+### Dependencies: None
+### Description: Handle 'T' key press, retrieve associated tasks for the current PRD, and display them in a dedicated task list panel or overlay.
+### Details:
+Similar to 'V', but targets task-related data. Use `getPrdTasks(currentPrdId)` and render a scrollable list of tasks. Handle cases where no tasks are associated.
+
+## 3. Implement 'S' (Statistics) Shortcut [done]
+### Dependencies: None
+### Description: Handle 'S' key press, retrieve PRD statistics (e.g., completion rate, progress), and display them in a dedicated statistics panel or status bar update.
+### Details:
+Utilize `getPrdStatistics(currentPrdId)` to fetch relevant metrics. Display these prominently, perhaps as a small overlay or by updating a dedicated statistics area in the UI. Consider visual representations like progress bars.
+
+## 4. Implement 'I' (Status Bar Info) Shortcut [done]
+### Dependencies: None
+### Description: Handle 'I' key press, retrieve concise PRD information, and update the application's status bar with this information.
+### Details:
+This should be a lightweight operation. Use `getPrdConciseInfo(currentPrdId)` to get a short string (e.g., 'PRD-001: In Progress'). Update the status bar element. Clear the status bar after a few seconds or on another action.
+
+## 5. Implement 'R' (Refresh Board) Shortcut [done]
+### Dependencies: None
+### Description: Handle 'R' key press, trigger a refresh of the current PRD board or view, ensuring data consistency.
+### Details:
+This will likely involve calling an existing `refreshBoard()` or `reloadData()` function. Ensure that the refresh operation is non-blocking and provides visual feedback (e.g., a loading spinner) if it takes time.
+
+## 6. Implement 'O' (Open File Location) Shortcut [done]
+### Dependencies: None
+### Description: Handle 'O' key press, retrieve the PRD's file path, and attempt to open its location in the native file explorer. Implement robust error handling and graceful degradation for file operations.
+### Details:
+This is the most complex due to external system interaction. Use `getPrdFilePath(currentPrdId)`. Then, use a platform-specific method (e.g., `shell.showItemInFolder` in Electron, or a similar OS-level command) to open the path. Crucially, implement `try-catch` blocks for file system errors (e.g., file not found, permissions issues) and provide clear user feedback. If opening fails, suggest manual navigation or provide the path to copy.
+

@@ -1,0 +1,16 @@
+# Task ID: 37
+# Title: Quick Task Operations via Keyboard
+# Status: done
+# Dependencies: 35
+# Priority: medium
+# PRD Source: kanban-view-prd.txt
+# PRD Path: C:/laragon/www/taskmaster-ai/scripts/kanban-view-prd.txt
+# Parsed Date: 2025-06-01T07:27:35.658Z
+# File Hash: 12f0f1db4cda4f5ad8a71c57a66d919f3e4b97458b4505e3b1b700180108c880
+# File Size: 18300 bytes
+# Description: Implement quick task operations accessible via keyboard shortcuts from the Kanban view. This includes viewing detailed task information, deleting tasks with a confirmation prompt, entering inline edit mode for task titles, showing task ID and metadata, and refreshing the board. All operations must update tasks.json and refresh the display immediately.
+# Details:
+For a selected task, implement the following keyboard shortcuts: 'V' to show detailed task information in a bottom panel, 'D' to delete the selected task (with a confirmation prompt), 'E' to open an inline edit mode for the task title, 'I' to show task ID and metadata in the status bar, and 'R' to refresh the board from tasks.json. Ensure all operations that modify task data (delete, edit) use existing TaskMaster utilities to update tasks.json and trigger an immediate board refresh. Maintain data consistency with existing TaskMaster commands.
+
+# Test Strategy:
+Test each quick operation ('V', 'D', 'E', 'I', 'R') with a selected task. Verify that 'V' displays correct detailed information. Confirm 'D' prompts for confirmation and successfully deletes the task from tasks.json and the board. Test 'E' for inline title editing and persistence. Check 'I' for correct ID/metadata display. Verify 'R' refreshes the board with the latest data from tasks.json. Ensure all operations maintain data consistency and update the board visually.
