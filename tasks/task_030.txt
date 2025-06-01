@@ -4,10 +4,10 @@
 # Dependencies: 29
 # Priority: high
 # PRD Source: append-expand-prd-option.txt
-# PRD Path: C:/laragon/www/taskmaster-ai/scripts/append-expand-prd-option.txt
-# Parsed Date: 2025-06-01T06:23:00.242Z
-# File Hash: f50675882b47c882d45a8aed13eb8d07574c30a5675bc461e89c9cca50e96442
-# File Size: 11286 bytes
+# PRD Path: prd/done/append-expand-prd-option.txt
+# Parsed Date: 2025-06-01T11:48:22.924Z
+# File Hash: 70eee9a84f4eea54ef67f2ec161fbc020d37d2b290179e6131aa20fe976028ab
+# File Size: 11834 bytes
 # Description: Integrate the automatic task expansion logic into the PRD parsing workflow. When the 'Append + Auto-Expand' option is selected, the system should identify complex tasks suitable for expansion and automatically expand them into subtasks using existing AI models and expansion criteria. Only tasks meeting the defined expansion criteria (complexity, description length, feature scope) should be expanded.
 # Details:
 Modify the `parse-prd` command's logic to incorporate the auto-expansion step after initial task parsing when the new option is chosen. Reuse the existing task expansion logic and AI models that are currently used by the `expand` command. Implement a mechanism to identify 'complex' tasks based on criteria such as description length, presence of keywords indicating complexity, or predefined feature scope. This identification should precede the expansion process. Ensure that the expansion process maintains all existing functionality and quality standards of the standalone expansion command. Provide progress feedback to the user during this process.

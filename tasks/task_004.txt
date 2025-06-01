@@ -3,7 +3,11 @@
 # Status: done
 # Dependencies: 3
 # Priority: medium
-# PRD Source: None (manually created)
+# PRD Source: interactive-menu-prd.txt
+# PRD Path: prd/done/interactive-menu-prd.txt
+# Parsed Date: 2025-06-01T11:48:22.906Z
+# File Hash: 6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622
+# File Size: 16119 bytes
 # Description: Implement the 'Task Management' and 'Subtask Operations' menu categories, ensuring seamless integration with existing `task-hero` commands and handling of required parameters.
 # Details:
 Develop sub-menus for 'Task Management' (add-task, update-task, update, remove-task, move) and 'Subtask Operations' (add-subtask, update-subtask, remove-subtask, expand, clear-subtasks). For commands requiring parameters (e.g., `add-task <name>`), use `inquirer.js` to prompt the user for input. Implement smart defaults based on project context where applicable. Ensure command output is displayed within the menu interface.

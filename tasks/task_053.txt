@@ -1,0 +1,16 @@
+# Task ID: 53
+# Title: Implement PRD Status Updates via Keyboard
+# Status: pending
+# Dependencies: 52
+# Priority: high
+# PRD Source: prd-kanban-view.txt
+# PRD Path: C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt
+# Parsed Date: 2025-06-01T12:39:51.399Z
+# File Hash: 6ad2b16f54193c55e6c60c0a8d4db261a353e5e6e2bd1e5788c179070612201a
+# File Size: 22432 bytes
+# Description: Implement the functionality to update PRD status using number keys (1-4) to move selected PRDs to corresponding status columns. This includes updating the `prd/prds.json` file, updating column PRD counts, and automatically organizing PRD files into status-based directories.
+# Details:
+Add event listeners for number keys (1-4). When a PRD is selected and a number key is pressed, update the PRD's status in the in-memory data structure and then persist this change to `prd/prds.json` using existing TaskMaster PRD utilities (e.g., `updatePrdStatus`). Ensure column PRD counts are immediately updated. Crucially, integrate with the existing logic for automatic PRD file organization into status-based directories (pending, in-progress, done, archived) after a status change.
+
+# Test Strategy:
+Select a PRD and use number keys (1-4) to move it between columns. Verify that the PRD visually moves to the correct column. Check `prd/prds.json` to confirm the status update is persistent. Verify that the PRD file is moved to the correct status-based directory. Confirm column PRD counts update accurately after each move.

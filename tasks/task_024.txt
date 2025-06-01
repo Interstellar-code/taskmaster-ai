@@ -3,7 +3,11 @@
 # Status: done
 # Dependencies: 21
 # Priority: medium
-# PRD Source: None (manually created)
+# PRD Source: prd-source-tracking.txt
+# PRD Path: prd/done/prd-source-tracking.txt
+# Parsed Date: 2025-06-01T11:48:22.921Z
+# File Hash: 25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4
+# File Size: 15940 bytes
 # Description: Implement new commands to query and filter tasks based on their PRD source. This includes listing all PRDs, showing tasks from a specific PRD, and displaying the PRD source for a given task ID.
 # Details:
 Add new commands to the command registry (e.g., `task-master list-prds`, `task-master tasks-from-prd --file=<path>`, `task-master show-prd-source --id=<id>`). `list-prds` should iterate through all tasks and unique `prdSource.filePath` values. `tasks-from-prd` should filter tasks based on the provided PRD file path. `show-prd-source` should retrieve and display the `prdSource` object for a specific task ID. Implement efficient data retrieval for these queries.

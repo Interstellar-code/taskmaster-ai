@@ -3,7 +3,11 @@
 # Status: done
 # Dependencies: None
 # Priority: high
-# PRD Source: None (manually created)
+# PRD Source: interactive-menu-prd.txt
+# PRD Path: prd/done/interactive-menu-prd.txt
+# Parsed Date: 2025-06-01T11:48:22.904Z
+# File Hash: 6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622
+# File Size: 16119 bytes
 # Description: Implement the core command-line interface entry point for the interactive menu system, allowing users to launch it using `task-hero --menu`, `task-hero -m`, or `task-hero menu`.
 # Details:
 Utilize Commander.js to define the `--menu`, `-m`, and `menu` options. This should trigger the initialization of the interactive menu system. Ensure backward compatibility with existing commands. The entry point should call a main menu rendering function.

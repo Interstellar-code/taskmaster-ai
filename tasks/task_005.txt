@@ -3,7 +3,11 @@
 # Status: done
 # Dependencies: 4
 # Priority: medium
-# PRD Source: None (manually created)
+# PRD Source: interactive-menu-prd.txt
+# PRD Path: prd/done/interactive-menu-prd.txt
+# Parsed Date: 2025-06-01T11:48:22.907Z
+# File Hash: 6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622
+# File Size: 16119 bytes
 # Description: Implement the 'Analysis & Dependencies', 'Help & Information', and 'Settings' menu categories, integrating them with their respective functionalities and ensuring proper context awareness.
 # Details:
 Create sub-menus for 'Analysis & Dependencies' (analyze-complexity, complexity-report, add-dependency, remove-dependency, validate-dependencies, fix-dependencies), 'Help & Information' (Command Reference, Quick Start Guide, Keyboard Shortcuts), and 'Settings' (Toggle Research Mode, Set Default File Paths, Debug Mode). For 'Settings', ensure integration with `.taskmasterconfig` for reading and updating settings. Implement contextual help and suggestions where appropriate.

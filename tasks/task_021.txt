@@ -3,7 +3,11 @@
 # Status: done
 # Dependencies: None
 # Priority: high
-# PRD Source: None (manually created)
+# PRD Source: prd-source-tracking.txt
+# PRD Path: prd/done/prd-source-tracking.txt
+# Parsed Date: 2025-06-01T11:48:22.916Z
+# File Hash: 25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4
+# File Size: 15940 bytes
 # Description: Enhance the existing task data structure to include a new 'prdSource' field. This field will be an object containing metadata about the PRD file from which the task was generated. This is a foundational change for all subsequent features.
 # Details:
 Modify the task object schema to include the 'prdSource' field as specified in the PRD. The 'prdSource' object should contain 'filePath', 'fileName', 'parsedDate', 'fileHash', and 'fileSize'. Ensure backward compatibility for existing tasks by setting 'prdSource' to null or an empty object for tasks not yet associated with a PRD. This will likely involve updating `tasks.json` and potentially `task_xxx.txt` file formats.

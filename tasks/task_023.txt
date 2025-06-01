@@ -3,7 +3,11 @@
 # Status: done
 # Dependencies: 22
 # Priority: medium
-# PRD Source: None (manually created)
+# PRD Source: prd-source-tracking.txt
+# PRD Path: prd/done/prd-source-tracking.txt
+# Parsed Date: 2025-06-01T11:48:22.920Z
+# File Hash: 25d75529982bef86f127ff8043151dc66570dc143f77ab709d800cc42a2314f4
+# File Size: 15940 bytes
 # Description: Update all relevant UI components (task list, task details, project dashboard, interactive menu) to display the PRD source information for each task. This provides immediate visual traceability to users.
 # Details:
 Modify `scripts/modules/ui.js` and other display functions to show the `prdSource.fileName` in the task list view (e.g., as a new column). Enhance the individual task details view to display all `prdSource` fields (filePath, parsedDate, version, etc.). Update the project dashboard to include a summary of PRD sources (e.g., number of PRD files processed, total tasks generated per PRD). Ensure interactive menu displays also reflect this information.

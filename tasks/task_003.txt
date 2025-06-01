@@ -3,7 +3,11 @@
 # Status: done
 # Dependencies: 2
 # Priority: medium
-# PRD Source: None (manually created)
+# PRD Source: interactive-menu-prd.txt
+# PRD Path: prd/done/interactive-menu-prd.txt
+# Parsed Date: 2025-06-01T11:48:22.906Z
+# File Hash: 6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622
+# File Size: 16119 bytes
 # Description: Implement the 'Project Management' and 'Task Operations' menu categories, mapping their respective numbered options to the existing `task-hero` commands. This involves integrating the menu selections with the underlying command execution logic.
 # Details:
 Create sub-menus for 'Project Management' (init, parse-prd, models) and 'Task Operations' (list, next, show, set-status, generate). Map each menu option to its corresponding `task-hero` command. When a command is selected, execute it and ensure control returns to the menu after completion. Utilize the existing `scripts/modules/commands.js` infrastructure.
