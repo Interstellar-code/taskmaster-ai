@@ -1,6 +1,6 @@
 # Task ID: 55
 # Title: Implement Quick PRD Operations via Keyboard Shortcuts
-# Status: pending
+# Status: done
 # Dependencies: 52
 # Priority: medium
 # PRD Source: prd-kanban-view.txt
@@ -16,37 +16,37 @@ Add event listeners for 'V', 'T', 'S', 'I', 'R', and 'O' keys. For 'V', display 
 Select a PRD and test each shortcut ('V', 'T', 'S', 'I', 'R', 'O'). Verify that the correct information is displayed or the action is performed. For 'R', make an external change to `prd/prds.json` and confirm the board refreshes. For 'O', verify the file explorer attempts to open the PRD's directory.
 
 # Subtasks:
-## 1. Implement 'V' (View Details) Shortcut [pending]
+## 1. Implement 'V' (View Details) Shortcut [done]
 ### Dependencies: None
 ### Description: Handle 'V' key press, retrieve PRD details using existing utilities, and display them in a detailed view overlay. Include error handling for missing PRD data.
 ### Details:
 This involves setting up an event listener for 'V', calling a utility function like `getPrdDetails(currentPrdId)`, and then rendering a modal or overlay with the returned data. If `getPrdDetails` returns null or an error, display a user-friendly message.
 
-## 2. Implement 'T' (Task List) Shortcut [pending]
+## 2. Implement 'T' (Task List) Shortcut [done]
 ### Dependencies: None
 ### Description: Handle 'T' key press, retrieve associated tasks for the current PRD, and display them in a dedicated task list panel or overlay.
 ### Details:
 Similar to 'V', but targets task-related data. Use `getPrdTasks(currentPrdId)` and render a scrollable list of tasks. Handle cases where no tasks are associated.
 
-## 3. Implement 'S' (Statistics) Shortcut [pending]
+## 3. Implement 'S' (Statistics) Shortcut [done]
 ### Dependencies: None
 ### Description: Handle 'S' key press, retrieve PRD statistics (e.g., completion rate, progress), and display them in a dedicated statistics panel or status bar update.
 ### Details:
 Utilize `getPrdStatistics(currentPrdId)` to fetch relevant metrics. Display these prominently, perhaps as a small overlay or by updating a dedicated statistics area in the UI. Consider visual representations like progress bars.
 
-## 4. Implement 'I' (Status Bar Info) Shortcut [pending]
+## 4. Implement 'I' (Status Bar Info) Shortcut [done]
 ### Dependencies: None
 ### Description: Handle 'I' key press, retrieve concise PRD information, and update the application's status bar with this information.
 ### Details:
 This should be a lightweight operation. Use `getPrdConciseInfo(currentPrdId)` to get a short string (e.g., 'PRD-001: In Progress'). Update the status bar element. Clear the status bar after a few seconds or on another action.
 
-## 5. Implement 'R' (Refresh Board) Shortcut [pending]
+## 5. Implement 'R' (Refresh Board) Shortcut [done]
 ### Dependencies: None
 ### Description: Handle 'R' key press, trigger a refresh of the current PRD board or view, ensuring data consistency.
 ### Details:
 This will likely involve calling an existing `refreshBoard()` or `reloadData()` function. Ensure that the refresh operation is non-blocking and provides visual feedback (e.g., a loading spinner) if it takes time.
 
-## 6. Implement 'O' (Open File Location) Shortcut [pending]
+## 6. Implement 'O' (Open File Location) Shortcut [done]
 ### Dependencies: None
 ### Description: Handle 'O' key press, retrieve the PRD's file path, and attempt to open its location in the native file explorer. Implement robust error handling and graceful degradation for file operations.
 ### Details:

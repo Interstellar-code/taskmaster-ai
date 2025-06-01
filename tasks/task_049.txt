@@ -1,6 +1,6 @@
 # Task ID: 49
 # Title: Initialize Terminal UI Framework (Blessed.js)
-# Status: pending
+# Status: done
 # Dependencies: None
 # Priority: high
 # PRD Source: prd-kanban-view.txt
@@ -16,19 +16,19 @@ Utilize Blessed.js to create the terminal screen and basic layout. Ensure the se
 Verify that a blank Blessed.js screen initializes without errors across different terminal environments. Check for basic keyboard input responsiveness (e.g., 'Q' to quit) to ensure the framework is active.
 
 # Subtasks:
-## 1. Initialize Blessed.js Screen and Basic Layout [pending]
+## 1. Initialize Blessed.js Screen and Basic Layout [done]
 ### Dependencies: None
 ### Description: Set up the core Blessed.js screen object, configure basic terminal properties (e.g., smart CSR), and create a main container element to serve as the root for the UI. Implement a basic 'quit' functionality on 'q', 'C-c', or 'escape' key presses.
 ### Details:
 This involves importing blessed, calling `blessed.screen()`, setting `screen.key(['escape', 'q', 'C-c'], function(ch, key) { return process.exit(0); });`, creating `blessed.box()` for the main container, appending it to the screen, and calling `screen.render()`.
 
-## 2. Implement Cross-Platform Compatibility Checks and Error Handling [pending]
+## 2. Implement Cross-Platform Compatibility Checks and Error Handling [done]
 ### Dependencies: 49.1
 ### Description: Add checks to ensure the terminal environment is suitable for Blessed.js (e.g., checking for TTY, basic terminal capabilities) and implement robust error handling for common initialization failures. Log relevant environment details for debugging.
 ### Details:
 This includes checking `process.stdout.isTTY` and `process.stdin.isTTY`. Wrap screen initialization in try-catch blocks to gracefully handle errors like unsupported terminals or missing dependencies. Log terminal type (`process.env.TERM`) and other relevant environment variables.
 
-## 3. Manage Dependencies and Project Setup [pending]
+## 3. Manage Dependencies and Project Setup [done]
 ### Dependencies: None
 ### Description: Ensure Blessed.js is correctly installed and managed as a project dependency. Set up a basic `package.json` if not already present, and include instructions for installing Blessed.js.
 ### Details:

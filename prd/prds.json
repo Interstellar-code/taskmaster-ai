@@ -231,11 +231,11 @@
       "id": "prd_006",
       "title": "prd-kanban-view",
       "fileName": "prd-kanban-view.txt",
-      "status": "pending",
+      "status": "in-progress",
       "complexity": "medium",
       "createdDate": "2025-06-01T12:40:23.970Z",
-      "lastModified": "2025-06-01T12:40:23.970Z",
-      "filePath": "C:\\laragon\\www\\taskmaster-ai\\prd\\pending\\prd-kanban-view.txt",
+      "lastModified": "2025-06-01T13:34:40.659Z",
+      "filePath": "prd\\in-progress\\prd-kanban-view.txt",
       "fileHash": "23ff94315df3caa7a61766f60964107bf5a1dcc38093b3b84734ebda980653e2",
       "fileSize": 22484,
       "description": "PRD parsed and registered automatically during task generation",
@@ -260,7 +260,7 @@
   ],
   "metadata": {
     "version": "1.0.0",
-    "lastUpdated": "2025-06-01T12:40:23.983Z",
+    "lastUpdated": "2025-06-01T13:34:40.660Z",
     "totalPrds": 6,
     "schema": {
       "version": "1.0.0",

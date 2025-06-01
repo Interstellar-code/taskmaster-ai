@@ -308,6 +308,7 @@ async function handleProjectManagement(sessionState) {
                         { name: chalk.blue('🚀 Initialize Project'), value: 'init' },
                         { name: chalk.green('📄 Parse PRD'), value: 'parse-prd' },
                         { name: chalk.magenta('📄 PRD Management'), value: 'prd-mgmt' },
+                        { name: chalk.cyan('📊 PRD Kanban Board'), value: 'prd-kanban' },
                         { name: chalk.yellow('🤖 Configure Models'), value: 'models' },
                         new inquirer.Separator(),
                         { name: chalk.gray('← Back to Main Menu'), value: 'back' }
@@ -329,6 +330,9 @@ async function handleProjectManagement(sessionState) {
                     break;
                 case 'prd-mgmt':
                     await handlePrdManagement(sessionState);
+                    break;
+                case 'prd-kanban':
+                    await handlePRDKanbanBoard(sessionState);
                     break;
                 case 'models':
                     await executeCommand('models', ['--setup'], { projectRoot: sessionState.projectRoot });
@@ -1408,6 +1412,36 @@ async function handleListTasks(sessionState) {
     } catch (error) {
         console.error(chalk.red('❌ Failed to list tasks:'), error.message);
         logError('List tasks failed', error);
+    }
+}
+
+/**
+ * Handle PRD Kanban board view
+ */
+async function handlePRDKanbanBoard(sessionState) {
+    try {
+        console.log(chalk.blue('Launching PRD Kanban board...'));
+        console.log(chalk.gray('Use arrow keys to navigate, 1-3 to move PRDs, V for details, Q to return to menu'));
+
+        // Give user a moment to read the instructions
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        // Import and create a PRD Kanban board instance using the NEW implementation
+        const { PRDKanbanBoard } = await import('../prd-kanban/prd-kanban-board.js');
+        const board = new PRDKanbanBoard();
+
+        // Start the board and wait for it to finish
+        await board.start();
+
+        // Give a moment for cleanup to complete
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        // Board has finished, show completion message
+        console.log(chalk.green('\n✅ PRD Kanban board session completed'));
+
+    } catch (error) {
+        console.error(chalk.red('Error launching PRD Kanban board:'), error.message);
+        logError('PRD Kanban board error', error, { sessionState: sessionState.menuPath });
     }
 }
 

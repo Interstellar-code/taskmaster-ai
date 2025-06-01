@@ -1,6 +1,6 @@
 # Task ID: 52
 # Title: Develop Keyboard Navigation and PRD Selection
-# Status: pending
+# Status: done
 # Dependencies: 51
 # Priority: high
 # PRD Source: prd-kanban-view.txt
@@ -16,31 +16,31 @@ Implement event listeners for arrow key presses to control navigation. Maintain 
 Test arrow key navigation (up, down, left, right) to ensure smooth movement between PRDs and columns. Verify that the selected PRD is visually highlighted. Check that the status bar accurately reflects the current selection and available navigation shortcuts.
 
 # Subtasks:
-## 1. Set up Keyboard Event Listeners [pending]
+## 1. Set up Keyboard Event Listeners [done]
 ### Dependencies: None
 ### Description: Implement event listeners for arrow keys (Up, Down, Left, Right) on the document or a specific container to capture keyboard navigation input.
 ### Details:
 Attach event listeners to the appropriate DOM element. Consider using `keydown` or `keyup` events and prevent default browser behavior for arrow keys.
 
-## 2. Manage PRD Selection State [pending]
+## 2. Manage PRD Selection State [done]
 ### Dependencies: 52.1
 ### Description: Develop a state management system to track the currently selected PRD, including its column index and item index within that column. Handle initial selection and updates based on keyboard input.
 ### Details:
 Define a state variable (e.g., `selectedPRD: { columnIndex: number, itemIndex: number }`). Implement functions to update this state based on arrow key presses, considering boundary conditions (first/last item in a column, first/last column).
 
-## 3. Implement Visual Highlighting for Selected PRD [pending]
+## 3. Implement Visual Highlighting for Selected PRD [done]
 ### Dependencies: 52.2
 ### Description: Apply visual feedback (e.g., a border, background color change) to the currently selected PRD item based on the managed selection state.
 ### Details:
 Develop CSS classes or inline styles to apply highlighting. Implement a rendering function that removes highlighting from the previously selected item and applies it to the newly selected item whenever the selection state changes. Ensure smooth transitions.
 
-## 4. Handle Edge Cases and Boundary Conditions [pending]
+## 4. Handle Edge Cases and Boundary Conditions [done]
 ### Dependencies: 52.2, 52.3
 ### Description: Refine the selection logic to correctly handle navigation when columns are empty, when reaching the top/bottom of a column, or when moving between columns at the board's left/right edges.
 ### Details:
 Add conditional logic to the state update functions (from subtask 2) to prevent out-of-bounds selections. For example, if moving 'down' from the last item, stay on the last item. If moving 'left' from the first column, stay on the first column. Consider how to handle navigation into/out of empty columns gracefully (e.g., skip empty columns or select the first item in the next non-empty column).
 
-## 5. Dynamically Update Status Bar [pending]
+## 5. Dynamically Update Status Bar [done]
 ### Dependencies: 52.2, 52.4
 ### Description: Update the application's status bar to display details of the currently selected PRD (e.g., 'Selected: Column X, Item Y') and available keyboard shortcuts based on the current context.
 ### Details:

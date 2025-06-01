@@ -3943,7 +3943,7 @@
       "testStrategy": "Verify that a blank Blessed.js screen initializes without errors across different terminal environments. Check for basic keyboard input responsiveness (e.g., 'Q' to quit) to ensure the framework is active.",
       "priority": "high",
       "dependencies": [],
-      "status": "pending",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
@@ -3951,7 +3951,7 @@
           "description": "Set up the core Blessed.js screen object, configure basic terminal properties (e.g., smart CSR), and create a main container element to serve as the root for the UI. Implement a basic 'quit' functionality on 'q', 'C-c', or 'escape' key presses.",
           "dependencies": [],
           "details": "This involves importing blessed, calling `blessed.screen()`, setting `screen.key(['escape', 'q', 'C-c'], function(ch, key) { return process.exit(0); });`, creating `blessed.box()` for the main container, appending it to the screen, and calling `screen.render()`.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
             "fileName": "prd-kanban-view.txt",
@@ -3968,7 +3968,7 @@
             1
           ],
           "details": "This includes checking `process.stdout.isTTY` and `process.stdin.isTTY`. Wrap screen initialization in try-catch blocks to gracefully handle errors like unsupported terminals or missing dependencies. Log terminal type (`process.env.TERM`) and other relevant environment variables.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
             "fileName": "prd-kanban-view.txt",
@@ -3983,7 +3983,7 @@
           "description": "Ensure Blessed.js is correctly installed and managed as a project dependency. Set up a basic `package.json` if not already present, and include instructions for installing Blessed.js.",
           "dependencies": [],
           "details": "This involves running `npm init -y` (if no package.json) and `npm install blessed`. Document these steps in a README or setup instructions. Consider adding a simple start script in `package.json`.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
             "fileName": "prd-kanban-view.txt",
@@ -4011,7 +4011,7 @@
       "dependencies": [
         49
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
@@ -4019,7 +4019,7 @@
           "description": "Create the ASCII art designs for the vertical separators and horizontal lines that will form the Kanban board columns. This includes defining the characters and patterns for column borders.",
           "dependencies": [],
           "details": "This subtask focuses on the visual design aspect of the column structure using ASCII characters. Consider different terminal fonts and character sets for optimal appearance.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
             "fileName": "prd-kanban-view.txt",
@@ -4034,7 +4034,7 @@
           "description": "Develop the JavaScript logic to detect the current terminal width and height and dynamically adjust the Kanban board layout, including column widths and heights, to fit the available space. This should ensure the board scales correctly.",
           "dependencies": [],
           "details": "Utilize Blessed.js for terminal size detection and layout management. The logic should calculate optimal column widths based on the total terminal width, ensuring all columns are visible and proportionally sized.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
             "fileName": "prd-kanban-view.txt",
@@ -4052,7 +4052,7 @@
             2
           ],
           "details": "This involves writing the code to draw the ASCII art borders for each column. Apply Chalk.js styles (colors, bolding) to enhance the visual separation and appearance of the columns. Ensure the rendering respects the dynamic sizing from subtask 2.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
             "fileName": "prd-kanban-view.txt",
@@ -4069,7 +4069,7 @@
             3
           ],
           "details": "The header should be prominently displayed at the top of each column. The PRD count should be updated in real-time based on the data model. Apply appropriate Chalk.js styles for readability and visual appeal.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
             "fileName": "prd-kanban-view.txt",
@@ -4086,7 +4086,7 @@
             3
           ],
           "details": "This placeholder provides clear feedback to the user when a column has no items. Ensure the message is visually distinct and correctly positioned within the empty column's boundaries. Use Chalk.js for styling (e.g., greyed out text).",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
             "fileName": "prd-kanban-view.txt",
@@ -4114,7 +4114,7 @@
       "dependencies": [
         50
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
@@ -4122,7 +4122,7 @@
           "description": "Define the ASCII character layout and structure for a single PRD card, including placeholders for all metadata fields (ID, title, priority, complexity, linked task count, completion percentage). Determine fixed widths for each section.",
           "dependencies": [],
           "details": "This involves sketching out the card's visual representation using ASCII characters, considering borders, separators, and alignment. Decide on the maximum width for the card and allocate space for each data point. For example:\n+-----------------------------------+\n| ID: [ID] | P: [P] | C: [C] |\n|-----------------------------------|\n| [Title]                           |\n|                                   |\n|-----------------------------------|\n| Tasks: [Count] | Comp: [Percent] |\n+-----------------------------------+",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
             "fileName": "prd-kanban-view.txt",
@@ -4139,7 +4139,7 @@
             1
           ],
           "details": "The component should accept parameters like `id`, `title`, `priority`, `complexity`, `linkedTaskCount`, and `completionPercentage`. It will use the structure defined in subtask 1 to format and place these values. Implement basic string formatting and padding to align text within the card structure.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
             "fileName": "prd-kanban-view.txt",
@@ -4156,7 +4156,7 @@
             2
           ],
           "details": "For title truncation, if the title exceeds a certain character limit, it should be cut off and '...' appended. For text wrapping, if the title is too long for a single line, it should wrap to the next line within the allocated title area. Implement logic to apply ANSI escape codes for colors (e.g., red for high priority, green for low complexity) to the priority and complexity fields.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
             "fileName": "prd-kanban-view.txt",
@@ -4173,7 +4173,7 @@
             3
           ],
           "details": "Identify the data structure provided by the PRD data utilities (or create a mock object with similar structure). Map the fields from this data structure to the parameters expected by the PRD card component. Test with various data inputs to ensure robustness and correct display of all metadata.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
             "fileName": "prd-kanban-view.txt",
@@ -4201,7 +4201,7 @@
       "dependencies": [
         51
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
@@ -4209,7 +4209,7 @@
           "description": "Implement event listeners for arrow keys (Up, Down, Left, Right) on the document or a specific container to capture keyboard navigation input.",
           "dependencies": [],
           "details": "Attach event listeners to the appropriate DOM element. Consider using `keydown` or `keyup` events and prevent default browser behavior for arrow keys.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
             "fileName": "prd-kanban-view.txt",
@@ -4226,7 +4226,7 @@
             1
           ],
           "details": "Define a state variable (e.g., `selectedPRD: { columnIndex: number, itemIndex: number }`). Implement functions to update this state based on arrow key presses, considering boundary conditions (first/last item in a column, first/last column).",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
             "fileName": "prd-kanban-view.txt",
@@ -4243,7 +4243,7 @@
             2
           ],
           "details": "Develop CSS classes or inline styles to apply highlighting. Implement a rendering function that removes highlighting from the previously selected item and applies it to the newly selected item whenever the selection state changes. Ensure smooth transitions.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
             "fileName": "prd-kanban-view.txt",
@@ -4261,7 +4261,7 @@
             3
           ],
           "details": "Add conditional logic to the state update functions (from subtask 2) to prevent out-of-bounds selections. For example, if moving 'down' from the last item, stay on the last item. If moving 'left' from the first column, stay on the first column. Consider how to handle navigation into/out of empty columns gracefully (e.g., skip empty columns or select the first item in the next non-empty column).",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
             "fileName": "prd-kanban-view.txt",
@@ -4279,7 +4279,7 @@
             4
           ],
           "details": "Create a dedicated component or function for the status bar. Whenever the `selectedPRD` state changes, update the status bar text. Include relevant shortcuts (e.g., 'Enter: Open PRD', 'Delete: Remove PRD') that are applicable to the selected item or general navigation.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
             "fileName": "prd-kanban-view.txt",
@@ -4307,7 +4307,7 @@
       "dependencies": [
         52
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": [],
       "prdSource": {
         "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
@@ -4327,7 +4327,7 @@
       "dependencies": [
         49
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": [],
       "prdSource": {
         "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
@@ -4347,7 +4347,7 @@
       "dependencies": [
         52
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
@@ -4355,7 +4355,7 @@
           "description": "Handle 'V' key press, retrieve PRD details using existing utilities, and display them in a detailed view overlay. Include error handling for missing PRD data.",
           "dependencies": [],
           "details": "This involves setting up an event listener for 'V', calling a utility function like `getPrdDetails(currentPrdId)`, and then rendering a modal or overlay with the returned data. If `getPrdDetails` returns null or an error, display a user-friendly message.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
             "fileName": "prd-kanban-view.txt",
@@ -4370,7 +4370,7 @@
           "description": "Handle 'T' key press, retrieve associated tasks for the current PRD, and display them in a dedicated task list panel or overlay.",
           "dependencies": [],
           "details": "Similar to 'V', but targets task-related data. Use `getPrdTasks(currentPrdId)` and render a scrollable list of tasks. Handle cases where no tasks are associated.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
             "fileName": "prd-kanban-view.txt",
@@ -4385,7 +4385,7 @@
           "description": "Handle 'S' key press, retrieve PRD statistics (e.g., completion rate, progress), and display them in a dedicated statistics panel or status bar update.",
           "dependencies": [],
           "details": "Utilize `getPrdStatistics(currentPrdId)` to fetch relevant metrics. Display these prominently, perhaps as a small overlay or by updating a dedicated statistics area in the UI. Consider visual representations like progress bars.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
             "fileName": "prd-kanban-view.txt",
@@ -4400,7 +4400,7 @@
           "description": "Handle 'I' key press, retrieve concise PRD information, and update the application's status bar with this information.",
           "dependencies": [],
           "details": "This should be a lightweight operation. Use `getPrdConciseInfo(currentPrdId)` to get a short string (e.g., 'PRD-001: In Progress'). Update the status bar element. Clear the status bar after a few seconds or on another action.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
             "fileName": "prd-kanban-view.txt",
@@ -4415,7 +4415,7 @@
           "description": "Handle 'R' key press, trigger a refresh of the current PRD board or view, ensuring data consistency.",
           "dependencies": [],
           "details": "This will likely involve calling an existing `refreshBoard()` or `reloadData()` function. Ensure that the refresh operation is non-blocking and provides visual feedback (e.g., a loading spinner) if it takes time.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
             "fileName": "prd-kanban-view.txt",
@@ -4430,7 +4430,7 @@
           "description": "Handle 'O' key press, retrieve the PRD's file path, and attempt to open its location in the native file explorer. Implement robust error handling and graceful degradation for file operations.",
           "dependencies": [],
           "details": "This is the most complex due to external system interaction. Use `getPrdFilePath(currentPrdId)`. Then, use a platform-specific method (e.g., `shell.showItemInFolder` in Electron, or a similar OS-level command) to open the path. Crucially, implement `try-catch` blocks for file system errors (e.g., file not found, permissions issues) and provide clear user feedback. If opening fails, suggest manual navigation or provide the path to copy.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
             "fileName": "prd-kanban-view.txt",
@@ -4458,7 +4458,7 @@
       "dependencies": [
         50
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": [],
       "prdSource": {
         "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
@@ -4479,7 +4479,7 @@
         53,
         55
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
@@ -4487,7 +4487,7 @@
           "description": "Confirm that all read and write operations for PRD data correctly interact with `prd/prds.json` by leveraging existing TaskMaster utilities. This includes creating, updating, and deleting PRD entries.",
           "dependencies": [],
           "details": "Ensure that the integration uses established TaskMaster functions for file system interaction to maintain consistency and avoid direct file manipulation. Validate that data written to `prd/prds.json` is correctly formatted and readable, and that data read from it accurately reflects the file's content.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
             "fileName": "prd-kanban-view.txt",
@@ -4504,7 +4504,7 @@
             1
           ],
           "details": "Test various PRD status transitions to ensure that the corresponding file system actions are executed as expected. This includes verifying the correct destination paths for moved files and the accuracy of any updated file metadata or directory structures.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
             "fileName": "prd-kanban-view.txt",
@@ -4521,7 +4521,7 @@
             1
           ],
           "details": "Implement checks to verify that PRD entries conform to the expected schema (e.g., required fields, data types, format). Test edge cases and invalid inputs to confirm that validation rules correctly reject malformed data and provide appropriate error messages.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
             "fileName": "prd-kanban-view.txt",
@@ -4540,7 +4540,7 @@
             3
           ],
           "details": "This strategy should include unit tests for individual components, integration tests for data flow between modules, and end-to-end tests simulating real-world scenarios. Focus on testing concurrent operations, error handling, and recovery mechanisms to prevent data loss or corruption. Include regression tests to ensure new features do not break existing functionality.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
             "fileName": "prd-kanban-view.txt",
@@ -4570,7 +4570,7 @@
         56,
         57
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
@@ -4578,7 +4578,7 @@
           "description": "Develop a detailed test plan outlining methodologies, scope, environments (Windows, macOS, Linux terminals), test cases for cross-platform and integration testing, and bug reporting/resolution processes.",
           "dependencies": [],
           "details": "Define specific test scenarios for UI elements, functionality, performance, and compatibility across all target operating systems. Outline the bug lifecycle from reporting to verification.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
             "fileName": "prd-kanban-view.txt",
@@ -4595,7 +4595,7 @@
             1
           ],
           "details": "Systematically test all user interface components, navigation, and user experience flows on each specified platform. Document all findings in the designated bug tracking system.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
             "fileName": "prd-kanban-view.txt",
@@ -4612,7 +4612,7 @@
             1
           ],
           "details": "Verify data consistency, command execution, and menu navigation when interacting with the PRD tracking and menu systems. Report any integration failures or inconsistencies.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
             "fileName": "prd-kanban-view.txt",
@@ -4630,7 +4630,7 @@
             3
           ],
           "details": "Produce a user manual covering all functionalities of the Kanban board, from basic task management to advanced features. Include screenshots and step-by-step instructions. Document all available shortcuts.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
             "fileName": "prd-kanban-view.txt",
@@ -4648,7 +4648,7 @@
             3
           ],
           "details": "Detail the UI component structure, data flow, API endpoints used for integration, and any specific technical considerations for the Kanban board. This document should serve as a reference for developers.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/prd/pending/prd-kanban-view.txt",
             "fileName": "prd-kanban-view.txt",

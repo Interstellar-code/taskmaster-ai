@@ -1,6 +1,6 @@
 # Task ID: 56
 # Title: Develop Board Navigation and Control Features
-# Status: pending
+# Status: done
 # Dependencies: 50
 # Priority: medium
 # PRD Source: prd-kanban-view.txt

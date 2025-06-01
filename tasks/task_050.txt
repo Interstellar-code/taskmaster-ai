@@ -1,6 +1,6 @@
 # Task ID: 50
 # Title: Develop Core Kanban Board Layout and Column Rendering
-# Status: pending
+# Status: done
 # Dependencies: 49
 # Priority: high
 # PRD Source: prd-kanban-view.txt
@@ -16,31 +16,31 @@ Design the ASCII art and box drawing characters for the columns. Implement dynam
 Visually inspect the board layout in various terminal sizes. Verify that columns are correctly rendered with ASCII art and box drawing characters. Confirm PRD counts in headers are accurate (even if 0 initially). Test 'No PRDs' placeholder for empty columns.
 
 # Subtasks:
-## 1. Design ASCII Art for Kanban Columns [pending]
+## 1. Design ASCII Art for Kanban Columns [done]
 ### Dependencies: None
 ### Description: Create the ASCII art designs for the vertical separators and horizontal lines that will form the Kanban board columns. This includes defining the characters and patterns for column borders.
 ### Details:
 This subtask focuses on the visual design aspect of the column structure using ASCII characters. Consider different terminal fonts and character sets for optimal appearance.
 
-## 2. Implement Dynamic Sizing Logic for Terminal [pending]
+## 2. Implement Dynamic Sizing Logic for Terminal [done]
 ### Dependencies: None
 ### Description: Develop the JavaScript logic to detect the current terminal width and height and dynamically adjust the Kanban board layout, including column widths and heights, to fit the available space. This should ensure the board scales correctly.
 ### Details:
 Utilize Blessed.js for terminal size detection and layout management. The logic should calculate optimal column widths based on the total terminal width, ensuring all columns are visible and proportionally sized.
 
-## 3. Render Kanban Columns with ASCII Art and Chalk.js [pending]
+## 3. Render Kanban Columns with ASCII Art and Chalk.js [done]
 ### Dependencies: 50.1, 50.2
 ### Description: Implement the rendering of the Kanban board columns using the designed ASCII art. Integrate Chalk.js for styling the column borders and backgrounds, and ensure proper integration with the Blessed.js layout.
 ### Details:
 This involves writing the code to draw the ASCII art borders for each column. Apply Chalk.js styles (colors, bolding) to enhance the visual separation and appearance of the columns. Ensure the rendering respects the dynamic sizing from subtask 2.
 
-## 4. Implement Column Headers with PRD Counts [pending]
+## 4. Implement Column Headers with PRD Counts [done]
 ### Dependencies: 50.3
 ### Description: Develop the functionality to display column headers (e.g., 'To Do', 'In Progress') and dynamically render the count of PRDs within each respective column. Use Chalk.js for styling the headers.
 ### Details:
 The header should be prominently displayed at the top of each column. The PRD count should be updated in real-time based on the data model. Apply appropriate Chalk.js styles for readability and visual appeal.
 
-## 5. Implement 'No PRDs' Placeholder [pending]
+## 5. Implement 'No PRDs' Placeholder [done]
 ### Dependencies: 50.3
 ### Description: Create a placeholder message, such as 'No PRDs in this column', to be displayed when a column is empty. This message should be centrally aligned within the column and styled with Chalk.js.
 ### Details:

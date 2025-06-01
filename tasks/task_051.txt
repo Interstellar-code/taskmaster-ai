@@ -1,6 +1,6 @@
 # Task ID: 51
 # Title: Implement ASCII PRD Card Design and Metadata Display
-# Status: pending
+# Status: done
 # Dependencies: 50
 # Priority: high
 # PRD Source: prd-kanban-view.txt
@@ -16,7 +16,7 @@ Create a component or function to render individual PRD cards. Each card must di
 Verify that PRD cards are rendered correctly within their respective columns. Check for accurate display of all metadata fields, including colored priority/complexity indicators, task counts, and completion percentages. Test title truncation and ensure full title is available when selected (to be implemented in a later task).
 
 # Subtasks:
-## 1. Design ASCII PRD Card Structure [pending]
+## 1. Design ASCII PRD Card Structure [done]
 ### Dependencies: None
 ### Description: Define the ASCII character layout and structure for a single PRD card, including placeholders for all metadata fields (ID, title, priority, complexity, linked task count, completion percentage). Determine fixed widths for each section.
 ### Details:
@@ -30,19 +30,19 @@ This involves sketching out the card's visual representation using ASCII charact
 | Tasks: [Count] | Comp: [Percent] |
 +-----------------------------------+
 
-## 2. Implement Reusable PRD Card Component [pending]
+## 2. Implement Reusable PRD Card Component [done]
 ### Dependencies: 51.1
 ### Description: Develop a function or class that takes PRD metadata as input and returns a multi-line string representing the ASCII PRD card. This component should handle the rendering of all specified metadata fields.
 ### Details:
 The component should accept parameters like `id`, `title`, `priority`, `complexity`, `linkedTaskCount`, and `completionPercentage`. It will use the structure defined in subtask 1 to format and place these values. Implement basic string formatting and padding to align text within the card structure.
 
-## 3. Integrate Text Formatting and Styling [pending]
+## 3. Integrate Text Formatting and Styling [done]
 ### Dependencies: 51.2
 ### Description: Enhance the PRD card component to include title truncation with ellipsis, text wrapping for long titles, and conditional coloring for priority and complexity based on predefined rules.
 ### Details:
 For title truncation, if the title exceeds a certain character limit, it should be cut off and '...' appended. For text wrapping, if the title is too long for a single line, it should wrap to the next line within the allocated title area. Implement logic to apply ANSI escape codes for colors (e.g., red for high priority, green for low complexity) to the priority and complexity fields.
 
-## 4. Connect with Existing PRD Data Utilities [pending]
+## 4. Connect with Existing PRD Data Utilities [done]
 ### Dependencies: 51.3
 ### Description: Modify the PRD card component to accept data directly from the existing PRD data utilities or a mock data source that mimics their output format. Ensure all required metadata fields are correctly mapped and displayed.
 ### Details:
