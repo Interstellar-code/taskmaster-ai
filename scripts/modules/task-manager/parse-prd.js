@@ -445,7 +445,7 @@ async function handleAutoExpansion(newTasks, tasksPath, options) {
 		report('🔍 Step 1: Performing comprehensive complexity analysis...', 'info');
 
 		// First, perform complexity analysis on all new tasks
-		const complexityReportPath = path.join(projectRoot || path.dirname(path.dirname(tasksPath)), 'scripts/task-complexity-report.json');
+		const complexityReportPath = path.join(projectRoot || path.dirname(path.dirname(tasksPath)), '.taskmaster/reports/task-complexity-report.json');
 
 		try {
 			await analyzeTaskComplexity({

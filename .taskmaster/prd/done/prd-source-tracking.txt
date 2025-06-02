@@ -1,0 +1,364 @@
+# PRD ID: prd_003
+# Title: PRD Source Tracking and Traceability System
+# Status: done
+# Priority: high
+# Complexity: high
+# Total Tasks: 0
+# Completed Tasks: 0
+# Completion: 0%
+# PRD Path: prd\done\prd-source-tracking.txt
+# File Hash: 45dc8a70177d3ffd8891b584dfbd3f42510442b5fd5012791a4ccad3eb22774a
+# File Size: 15943 bytes
+# Created Date: 2025-05-31T21:50:10.540Z
+# Last Modified: 2025-06-01T11:59:49.148Z
+# Tags: traceability, metadata, task-enhancement, prd-linking
+# Estimated Effort: 35 hours
+# Description: Enhanced task schema with PRD source tracking, metadata capture, and traceability reporting
+Product Requirements Document: PRD Source Tracking and Traceability for TaskMaster AI
+
+Document Information
+- Document ID: PRD-TRACK-001
+- Date Created: 2025-01-08
+- Priority: Medium
+- Status: Draft
+- Estimated Effort: 2-3 days
+- Assignee: Development Team
+
+Executive Summary
+
+Enhance TaskMaster AI to track and display the source PRD (Product Requirements Document) file for all tasks generated from PRD parsing. This feature will provide complete traceability from tasks back to their original requirements, improving project management, compliance, and debugging capabilities.
+
+Problem Statement
+
+Current State
+- Tasks generated from PRD files have no reference to their source document
+- Users cannot trace tasks back to original requirements
+- No visibility into which PRD generated specific tasks
+- Difficult to update tasks when PRD changes
+- No audit trail for requirement traceability
+
+Pain Points
+1. Traceability Gap: No way to identify which PRD generated specific tasks
+2. Change Management: When PRDs are updated, no clear way to identify affected tasks
+3. Compliance Issues: Lack of audit trail for requirement-to-task mapping
+4. Debugging Difficulty: Hard to troubleshoot task generation issues
+5. Documentation Disconnect: Tasks exist in isolation from their source requirements
+
+Proposed Solution
+
+PRD Source Tracking System Overview
+Implement comprehensive PRD source tracking that:
+
+1. Records PRD file path and metadata during task generation
+2. Displays PRD source information in all task views and reports
+3. Provides commands to query tasks by PRD source
+4. Maintains historical tracking of PRD changes
+5. Enables bulk operations on tasks from specific PRDs
+
+Technical Requirements
+
+Core Implementation
+1. Task Schema Enhancement: Add PRD source fields to task data structure
+2. Parse Command Integration: Capture PRD metadata during task generation
+3. Display Integration: Show PRD source in all task views and reports
+4. Query Commands: Add commands to filter and search by PRD source
+5. Historical Tracking: Maintain version history of PRD associations
+
+Data Structure Changes
+Task Object Enhancement:
+```json
+{
+  "id": 1,
+  "title": "Task Title",
+  "description": "Task description",
+  "prdSource": {
+    "filePath": "scripts/interactive-menu-prd.txt",
+    "fileName": "interactive-menu-prd.txt",
+    "parsedDate": "2025-01-08T10:30:00Z",
+    "fileHash": "sha256:abc123...",
+    "fileSize": 15420,
+    "version": "1.0"
+  },
+  "status": "pending",
+  "priority": "high"
+}
+```
+
+Functional Requirements
+
+FR-1: PRD Source Capture
+- FR-1.1: Capture full file path during parse-prd command execution
+- FR-1.2: Record file metadata (size, hash, modification date)
+- FR-1.3: Generate unique identifier for each PRD parsing session
+- FR-1.4: Store parsing timestamp and version information
+- FR-1.5: Handle relative and absolute file paths consistently
+
+FR-2: Display Integration
+- FR-2.1: Show PRD source in task list view
+- FR-2.2: Display PRD information in individual task details
+- FR-2.3: Include PRD source in project dashboard
+- FR-2.4: Add PRD column to task tables and reports
+- FR-2.5: Show PRD source in interactive menu displays
+
+FR-3: Query and Filter Capabilities
+- FR-3.1: Filter tasks by PRD source file
+- FR-3.2: List all PRDs used in current project
+- FR-3.3: Show tasks generated from specific PRD
+- FR-3.4: Search tasks by PRD content or metadata
+- FR-3.5: Group tasks by PRD source in reports
+
+FR-4: Change Management
+- FR-4.1: Detect when source PRD files are modified
+- FR-4.2: Flag tasks with outdated PRD sources
+- FR-4.3: Provide commands to re-parse updated PRDs
+- FR-4.4: Maintain history of PRD changes and task updates
+- FR-4.5: Support incremental updates from modified PRDs
+
+FR-5: Audit and Compliance
+- FR-5.1: Generate traceability reports linking tasks to PRDs
+- FR-5.2: Export requirement-to-task mapping
+- FR-5.3: Track all PRD parsing sessions and results
+- FR-5.4: Maintain immutable audit log of PRD associations
+- FR-5.5: Support compliance reporting formats
+
+User Interface Requirements
+
+Enhanced Task List Display
+```
+┌───────┬─────────────────────────────────────┬───────────────┬────────────┬──────────────────────┐
+│ ID    │ Title                               │ Status        │ Priority   │ PRD Source           │
+├───────┼─────────────────────────────────────┼───────────────┼────────────┼──────────────────────┤
+│ 1     │ Implement CLI Entry Point           │ ✓ done        │ high       │ interactive-menu.txt │
+│ 2     │ Develop Core Menu Framework         │ ✓ done        │ high       │ interactive-menu.txt │
+│ 11    │ Update package.json                 │ ○ pending     │ high       │ rebrand-prd.txt      │
+└───────┴─────────────────────────────────────┴───────────────┴────────────┴──────────────────────┘
+```
+
+Enhanced Task Details View
+```
+╭───────────────────────────────────────────────────────────╮
+│ Task: #1 - Implement CLI Entry Point for Interactive Menu │
+╰───────────────────────────────────────────────────────────╯
+┌───────────────┬───────────────────────────────────────────────────────────────────────────┐
+│ ID:           │ 1                                                                         │
+│ Title:        │ Implement CLI Entry Point for Interactive Menu                            │
+│ Status:       │ ✓ done                                                                    │
+│ Priority:     │ high                                                                      │
+│ PRD Source:   │ scripts/interactive-menu-prd.txt                                         │
+│ Parsed Date:  │ 2025-01-08 10:30:00                                                      │
+│ PRD Version:  │ 1.0                                                                       │
+│ Dependencies: │ None                                                                      │
+└───────────────┴───────────────────────────────────────────────────────────────────────────┘
+```
+
+Project Dashboard Enhancement
+```
+╭──────────────────────────────────────────────────╮╭──────────────────────────────────────────────────╮
+│   Project Dashboard                              ││   PRD Source Summary                             │
+│   Tasks Progress:                                ││   Active PRDs:                                   │
+│   ███████████████░░░░░░░░░░░░░░░ 50% 50%         ││   • interactive-menu-prd.txt (10 tasks)         │
+│   Done: 10  In Progress: 0  Pending: 10          ││   • rebrand-prd.txt (10 tasks)                  │
+│                                                  ││   • feature-enhancement.txt (5 tasks)           │
+│   PRD Sources:                                   ││                                                  │
+│   • 3 PRD files processed                        ││   Last Parsed:                                   │
+│   • 25 total tasks generated                     ││   rebrand-prd.txt (2025-01-08 15:45)            │
+│   • 2 PRDs need updates                          ││                                                  │
+╰──────────────────────────────────────────────────╯╰──────────────────────────────────────────────────╯
+```
+
+New Commands
+
+PRD Source Management Commands
+```bash
+# List all PRD sources in project
+task-master list-prds
+
+# Show tasks from specific PRD
+task-master tasks-from-prd --file=scripts/interactive-menu-prd.txt
+
+# Show PRD source for specific task
+task-master show-prd-source --id=5
+
+# Check for outdated PRD sources
+task-master check-prd-updates
+
+# Re-parse updated PRD (append mode)
+task-master reparse-prd --file=scripts/updated-prd.txt --update-existing
+
+# Generate traceability report
+task-master prd-traceability-report --format=csv
+```
+
+Implementation Plan
+
+Phase 1: Core Data Structure (Day 1)
+1. Enhance task schema to include PRD source fields
+2. Modify parse-prd command to capture source metadata
+3. Update task creation and storage logic
+4. Implement backward compatibility for existing tasks
+
+Phase 2: Display Integration (Day 1-2)
+1. Add PRD source column to task list displays
+2. Enhance task detail views with PRD information
+3. Update project dashboard with PRD summary
+4. Modify interactive menu to show PRD sources
+
+Phase 3: Query and Management (Day 2)
+1. Implement list-prds command
+2. Add tasks-from-prd filtering command
+3. Create show-prd-source command
+4. Develop PRD update detection logic
+
+Phase 4: Advanced Features (Day 3)
+1. Implement change detection for PRD files
+2. Add traceability reporting capabilities
+3. Create PRD re-parsing with update logic
+4. Add audit logging for PRD operations
+
+Acceptance Criteria
+
+AC-1: Data Capture
+- [ ] PRD source information captured during parse-prd execution
+- [ ] File metadata (path, size, hash, date) stored correctly
+- [ ] Parsing session information tracked
+- [ ] Backward compatibility maintained for existing tasks
+
+AC-2: Display Integration
+- [ ] PRD source visible in all task list views
+- [ ] Task details show complete PRD information
+- [ ] Project dashboard includes PRD summary
+- [ ] Interactive menu displays PRD sources
+
+AC-3: Query Capabilities
+- [ ] Can filter tasks by PRD source
+- [ ] Can list all PRDs used in project
+- [ ] Can show tasks from specific PRD
+- [ ] Search functionality works with PRD metadata
+
+AC-4: Change Management
+- [ ] Detects when PRD files are modified
+- [ ] Flags tasks with outdated sources
+- [ ] Supports re-parsing updated PRDs
+- [ ] Maintains change history
+
+Success Metrics
+
+Traceability Improvement
+- 100% of tasks have identifiable PRD source
+- 90% reduction in time to trace task to requirement
+- 80% improvement in change impact analysis
+
+User Experience
+- Clear visibility of task origins in all views
+- Easy identification of PRD-generated vs manually created tasks
+- Simplified workflow for updating tasks from modified PRDs
+
+Compliance and Audit
+- Complete audit trail from requirements to tasks
+- Exportable traceability reports
+- Historical tracking of all PRD changes
+
+Risk Assessment
+
+Low Risk
+- Data structure changes are additive and backward compatible
+- Display changes are non-breaking enhancements
+- Query commands are new additions
+
+Medium Risk
+- File path handling across different operating systems
+- Performance impact of additional metadata storage
+- Complexity of change detection logic
+
+Mitigation Strategies
+- Comprehensive testing on Windows, macOS, and Linux
+- Performance benchmarking with large task sets
+- Incremental rollout with feature flags
+
+Dependencies
+
+Internal Dependencies
+- Task data structure and storage system
+- Parse-prd command implementation
+- Display and reporting systems
+- Interactive menu framework
+
+External Dependencies
+- File system access for PRD metadata
+- Hashing library for file integrity
+- Date/time handling for timestamps
+
+Future Enhancements
+
+Advanced Features
+- Visual dependency graphs showing PRD-to-task relationships
+- Integration with version control systems for PRD tracking
+- Automated notifications when PRD sources change
+- AI-powered analysis of PRD changes and task impact
+
+Integration Opportunities
+- Link with project management tools
+- Export to requirements management systems
+- Integration with documentation generators
+- API endpoints for external tool integration
+
+Technical Implementation Details
+
+File Structure Changes
+```
+tasks/
+├── tasks.json (enhanced with prdSource fields)
+├── prd-history.json (PRD parsing history)
+├── task_001.txt (enhanced with PRD source header)
+└── task_002.txt
+```
+
+Enhanced Task File Format
+```markdown
+# Task 1: Implement CLI Entry Point for Interactive Menu
+
+**PRD Source:** scripts/interactive-menu-prd.txt
+**Parsed Date:** 2025-01-08 10:30:00
+**PRD Version:** 1.0
+
+## Description
+Implement the core command-line interface entry point...
+```
+
+Command Integration Points
+1. Modify `scripts/modules/commands.js` parse-prd command
+2. Enhance `scripts/modules/task-manager.js` for PRD metadata
+3. Update display functions in `scripts/modules/ui.js`
+4. Add new commands to command registry
+
+Database Schema Migration
+- Add prdSource object to existing tasks (default: null)
+- Create prd-history.json for tracking parsing sessions
+- Implement data migration for existing projects
+- Ensure backward compatibility with older task formats
+
+Error Handling Scenarios
+- PRD file not found or moved
+- Corrupted PRD metadata
+- File permission issues
+- Invalid file paths or formats
+- Network drive accessibility
+
+Performance Considerations
+- Lazy loading of PRD metadata for large projects
+- Efficient file hash calculation
+- Optimized queries for PRD-based filtering
+- Minimal impact on existing command performance
+
+Testing Strategy
+- Unit tests for PRD metadata capture and storage
+- Integration tests for display enhancements
+- End-to-end tests for complete workflow
+- Performance tests with large task sets
+- Cross-platform compatibility tests
+
+Conclusion
+
+PRD source tracking will provide essential traceability capabilities to TaskMaster AI, enabling users to maintain clear connections between requirements and implementation tasks. This enhancement supports better project management, compliance requirements, and change management workflows while maintaining the tool's ease of use and performance.
+
+The implementation follows TaskMaster's established patterns, ensures backward compatibility, and provides a foundation for advanced requirement management features. Success will be measured through improved traceability, user satisfaction, and compliance capabilities.

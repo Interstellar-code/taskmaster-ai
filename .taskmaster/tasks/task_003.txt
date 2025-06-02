@@ -1,0 +1,48 @@
+# Task ID: 3
+# Title: Integrate Project Management and Task Operations Menus
+# Status: done
+# Dependencies: 2
+# Priority: medium
+# PRD Source: interactive-menu-prd.txt
+# PRD Path: prd/done/interactive-menu-prd.txt
+# Parsed Date: 2025-06-01T11:48:22.906Z
+# File Hash: 6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622
+# File Size: 16119 bytes
+# Description: Implement the 'Project Management' and 'Task Operations' menu categories, mapping their respective numbered options to the existing `task-hero` commands. This involves integrating the menu selections with the underlying command execution logic.
+# Details:
+Create sub-menus for 'Project Management' (init, parse-prd, models) and 'Task Operations' (list, next, show, set-status, generate). Map each menu option to its corresponding `task-hero` command. When a command is selected, execute it and ensure control returns to the menu after completion. Utilize the existing `scripts/modules/commands.js` infrastructure.
+
+# Test Strategy:
+Navigate to 'Project Management' and 'Task Operations' menus. Select each command option and verify that the correct `task-hero` command is executed. Confirm that the menu reappears after command execution. Test 'Back to Main Menu' functionality.
+
+# Subtasks:
+## 1. Define Menu Structure and Command Mappings [done]
+### Dependencies: None
+### Description: Create a data structure (e.g., a JavaScript object or array) that defines the 'Project Management' and 'Task Operations' menu categories, their display names, and the mapping of each numbered option to its corresponding `task-hero` command name.
+### Details:
+Define a clear, maintainable data structure, possibly in a new module like `scripts/modules/menu_definitions.js`. Each menu item should include its display text, the associated command name, and potentially a short description. Ensure the command names precisely match those expected by `task-hero`.
+
+## 2. Implement Menu Display Logic [done]
+### Dependencies: 3.1
+### Description: Develop a function or module responsible for displaying the defined menu structure to the user, including categories and numbered options. This function should take the menu definition as input and print it to the console.
+### Details:
+Create a function, perhaps `displayMenu(menuStructure)`, that iterates through the menu categories and their options, printing them in a user-friendly format. Use `console.log` for output. Ensure clear numbering for each option.
+
+## 3. Implement User Input and Command Selection Logic [done]
+### Dependencies: 3.1, 3.2
+### Description: Develop logic to prompt the user for a menu selection, read their input, and validate it against the available options. Once a valid selection is made, identify the corresponding `task-hero` command.
+### Details:
+Use `readline` or similar module for input. Implement a loop that repeatedly prompts the user until valid input (a number corresponding to an existing menu option) is received. Map the selected number back to the command name using the data structure defined in subtask 1. Handle invalid input gracefully.
+
+## 4. Integrate Command Execution and Return to Menu [done]
+### Dependencies: 3.3
+### Description: Connect the selected command from subtask 3 with the existing `task-hero` command execution logic (likely in `scripts/modules/commands.js`). After the command completes, ensure control returns to the main menu display.
+### Details:
+Call the appropriate function from `scripts/modules/commands.js` with the identified command name and any necessary arguments. Wrap the command execution in a `try-catch` block for error handling. After execution (or error), re-display the menu (calling the function from subtask 2) to allow further selections.
+
+## 5. Refine User Experience and Error Handling [done]
+### Dependencies: 3.4
+### Description: Enhance the overall user experience by adding clear prompts, confirmation messages, and robust error handling for command execution failures or unexpected scenarios.
+### Details:
+Add clear instructions for menu navigation. Implement specific error messages for command failures, perhaps by catching exceptions from `scripts/modules/commands.js`. Consider adding a 'back' or 'exit' option to the menu. Ensure consistent formatting for all console output.
+

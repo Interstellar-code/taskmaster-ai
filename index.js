@@ -83,6 +83,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 		.option('--skip-install', 'Skip installing dependencies')
 		.option('--dry-run', 'Show what would be done without making changes')
 		.option('--aliases', 'Add shell aliases (tm, taskmaster)')
+		.option('--reset', 'Reset project data (clear all tasks, PRDs, reports, and tests)')
 		.action(async (cmdOptions) => {
 			try {
 				await runInitCLI(cmdOptions);

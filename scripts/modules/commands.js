@@ -681,7 +681,7 @@ function registerCommands(programInstance) {
 			'-i, --input <file>',
 			'Path to the PRD file (alternative to positional argument)'
 		)
-		.option('-o, --output <file>', 'Output file path', 'tasks/tasks.json')
+		.option('-o, --output <file>', 'Output file path', '.taskmaster/tasks/tasks.json')
 		.option('-n, --num-tasks <number>', 'Number of tasks to generate', '10')
 		.option('-f, --force', 'Skip confirmation when overwriting existing tasks')
 		.option(
@@ -845,7 +845,7 @@ function registerCommands(programInstance) {
 		.description(
 			'Update multiple tasks with ID >= "from" based on new information or implementation changes'
 		)
-		.option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
+		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
 		.option(
 			'--from <id>',
 			'Task ID to start updating from (tasks with ID >= this value will be updated)',
@@ -926,7 +926,7 @@ function registerCommands(programInstance) {
 		.description(
 			'Update a single specific task by ID with new information (use --id parameter)'
 		)
-		.option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
+		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
 		.option('-i, --id <id>', 'Task ID to update (required)')
 		.option(
 			'-p, --prompt <text>',
@@ -989,7 +989,7 @@ function registerCommands(programInstance) {
 					console.error(
 						chalk.red(`Error: Tasks file not found at path: ${tasksPath}`)
 					);
-					if (tasksPath === 'tasks/tasks.json') {
+					if (tasksPath === '.taskmaster/tasks/tasks.json') {
 						console.log(
 							chalk.yellow(
 								'Hint: Run task-master init or task-master parse-prd to create tasks.json first'
@@ -1079,7 +1079,7 @@ function registerCommands(programInstance) {
 		.description(
 			'Update a subtask by appending additional timestamped information'
 		)
-		.option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
+		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
 		.option(
 			'-i, --id <id>',
 			'Subtask ID to update in format "parentId.subtaskId" (required)'
@@ -1142,7 +1142,7 @@ function registerCommands(programInstance) {
 					console.error(
 						chalk.red(`Error: Tasks file not found at path: ${tasksPath}`)
 					);
-					if (tasksPath === 'tasks/tasks.json') {
+					if (tasksPath === '.taskmaster/tasks/tasks.json') {
 						console.log(
 							chalk.yellow(
 								'Hint: Run task-master init or task-master parse-prd to create tasks.json first'
@@ -1233,8 +1233,8 @@ function registerCommands(programInstance) {
 	programInstance
 		.command('generate')
 		.description('Generate task files from tasks.json')
-		.option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
-		.option('-o, --output <dir>', 'Output directory', 'tasks')
+		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
+		.option('-o, --output <dir>', 'Output directory', '.taskmaster/tasks')
 		.action(async (options) => {
 			const tasksPath = options.file;
 			const outputDir = options.output;
@@ -1259,7 +1259,7 @@ function registerCommands(programInstance) {
 			'-s, --status <status>',
 			`New status (one of: ${TASK_STATUS_OPTIONS.join(', ')})`
 		)
-		.option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
+		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
 		.action(async (options) => {
 			const tasksPath = options.file;
 			const taskId = options.id;
@@ -1291,11 +1291,11 @@ function registerCommands(programInstance) {
 	programInstance
 		.command('list')
 		.description('List all tasks')
-		.option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
+		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
 		.option(
 			'-r, --report <report>',
 			'Path to the complexity report file',
-			'scripts/task-complexity-report.json'
+			'.taskmaster/reports/task-complexity-report.json'
 		)
 		.option('-s, --status <status>', 'Filter by status')
 		.option('--with-subtasks', 'Show subtasks for each task')
@@ -1358,7 +1358,7 @@ function registerCommands(programInstance) {
 		.option(
 			'--file <file>',
 			'Path to the tasks file (relative to project root)',
-			'tasks/tasks.json'
+			'.taskmaster/tasks/tasks.json'
 		) // Allow file override
 		.action(async (options) => {
 			const projectRoot = findProjectRoot();
@@ -1433,7 +1433,7 @@ function registerCommands(programInstance) {
 		.option(
 			'-o, --output <file>',
 			'Output file path for the report',
-			'scripts/task-complexity-report.json'
+			'.taskmaster/reports/task-complexity-report.json'
 		)
 		.option(
 			'-m, --model <model>',
@@ -1444,7 +1444,7 @@ function registerCommands(programInstance) {
 			'Minimum complexity score to recommend expansion (1-10)',
 			'5'
 		)
-		.option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
+		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
 		.option(
 			'-r, --research',
 			'Use Perplexity AI for research-backed complexity analysis'
@@ -1456,7 +1456,7 @@ function registerCommands(programInstance) {
 		.option('--from <id>', 'Starting task ID in a range to analyze')
 		.option('--to <id>', 'Ending task ID in a range to analyze')
 		.action(async (options) => {
-			const tasksPath = options.file || 'tasks/tasks.json';
+			const tasksPath = options.file || '.taskmaster/tasks/tasks.json';
 			const outputPath = options.output;
 			const modelOverride = options.model;
 			const thresholdScore = parseFloat(options.threshold);
@@ -1490,7 +1490,7 @@ function registerCommands(programInstance) {
 	programInstance
 		.command('clear-subtasks')
 		.description('Clear subtasks from specified tasks')
-		.option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
+		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
 		.option(
 			'-i, --id <ids>',
 			'Task IDs (comma-separated) to clear subtasks from'
@@ -1528,7 +1528,7 @@ function registerCommands(programInstance) {
 	programInstance
 		.command('add-task')
 		.description('Add a new task using AI, optionally providing manual details')
-		.option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
+		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
 		.option(
 			'-p, --prompt <prompt>',
 			'Description of the task to add (required if not using manual fields)'
@@ -1570,8 +1570,8 @@ function registerCommands(programInstance) {
 
 			const tasksPath =
 				options.file ||
-				path.join(findProjectRoot() || '.', 'tasks', 'tasks.json') || // Ensure tasksPath is also relative to a found root or current dir
-				'tasks/tasks.json';
+				path.join(findProjectRoot() || '.', '.taskmaster', 'tasks', 'tasks.json') || // Ensure tasksPath is also relative to a found root or current dir
+				'.taskmaster/tasks/tasks.json';
 
 			// Correctly determine projectRoot
 			const projectRoot = findProjectRoot();
@@ -1643,11 +1643,11 @@ function registerCommands(programInstance) {
 		.description(
 			`Show the next task to work on based on dependencies and status${chalk.reset('')}`
 		)
-		.option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
+		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
 		.option(
 			'-r, --report <report>',
 			'Path to the complexity report file',
-			'scripts/task-complexity-report.json'
+			'.taskmaster/reports/task-complexity-report.json'
 		)
 		.action(async (options) => {
 			const tasksPath = options.file;
@@ -1664,11 +1664,11 @@ function registerCommands(programInstance) {
 		.argument('[id]', 'Task ID to show')
 		.option('-i, --id <id>', 'Task ID to show')
 		.option('-s, --status <status>', 'Filter subtasks by status') // ADDED status option
-		.option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
+		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
 		.option(
 			'-r, --report <report>',
 			'Path to the complexity report file',
-			'scripts/task-complexity-report.json'
+			'.taskmaster/reports/task-complexity-report.json'
 		)
 		.action(async (taskId, options) => {
 			const idArg = taskId || options.id;
@@ -1691,7 +1691,7 @@ function registerCommands(programInstance) {
 		.description('Add a dependency to a task')
 		.option('-i, --id <id>', 'Task ID to add dependency to')
 		.option('-d, --depends-on <id>', 'Task ID that will become a dependency')
-		.option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
+		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
 		.action(async (options) => {
 			const tasksPath = options.file;
 			const taskId = options.id;
@@ -1722,7 +1722,7 @@ function registerCommands(programInstance) {
 		.description('Remove a dependency from a task')
 		.option('-i, --id <id>', 'Task ID to remove dependency from')
 		.option('-d, --depends-on <id>', 'Task ID to remove as a dependency')
-		.option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
+		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
 		.action(async (options) => {
 			const tasksPath = options.file;
 			const taskId = options.id;
@@ -1753,7 +1753,7 @@ function registerCommands(programInstance) {
 		.description(
 			`Identify invalid dependencies without fixing them${chalk.reset('')}`
 		)
-		.option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
+		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
 		.action(async (options) => {
 			await validateDependenciesCommand(options.file);
 		});
@@ -1762,7 +1762,7 @@ function registerCommands(programInstance) {
 	programInstance
 		.command('fix-dependencies')
 		.description(`Fix invalid dependencies automatically${chalk.reset('')}`)
-		.option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
+		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
 		.action(async (options) => {
 			await fixDependenciesCommand(options.file);
 		});
@@ -1774,7 +1774,7 @@ function registerCommands(programInstance) {
 		.option(
 			'-f, --file <file>',
 			'Path to the report file',
-			'scripts/task-complexity-report.json'
+			'.taskmaster/reports/task-complexity-report.json'
 		)
 		.action(async (options) => {
 			await displayComplexityReport(options.file);
@@ -1784,7 +1784,7 @@ function registerCommands(programInstance) {
 	programInstance
 		.command('add-subtask')
 		.description('Add a subtask to an existing task')
-		.option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
+		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
 		.option('-p, --parent <id>', 'Parent task ID (required)')
 		.option('-i, --task-id <id>', 'Existing task ID to convert to subtask')
 		.option(
@@ -1959,7 +1959,7 @@ function registerCommands(programInstance) {
 					'  --details <text>          Implementation details for the new subtask\n' +
 					'  --dependencies <ids>      Comma-separated list of dependency IDs\n' +
 					'  -s, --status <status>     Status for the new subtask (default: "pending")\n' +
-					'  -f, --file <file>         Path to the tasks file (default: "tasks/tasks.json")\n' +
+					'  -f, --file <file>         Path to the tasks file (default: ".taskmaster/tasks/tasks.json")\n' +
 					'  --skip-generate           Skip regenerating task files\n\n' +
 					chalk.cyan('Examples:') +
 					'\n' +
@@ -1974,7 +1974,7 @@ function registerCommands(programInstance) {
 	programInstance
 		.command('remove-subtask')
 		.description('Remove a subtask from its parent task')
-		.option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
+		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
 		.option(
 			'-i, --id <id>',
 			'Subtask ID(s) to remove in format "parentId.subtaskId" (can be comma-separated for multiple subtasks)'
@@ -2105,7 +2105,7 @@ function registerCommands(programInstance) {
 					'\n' +
 					'  -i, --id <id>       Subtask ID(s) to remove in format "parentId.subtaskId" (can be comma-separated, required)\n' +
 					'  -c, --convert       Convert the subtask to a standalone task instead of deleting it\n' +
-					'  -f, --file <file>   Path to the tasks file (default: "tasks/tasks.json")\n' +
+					'  -f, --file <file>   Path to the tasks file (default: ".taskmaster/tasks/tasks.json")\n' +
 					'  --skip-generate     Skip regenerating task files\n\n' +
 					chalk.cyan('Examples:') +
 					'\n' +
@@ -2126,7 +2126,7 @@ function registerCommands(programInstance) {
 			'-i, --id <ids>',
 			'ID(s) of the task(s) or subtask(s) to remove (e.g., "5", "5.2", or "5,6.1,7")'
 		)
-		.option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
+		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
 		.option('-y, --yes', 'Skip confirmation prompt', false)
 		.action(async (options) => {
 			const tasksPath = options.file;
@@ -2377,6 +2377,7 @@ function registerCommands(programInstance) {
 		.option('--skip-install', 'Skip installing dependencies')
 		.option('--dry-run', 'Show what would be done without making changes')
 		.option('--aliases', 'Add shell aliases (tm, taskmaster)')
+		.option('--reset', 'Reset project data (clear all tasks, PRDs, reports, and tests)')
 		.action(async (cmdOptions) => {
 			// cmdOptions contains parsed arguments
 			try {
@@ -2622,7 +2623,7 @@ Examples:
 	programInstance
 		.command('list-prds')
 		.description('List all unique PRD files that have generated tasks')
-		.option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
+		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
 		.option('--format <format>', 'Output format (table, json)', 'table')
 		.action(async (options) => {
 			const { listPRDs } = await import('./task-manager/prd-queries.js');
@@ -2633,7 +2634,7 @@ Examples:
 	programInstance
 		.command('tasks-from-prd')
 		.description('Show all tasks generated from a specific PRD file')
-		.option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
+		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
 		.option('--prd <prd>', 'PRD file path or name to filter by (required)')
 		.option('--format <format>', 'Output format (table, json)', 'table')
 		.option('--status <status>', 'Filter tasks by status')
@@ -2651,7 +2652,7 @@ Examples:
 	programInstance
 		.command('show-prd-source')
 		.description('Display PRD source information for a specific task')
-		.option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
+		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
 		.option('--id <id>', 'Task ID to show PRD source for (required)')
 		.option('--format <format>', 'Output format (table, json)', 'table')
 		.action(async (options) => {
@@ -2668,7 +2669,7 @@ Examples:
 	programInstance
 		.command('check-prd-changes')
 		.description('Check if PRD files referenced in tasks have been modified')
-		.option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
+		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
 		.option('--format <format>', 'Output format (table, json)', 'table')
 		.action(async (options) => {
 			const { checkPRDChanges, displayPRDChanges } = await import('./task-manager/prd-monitor.js');
@@ -2680,7 +2681,7 @@ Examples:
 	programInstance
 		.command('update-prd-metadata')
 		.description('Update PRD metadata for tasks after a PRD file has been modified')
-		.option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
+		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
 		.option('--prd <prd>', 'Path to the modified PRD file (required)')
 		.action(async (options) => {
 			if (!options.prd) {
@@ -2705,7 +2706,7 @@ Examples:
 	programInstance
 		.command('move')
 		.description('Move a task or subtask to a new position')
-		.option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
+		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
 		.option(
 			'--from <id>',
 			'ID of the task/subtask to move (e.g., "5" or "5.2"). Can be comma-separated to move multiple tasks (e.g., "5,6,7")'
@@ -2984,6 +2985,66 @@ Examples:
 		.option('--dry-run', 'Show what would be added without making changes')
 		.action((options) => {
 			setupGitignoreCommand(options);
+		});
+
+	// migrate command - Directory structure migration
+	programInstance
+		.command('migrate')
+		.description('Migrate from old directory structure to new .taskmaster/ structure')
+		.option('--check', 'Check if migration is needed without performing it')
+		.option('--clean', 'Remove old files after successful migration')
+		.option('--force', 'Force migration even if new structure already exists')
+		.action(async (options) => {
+			const { migrateDirectoryStructure, needsMigration } = await import('./directory-migration.js');
+			const { findProjectRoot } = await import('./utils.js');
+
+			try {
+				const projectRoot = findProjectRoot();
+				if (!projectRoot) {
+					console.error(chalk.red('Error: Could not find project root directory'));
+					process.exit(1);
+				}
+
+				if (options.check) {
+					const migrationNeeded = needsMigration(projectRoot);
+					if (migrationNeeded) {
+						console.log(chalk.yellow('Migration needed: Old directory structure detected'));
+						console.log(chalk.cyan('Run "task-master migrate" to perform migration'));
+					} else {
+						console.log(chalk.green('No migration needed: New directory structure already in use'));
+					}
+					return;
+				}
+
+				if (!options.force && !needsMigration(projectRoot)) {
+					console.log(chalk.green('No migration needed: New directory structure already in use'));
+					console.log(chalk.cyan('Use --force to migrate anyway'));
+					return;
+				}
+
+				console.log(chalk.cyan('Starting directory structure migration...'));
+				const success = migrateDirectoryStructure(projectRoot, !options.clean);
+
+				if (success) {
+					console.log(chalk.green('✅ Migration completed successfully!'));
+					console.log(chalk.cyan('New structure:'));
+					console.log('  .taskmaster/tasks/     - Task files');
+					console.log('  .taskmaster/prd/       - PRD files');
+					console.log('  .taskmaster/reports/   - Complexity reports');
+					console.log('  .taskmaster/templates/ - Template files');
+					console.log('  .taskmaster/config.json - Configuration');
+
+					if (!options.clean) {
+						console.log(chalk.yellow('\nOld files preserved. Use --clean to remove them after verification.'));
+					}
+				} else {
+					console.error(chalk.red('❌ Migration failed. Check logs for details.'));
+					process.exit(1);
+				}
+			} catch (error) {
+				console.error(chalk.red(`Migration error: ${error.message}`));
+				process.exit(1);
+			}
 		});
 
 	return programInstance;

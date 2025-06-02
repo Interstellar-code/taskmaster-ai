@@ -181,9 +181,11 @@ function findTasksJsonInDirectory(dirPath, explicitFilePath, log) {
 	}
 
 	// 2. Check the standard locations relative to dirPath
+	// Priority order: new structure first, then legacy structure
 	possiblePaths.push(
-		path.join(dirPath, 'tasks.json'),
-		path.join(dirPath, 'tasks', 'tasks.json')
+		path.join(dirPath, '.taskmaster', 'tasks', 'tasks.json'), // New structure (highest priority)
+		path.join(dirPath, 'tasks', 'tasks.json'), // Legacy structure
+		path.join(dirPath, 'tasks.json') // Root level (lowest priority)
 	);
 
 	log.info(`Checking potential task file paths: ${possiblePaths.join(', ')}`);
@@ -356,15 +358,17 @@ export function findComplexityReportPath(projectRoot, explicitPath, log) {
 		}
 	}
 
-	// Common locations and file patterns for PRD documents
+	// Common locations and file patterns for complexity reports
+	// Priority order: new structure first, then legacy structure
 	const commonLocations = [
-		'', // Project root
-		'scripts/'
+		'.taskmaster/reports/', // New structure (highest priority)
+		'scripts/', // Legacy structure
+		'' // Project root (lowest priority)
 	];
 
 	const commonFileNames = [
-		'complexity-report.json',
-		'task-complexity-report.json'
+		'task-complexity-report.json',
+		'complexity-report.json'
 	];
 
 	// Check all possible combinations
@@ -400,8 +404,8 @@ export function resolveTasksOutputPath(projectRoot, explicitPath, log) {
 		return outputPath;
 	}
 
-	// Default output path: tasks/tasks.json in the project root
-	const defaultPath = path.resolve(projectRoot, 'tasks', 'tasks.json');
+	// Default output path: .taskmaster/tasks/tasks.json in the project root (new structure)
+	const defaultPath = path.resolve(projectRoot, '.taskmaster', 'tasks', 'tasks.json');
 	log.info(`Using default tasks output path: ${defaultPath}`);
 
 	// Ensure the directory exists

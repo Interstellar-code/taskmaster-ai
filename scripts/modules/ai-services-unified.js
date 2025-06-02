@@ -23,14 +23,32 @@ import {
 } from './config-manager.js';
 import { log, resolveEnvVariable, findProjectRoot } from './utils.js';
 
-import * as anthropic from '../../src/ai-providers/anthropic.js';
-import * as perplexity from '../../src/ai-providers/perplexity.js';
-import * as google from '../../src/ai-providers/google.js';
-import * as openai from '../../src/ai-providers/openai.js';
-import * as xai from '../../src/ai-providers/xai.js';
-import * as openrouter from '../../src/ai-providers/openrouter.js';
-import * as ollama from '../../src/ai-providers/ollama.js';
-// TODO: Import other provider modules when implemented (ollama, etc.)
+import {
+	AnthropicAIProvider,
+	PerplexityAIProvider,
+	GoogleAIProvider,
+	OpenAIProvider,
+	XAIProvider,
+	OpenRouterAIProvider,
+	OllamaAIProvider,
+	BedrockAIProvider,
+	AzureProvider,
+	VertexAIProvider
+} from '../../src/ai-providers/index.js';
+
+// Create provider instances
+const providers = {
+	anthropic: new AnthropicAIProvider(),
+	perplexity: new PerplexityAIProvider(),
+	google: new GoogleAIProvider(),
+	openai: new OpenAIProvider(),
+	xai: new XAIProvider(),
+	openrouter: new OpenRouterAIProvider(),
+	ollama: new OllamaAIProvider(),
+	bedrock: new BedrockAIProvider(),
+	azure: new AzureProvider(),
+	'google-vertex': new VertexAIProvider()
+};
 
 // Helper function to get cost for a specific model
 function _getCostForModel(providerName, modelId) {
@@ -66,45 +84,55 @@ function _getCostForModel(providerName, modelId) {
 // Maps provider names (lowercase) to their respective service functions
 const PROVIDER_FUNCTIONS = {
 	anthropic: {
-		generateText: anthropic.generateAnthropicText,
-		streamText: anthropic.streamAnthropicText,
-		generateObject: anthropic.generateAnthropicObject
+		generateText: (params) => providers.anthropic.generateText(params),
+		streamText: (params) => providers.anthropic.streamText(params),
+		generateObject: (params) => providers.anthropic.generateObject(params)
 	},
 	perplexity: {
-		generateText: perplexity.generatePerplexityText,
-		streamText: perplexity.streamPerplexityText,
-		generateObject: perplexity.generatePerplexityObject
+		generateText: (params) => providers.perplexity.generateText(params),
+		streamText: (params) => providers.perplexity.streamText(params),
+		generateObject: (params) => providers.perplexity.generateObject(params)
 	},
 	google: {
-		// Add Google entry
-		generateText: google.generateGoogleText,
-		streamText: google.streamGoogleText,
-		generateObject: google.generateGoogleObject
+		generateText: (params) => providers.google.generateText(params),
+		streamText: (params) => providers.google.streamText(params),
+		generateObject: (params) => providers.google.generateObject(params)
 	},
 	openai: {
-		// ADD: OpenAI entry
-		generateText: openai.generateOpenAIText,
-		streamText: openai.streamOpenAIText,
-		generateObject: openai.generateOpenAIObject
+		generateText: (params) => providers.openai.generateText(params),
+		streamText: (params) => providers.openai.streamText(params),
+		generateObject: (params) => providers.openai.generateObject(params)
 	},
 	xai: {
-		// ADD: xAI entry
-		generateText: xai.generateXaiText,
-		streamText: xai.streamXaiText,
-		generateObject: xai.generateXaiObject // Note: Object generation might be unsupported
+		generateText: (params) => providers.xai.generateText(params),
+		streamText: (params) => providers.xai.streamText(params),
+		generateObject: (params) => providers.xai.generateObject(params)
 	},
 	openrouter: {
-		// ADD: OpenRouter entry
-		generateText: openrouter.generateOpenRouterText,
-		streamText: openrouter.streamOpenRouterText,
-		generateObject: openrouter.generateOpenRouterObject
+		generateText: (params) => providers.openrouter.generateText(params),
+		streamText: (params) => providers.openrouter.streamText(params),
+		generateObject: (params) => providers.openrouter.generateObject(params)
 	},
 	ollama: {
-		generateText: ollama.generateOllamaText,
-		streamText: ollama.streamOllamaText,
-		generateObject: ollama.generateOllamaObject
+		generateText: (params) => providers.ollama.generateText(params),
+		streamText: (params) => providers.ollama.streamText(params),
+		generateObject: (params) => providers.ollama.generateObject(params)
+	},
+	bedrock: {
+		generateText: (params) => providers.bedrock.generateText(params),
+		streamText: (params) => providers.bedrock.streamText(params),
+		generateObject: (params) => providers.bedrock.generateObject(params)
+	},
+	azure: {
+		generateText: (params) => providers.azure.generateText(params),
+		streamText: (params) => providers.azure.streamText(params),
+		generateObject: (params) => providers.azure.generateObject(params)
+	},
+	'google-vertex': {
+		generateText: (params) => providers['google-vertex'].generateText(params),
+		streamText: (params) => providers['google-vertex'].streamText(params),
+		generateObject: (params) => providers['google-vertex'].generateObject(params)
 	}
-	// TODO: Add entries for ollama, etc. when implemented
 };
 
 // --- Configuration for Retries ---
@@ -191,7 +219,9 @@ function _resolveApiKey(providerName, session, projectRoot = null) {
 		azure: 'AZURE_OPENAI_API_KEY',
 		openrouter: 'OPENROUTER_API_KEY',
 		xai: 'XAI_API_KEY',
-		ollama: 'OLLAMA_API_KEY'
+		ollama: 'OLLAMA_API_KEY',
+		bedrock: 'AWS_ACCESS_KEY_ID', // Bedrock uses AWS credentials
+		'google-vertex': 'GOOGLE_API_KEY'
 	};
 
 	const envVarName = keyMap[providerName];
@@ -203,8 +233,8 @@ function _resolveApiKey(providerName, session, projectRoot = null) {
 
 	const apiKey = resolveEnvVariable(envVarName, session, projectRoot);
 
-	// Special handling for Ollama - API key is optional
-	if (providerName === 'ollama') {
+	// Special handling for providers with optional API keys or different auth methods
+	if (providerName === 'ollama' || providerName === 'bedrock') {
 		return apiKey || null;
 	}
 
@@ -391,8 +421,8 @@ async function _unifiedServiceRunner(serviceType, params) {
 				continue;
 			}
 
-			// Check if API key is set for the current provider and role (excluding 'ollama')
-			if (providerName?.toLowerCase() !== 'ollama') {
+			// Check if API key is set for the current provider and role (excluding providers with alternative auth)
+			if (providerName?.toLowerCase() !== 'ollama' && providerName?.toLowerCase() !== 'bedrock') {
 				if (!isApiKeySet(providerName, session, effectiveProjectRoot)) {
 					log(
 						'warn',

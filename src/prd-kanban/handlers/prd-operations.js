@@ -6,6 +6,24 @@
 import chalk from 'chalk';
 import { readJSON } from '../../../scripts/modules/utils.js';
 import path from 'path';
+import fs from 'fs';
+
+/**
+ * Get the correct tasks.json path based on the new directory structure
+ * @param {string} projectRoot - Project root directory
+ * @returns {string} - Path to tasks.json file
+ */
+function getTasksJsonPath(projectRoot) {
+    // Try new structure first
+    const newPath = path.join(projectRoot, '.taskmaster', 'tasks', 'tasks.json');
+    if (fs.existsSync(newPath)) {
+        return newPath;
+    }
+
+    // Fall back to old structure
+    const oldPath = path.join(projectRoot, 'tasks', 'tasks.json');
+    return oldPath;
+}
 
 /**
  * PRD Operations Handler class
@@ -15,7 +33,7 @@ export class PRDOperationsHandler {
         this.board = board;
         this.projectRoot = board.projectRoot;
         this.prdsPath = board.prdsPath;
-        this.tasksPath = path.join(this.projectRoot, 'tasks', 'tasks.json');
+        this.tasksPath = getTasksJsonPath(this.projectRoot);
     }
 
     /**

@@ -1,0 +1,16 @@
+# Task ID: 31
+# Title: Implement PRD Context Inheritance for Auto-Generated Subtasks
+# Status: done
+# Dependencies: 30
+# Priority: high
+# PRD Source: append-expand-prd-option.txt
+# PRD Path: prd/done/append-expand-prd-option.txt
+# Parsed Date: 2025-06-01T11:48:22.924Z
+# File Hash: 70eee9a84f4eea54ef67f2ec161fbc020d37d2b290179e6131aa20fe976028ab
+# File Size: 11834 bytes
+# Description: Ensure that all subtasks automatically generated through the auto-expansion process inherit the complete PRD source metadata (filePath, fileName, fileHash, parsedDate) from their parent tasks. This is crucial for maintaining traceability of requirements from subtasks back to the original PRD.
+# Details:
+During the auto-expansion process, for each subtask generated, copy the `prdSource` metadata from its parent task. This includes `filePath`, `fileName`, `fileHash`, and `parsedDate`. The `prdSource` field for subtasks should be a direct copy of the parent's `prdSource`. Verify that existing traceability commands (e.g., `show-prd-source`, `tasks-from-prd`) correctly display and utilize this inherited information for subtasks. Ensure that change detection mechanisms also work properly with subtasks having inherited PRD context.
+
+# Test Strategy:
+Unit tests to confirm that subtasks are created with the correct inherited `prdSource` metadata. Integration tests using `task-master show-prd-source --id=<subtask_id>` and `task-master tasks-from-prd --prd=<prd_file>` to verify that the PRD source information is accurately displayed and traceable for auto-generated subtasks. Test with various PRDs to ensure consistent inheritance across different scenarios.

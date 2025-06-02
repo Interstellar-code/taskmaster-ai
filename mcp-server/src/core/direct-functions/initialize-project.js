@@ -66,6 +66,7 @@ export async function initializeProjectDirect(args, log, context = {}) {
 		const options = {
 			aliases: args.addAliases,
 			skipInstall: args.skipInstall,
+			reset: args.reset,
 			yes: true // Force yes mode
 		};
 

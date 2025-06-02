@@ -1,0 +1,48 @@
+# Task ID: 2
+# Title: Develop Core Menu Framework and UI
+# Status: done
+# Dependencies: 1
+# Priority: high
+# PRD Source: interactive-menu-prd.txt
+# PRD Path: prd/done/interactive-menu-prd.txt
+# Parsed Date: 2025-06-01T11:48:22.905Z
+# File Hash: 6708cf4cce21377e2894f1866cf4ac6101725af38074fbc80a491a68728fd622
+# File Size: 16119 bytes
+# Description: Develop the foundational framework for the interactive menu using `inquirer.js` for prompts and `chalk` and `boxen` for visual styling. This includes rendering the main menu structure, handling user input for navigation, and displaying basic project status.
+# Details:
+Design the main menu interface as specified in the PRD, including the header with project name, task counts, and status. Use `inquirer.js` for numbered menu options and input handling. Implement `chalk` for colors and `boxen` for borders to achieve the specified visual hierarchy. Ensure the menu persists after an action and returns to the main menu. Implement a basic loop for menu interaction.
+
+# Test Strategy:
+Launch the menu and verify its visual appearance matches the PRD. Test selecting valid and invalid options, ensuring the menu loops correctly and handles invalid input gracefully. Verify the display of project information (placeholder values initially).
+
+# Subtasks:
+## 1. Set up Project Structure and Basic Dependencies [done]
+### Dependencies: None
+### Description: Initialize the project, install core dependencies (`inquirer`, `chalk`, `boxen`), and create a basic entry point file to ensure the environment is ready for menu development.
+### Details:
+Create a new Node.js project. Install `inquirer`, `chalk`, and `boxen` as production dependencies. Create an `index.js` or `app.js` file. Add a simple 'Hello World' console log to verify execution.
+
+## 2. Implement Main Menu Structure and Styling [done]
+### Dependencies: 2.1
+### Description: Develop the visual layout of the main menu, including the header with project name, task counts, and status, using `chalk` for colors and `boxen` for borders.
+### Details:
+Create a function, e.g., `renderMainMenuHeader()`, that takes project name, total tasks, and completed tasks as arguments. Use `chalk` to colorize text (e.g., project name, status). Use `boxen` to draw a border around the header content. For initial testing, hardcode placeholder values for project name and task counts.
+
+## 3. Integrate Inquirer for Menu Options and Input [done]
+### Dependencies: 2.2
+### Description: Implement the interactive menu options using `inquirer.js`, allowing users to select actions. This subtask focuses on displaying the options and capturing user input.
+### Details:
+Create a function, e.g., `promptMainMenu()`, that uses `inquirer.prompt` with a `list` type. Define at least 3-4 placeholder menu options (e.g., 'View Tasks', 'Add Task', 'Exit'). Ensure the prompt is displayed below the header rendered in the previous step. Capture the user's choice.
+
+## 4. Implement Main Menu Loop and Basic Navigation [done]
+### Dependencies: 2.3
+### Description: Create the core application loop that continuously displays the main menu, processes user input, and returns to the menu after an action, until the user chooses to exit.
+### Details:
+Wrap the menu rendering and prompting logic within an asynchronous `while` loop. Implement a `switch` or `if/else if` statement to handle different user choices. For non-exit choices, simply log a message indicating the selected action (e.g., 'Viewing tasks...') and then re-render the menu. The loop should break when the 'Exit' option is chosen.
+
+## 5. Refine Styling and Placeholder Status Integration [done]
+### Dependencies: 2.4
+### Description: Apply final styling adjustments to the entire menu, ensuring consistency. Integrate dynamic (placeholder) project status and task counts into the header, simulating real data.
+### Details:
+Review the PRD for specific color schemes, padding, and border styles for both the header and potentially the menu options. Adjust `chalk` and `boxen` parameters accordingly. Create simple placeholder variables for 'project name', 'total tasks', and 'completed tasks' (e.g., `const projectName = 'My Project'; const totalTasks = 10; const completedTasks = 3;`). Pass these variables to the `renderMainMenuHeader()` function.
+

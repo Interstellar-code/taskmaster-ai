@@ -3,6 +3,7 @@ import path from 'path';
 import chalk from 'chalk';
 import { fileURLToPath } from 'url';
 import { log, resolveEnvVariable, findProjectRoot } from './utils.js';
+import { getStructurePath } from './directory-migration.js';
 
 // Calculate __dirname in ESM
 const __filename = fileURLToPath(import.meta.url);
@@ -28,6 +29,29 @@ try {
 }
 
 const CONFIG_FILE_NAME = '.taskmasterconfig';
+const NEW_CONFIG_FILE = 'config.json';
+
+/**
+ * Get the correct config file path based on directory structure
+ * @param {string} projectRoot - Project root directory
+ * @returns {string} Path to config file
+ */
+function getConfigPath(projectRoot) {
+	// Try new structure first
+	const newConfigPath = getStructurePath(projectRoot, 'config');
+	if (fs.existsSync(newConfigPath)) {
+		return newConfigPath;
+	}
+
+	// Fall back to old structure
+	const oldConfigPath = path.join(projectRoot, CONFIG_FILE_NAME);
+	if (fs.existsSync(oldConfigPath)) {
+		return oldConfigPath;
+	}
+
+	// Default to new structure for creation
+	return newConfigPath;
+}
 
 // Define valid providers dynamically from the loaded MODEL_MAP
 const VALID_PROVIDERS = Object.keys(MODEL_MAP || {});
@@ -97,7 +121,7 @@ function _loadAndValidateConfig(explicitRoot = null) {
 	// ---> End find project root logic <---
 
 	// --- Proceed with loading from the determined rootToUse ---
-	const configPath = path.join(rootToUse, CONFIG_FILE_NAME);
+	const configPath = getConfigPath(rootToUse);
 	let config = { ...defaults }; // Start with a deep copy of defaults
 	let configExists = false;
 
@@ -631,7 +655,7 @@ function writeConfig(config, explicitRoot = null) {
 	const configPath =
 		path.basename(rootPath) === CONFIG_FILE_NAME
 			? rootPath
-			: path.join(rootPath, CONFIG_FILE_NAME);
+			: getConfigPath(rootPath);
 
 	try {
 		fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
@@ -665,7 +689,7 @@ function isConfigFilePresent(explicitRoot = null) {
 	}
 	// ---> End determine root path logic <---
 
-	const configPath = path.join(rootPath, CONFIG_FILE_NAME);
+	const configPath = getConfigPath(rootPath);
 	return fs.existsSync(configPath);
 }
 

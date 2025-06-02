@@ -68,8 +68,14 @@ function resolveEnvVariable(key, session = null, projectRoot = null) {
  */
 function findProjectRoot(
 	startPath = process.cwd(),
-	markers = ['package.json', '.git', '.taskmasterconfig']
+	markers = ['package.json', '.git', '.taskmasterconfig', '.taskmaster']
 ) {
+	// Check for TASK_MASTER_PROJECT_ROOT environment variable first
+	const envProjectRoot = process.env.TASK_MASTER_PROJECT_ROOT;
+	if (envProjectRoot && fs.existsSync(envProjectRoot)) {
+		return path.resolve(envProjectRoot);
+	}
+
 	let currentPath = path.resolve(startPath);
 	while (true) {
 		for (const marker of markers) {
