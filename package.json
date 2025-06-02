@@ -1,6 +1,6 @@
 {
   "name": "task-hero-ai",
-  "version": "0.15.4",
+  "version": "0.15.5",
   "description": "TaskMaster AI - A task management system for ambitious AI-driven development",
   "main": "index.js",
   "type": "module",
