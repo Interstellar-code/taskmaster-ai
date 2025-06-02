@@ -173,6 +173,129 @@ alias taskmaster='task-master'
 	}
 }
 
+// Function to clear project data for fresh start
+function clearProjectData(targetDir, dryRun = false) {
+	const action = dryRun ? 'Would clear' : 'Clearing';
+	log('info', `${action} project data for fresh start...`);
+
+	const pathsToClear = [
+		// TaskMaster directory structure
+		{ path: path.join(targetDir, '.taskmaster', 'tasks'), type: 'directory' },
+		{ path: path.join(targetDir, '.taskmaster', 'prd'), type: 'directory' },
+		{ path: path.join(targetDir, '.taskmaster', 'reports'), type: 'directory' },
+
+		// Legacy directory structure
+		{ path: path.join(targetDir, 'tasks'), type: 'directory' },
+		{ path: path.join(targetDir, 'prd'), type: 'directory' },
+
+		// Test files
+		{ path: path.join(targetDir, 'tests', 'unit'), type: 'directory' },
+		{ path: path.join(targetDir, 'tests', 'integration'), type: 'directory' },
+		{ path: path.join(targetDir, 'tests', 'e2e'), type: 'directory' }
+	];
+
+	let clearedCount = 0;
+	let errorCount = 0;
+
+	for (const item of pathsToClear) {
+		try {
+			if (fs.existsSync(item.path)) {
+				if (dryRun) {
+					log('info', `  Would clear: ${item.path}`);
+					clearedCount++;
+				} else {
+					if (item.type === 'directory') {
+						// Clear directory contents but keep the directory structure
+						const files = fs.readdirSync(item.path);
+						for (const file of files) {
+							const filePath = path.join(item.path, file);
+							const stat = fs.statSync(filePath);
+							if (stat.isDirectory()) {
+								fs.rmSync(filePath, { recursive: true, force: true });
+							} else {
+								fs.unlinkSync(filePath);
+							}
+						}
+						log('info', `  Cleared directory: ${item.path}`);
+					} else {
+						fs.unlinkSync(item.path);
+						log('info', `  Removed file: ${item.path}`);
+					}
+					clearedCount++;
+				}
+			}
+		} catch (error) {
+			log('error', `Failed to clear ${item.path}: ${error.message}`);
+			errorCount++;
+		}
+	}
+
+	// Recreate essential files
+	if (!dryRun) {
+		try {
+			// Recreate tasks.json files
+			const tasksJsonContent = {
+				tasks: [],
+				metadata: {
+					version: '1.0.0',
+					lastUpdated: new Date().toISOString(),
+					totalTasks: 0
+				}
+			};
+
+			const tasksJsonPaths = [
+				path.join(targetDir, '.taskmaster', 'tasks', 'tasks.json'),
+				path.join(targetDir, 'tasks', 'tasks.json')
+			];
+
+			for (const tasksJsonPath of tasksJsonPaths) {
+				if (fs.existsSync(path.dirname(tasksJsonPath))) {
+					fs.writeFileSync(tasksJsonPath, JSON.stringify(tasksJsonContent, null, 2));
+					log('info', `  Recreated: ${tasksJsonPath}`);
+				}
+			}
+
+			// Recreate prds.json files
+			const prdsJsonContent = {
+				prds: [],
+				metadata: {
+					version: '1.0.0',
+					lastUpdated: new Date().toISOString(),
+					totalPrds: 0,
+					schema: {
+						version: '1.0.0',
+						description: 'TaskMaster AI PRD Lifecycle Tracking Schema'
+					}
+				}
+			};
+
+			const prdsJsonPaths = [
+				path.join(targetDir, '.taskmaster', 'prd', 'prds.json'),
+				path.join(targetDir, 'prd', 'prds.json')
+			];
+
+			for (const prdsJsonPath of prdsJsonPaths) {
+				if (fs.existsSync(path.dirname(prdsJsonPath))) {
+					fs.writeFileSync(prdsJsonPath, JSON.stringify(prdsJsonContent, null, 2));
+					log('info', `  Recreated: ${prdsJsonPath}`);
+				}
+			}
+
+		} catch (error) {
+			log('error', `Failed to recreate essential files: ${error.message}`);
+			errorCount++;
+		}
+	}
+
+	const summary = dryRun ?
+		`Would clear ${clearedCount} items with ${errorCount} potential errors` :
+		`Cleared ${clearedCount} items with ${errorCount} errors`;
+
+	log(errorCount > 0 ? 'warn' : 'success', summary);
+
+	return { cleared: clearedCount, errors: errorCount };
+}
+
 // Function to copy a file from the package to the target directory
 function copyTemplateFile(templateName, targetPath, replacements = {}) {
 	// Get the file content from the appropriate source directory
@@ -380,6 +503,7 @@ async function initializeProject(options = {}) {
 		const authorName = options.author || 'Vibe coder';
 		const dryRun = options.dryRun || false;
 		const addAliases = options.aliases || false;
+		const resetProject = options.reset || false;
 
 		if (dryRun) {
 			log('info', 'DRY RUN MODE: No files will be modified');
@@ -388,9 +512,22 @@ async function initializeProject(options = {}) {
 			if (addAliases) {
 				log('info', 'Would add shell aliases for task-master');
 			}
+			if (resetProject) {
+				log('info', 'Would reset project data for fresh start');
+			}
 			return {
 				dryRun: true
 			};
+		}
+
+		// Reset project data if requested
+		if (resetProject) {
+			const resetResult = clearProjectData(process.cwd(), dryRun);
+			if (resetResult.errors > 0) {
+				log('warn', `Project reset completed with ${resetResult.errors} errors. Continuing with initialization...`);
+			} else {
+				log('success', 'Project data reset successfully');
+			}
 		}
 
 		createProjectStructure(addAliases, dryRun);
@@ -412,6 +549,15 @@ async function initializeProject(options = {}) {
 			);
 			const addAliasesPrompted = addAliasesInput.trim().toLowerCase() !== 'n';
 
+			// Prompt for project reset
+			const resetProjectInput = await promptQuestion(
+				rl,
+				chalk.cyan(
+					'Reset project data? This will clear all tasks, PRDs, reports and tests for a fresh start (y/N): '
+				)
+			);
+			const resetProjectPrompted = resetProjectInput.trim().toLowerCase() === 'y';
+
 			// Confirm settings...
 			console.log('\nTask Master Project settings:');
 			console.log(
@@ -420,6 +566,18 @@ async function initializeProject(options = {}) {
 				),
 				chalk.white(addAliasesPrompted ? 'Yes' : 'No')
 			);
+			console.log(
+				chalk.blue('Reset project data for fresh start:'),
+				chalk.white(resetProjectPrompted ? 'Yes' : 'No')
+			);
+
+			if (resetProjectPrompted) {
+				console.log(
+					chalk.yellow(
+						'⚠️  Warning: This will permanently delete all existing tasks, PRDs, reports, and test files!'
+					)
+				);
+			}
 
 			const confirmInput = await promptQuestion(
 				rl,
@@ -443,9 +601,22 @@ async function initializeProject(options = {}) {
 				if (addAliasesPrompted) {
 					log('info', 'Would add shell aliases for task-master');
 				}
+				if (resetProjectPrompted) {
+					log('info', 'Would reset project data for fresh start');
+				}
 				return {
 					dryRun: true
 				};
+			}
+
+			// Reset project data if requested
+			if (resetProjectPrompted) {
+				const resetResult = clearProjectData(process.cwd(), dryRun);
+				if (resetResult.errors > 0) {
+					log('warn', `Project reset completed with ${resetResult.errors} errors. Continuing with initialization...`);
+				} else {
+					log('success', 'Project data reset successfully');
+				}
 			}
 
 			// Create structure using only necessary values

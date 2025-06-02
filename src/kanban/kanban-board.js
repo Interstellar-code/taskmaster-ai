@@ -17,6 +17,24 @@ import { readJSON } from '../../scripts/modules/utils.js';
 import { findProjectRoot } from '../../scripts/modules/utils.js';
 import chalk from 'chalk';
 import path from 'path';
+import fs from 'fs';
+
+/**
+ * Get the correct tasks.json path based on the new directory structure
+ * @param {string} projectRoot - Project root directory
+ * @returns {string} - Path to tasks.json file
+ */
+function getTasksJsonPath(projectRoot) {
+    // Try new structure first
+    const newPath = path.join(projectRoot, '.taskmaster', 'tasks', 'tasks.json');
+    if (fs.existsSync(newPath)) {
+        return newPath;
+    }
+
+    // Fall back to old structure
+    const oldPath = path.join(projectRoot, 'tasks', 'tasks.json');
+    return oldPath;
+}
 
 /**
  * Main Kanban Board class
@@ -26,7 +44,7 @@ export class KanbanBoard {
         this.boardLayout = new BoardLayout();
         this.tasks = [];
         this.projectRoot = findProjectRoot();
-        this.tasksPath = path.join(this.projectRoot, 'tasks', 'tasks.json');
+        this.tasksPath = getTasksJsonPath(this.projectRoot);
         this.isRunning = false;
         this.prdFilter = prdFilter;
 

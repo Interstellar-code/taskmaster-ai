@@ -173,7 +173,7 @@ function analyzePrdFile(filePath) {
  * @param {string} tasksPath - Path to tasks.json
  * @returns {Array} Array of task IDs that reference this PRD
  */
-function findTasksReferencingPrd(prdFileName, tasksPath = 'tasks/tasks.json') {
+function findTasksReferencingPrd(prdFileName, tasksPath = '.taskmaster/tasks/tasks.json') {
     try {
         const tasksData = readJSON(tasksPath);
         if (!tasksData || !tasksData.tasks) {

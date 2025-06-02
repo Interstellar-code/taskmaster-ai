@@ -445,7 +445,7 @@ async function promptForComplexityAnalysis(task, tasksPath, context, outputForma
 			console.log('✅ Complexity analysis completed!');
 
 			// Read the generated report to get analysis for this task
-			const reportPath = path.join(projectRoot || path.dirname(path.dirname(tasksPath)), 'scripts/task-complexity-report.json');
+			const reportPath = path.join(projectRoot || path.dirname(path.dirname(tasksPath)), '.taskmaster/reports/task-complexity-report.json');
 			if (fs.existsSync(reportPath)) {
 				const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
 				const taskAnalysis = report.complexityAnalysis?.find(a => a.taskId === task.id);

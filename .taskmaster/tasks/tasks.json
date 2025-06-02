@@ -3916,7 +3916,7 @@
       "description": "Integrate bug fixes and improvements from upstream v0.16.0 release while preserving unique custom features including: Kanban board functionality, PRD lifecycle tracking, interactive menu systems, custom AI editor integrations (.augment-guidelines, .cursor/rules, .roo/rules, .windsurfrules), custom task templates and workflow, and enhanced project management features. Focus on: 1) New directory structure (.taskmaster/ consolidation), 2) AWS Bedrock support, 3) Google Vertex AI support, 4) Azure support, 5) Node.js version requirement update, 6) TASK_MASTER_PROJECT_ROOT env variable, 7) Bug fixes for max_tokens and add-task MCP command. Create integration branch dev_rohit for selective merging.",
       "details": "",
       "testStrategy": "",
-      "status": "in-progress",
+      "status": "done",
       "dependencies": [],
       "priority": "high",
       "subtasks": [],

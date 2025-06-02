@@ -7,7 +7,8 @@ import chalk from 'chalk';
 import boxen from 'boxen';
 import inquirer from 'inquirer';
 import path from 'path';
-import { findProjectRoot } from '../../scripts/modules/utils.js';
+import fs from 'fs';
+import { findProjectRoot, readJSON } from '../../scripts/modules/utils.js';
 import { getConfig } from '../../scripts/modules/config-manager.js';
 import { listTasks } from '../../scripts/modules/task-manager.js';
 import { launchKanbanBoard } from '../kanban/kanban-board.js';
@@ -19,6 +20,23 @@ import {
     logError,
     logWarning
 } from './command-executor.js';
+
+/**
+ * Get the correct tasks.json path based on the new directory structure
+ * @param {string} projectRoot - Project root directory
+ * @returns {string} - Path to tasks.json file
+ */
+function getTasksJsonPath(projectRoot) {
+    // Try new structure first
+    const newPath = path.join(projectRoot, '.taskmaster', 'tasks', 'tasks.json');
+    if (fs.existsSync(newPath)) {
+        return newPath;
+    }
+
+    // Fall back to old structure
+    const oldPath = path.join(projectRoot, 'tasks', 'tasks.json');
+    return oldPath;
+}
 
 /**
  * Initialize and launch the interactive menu system
@@ -60,8 +78,6 @@ async function getProjectInfo() {
         // Get project name from package.json or directory name
         let projectName = 'TaskMaster Project';
         try {
-            const fs = await import('fs');
-            const path = await import('path');
             const packagePath = path.join(projectRoot, 'package.json');
             if (fs.existsSync(packagePath)) {
                 const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
@@ -77,20 +93,46 @@ async function getProjectInfo() {
         let tasksWithPrdSource = 0;
         let uniquePrdSources = 0;
         try {
-            const path = await import('path');
-            const tasksPath = path.join(projectRoot, 'tasks', 'tasks.json');
-            const result = listTasks(tasksPath, null, null, false, 'json');
-            if (result && result.tasks && Array.isArray(result.tasks)) {
-                totalTasks = result.tasks.length;
-                pendingTasks = result.tasks.filter(task => task.status === 'pending').length;
+            const tasksPath = getTasksJsonPath(projectRoot);
 
-                // Calculate PRD source statistics
-                tasksWithPrdSource = result.tasks.filter(task => task.prdSource && task.prdSource.fileName).length;
-                const prdFileNames = [...new Set(result.tasks
-                    .filter(task => task.prdSource && task.prdSource.fileName)
-                    .map(task => task.prdSource.fileName))];
-                uniquePrdSources = prdFileNames.length;
+            // Check if file exists before trying to read it
+            if (!fs.existsSync(tasksPath)) {
+                // File doesn't exist, use default values
+                return {
+                    name: projectName,
+                    totalTasks: 0,
+                    pendingTasks: 0,
+                    tasksWithPrdSource: 0,
+                    uniquePrdSources: 0,
+                    status: '⚠ No Tasks File'
+                };
             }
+
+            // Try to read the file directly first to check if it's valid JSON
+            const data = readJSON(tasksPath);
+            if (!data || !data.tasks || !Array.isArray(data.tasks)) {
+                // Invalid or empty tasks file
+                return {
+                    name: projectName,
+                    totalTasks: 0,
+                    pendingTasks: 0,
+                    tasksWithPrdSource: 0,
+                    uniquePrdSources: 0,
+                    status: '⚠ Invalid Tasks File'
+                };
+            }
+
+            // File is valid, calculate statistics
+            totalTasks = data.tasks.length;
+            pendingTasks = data.tasks.filter(task => task.status === 'pending').length;
+
+            // Calculate PRD source statistics
+            tasksWithPrdSource = data.tasks.filter(task => task.prdSource && task.prdSource.fileName).length;
+            const prdFileNames = [...new Set(data.tasks
+                .filter(task => task.prdSource && task.prdSource.fileName)
+                .map(task => task.prdSource.fileName))];
+            uniquePrdSources = prdFileNames.length;
+
         } catch (err) {
             // Use default values if tasks can't be read
         }
@@ -891,9 +933,8 @@ function generatePRDMenuChoices(hasExistingTasks) {
 async function handleParsePRD(sessionState) {
     try {
         // Check if tasks already exist
-        const path = await import('path');
         const fs = await import('fs');
-        const tasksPath = path.join(sessionState.projectRoot, 'tasks', 'tasks.json');
+        const tasksPath = getTasksJsonPath(sessionState.projectRoot);
 
         let hasExistingTasks = false;
         let existingTaskCount = 0;
@@ -1128,9 +1169,8 @@ async function handleAppendAndAutoExpand(args, sessionState) {
         console.log(chalk.blue('🔍 Step 2: Performing comprehensive complexity analysis...'));
 
         // Read the updated tasks to find newly added ones
-        const path = await import('path');
         const fs = await import('fs');
-        const tasksPath = path.join(sessionState.projectRoot, 'tasks', 'tasks.json');
+        const tasksPath = getTasksJsonPath(sessionState.projectRoot);
 
         // Perform complexity analysis first
         try {
@@ -1151,7 +1191,7 @@ async function handleAppendAndAutoExpand(args, sessionState) {
                 console.log(chalk.yellow(`🎯 Found ${complexTasks.length} complex task(s) suitable for expansion:`));
 
                 // Try to read complexity analysis results for better display
-                const complexityReportPath = path.join(sessionState.projectRoot, 'scripts', 'task-complexity-report.json');
+                const complexityReportPath = path.join(sessionState.projectRoot, '.taskmaster', 'reports', 'task-complexity-report.json');
                 let complexityReport = null;
                 try {
                     if (fs.existsSync(complexityReportPath)) {

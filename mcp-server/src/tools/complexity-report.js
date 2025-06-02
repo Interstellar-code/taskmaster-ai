@@ -25,7 +25,7 @@ export function registerComplexityReportTool(server) {
 				.string()
 				.optional()
 				.describe(
-					'Path to the report file (default: scripts/task-complexity-report.json)'
+					'Path to the report file (default: .taskmaster/reports/task-complexity-report.json)'
 				),
 			projectRoot: z
 				.string()

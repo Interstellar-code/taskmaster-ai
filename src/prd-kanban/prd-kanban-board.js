@@ -6,6 +6,7 @@
 
 import chalk from 'chalk';
 import path from 'path';
+import fs from 'fs';
 import { findProjectRoot, readJSON } from '../../scripts/modules/utils.js';
 import { PRDBoardLayout } from './components/prd-board-layout.js';
 import { createPRDKeyboardHandler } from './handlers/prd-keyboard-handler.js';
@@ -17,6 +18,40 @@ import { createPRDDetailsPopup } from './components/prd-details-popup.js';
 import { createPRDHelpPopup } from './components/prd-help-popup.js';
 
 /**
+ * Get the correct prds.json path based on the new directory structure
+ * @param {string} projectRoot - Project root directory
+ * @returns {string} - Path to prds.json file
+ */
+function getPRDsJsonPath(projectRoot) {
+    // Try new structure first
+    const newPath = path.join(projectRoot, '.taskmaster', 'prd', 'prds.json');
+    if (fs.existsSync(newPath)) {
+        return newPath;
+    }
+
+    // Fall back to old structure
+    const oldPath = path.join(projectRoot, 'prd', 'prds.json');
+    return oldPath;
+}
+
+/**
+ * Get the correct tasks.json path based on the new directory structure
+ * @param {string} projectRoot - Project root directory
+ * @returns {string} - Path to tasks.json file
+ */
+function getTasksJsonPath(projectRoot) {
+    // Try new structure first
+    const newPath = path.join(projectRoot, '.taskmaster', 'tasks', 'tasks.json');
+    if (fs.existsSync(newPath)) {
+        return newPath;
+    }
+
+    // Fall back to old structure
+    const oldPath = path.join(projectRoot, 'tasks', 'tasks.json');
+    return oldPath;
+}
+
+/**
  * PRD Kanban Board class - Following Task Kanban Architecture
  */
 export class PRDKanbanBoard {
@@ -24,7 +59,7 @@ export class PRDKanbanBoard {
         this.boardLayout = new PRDBoardLayout();
         this.prds = [];
         this.projectRoot = findProjectRoot();
-        this.prdsPath = path.join(this.projectRoot, 'prd', 'prds.json');
+        this.prdsPath = getPRDsJsonPath(this.projectRoot);
         this.isRunning = false;
         this.onQuitCallback = null;
 

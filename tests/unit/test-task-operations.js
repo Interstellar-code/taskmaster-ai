@@ -10,7 +10,7 @@ console.log(chalk.blue('Testing task operations...'));
 // Mock kanban board
 const mockBoard = {
     projectRoot: process.cwd(),
-    tasksPath: './tasks/tasks.json',
+    tasksPath: './.taskmaster/tasks/tasks.json',
     tasks: [],
     async loadTasks() {
         console.log('Mock: Loading tasks...');
