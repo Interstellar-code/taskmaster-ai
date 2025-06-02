@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Task Master
  * Copyright (c) 2025 Eyal Toledano, Ralph Khreish
  *
@@ -78,11 +78,11 @@ function displayBanner() {
 // Logging function with icons and colors
 function log(level, ...args) {
 	const icons = {
-		debug: chalk.gray('🔍'),
-		info: chalk.blue('ℹ️'),
-		warn: chalk.yellow('⚠️'),
-		error: chalk.red('❌'),
-		success: chalk.green('✅')
+		debug: chalk.gray('ðŸ”'),
+		info: chalk.blue('â„¹ï¸'),
+		warn: chalk.yellow('âš ï¸'),
+		error: chalk.red('âŒ'),
+		success: chalk.green('âœ…')
 	};
 
 	if (LOG_LEVELS[level] >= LOG_LEVEL) {
@@ -179,20 +179,30 @@ function clearProjectData(targetDir, dryRun = false) {
 	log('info', `${action} project data for fresh start...`);
 
 	const pathsToClear = [
-		// TaskMaster directory structure
-		{ path: path.join(targetDir, '.taskmaster', 'tasks'), type: 'directory' },
-		{ path: path.join(targetDir, '.taskmaster', 'prd'), type: 'directory' },
-		{ path: path.join(targetDir, '.taskmaster', 'reports'), type: 'directory' },
+                // TaskMaster directory structure
+                { path: path.join(targetDir, '.taskmaster', 'tasks'), type: 'directory' },
+                { path: path.join(targetDir, '.taskmaster', 'reports'), type: 'directory' },
 
-		// Legacy directory structure
-		{ path: path.join(targetDir, 'tasks'), type: 'directory' },
-		{ path: path.join(targetDir, 'prd'), type: 'directory' },
+                // PRD status subdirectories (clear contents but keep structure)
+                { path: path.join(targetDir, '.taskmaster', 'prd', 'pending'), type: 'directory' },
+                { path: path.join(targetDir, '.taskmaster', 'prd', 'in-progress'), type: 'directory' },
+                { path: path.join(targetDir, '.taskmaster', 'prd', 'done'), type: 'directory' },
+                { path: path.join(targetDir, '.taskmaster', 'prd', 'archived'), type: 'directory' },
 
-		// Test files
-		{ path: path.join(targetDir, 'tests', 'unit'), type: 'directory' },
-		{ path: path.join(targetDir, 'tests', 'integration'), type: 'directory' },
-		{ path: path.join(targetDir, 'tests', 'e2e'), type: 'directory' }
-	];
+                // Legacy directory structure
+                { path: path.join(targetDir, 'tasks'), type: 'directory' },
+
+                // Legacy PRD status subdirectories (clear contents but keep structure)
+                { path: path.join(targetDir, 'prd', 'pending'), type: 'directory' },
+                { path: path.join(targetDir, 'prd', 'in-progress'), type: 'directory' },
+                { path: path.join(targetDir, 'prd', 'done'), type: 'directory' },
+                { path: path.join(targetDir, 'prd', 'archived'), type: 'directory' },
+
+                // Test files
+                { path: path.join(targetDir, 'tests', 'unit'), type: 'directory' },
+                { path: path.join(targetDir, 'tests', 'integration'), type: 'directory' },
+                { path: path.join(targetDir, 'tests', 'e2e'), type: 'directory' }
+        ];
 
 	let clearedCount = 0;
 	let errorCount = 0;
@@ -574,7 +584,7 @@ async function initializeProject(options = {}) {
 			if (resetProjectPrompted) {
 				console.log(
 					chalk.yellow(
-						'⚠️  Warning: This will permanently delete all existing tasks, PRDs, reports, and test files!'
+						'âš ï¸  Warning: This will permanently delete all existing tasks, PRDs, reports, and test files!'
 					)
 				);
 			}
@@ -893,10 +903,10 @@ function createProjectStructure(addAliases, dryRun) {
 						'Configure AI models (if needed) and add API keys to `.env`'
 					) +
 					'\n' +
-					chalk.white('   ├─ ') +
+					chalk.white('   â”œâ”€ ') +
 					chalk.dim('Models: Use `task-master models` commands') +
 					'\n' +
-					chalk.white('   └─ ') +
+					chalk.white('   â””â”€ ') +
 					chalk.dim(
 						'Keys: Add provider API keys to .env (or inside the MCP config file i.e. .cursor/mcp.json)'
 					) +
@@ -911,7 +921,7 @@ function createProjectStructure(addAliases, dryRun) {
 						'Ask Cursor Agent (or run CLI) to parse your PRD and generate initial tasks:'
 					) +
 					'\n' +
-					chalk.white('   └─ ') +
+					chalk.white('   â””â”€ ') +
 					chalk.dim('MCP Tool: ') +
 					chalk.cyan('parse_prd') +
 					chalk.dim(' | CLI: ') +
@@ -922,7 +932,7 @@ function createProjectStructure(addAliases, dryRun) {
 						'Ask Cursor to analyze the complexity of the tasks in your PRD using research'
 					) +
 					'\n' +
-					chalk.white('   └─ ') +
+					chalk.white('   â””â”€ ') +
 					chalk.dim('MCP Tool: ') +
 					chalk.cyan('analyze_project_complexity') +
 					chalk.dim(' | CLI: ') +
