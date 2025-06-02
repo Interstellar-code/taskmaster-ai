@@ -171,8 +171,19 @@ export class PRDDetailsPopup {
         this.contentLines.push('');
 
         try {
-            // Load tasks from tasks.json
-            const tasksPath = path.join(process.cwd(), 'tasks', 'tasks.json');
+            // Load tasks from tasks.json using proper path resolution
+            const projectRoot = process.cwd();
+            let tasksPath;
+
+            // Try new structure first
+            const newTasksPath = path.join(projectRoot, '.taskmaster', 'tasks', 'tasks.json');
+            if (await fs.access(newTasksPath).then(() => true).catch(() => false)) {
+                tasksPath = newTasksPath;
+            } else {
+                // Fall back to old structure
+                tasksPath = path.join(projectRoot, 'tasks', 'tasks.json');
+            }
+
             const tasksData = await fs.readFile(tasksPath, 'utf8');
             const tasksJson = JSON.parse(tasksData);
             const allTasks = tasksJson.tasks || [];

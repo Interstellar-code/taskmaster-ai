@@ -1,0 +1,35 @@
+# Test PRD for Linking Functionality
+
+## Overview
+This is a test Product Requirements Document (PRD) created to demonstrate and test the TaskMaster PRD-Task linking functionality.
+
+## Objectives
+- Test PRD registration and tracking
+- Verify task-PRD linking mechanisms
+- Validate integrity check and auto-fix features
+
+## Requirements
+
+### Functional Requirements
+1. **Task Creation**: System should create tasks from this PRD
+2. **Link Management**: Tasks should be properly linked to this PRD
+3. **Status Tracking**: PRD status should reflect task completion progress
+
+### Technical Requirements
+1. **Data Integrity**: Maintain consistent links between tasks and PRDs
+2. **Auto-Fix**: System should automatically repair missing links
+3. **Validation**: Integrity checks should detect and report issues
+
+## Success Criteria
+- All tasks created from this PRD are properly linked
+- Integrity checks pass without errors
+- Auto-fix functionality works correctly
+
+## Test Scenarios
+1. Create tasks from PRD
+2. Verify linking in prds.json
+3. Test integrity check detection
+4. Validate auto-fix functionality
+
+---
+Generated for testing TaskMaster PRD lifecycle tracking system.

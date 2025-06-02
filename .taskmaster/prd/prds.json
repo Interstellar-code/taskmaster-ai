@@ -1,9 +1,43 @@
 {
-  "prds": [],
+  "prds": [
+    {
+      "id": "prd_001",
+      "title": "Test PRD for Linking",
+      "fileName": "test-prd.txt",
+      "status": "pending",
+      "complexity": "medium",
+      "createdDate": "2025-06-02T16:30:00.000Z",
+      "lastModified": "2025-06-02T17:10:51.947Z",
+      "filePath": "C:\\laragon\\www\\taskmaster-ai\\.taskmaster\\prd\\pending\\test-prd.txt",
+      "fileHash": "33e22a4be38c5ff5057009103394f534afcfe3d622e9fe7c3db725629bb5f1cf",
+      "fileSize": 1172,
+      "description": "Test PRD to demonstrate linking functionality",
+      "tags": [
+        "test",
+        "linking"
+      ],
+      "linkedTaskIds": [
+        60,
+        61
+      ],
+      "taskStats": {
+        "totalTasks": 2,
+        "completedTasks": 0,
+        "pendingTasks": 2,
+        "inProgressTasks": 0,
+        "blockedTasks": 0,
+        "deferredTasks": 0,
+        "cancelledTasks": 0,
+        "completionPercentage": 0
+      },
+      "estimatedEffort": "2-4 hours",
+      "priority": "medium"
+    }
+  ],
   "metadata": {
     "version": "1.0.0",
-    "lastUpdated": "2025-06-02T15:48:01.642Z",
-    "totalPrds": 0,
+    "lastUpdated": "2025-06-02T17:10:51.948Z",
+    "totalPrds": 1,
     "schema": {
       "version": "1.0.0",
       "description": "TaskMaster AI PRD Lifecycle Tracking Schema",

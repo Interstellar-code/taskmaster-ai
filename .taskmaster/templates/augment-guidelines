@@ -3,14 +3,17 @@
 ## Project Overview
 This is a TaskMaster AI project - an AI-driven task management system designed for ambitious development projects. TaskMaster helps break down complex requirements into manageable, well-structured tasks with dependencies, subtasks, and detailed implementation guidance.
 
+**Key Philosophy**: Augment AI serves as the **intelligence layer** that performs deep analysis, planning, and task structure generation, while TaskMaster serves as the **tracking and management system** for documentation and progress monitoring.
+
 ## Core Technologies & Architecture
-- **Runtime**: Node.js with ES modules
+- **Runtime**: Node.js with ES modules (>=18.0.0)
 - **CLI Framework**: Commander.js for command-line interface
 - **Interactive UI**: Inquirer.js with chalk for colored output and boxen for styled containers
-- **AI Integration**: Multiple AI providers (Anthropic Claude, OpenAI, Google Gemini, Perplexity, xAI, OpenRouter)
-- **Data Storage**: JSON files for task data (`tasks/tasks.json`)
-- **Configuration**: `.taskmasterconfig` for AI models, `.env` for API keys
+- **AI Integration**: Multiple AI providers (Anthropic Claude, OpenAI, Google Gemini, Perplexity, xAI, OpenRouter, AWS Bedrock, Google Vertex AI, Azure)
+- **Data Storage**: JSON files in `.taskmaster/` directory structure
+- **Configuration**: `.taskmaster/config.json` for AI models, `.env` for API keys
 - **MCP Integration**: Model Context Protocol server for editor integrations (Cursor, Windsurf, VS Code)
+- **Package**: Published as `task-hero-ai` with global CLI commands
 
 ## TaskMaster-Specific Patterns
 
@@ -24,15 +27,25 @@ This is a TaskMaster AI project - an AI-driven task management system designed f
 - All commands support both CLI and MCP interfaces
 - Use `--append` flag when adding tasks to existing projects
 - Commands that modify tasks should regenerate markdown files automatically
-- AI-powered commands (parse-prd, update, expand) require API keys and can take time
+- **No API Keys Required**: TaskMaster can function purely as a tracking system without AI integration
+- AI-powered commands (parse-prd, update, expand) require API keys when using TaskMaster's built-in AI
+- **Augment AI Integration**: Augment performs the intelligence work and uses TaskMaster commands for documentation
 
 ### File Organization
-- `tasks/tasks.json` - Main task data file
-- `tasks/task_XXX.txt` - Individual task markdown files
-- `scripts/` - PRD files and utilities
+- `.taskmaster/config.json` - AI models and global configuration
+- `.taskmaster/tasks/tasks.json` - Main task data file
+- `.taskmaster/tasks/task_XXX.txt` - Individual task files
+- `.taskmaster/prd/` - PRD lifecycle management directory
+  - `pending/`, `in-progress/`, `done/`, `archived/` - Status-based directories
+  - `prds.json` - PRD metadata and tracking
+- `.taskmaster/reports/` - Analysis and complexity reports
+- `.taskmaster/templates/` - Project templates including this guidelines template
+- `scripts/` - Legacy location, may contain utilities
 - `.cursor/rules/` - Cursor AI integration rules
 - `mcp-server/` - Model Context Protocol server
 - `src/menu/` - Interactive menu system
+- `src/kanban/` - Kanban board implementation
+- `src/prd-kanban/` - PRD Kanban board implementation
 
 ## Development Guidelines
 
@@ -50,12 +63,15 @@ This is a TaskMaster AI project - an AI-driven task management system designed f
 - Include "Back to Main Menu" options in sub-menus
 - Show real-time project information in menu headers
 
-### AI Integration Best Practices
+### Augment AI Integration Best Practices
+- **Augment as Intelligence Layer**: Perform deep PRD analysis, complexity assessment, and task structure generation
+- **TaskMaster as Tracking System**: Use TaskMaster commands to document and track the structures created by Augment
+- **No API Keys Scenario**: TaskMaster functions purely as task/PRD tracking without requiring AI API keys
+- **Autonomous Analysis**: Augment should perform complexity analysis and generate subtask structures without user intervention
+- **PRD-Driven Workflow**: Start from PRD analysis rather than project initialization
 - Always check for existing tasks before parsing PRD - offer append vs replace options
-- Validate API keys before making AI calls
-- Provide progress feedback for long-running AI operations
-- Use research models for complex analysis when available
-- Handle AI failures gracefully with fallback options
+- Provide progress feedback for long-running operations
+- Handle failures gracefully with fallback options
 
 ### Error Handling
 - Log errors with context using the logging system
@@ -72,32 +88,84 @@ This is a TaskMaster AI project - an AI-driven task management system designed f
 ## TaskMaster Command Reference
 
 ### Essential Commands
-- `task-master init` - Initialize new project
-- `task-master menu` - Launch interactive menu (recommended)
-- `task-master parse-prd --input=<file>` - Generate tasks from PRD
-- `task-master list` - Show all tasks
-- `task-master next` - Find next available task
-- `task-master set-status --id=<id> --status=<status>` - Update task status
+- `task-hero init` or `task-master init` - Initialize new project
+- `task-hero menu` or `task-master menu` - Launch interactive menu (recommended)
+- `task-hero parse-prd --input=<file>` - Generate tasks from PRD
+- `task-hero list` - Show all tasks
+- `task-hero next` - Find next available task
+- `task-hero set-status --id=<id> --status=<status>` - Update task status
 
 ### Task Management
-- `task-master add-task --prompt="<description>"` - Add new task
-- `task-master update-task --id=<id> --prompt="<context>"` - Update specific task
-- `task-master expand --id=<id>` - Break task into subtasks
-- `task-master remove-task --id=<id>` - Delete task
+- `task-hero add-task --prompt="<description>"` - Add new task
+- `task-hero add-task --prompt="<description>" --research` - Add task using research model
+- `task-hero update-task --id=<id> --prompt="<context>"` - Update specific task
+- `task-hero update-task --id=<id> --prompt="<context>" --research` - Update with research model
+- `task-hero expand --id=<id>` - Break task into subtasks (supports nested: X.Y.Z)
+- `task-hero expand --id=<id> --num=<count>` - Expand with specific number of subtasks
+- `task-hero expand --id=<id> --prompt="<guidance>"` - Expand with specific guidance
+- `task-hero expand --id=<id> --research` - Research-backed subtask generation
+- `task-hero expand --all` - Expand all pending tasks
+- `task-hero expand --all --force` - Force regeneration of existing subtasks
+- `task-hero expand --all --research` - Research-backed generation for all tasks
+- `task-hero remove-task --id=<id>` - Delete task
+- `task-hero show <id>` - Show task details
+- `task-hero move-task --id=<id> --after=<target-id>` - Reorder tasks
+- `task-hero move --from=<id> --to=<id>` - Move task or subtask to new position
+- `task-hero clear-subtasks --id=<id>` - Clear subtasks from specific task
+- `task-hero clear-subtasks --all` - Clear subtasks from all tasks
+- `task-hero update-subtask --id=<parentId.subtaskId> --prompt="<prompt>"` - Update specific subtask
+
+### PRD Lifecycle Management
+- `task-hero prd` - List PRDs with optional filtering
+- `task-hero prd-show <prd-id>` - Show detailed PRD information
+- `task-hero prd-status <prd-id> <status>` - Update PRD status
+- `task-hero prd-sync` - Synchronize PRD statuses with task completion
+- `task-hero prd-migrate` - Migrate legacy PRD files to new system
+- `task-hero prd-archive <prd-id>` - Archive completed PRDs
+- `task-hero prd-integrity` - Check and fix PRD file integrity
+- `task-hero list-prds` - List all PRD files that have generated tasks
+- `task-hero tasks-from-prd --prd=<file>` - Show tasks from specific PRD
 
 ### Advanced Features
-- `task-master analyze-complexity` - Analyze task complexity
-- `task-master models --setup` - Configure AI models
-- `task-master add-dependency --id=<id> --depends-on=<id>` - Add dependencies
+- `task-hero analyze-complexity` - Analyze task complexity
+- `task-hero analyze-complexity --research` - Research-backed complexity analysis
+- `task-hero complexity-report` - Display complexity analysis report
+- `task-hero models` - View current AI model configuration
+- `task-hero models --setup` - Configure AI models interactively
+- `task-hero add-dependency --id=<id> --depends-on=<id>` - Add dependencies
+- `task-hero remove-dependency --id=<id> --depends-on=<id>` - Remove dependencies
+- `task-hero generate` - Generate task files from tasks.json
+- `task-hero validate-dependencies` - Check dependency integrity
+- `task-hero fix-dependencies` - Fix broken dependencies
+- `task-hero kanban` - Launch interactive Kanban board
+- `task-hero prd-kanban` - Launch PRD Kanban board
+
+### PRD Source Tracking
+- `task-hero list-prds` - List all PRD files that have generated tasks
+- `task-hero tasks-from-prd --prd=<file>` - Show tasks from specific PRD
+- `task-hero show-prd-source --id=<id>` - Display PRD source info for task
+- `task-hero check-prd-changes` - Check if PRD files have been modified
+- `task-hero update-prd-metadata --prd=<file>` - Update PRD metadata after changes
+
+### Interactive Features
+- `task-hero menu` - Launch interactive menu system (recommended)
+- `task-hero kanban` - Interactive task Kanban board with drag-and-drop
+- `task-hero prd-kanban` - Interactive PRD lifecycle Kanban board
 
 ## Best Practices for TaskMaster Development
 
 ### When Working with Tasks
-- Always use the interactive menu (`task-master menu`) for better UX
+- Always use the interactive menu (`task-hero menu`) for better UX
 - Check task dependencies before marking tasks as done
 - Use subtasks to break down complex implementations
 - Update task status regularly to track progress
 - Add dependencies to ensure proper execution order
+- Use PRD references to maintain traceability from requirements to implementation
+
+### PRD Lifecycle Management
+- PRDs are stored in `.taskmaster/prd/` with status-based directories
+- PRD metadata is tracked in `.taskmaster/prd/prds.json`
+- PRD status automatically updates based on linked task completion
 
 ### When Modifying TaskMaster Code
 - Test changes with the interactive menu system
@@ -105,13 +173,6 @@ This is a TaskMaster AI project - an AI-driven task management system designed f
 - Validate error handling with invalid inputs
 - Update documentation when adding new features
 - Consider backward compatibility with existing task files
-
-### AI Model Configuration
-- Set up multiple AI providers for redundancy
-- Use research models for complex analysis tasks
-- Configure fallback models for reliability
-- Store API keys securely in `.env` file
-- Test AI integration before deploying changes
 
 ## File Naming Conventions
 - Use kebab-case for CLI command files
@@ -133,6 +194,12 @@ This is a TaskMaster AI project - an AI-driven task management system designed f
 - Don't hardcode file paths - use path resolution utilities
 - Don't forget to regenerate task files after JSON changes
 
+## Package Information
+- **NPM Package**: `task-hero-ai`
+- **Binary Commands**: `task-hero`, `task-hero-ai`, `task-hero-mcp`
+- **Installation**: `npm install -g task-hero-ai`
+- **Local Development**: Clone repository and use `npm link` for local installation
+
 ## When Implementing New Features
 - Follow the existing command pattern (CLI + MCP + interactive menu)
 - Add comprehensive error handling and validation
@@ -140,3 +207,159 @@ This is a TaskMaster AI project - an AI-driven task management system designed f
 - Update both documentation and help text
 - Test with various project configurations
 - Consider impact on existing task data structures
+
+## Augment AI + TaskMaster Integration Workflow
+
+### Complete PRD-to-Execution Workflow
+
+**Key Principle**: Augment AI performs intelligent analysis and planning, TaskMaster handles documentation and tracking.
+
+#### 🧠 **Phase 1: Intelligent PRD Analysis & Planning (Augment AI)**
+```markdown
+When user provides a PRD, Augment should:
+
+1. **Complexity Pattern Recognition**
+   - Identify technical complexity indicators (APIs, databases, integrations)
+   - Recognize architectural patterns (microservices, monolith, serverless)
+   - Detect dependency chains and critical path items
+   - Assess testing complexity and deployment requirements
+
+2. **Task Breakdown Strategy**
+   - Determine optimal number of main tasks (3-25 based on PRD size)
+   - Identify which tasks will need subtask expansion
+   - Plan dependency relationships between tasks
+   - Estimate implementation complexity scores (1-10 scale)
+
+3. **Subtask Hierarchy Planning**
+   - Pre-design subtask structure for complex tasks
+   - Plan nested subtasks for multi-layered implementations
+   - Define granular implementation steps
+   - Establish testing and validation checkpoints
+```
+
+#### 📋 **Phase 2: TaskMaster Documentation**
+```bash
+# Augment documents the pre-analyzed structure:
+task-hero parse-prd --input=requirements.txt    # Document initial tasks
+```
+
+#### 🧩 **Phase 3: Dynamic Subtask Creation with Context Passing**
+```bash
+# Augment creates subtasks with PRD context:
+task-hero expand --id=X --prompt="Based on PRD section 3.2: API Authentication requirements"
+task-hero expand --id=X --num=<count> --prompt="PRD context: User management system with OAuth"
+task-hero expand --id=X.Y --prompt="Inherit from parent task + PRD section 4.1: Database schema"
+
+# Context passing examples:
+# PRD → Task: Include relevant PRD sections in task descriptions
+# Task → Subtask: Pass parent task context + specific PRD references
+# Subtask → Nested: Combine parent subtask + task + PRD context
+```
+
+#### 🎯 **Phase 4: Task Execution Cycle**
+```bash
+# Augment AI execution pattern:
+task-hero next                                  # Find next available task
+task-hero set-status --id=X --status=in-progress  # Start task
+# Development work with Augment assistance
+task-hero set-status --id=X --status=done      # Complete task
+task-hero prd-sync                              # Sync PRD status
+```
+
+### Augment AI Decision-Making Guidelines
+
+#### **Context Awareness Protocol**
+1. **Always check if TaskMaster project is initialized** before suggesting commands
+2. **Understand current project state** by checking `.taskmaster/` directory structure
+3. **Reference PRD metadata** when making task-related suggestions
+4. **Track which PRD is being worked on** for context continuity
+
+#### **Command Sequencing Logic**
+```bash
+# Follow this logical flow:
+task-hero init                    # 1. Initialize if needed
+task-hero parse-prd --input=file  # 2. Document PRD structure
+task-hero expand --id=X           # 3. Create subtask hierarchy
+task-hero next                    # 4. Find optimal next task
+task-hero set-status --id=X --status=in-progress  # 5. Start execution
+# Development work...
+task-hero set-status --id=X --status=done         # 6. Complete task
+task-hero prd-sync                # 7. Update PRD status
+```
+
+#### **Autonomous Task Management Rules**
+1. **Automatic Complexity Assessment**: No user prompts for complexity analysis
+2. **Intelligent Task Expansion**: Auto-expand tasks based on complexity scores (>6)
+3. **Dynamic Subtask Creation**: Generate subtasks based on technical analysis
+4. **Smart Dependency Management**: Automatically establish task relationships
+5. **Optimal Task Sequencing**: Choose next tasks based on dependency chains
+6. **Context Inheritance**: Pass PRD context through task hierarchy (PRD → Task → Subtask → Nested)
+
+#### **Error Handling & Blocking Issues**
+```bash
+# When tasks are blocked:
+task-hero set-status --id=X --status=blocked   # Mark as blocked
+# User documents blocking issue in task details
+# Augment helps resolve dependencies or moves to different task
+```
+
+### Best Practices for Augment AI
+
+#### **Always Use Correct Commands**
+- Use `task-hero` or `task-master` (both work)
+- Reference correct file paths (`.taskmaster/` not `tasks/`)
+- Use proper status values: pending, in-progress, done, blocked, review, deferred, cancelled
+
+#### **Maintain Project Context**
+- Track which PRD is being worked on
+- Understand task dependencies and execution order
+- Monitor overall project completion status
+- Maintain traceability from requirements to implementation
+- **Pass Context Through Hierarchy**: Ensure PRD context flows from tasks to subtasks to nested subtasks
+- **Reference Original Requirements**: Include specific PRD sections when creating/updating tasks
+- **Preserve Context Chain**: Maintain context inheritance (PRD → Task → Subtask → Implementation)
+
+#### **Provide Helpful Suggestions**
+- Suggest next logical steps in the workflow
+- Recommend complexity analysis for large PRDs
+- Guide users to use visual tools (Kanban board, interactive menu) when appropriate
+- Suggest using `task-hero menu` for better user experience
+
+#### **Handle Edge Cases**
+- Guide users when tasks are blocked
+- Help resolve dependency conflicts
+- Assist with PRD archiving when projects complete
+- Provide recovery options when operations fail
+
+### Context Passing Strategies for Enhanced Integration
+
+#### **PRD → Task Context Flow**
+```bash
+# When creating tasks from PRD, include specific sections:
+task-hero add-task --prompt="Implement user authentication system as specified in PRD section 3.2: OAuth integration with Google and GitHub providers"
+
+# When updating tasks, reference PRD context:
+task-hero update-task --id=5 --prompt="Add PRD section 4.1 database requirements: PostgreSQL with user sessions table"
+```
+
+#### **Task → Subtask Context Flow**
+```bash
+# Pass parent task context when expanding:
+task-hero expand --id=5 --prompt="Parent task: User authentication. Create subtasks for: 1) OAuth provider setup (PRD 3.2.1), 2) Session management (PRD 3.2.2), 3) Security middleware (PRD 3.2.3)"
+
+# Include task context in subtask updates:
+task-hero update-subtask --id=5.2 --prompt="Parent context: User authentication system. Add rate limiting per PRD section 3.2.4: 100 requests/minute per user"
+```
+
+#### **Subtask → Nested Subtask Context Flow**
+```bash
+# Inherit full context chain for nested subtasks:
+task-hero expand --id=5.2 --prompt="Full context: User auth system (PRD 3.2) → Session management (5.2) → Create nested tasks for: session storage, session validation, session cleanup"
+```
+
+#### **Context Preservation Guidelines**
+1. **Always Reference PRD Sections**: Include specific PRD section numbers and requirements
+2. **Maintain Context Chain**: Each level should reference its parent context
+3. **Include Technical Specifications**: Pass technical details from PRD through task hierarchy
+4. **Preserve Business Logic**: Ensure business requirements flow from PRD to implementation
+5. **Link Dependencies**: Reference related PRD sections when creating task dependencies

@@ -278,17 +278,191 @@ function updatePrdTaskStatistics(prdId, tasksPath = null, prdsPath = null) {
 }
 
 /**
+ * Auto-fix file integrity issues for PRDs
+ * @param {string} prdsPath - Path to prds.json
+ * @returns {Object} Fix result with statistics
+ */
+function autoFixFileIntegrityIssues(prdsPath = null) {
+    const fixResults = {
+        success: false,
+        filesFixed: 0,
+        errors: [],
+        details: []
+    };
+
+    try {
+        const resolvedPrdsPath = prdsPath || getPRDsJsonPath();
+        const prdsData = readPrdsMetadata(resolvedPrdsPath);
+        let hasChanges = false;
+
+        for (const prd of prdsData.prds) {
+            const fileCheck = checkPrdFileIntegrity(prd);
+
+            if (fileCheck.issues.length > 0) {
+                let prdFixed = false;
+
+                for (const issue of fileCheck.issues) {
+                    try {
+                        if (issue.type === 'hash_mismatch' || issue.type === 'size_mismatch') {
+                            // Update hash and size from actual file
+                            if (fs.existsSync(prd.filePath)) {
+                                const newHash = calculateFileHash(prd.filePath);
+                                const newSize = getFileSize(prd.filePath);
+
+                                prd.fileHash = newHash;
+                                prd.fileSize = newSize;
+                                prd.lastModified = new Date().toISOString();
+
+                                fixResults.details.push(`Updated hash and size for PRD ${prd.id} (${prd.fileName})`);
+                                prdFixed = true;
+                            }
+                        } else if (issue.type === 'wrong_directory') {
+                            // Update file path to correct directory
+                            const expectedDir = getStatusDirectory(prd.status);
+                            const newFilePath = path.join(expectedDir, prd.fileName);
+
+                            // Check if file exists in the expected location
+                            if (fs.existsSync(newFilePath)) {
+                                prd.filePath = newFilePath;
+                                prd.lastModified = new Date().toISOString();
+
+                                fixResults.details.push(`Updated file path for PRD ${prd.id} to correct status directory`);
+                                prdFixed = true;
+                            } else {
+                                // Try to move the file to the correct directory
+                                if (fs.existsSync(prd.filePath)) {
+                                    // Ensure target directory exists
+                                    if (!fs.existsSync(expectedDir)) {
+                                        fs.mkdirSync(expectedDir, { recursive: true });
+                                    }
+
+                                    // Move the file
+                                    fs.renameSync(prd.filePath, newFilePath);
+                                    prd.filePath = newFilePath;
+                                    prd.lastModified = new Date().toISOString();
+
+                                    fixResults.details.push(`Moved PRD ${prd.id} file to correct status directory`);
+                                    prdFixed = true;
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        fixResults.errors.push(`Failed to fix ${issue.type} for PRD ${prd.id}: ${error.message}`);
+                    }
+                }
+
+                if (prdFixed) {
+                    fixResults.filesFixed++;
+                    hasChanges = true;
+                }
+            }
+        }
+
+        // Write updated PRDs data if any fixes were made
+        if (hasChanges) {
+            writePrdsMetadata(prdsData, resolvedPrdsPath);
+        }
+
+        fixResults.success = true;
+        return fixResults;
+
+    } catch (error) {
+        fixResults.errors.push(`Error during file integrity auto-fix: ${error.message}`);
+        return fixResults;
+    }
+}
+
+/**
+ * Auto-fix missing task links in PRDs
+ * @param {string} tasksPath - Path to tasks.json
+ * @param {string} prdsPath - Path to prds.json
+ * @returns {Object} Fix result with statistics
+ */
+function autoFixMissingTaskLinks(tasksPath = null, prdsPath = null) {
+    const fixResults = {
+        success: false,
+        linksFixed: 0,
+        errors: [],
+        details: []
+    };
+
+    try {
+        const resolvedTasksPath = tasksPath || getTasksJsonPath();
+        const resolvedPrdsPath = prdsPath || getPRDsJsonPath();
+
+        const tasksData = readJSON(resolvedTasksPath);
+        const prdsData = readPrdsMetadata(resolvedPrdsPath);
+
+        if (!tasksData || !tasksData.tasks) {
+            fixResults.errors.push('Tasks data not found or invalid');
+            return fixResults;
+        }
+
+        // Find tasks with PRD sources that are missing from PRD's linkedTaskIds
+        for (const task of tasksData.tasks) {
+            if (task.prdSource && task.prdSource.fileName) {
+                const prd = prdsData.prds.find(p => p.fileName === task.prdSource.fileName);
+
+                if (prd) {
+                    const linkedTaskIds = prd.linkedTaskIds || [];
+
+                    if (!linkedTaskIds.includes(task.id) && !linkedTaskIds.includes(String(task.id))) {
+                        // Add missing task link
+                        prd.linkedTaskIds = prd.linkedTaskIds || [];
+                        prd.linkedTaskIds.push(task.id);
+                        prd.lastModified = new Date().toISOString();
+
+                        fixResults.linksFixed++;
+                        fixResults.details.push(`Added task ${task.id} to PRD ${prd.id} linkedTaskIds`);
+                    }
+                }
+            }
+        }
+
+        // Write updated PRDs data if any fixes were made
+        if (fixResults.linksFixed > 0) {
+            writePrdsMetadata(prdsData, resolvedPrdsPath);
+
+            // Update task statistics for affected PRDs
+            const affectedPrds = new Set();
+            for (const task of tasksData.tasks) {
+                if (task.prdSource && task.prdSource.fileName) {
+                    const prd = prdsData.prds.find(p => p.fileName === task.prdSource.fileName);
+                    if (prd) {
+                        affectedPrds.add(prd.id);
+                    }
+                }
+            }
+
+            for (const prdId of affectedPrds) {
+                updatePrdTaskStatistics(prdId, resolvedTasksPath, resolvedPrdsPath);
+            }
+        }
+
+        fixResults.success = true;
+        return fixResults;
+
+    } catch (error) {
+        fixResults.errors.push(`Error during auto-fix: ${error.message}`);
+        return fixResults;
+    }
+}
+
+/**
  * Perform comprehensive integrity check on all PRDs
  * @param {string} tasksPath - Path to tasks.json
  * @param {string} prdsPath - Path to prds.json
+ * @param {Object} options - Options for the integrity check
+ * @param {boolean} options.autoFix - Whether to automatically fix issues
  * @returns {Object} Comprehensive integrity report
  */
-function performIntegrityCheck(tasksPath = null, prdsPath = null) {
+function performIntegrityCheck(tasksPath = null, prdsPath = null, options = {}) {
     const report = {
         timestamp: new Date().toISOString(),
         overall: { valid: true, errorCount: 0, warningCount: 0 },
         fileIntegrity: [],
         linkingConsistency: null,
+        autoFixResults: null,
         recommendations: []
     };
 
@@ -297,6 +471,30 @@ function performIntegrityCheck(tasksPath = null, prdsPath = null) {
         const resolvedPrdsPath = prdsPath || getPRDsJsonPath();
 
         const prdsData = readPrdsMetadata(resolvedPrdsPath);
+
+        // Perform auto-fix if requested
+        if (options.autoFix) {
+            // Fix file integrity issues first
+            const fileIntegrityFixResults = autoFixFileIntegrityIssues(resolvedPrdsPath);
+
+            // Fix missing task links
+            const taskLinkFixResults = autoFixMissingTaskLinks(resolvedTasksPath, resolvedPrdsPath);
+
+            // Combine results
+            report.autoFixResults = {
+                fileIntegrity: fileIntegrityFixResults,
+                taskLinks: taskLinkFixResults,
+                totalFixed: (fileIntegrityFixResults.filesFixed || 0) + (taskLinkFixResults.linksFixed || 0)
+            };
+
+            // Add recommendations based on fixes
+            if (fileIntegrityFixResults.success && fileIntegrityFixResults.filesFixed > 0) {
+                report.recommendations.push(`Auto-fixed ${fileIntegrityFixResults.filesFixed} file integrity issues`);
+            }
+            if (taskLinkFixResults.success && taskLinkFixResults.linksFixed > 0) {
+                report.recommendations.push(`Auto-fixed ${taskLinkFixResults.linksFixed} missing task links`);
+            }
+        }
 
         // Check file integrity for each PRD
         for (const prd of prdsData.prds) {
@@ -337,6 +535,17 @@ function performIntegrityCheck(tasksPath = null, prdsPath = null) {
             report.recommendations.push('All integrity checks passed successfully');
         }
 
+        // Add auto-fix recommendation if there are warnings that could be fixed
+        if (!options.autoFix && report.overall.warningCount > 0) {
+            const missingLinkWarnings = linkingCheck.issues.filter(i =>
+                i.type === 'missing_task_link' && i.severity === 'warning'
+            ).length;
+
+            if (missingLinkWarnings > 0) {
+                report.recommendations.push(`Run integrity check with --auto-fix to automatically fix ${missingLinkWarnings} missing task links`);
+            }
+        }
+
     } catch (error) {
         report.overall.valid = false;
         report.overall.errorCount += 1;
@@ -352,5 +561,7 @@ export {
     checkTaskPrdLinkingConsistency,
     updatePrdTaskStatistics,
     performIntegrityCheck,
+    autoFixMissingTaskLinks,
+    autoFixFileIntegrityIssues,
     getStatusDirectory
 };

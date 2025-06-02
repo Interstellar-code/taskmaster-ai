@@ -1731,7 +1731,7 @@ async function handlePrdManagement(sessionState) {
                     await executeCommand('prd-organize', [], { projectRoot: sessionState.projectRoot });
                     break;
                 case 'check':
-                    await executeCommand('prd-check', [], { projectRoot: sessionState.projectRoot });
+                    await handlePrdIntegrityCheck(sessionState);
                     break;
                 case 'archive':
                     await handlePrdArchive(sessionState);
@@ -1909,6 +1909,31 @@ async function handlePrdSync(sessionState) {
         projectRoot: sessionState.projectRoot,
         additionalFlags: flags
     });
+}
+
+/**
+ * Handle PRD Integrity Check with auto-fix option
+ */
+async function handlePrdIntegrityCheck(sessionState) {
+    try {
+        const { autoFix } = await inquirer.prompt([
+            {
+                type: 'confirm',
+                name: 'autoFix',
+                message: 'Automatically fix missing task links?',
+                default: false
+            }
+        ]);
+
+        const args = autoFix ? ['--auto-fix'] : [];
+        await executeCommand('prd-check', args, {
+            projectRoot: sessionState.projectRoot
+        });
+
+    } catch (error) {
+        console.error(chalk.red('Error checking PRD integrity:'), error.message);
+        logError('PRD integrity check error', error, { sessionState: sessionState.menuPath });
+    }
 }
 
 /**

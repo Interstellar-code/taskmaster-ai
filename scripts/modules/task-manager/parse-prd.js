@@ -930,6 +930,28 @@ Guidelines:
 				report(`⚠️ Error registering PRD in tracking system: ${registrationError.message}`, 'warn');
 			}
 
+			// Link newly created tasks to the PRD
+			try {
+				const { addTaskToPrd } = await import('../prd-manager/prd-write-operations.js');
+				const newTaskIds = processedNewTasks.map(task => task.id);
+				let linkedCount = 0;
+
+				for (const taskId of newTaskIds) {
+					const linkResult = addTaskToPrd(prdId, taskId, 'prd/prds.json');
+					if (linkResult.success) {
+						linkedCount++;
+					} else {
+						report(`⚠️ Failed to link task ${taskId} to PRD ${prdId}: ${linkResult.error}`, 'warn');
+					}
+				}
+
+				if (linkedCount > 0) {
+					report(`✅ Linked ${linkedCount} tasks to PRD ${prdId}`, 'info');
+				}
+			} catch (linkingError) {
+				report(`⚠️ Error linking tasks to PRD: ${linkingError.message}`, 'warn');
+			}
+
 		} catch (metadataError) {
 			report(`⚠️ Error updating PRD file metadata: ${metadataError.message}`, 'warn');
 		}

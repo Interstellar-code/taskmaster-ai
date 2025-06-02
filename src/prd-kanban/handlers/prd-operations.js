@@ -179,7 +179,8 @@ export class PRDOperationsHandler {
 
             // Find tasks linked to this PRD
             const linkedTasks = tasks.filter(task => {
-                return task.prdSource === prdId || 
+                // Check if task has prdSource that matches this PRD
+                return (task.prdSource && task.prdSource.prdId === prdId) ||
                        (task.linkedTasks && task.linkedTasks.includes(prdId)) ||
                        (task.metadata && task.metadata.prdSource === prdId);
             });

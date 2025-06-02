@@ -11,6 +11,42 @@
       "priority": "high",
       "subtasks": [],
       "prdSource": null
+    },
+    {
+      "id": 60,
+      "title": "Test Task 1 from PRD",
+      "description": "This is a test task created from a PRD to test the linking functionality",
+      "details": "",
+      "testStrategy": "",
+      "status": "pending",
+      "dependencies": [],
+      "priority": "medium",
+      "subtasks": [],
+      "prdSource": {
+        "prdId": "prd_001",
+        "fileName": "test-prd.txt",
+        "filePath": ".taskmaster/prd/pending/test-prd.txt",
+        "fileHash": "abc123",
+        "parsedDate": "2025-06-02T16:30:00.000Z"
+      }
+    },
+    {
+      "id": 61,
+      "title": "Test Task 2 from PRD",
+      "description": "This is another test task created from a PRD to test the linking functionality",
+      "details": "",
+      "testStrategy": "",
+      "status": "pending",
+      "dependencies": [],
+      "priority": "medium",
+      "subtasks": [],
+      "prdSource": {
+        "prdId": "prd_001",
+        "fileName": "test-prd.txt",
+        "filePath": ".taskmaster/prd/pending/test-prd.txt",
+        "fileHash": "abc123",
+        "parsedDate": "2025-06-02T16:30:00.000Z"
+      }
     }
   ]
 }

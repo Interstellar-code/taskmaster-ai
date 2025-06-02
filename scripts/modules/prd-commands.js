@@ -312,18 +312,65 @@ function organizePrds(options = {}) {
 /**
  * Check PRD integrity
  * @param {Object} options - Command options
+ * @param {boolean} options.autoFix - Whether to automatically fix issues
  */
 function checkPrdIntegrity(options = {}) {
     try {
-        const result = performIntegrityCheck();
+        const result = performIntegrityCheck(null, null, { autoFix: options.autoFix });
 
         console.log(chalk.cyan.bold('\n🔍 PRD Integrity Check Report'));
         console.log(chalk.gray('─'.repeat(50)));
-        
+
         if (result.overall.valid) {
             console.log(chalk.green('✓ All integrity checks passed'));
         } else {
             console.log(chalk.red(`✗ Found ${result.overall.errorCount} errors and ${result.overall.warningCount} warnings`));
+        }
+
+        // Show auto-fix results if performed
+        if (result.autoFixResults) {
+            const totalFixed = result.autoFixResults.totalFixed || 0;
+
+            if (totalFixed > 0) {
+                console.log(chalk.green(`\n🔧 Auto-Fix Results:`));
+
+                // Show file integrity fixes
+                if (result.autoFixResults.fileIntegrity && result.autoFixResults.fileIntegrity.filesFixed > 0) {
+                    console.log(chalk.green(`  ✓ Fixed ${result.autoFixResults.fileIntegrity.filesFixed} file integrity issues`));
+
+                    if (result.autoFixResults.fileIntegrity.details.length > 0) {
+                        console.log(chalk.gray('\n  File Integrity Details:'));
+                        result.autoFixResults.fileIntegrity.details.forEach(detail => {
+                            console.log(chalk.gray(`    • ${detail}`));
+                        });
+                    }
+                }
+
+                // Show task link fixes
+                if (result.autoFixResults.taskLinks && result.autoFixResults.taskLinks.linksFixed > 0) {
+                    console.log(chalk.green(`  ✓ Fixed ${result.autoFixResults.taskLinks.linksFixed} missing task links`));
+
+                    if (result.autoFixResults.taskLinks.details.length > 0) {
+                        console.log(chalk.gray('\n  Task Link Details:'));
+                        result.autoFixResults.taskLinks.details.forEach(detail => {
+                            console.log(chalk.gray(`    • ${detail}`));
+                        });
+                    }
+                }
+            }
+
+            // Show any errors
+            const allErrors = [
+                ...(result.autoFixResults.fileIntegrity?.errors || []),
+                ...(result.autoFixResults.taskLinks?.errors || [])
+            ];
+
+            if (allErrors.length > 0) {
+                console.log(chalk.red('\n❌ Auto-Fix Errors:'));
+                allErrors.forEach(error => {
+                    console.log(chalk.red(`  • ${error}`));
+                });
+            }
         }
 
         // Show file integrity issues

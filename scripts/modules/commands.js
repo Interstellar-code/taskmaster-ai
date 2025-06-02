@@ -2889,6 +2889,7 @@ Examples:
 	programInstance
 		.command('prd-check')
 		.description('Check PRD integrity and consistency')
+		.option('--auto-fix', 'Automatically fix missing task links')
 		.action((options) => {
 			checkPrdIntegrity(options);
 		});
