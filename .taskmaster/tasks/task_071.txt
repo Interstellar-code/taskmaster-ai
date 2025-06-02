@@ -1,0 +1,48 @@
+# Task ID: 71
+# Title: Integrate Frontend Drag-and-Drop with Backend API Calls
+# Status: pending
+# Dependencies: 69, 70
+# Priority: high
+# PRD Source: prd_kanban_webapp.md
+# PRD Path: C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md
+# Parsed Date: 2025-06-02T21:47:10.025Z
+# File Hash: 26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936
+# File Size: 21070 bytes
+# Description: Connect the frontend drag-and-drop actions with the backend API calls to persist status changes.
+# Details:
+In the `onDragEnd` handler of the `DndContext`, after updating the frontend state, make an asynchronous PATCH request to the `/api/v1/tasks/:id/status` endpoint. Pass the task ID and the new status. Implement error handling for API failures, potentially reverting the frontend state if the update fails.
+
+# Test Strategy:
+Drag a task between columns. Observe network requests in the browser's developer tools to confirm a PATCH request is sent to the correct API endpoint with the updated status. Verify that the change persists after refreshing the page, indicating `tasks.json` was updated.
+
+# Subtasks:
+## 1. Create API Client Function for Task Status Updates [pending]
+### Dependencies: None
+### Description: Develop a reusable API client function to handle PATCH requests for updating task statuses.
+### Details:
+Implement a function in the API client module that takes a task ID and a new status as parameters. Use the Fetch API to send a PATCH request to the `/api/v1/tasks/:id/status` endpoint. Ensure the function returns a promise that resolves with the response data or rejects with an error.
+
+## 2. Implement Optimistic UI Updates [pending]
+### Dependencies: 71.1
+### Description: Update the frontend state immediately upon drag-and-drop actions to reflect the new task status before the API call completes.
+### Details:
+Modify the `onDragEnd` handler to update the local state of the task list immediately after a drag-and-drop action. This should reflect the new status of the task optimistically, assuming the API call will succeed.
+
+## 3. Handle API Errors and Implement Rollback Mechanism [pending]
+### Dependencies: 71.2
+### Description: Implement error handling in the `onDragEnd` handler to revert the UI state if the API call fails.
+### Details:
+In the `onDragEnd` handler, catch any errors from the API client function. If an error occurs, revert the task status in the local state to its previous value. Display an error message to inform the user of the failure.
+
+## 4. Add Loading States During API Calls [pending]
+### Dependencies: 71.3
+### Description: Indicate loading states in the UI while the API request is in progress.
+### Details:
+Introduce a loading state variable in the component's state. Set this variable to true when the API call is initiated and false when it completes. Use this state to display a loading indicator or disable interactions with the task being updated.
+
+## 5. Implement Retry Logic for Failed Requests [pending]
+### Dependencies: 71.4
+### Description: Add retry logic to the API client function to attempt the request again if it fails.
+### Details:
+Enhance the API client function to include a retry mechanism using exponential backoff. Allow a configurable number of retries before ultimately failing. Ensure that retries are logged for debugging purposes.
+

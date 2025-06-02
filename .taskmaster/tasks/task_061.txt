@@ -1,0 +1,42 @@
+# Task ID: 61
+# Title: Setup shadcn/ui and Tailwind CSS Integration
+# Status: pending
+# Dependencies: 60
+# Priority: high
+# PRD Source: prd_kanban_webapp.md
+# PRD Path: C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md
+# Parsed Date: 2025-06-02T21:47:10.025Z
+# File Hash: 26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936
+# File Size: 21070 bytes
+# Description: Integrate shadcn/ui component library and configure Tailwind CSS for styling within the React application.
+# Details:
+Follow shadcn/ui installation instructions, which typically involve installing Tailwind CSS, PostCSS, and Autoprefixer, then initializing shadcn/ui components. Configure `tailwind.config.js` to include shadcn/ui presets and custom styles. Ensure `index.css` or `globals.css` imports Tailwind directives.
+
+# Test Strategy:
+Add a simple shadcn/ui component (e.g., Button) to `App.tsx` and verify it renders correctly with Tailwind CSS applied. Check for proper styling and responsiveness in the browser.
+
+# Subtasks:
+## 1. Install Tailwind CSS and PostCSS Dependencies [pending]
+### Dependencies: None
+### Description: Install Tailwind CSS, PostCSS, and Autoprefixer as dependencies in the React application.
+### Details:
+Run the command `npm install tailwindcss postcss autoprefixer` to add the necessary styling dependencies. Ensure that the package.json file is updated with these dependencies.
+
+## 2. Configure Tailwind CSS [pending]
+### Dependencies: 61.1
+### Description: Set up the Tailwind CSS configuration by creating and editing the `tailwind.config.js` file.
+### Details:
+Create a `tailwind.config.js` file in the root directory. Add the necessary content paths and include shadcn/ui presets. Customize the theme as needed for the application.
+
+## 3. Install and Initialize shadcn/ui Components [pending]
+### Dependencies: 61.2
+### Description: Install the shadcn/ui component library and initialize it within the React application.
+### Details:
+Run the command `npm install shadcn/ui` to add the component library. Follow the library's initialization instructions to set up the components within the application.
+
+## 4. Set Up Component Imports and Styling [pending]
+### Dependencies: 61.3
+### Description: Import Tailwind CSS directives and shadcn/ui components into the application for styling.
+### Details:
+Edit the `index.css` or `globals.css` file to include Tailwind's base, components, and utilities directives. Import shadcn/ui components into the relevant React components and apply Tailwind CSS classes for styling.
+

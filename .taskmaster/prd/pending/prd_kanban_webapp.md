@@ -1,3 +1,13 @@
+# PRD ID: prd_001
+# Title: undefined
+# Status: pending
+# Priority: medium
+# Complexity: medium
+# PRD Path: .taskmaster\prd\pending\prd_kanban_webapp.md
+# File Hash: 26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936
+# File Size: 21070 bytes
+# Last Modified: 2025-06-02T21:47:53.744Z
+# Last Parsed: 2025-06-02T21:47:53.742Z
 # PRD: TaskMaster Kanban Web Application
 
 **Document Version:** 1.0  

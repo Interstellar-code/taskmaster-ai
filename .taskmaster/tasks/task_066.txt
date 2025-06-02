@@ -1,0 +1,42 @@
+# Task ID: 66
+# Title: Create Responsive Three-Column Kanban Board Layout
+# Status: pending
+# Dependencies: 61, 64
+# Priority: high
+# PRD Source: prd_kanban_webapp.md
+# PRD Path: C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md
+# Parsed Date: 2025-06-02T21:47:10.025Z
+# File Hash: 26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936
+# File Size: 21070 bytes
+# Description: Develop the main Kanban board layout component with three columns for 'pending', 'in-progress', and 'done' task statuses.
+# Details:
+Create a `KanbanBoard` React component. Use Tailwind CSS grid or flexbox utilities to create a responsive three-column layout. Each column should represent a task status. Fetch tasks from the `/api/v1/tasks` endpoint and distribute them into the respective columns based on their `status` property. Display a task count in each column header.
+
+# Test Strategy:
+Render the `KanbanBoard` component. Verify that three columns are displayed and tasks are correctly categorized into 'pending', 'in-progress', and 'done' based on their status. Test responsiveness by resizing the browser window to ensure the layout adapts correctly.
+
+# Subtasks:
+## 1. Create Main Kanban Board Container [pending]
+### Dependencies: None
+### Description: Develop the main `KanbanBoard` React component with a responsive grid layout using Tailwind CSS.
+### Details:
+Set up a new React component named `KanbanBoard`. Use Tailwind CSS to create a responsive grid or flexbox layout that will house three columns. Ensure the layout adjusts for different screen sizes, maintaining a three-column layout on larger screens and stacking columns vertically on smaller screens.
+
+## 2. Implement Individual Column Components [pending]
+### Dependencies: 66.1
+### Description: Create separate components for each task status column: 'Pending', 'In-Progress', and 'Done'.
+### Details:
+Develop three React components, one for each task status: `PendingColumn`, `InProgressColumn`, and `DoneColumn`. Each component should accept a list of tasks as props and display them. Ensure these components integrate seamlessly into the `KanbanBoard` layout.
+
+## 3. Add Column Headers with Task Counts [pending]
+### Dependencies: 66.2
+### Description: Enhance each column component with a header that displays the column title and the count of tasks within that column.
+### Details:
+Modify each column component to include a header section. Use Tailwind CSS for styling. The header should display the column name and dynamically update to show the number of tasks in that column. Ensure the styling is consistent with the overall design of the Kanban board.
+
+## 4. Implement Responsive Design for Mobile and Tablet Views [pending]
+### Dependencies: 66.3
+### Description: Ensure the Kanban board layout is fully responsive and provides a good user experience on mobile and tablet devices.
+### Details:
+Use Tailwind CSS utilities to adjust the layout for smaller screens. Implement media queries if necessary to ensure the columns stack vertically on smaller devices. Test the layout on various screen sizes to ensure usability and readability.
+

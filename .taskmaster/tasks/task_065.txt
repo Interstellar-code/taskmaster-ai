@@ -1,0 +1,42 @@
+# Task ID: 65
+# Title: Setup Development Environment with Hot Reload and Build Scripts
+# Status: pending
+# Dependencies: 60, 62
+# Priority: high
+# PRD Source: prd_kanban_webapp.md
+# PRD Path: C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md
+# Parsed Date: 2025-06-02T21:47:10.025Z
+# File Hash: 26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936
+# File Size: 21070 bytes
+# Description: Configure the development environment for both frontend and backend with hot reload and build scripts.
+# Details:
+For the frontend, Vite provides hot module replacement (HMR) out-of-the-box. For the backend, use `nodemon` or `ts-node-dev` to enable hot reloading of the Express server. Configure `package.json` scripts for `dev` (running both frontend and backend concurrently, e.g., using `concurrently`) and `build` (for production builds of both).
+
+# Test Strategy:
+Run the combined `dev` script. Make a change in a React component and verify the browser updates without a full refresh. Make a change in an Express route and verify the server restarts automatically. Run the `build` script and ensure production-ready bundles are generated for both frontend and backend.
+
+# Subtasks:
+## 1. Configure Vite Development Server with Hot Module Replacement [pending]
+### Dependencies: None
+### Description: Set up the Vite development server to enable hot module replacement for efficient development.
+### Details:
+Ensure that the Vite server is configured to automatically reload modules during development without a full page refresh.
+
+## 2. Set Up Build Scripts for Development and Production [pending]
+### Dependencies: 65.1
+### Description: Create build scripts to handle both development and production environments.
+### Details:
+Develop scripts that can build the application for development with source maps and for production with optimizations.
+
+## 3. Configure Environment Variables and API Endpoints [pending]
+### Dependencies: 65.2
+### Description: Set up environment variables and configure API endpoints for different environments.
+### Details:
+Ensure that environment variables are correctly set up for development, testing, and production environments, and that API endpoints are configured accordingly.
+
+## 4. Set Up Development Tools and Debugging Configuration [pending]
+### Dependencies: 65.3
+### Description: Configure development tools and debugging settings to enhance the development workflow.
+### Details:
+Integrate tools such as linters, formatters, and debuggers to streamline the development process and improve code quality.
+

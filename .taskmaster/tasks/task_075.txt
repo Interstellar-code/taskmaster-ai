@@ -1,0 +1,36 @@
+# Task ID: 75
+# Title: Implement Task Metadata Display in Modal
+# Status: pending
+# Dependencies: 74
+# Priority: medium
+# PRD Source: prd_kanban_webapp.md
+# PRD Path: C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md
+# Parsed Date: 2025-06-02T21:47:10.025Z
+# File Hash: 26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936
+# File Size: 21070 bytes
+# Description: Implement the display of all task metadata within the task detail modal.
+# Details:
+Populate the `TaskModal` with input fields or display elements for each task property. For editable fields like `title`, `description`, `details`, and `testStrategy`, use appropriate input components. For `priority`, `status`, and `dependencies`, display them clearly, potentially using badges or lists.
+
+# Test Strategy:
+Open the task modal for various tasks with different data. Verify that all fields are populated correctly and that the data matches the task selected. Check for proper formatting of dependencies and priorities.
+
+# Subtasks:
+## 1. Create Form Fields for Task Properties [pending]
+### Dependencies: None
+### Description: Design and implement form fields for task properties such as title, description, priority, and status in the modal.
+### Details:
+Ensure the form fields are user-friendly and align with the overall design of the TaskMaster Kanban Web Application.
+
+## 2. Implement Data Binding and Initial Value Population [pending]
+### Dependencies: 75.1
+### Description: Set up data binding for the form fields to ensure they reflect the current task properties and populate initial values when the modal is opened.
+### Details:
+Use the existing data model to bind task properties to the form fields and ensure that any changes are reflected in the task data.
+
+## 3. Add Field Validation and Formatting [pending]
+### Dependencies: 75.2
+### Description: Implement validation rules and formatting for the form fields to ensure data integrity and user input accuracy.
+### Details:
+Include checks for required fields, valid data types, and appropriate formatting for each task property.
+

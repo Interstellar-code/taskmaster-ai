@@ -1,0 +1,48 @@
+# Task ID: 69
+# Title: Implement Drag-and-Drop Functionality Between Status Columns
+# Status: pending
+# Dependencies: 67, 68
+# Priority: high
+# PRD Source: prd_kanban_webapp.md
+# PRD Path: C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md
+# Parsed Date: 2025-06-02T21:47:10.025Z
+# File Hash: 26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936
+# File Size: 21070 bytes
+# Description: Implement drag-and-drop functionality to allow users to move tasks between status columns.
+# Details:
+Within each Kanban column, define a `Droppable` component from `@dnd-kit/core`. Make each `TaskCard` a `Draggable` component. In the `onDragEnd` handler of `DndContext`, update the task's status based on the `Droppable` column it was dropped into. Manage the state of tasks in the frontend to reflect the new status immediately.
+
+# Test Strategy:
+Drag a task from 'pending' to 'in-progress', then to 'done'. Verify that the task visually moves to the correct column and that the frontend state updates accordingly. Test dragging tasks within the same column and ensure no unintended changes occur.
+
+# Subtasks:
+## 1. Modify Core Logic to Accept ID Parameters [pending]
+### Dependencies: None
+### Description: Update the core logic to handle specific task IDs as input parameters for complexity analysis.
+### Details:
+Ensure the logic can filter and process tasks based on provided IDs, handling edge cases and parameter combinations.
+
+## 2. Implement Report Merging Functionality [pending]
+### Dependencies: 69.1
+### Description: Develop functionality to merge reports generated from different task IDs into a cohesive output.
+### Details:
+Design the merging logic to ensure data consistency and accuracy across combined reports.
+
+## 3. Update CLI Interface [pending]
+### Dependencies: 69.1, 69.2
+### Description: Revise the Command Line Interface to support new parameters for task ID input and report merging options.
+### Details:
+Ensure the CLI is user-friendly and provides clear instructions for using the new features.
+
+## 4. Integrate with MCP Tool [pending]
+### Dependencies: 69.1, 69.2, 69.3
+### Description: Ensure the modified complexity analysis integrates smoothly with the existing MCP tool.
+### Details:
+Test integration points and resolve any compatibility issues with the MCP tool.
+
+## 5. Update Documentation [pending]
+### Dependencies: 69.1, 69.2, 69.3, 69.4
+### Description: Revise and expand documentation to cover new features and usage instructions for the enhanced complexity analysis.
+### Details:
+Include examples and edge case scenarios to aid users in understanding the new functionality.
+

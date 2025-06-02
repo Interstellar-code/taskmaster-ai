@@ -1,0 +1,36 @@
+# Task ID: 60
+# Title: Initialize React Application with Vite and TypeScript
+# Status: in-progress
+# Dependencies: None
+# Priority: high
+# PRD Source: prd_kanban_webapp.md
+# PRD Path: C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md
+# Parsed Date: 2025-06-02T21:47:10.025Z
+# File Hash: 26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936
+# File Size: 21070 bytes
+# Description: Initialize a new React application using Vite with TypeScript, setting up the basic project structure and configuration files.
+# Details:
+Use `npm create vite@latest` to scaffold a new React project. Select 'React' and 'TypeScript' as options. Configure `tsconfig.json` for strict type checking and ensure proper alias resolution if needed. Set up basic folder structure for components, pages, and utilities.
+
+# Test Strategy:
+Verify that the React development server starts successfully and displays the default Vite welcome page. Check TypeScript compilation for any errors.
+
+# Subtasks:
+## 1. Create a new Vite React TypeScript project [pending]
+### Dependencies: None
+### Description: Initialize a new project using Vite with React and TypeScript to set up the foundation for the TaskMaster Kanban Web Application.
+### Details:
+Use the Vite CLI to create a new project with React and TypeScript templates. Ensure the project is set up in the designated repository.
+
+## 2. Configure TypeScript and project structure [pending]
+### Dependencies: 60.1
+### Description: Set up TypeScript configuration and organize the project structure to align with modern React development practices.
+### Details:
+Modify the tsconfig.json file to include necessary compiler options. Organize the project folders for components, hooks, and utilities.
+
+## 3. Set up initial development environment [pending]
+### Dependencies: 60.1, 60.2
+### Description: Prepare the development environment with necessary tools and configurations for efficient development.
+### Details:
+Install and configure ESLint, Prettier, and other development tools. Set up scripts for development and build processes.
+

@@ -499,8 +499,19 @@ async function expandTask(
 	const outputFormat = mcpLog ? 'json' : 'text';
 
 	// Determine projectRoot: Use from context if available, otherwise derive from tasksPath
-	const projectRoot =
-		contextProjectRoot || path.dirname(path.dirname(tasksPath));
+	let projectRoot = contextProjectRoot;
+	if (!projectRoot) {
+		// Handle both new (.taskmaster/tasks/tasks.json) and old (tasks/tasks.json) structures
+		if (tasksPath.includes('.taskmaster')) {
+			// New structure: .../project/.taskmaster/tasks/tasks.json -> .../project
+			const tasksDir = path.dirname(tasksPath); // .../project/.taskmaster/tasks
+			const taskMasterDir = path.dirname(tasksDir); // .../project/.taskmaster
+			projectRoot = path.dirname(taskMasterDir); // .../project
+		} else {
+			// Old structure: .../project/tasks/tasks.json -> .../project
+			projectRoot = path.dirname(path.dirname(tasksPath));
+		}
+	}
 
 	// Use mcpLog if available, otherwise use the default console log wrapper
 	const logger = mcpLog || {

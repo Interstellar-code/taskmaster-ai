@@ -739,6 +739,7 @@ function getBaseUrlForRole(role, explicitRoot = null) {
 export {
 	// Core config access
 	getConfig,
+	getConfigPath,
 	writeConfig,
 	ConfigurationError,
 	isConfigFilePresent,

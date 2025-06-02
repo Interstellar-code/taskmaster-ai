@@ -1,0 +1,36 @@
+# Task ID: 72
+# Title: Add Visual Feedback for Drag Operations
+# Status: pending
+# Dependencies: 69
+# Priority: medium
+# PRD Source: prd_kanban_webapp.md
+# PRD Path: C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md
+# Parsed Date: 2025-06-02T21:47:10.025Z
+# File Hash: 26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936
+# File Size: 21070 bytes
+# Description: Add visual feedback mechanisms for drag operations, such as hover states for drop zones and a visual representation of the dragged item.
+# Details:
+Use `@dnd-kit/core`'s `useDraggable` and `useDroppable` hooks to apply CSS classes or inline styles based on drag state. For draggable items, change opacity or add a shadow when dragging. For droppable areas, change background color or border when an item is hovered over them. Consider using `DragOverlay` for a smooth visual representation of the dragged item.
+
+# Test Strategy:
+Perform drag operations. Visually confirm that draggable items change appearance when picked up and that droppable columns highlight when a task is dragged over them. Ensure the visual feedback is clear and intuitive.
+
+# Subtasks:
+## 1. Implement Drag Overlay and Ghost Elements [pending]
+### Dependencies: None
+### Description: Create visual elements that appear during drag operations to enhance user feedback.
+### Details:
+Design and implement overlay and ghost elements that follow the cursor during drag operations. Ensure these elements are visually distinct and provide clear feedback to the user.
+
+## 2. Add Hover States and Drop Zone Indicators [pending]
+### Dependencies: 72.1
+### Description: Enhance visual feedback by highlighting potential drop zones and providing hover states.
+### Details:
+Implement visual cues that indicate valid drop zones when a draggable element is hovered over them. Ensure hover states are clear and intuitive.
+
+## 3. Create Smooth Animations and Transitions [pending]
+### Dependencies: 72.1, 72.2
+### Description: Develop animations and transitions to ensure a smooth drag-and-drop experience.
+### Details:
+Implement animations that provide a seamless transition between drag start, movement, and drop. Focus on performance and user experience.
+

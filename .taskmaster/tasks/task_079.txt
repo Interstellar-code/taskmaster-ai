@@ -1,0 +1,48 @@
+# Task ID: 79
+# Title: Add Save/Cancel Functionality with Optimistic UI Updates
+# Status: pending
+# Dependencies: 78
+# Priority: high
+# PRD Source: prd_kanban_webapp.md
+# PRD Path: C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md
+# Parsed Date: 2025-06-02T21:47:10.025Z
+# File Hash: 26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936
+# File Size: 21070 bytes
+# Description: Add save and cancel functionality to the task detail modal, including optimistic UI updates.
+# Details:
+Implement 'Save' and 'Cancel' buttons in the `TaskModal`. On 'Save', trigger the API call to update the task. Implement optimistic UI updates: immediately reflect changes in the frontend after 'Save' is clicked, and only revert if the API call fails. On 'Cancel', discard any unsaved changes and close the modal.
+
+# Test Strategy:
+Open a task modal, make changes, and click 'Save'. Verify that the changes are immediately reflected on the Kanban board. Then, simulate an API failure and verify that the changes are reverted on the frontend. Test 'Cancel' to ensure changes are discarded.
+
+# Subtasks:
+## 1. Create Save/Cancel Button Components [pending]
+### Dependencies: None
+### Description: Develop the 'Save' and 'Cancel' button components for the TaskModal with appropriate states.
+### Details:
+Design and implement reusable button components for 'Save' and 'Cancel'. Ensure they have states for default, hover, active, and disabled. Integrate these buttons into the TaskModal.
+
+## 2. Implement Optimistic UI Updates [pending]
+### Dependencies: 79.1
+### Description: Enable immediate UI updates upon clicking 'Save', reflecting changes optimistically before API confirmation.
+### Details:
+On 'Save' button click, update the UI to reflect changes immediately. Use a temporary state to hold these changes and revert them only if the API call fails.
+
+## 3. Manage Form State and Dirty Checking [pending]
+### Dependencies: 79.1
+### Description: Implement form state management and dirty checking to track unsaved changes in the TaskModal.
+### Details:
+Use a state management library or custom hooks to track form changes. Implement dirty checking to determine if there are unsaved changes when the modal is closed.
+
+## 4. Add Confirmation Dialog for Unsaved Changes [pending]
+### Dependencies: 79.3
+### Description: Prompt the user with a confirmation dialog if they attempt to close the modal with unsaved changes.
+### Details:
+Integrate a modal or dialog component that triggers when unsaved changes are detected and the user attempts to close the TaskModal. Provide options to discard changes or continue editing.
+
+## 5. Implement Auto-Save with Debouncing [pending]
+### Dependencies: 79.2, 79.3
+### Description: Add an auto-save feature that saves changes automatically after a delay, using debouncing to prevent excessive API calls.
+### Details:
+Implement a debounced function that triggers the save operation after a specified delay when changes are detected. Ensure this function is efficient and does not trigger unnecessary API calls.
+

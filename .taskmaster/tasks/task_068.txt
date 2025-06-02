@@ -1,0 +1,36 @@
+# Task ID: 68
+# Title: Setup @dnd-kit Library with Drag-and-Drop Context
+# Status: pending
+# Dependencies: 66
+# Priority: high
+# PRD Source: prd_kanban_webapp.md
+# PRD Path: C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md
+# Parsed Date: 2025-06-02T21:47:10.025Z
+# File Hash: 26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936
+# File Size: 21070 bytes
+# Description: Set up the @dnd-kit library with necessary context providers for drag-and-drop functionality.
+# Details:
+Wrap the `KanbanBoard` component (or a higher-level component) with `DndContext` from `@dnd-kit/core`. Configure `DndContext` with `sensors` (e.g., `PointerSensor`, `KeyboardSensor`) and `collisionDetection` (e.g., `closestCorners`). Define `onDragEnd` and `onDragOver` handlers to manage drag operations.
+
+# Test Strategy:
+Verify that the `DndContext` is correctly initialized by adding a simple draggable element within the context. Log drag events to the console to confirm that `onDragStart`, `onDragOver`, and `onDragEnd` callbacks are triggered as expected.
+
+# Subtasks:
+## 1. Install @dnd-kit Packages and Dependencies [pending]
+### Dependencies: None
+### Description: Install the necessary @dnd-kit packages and any required dependencies to enable drag-and-drop functionality in the TaskMaster Kanban application.
+### Details:
+Use npm or yarn to install @dnd-kit/core and any other related packages required for setting up the drag-and-drop context.
+
+## 2. Set Up DndContext Provider [pending]
+### Dependencies: 68.1
+### Description: Configure the DndContext provider with appropriate sensors and collision detection mechanisms.
+### Details:
+Integrate the DndContext provider into the application, ensuring that sensors for drag-and-drop interactions are correctly set up and collision detection is configured to handle item interactions.
+
+## 3. Configure Drag Overlay and Accessibility Features [pending]
+### Dependencies: 68.2
+### Description: Implement drag overlay and ensure accessibility features are in place for the drag-and-drop functionality.
+### Details:
+Set up a drag overlay to provide visual feedback during drag operations and ensure that the drag-and-drop functionality is accessible, including keyboard navigation and screen reader support.
+

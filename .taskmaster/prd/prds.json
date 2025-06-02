@@ -2,28 +2,50 @@
   "prds": [
     {
       "id": "prd_001",
-      "title": "Test PRD for Linking",
-      "fileName": "test-prd.txt",
+      "title": "prd_kanban_webapp",
+      "fileName": "prd_kanban_webapp.md",
       "status": "pending",
       "complexity": "medium",
-      "createdDate": "2025-06-02T16:30:00.000Z",
-      "lastModified": "2025-06-02T17:10:51.947Z",
-      "filePath": "C:\\laragon\\www\\taskmaster-ai\\.taskmaster\\prd\\pending\\test-prd.txt",
-      "fileHash": "33e22a4be38c5ff5057009103394f534afcfe3d622e9fe7c3db725629bb5f1cf",
-      "fileSize": 1172,
-      "description": "Test PRD to demonstrate linking functionality",
+      "createdDate": "2025-06-02T21:47:53.764Z",
+      "lastModified": "2025-06-02T21:54:53.939Z",
+      "filePath": "C:\\laragon\\www\\taskmaster-ai\\.taskmaster\\prd\\pending\\prd_kanban_webapp.md",
+      "fileHash": "5f55f8f58e41c06488c455cfbfcb82240d338b67bf166ec8840cce22ffd0241f",
+      "fileSize": 21407,
+      "description": "PRD parsed and registered automatically during task generation",
       "tags": [
-        "test",
-        "linking"
+        "auto-generated",
+        "parsed"
       ],
       "linkedTaskIds": [
         60,
-        61
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        82,
+        83
       ],
       "taskStats": {
-        "totalTasks": 2,
+        "totalTasks": 24,
         "completedTasks": 0,
-        "pendingTasks": 2,
+        "pendingTasks": 24,
         "inProgressTasks": 0,
         "blockedTasks": 0,
         "deferredTasks": 0,
@@ -36,44 +58,11 @@
   ],
   "metadata": {
     "version": "1.0.0",
-    "lastUpdated": "2025-06-02T17:10:51.948Z",
+    "lastUpdated": "2025-06-02T21:54:53.940Z",
     "totalPrds": 1,
     "schema": {
       "version": "1.0.0",
-      "description": "TaskMaster AI PRD Lifecycle Tracking Schema",
-      "fields": {
-        "id": "Unique PRD identifier",
-        "title": "Human-readable PRD title",
-        "fileName": "Original PRD filename",
-        "status": "Current PRD status (pending|in-progress|done|archived)",
-        "complexity": "PRD complexity level (low|medium|high)",
-        "createdDate": "ISO 8601 creation timestamp",
-        "lastModified": "ISO 8601 last modification timestamp",
-        "filePath": "Current file path relative to project root",
-        "fileHash": "SHA256 hash for change detection",
-        "fileSize": "File size in bytes",
-        "description": "Brief PRD description",
-        "tags": "Array of categorization tags",
-        "linkedTaskIds": "Array of task IDs generated from this PRD",
-        "taskStats": "Task completion statistics",
-        "estimatedEffort": "Estimated effort for completion",
-        "priority": "PRD priority level (low|medium|high)"
-      }
-    },
-    "statusDirectories": {
-      "pending": "prd/pending",
-      "in-progress": "prd/in-progress",
-      "done": "prd/done",
-      "archived": "prd/archived",
-      "templates": "prd/templates"
-    },
-    "automationRules": {
-      "statusTransitions": {
-        "pending_to_inprogress": "When first linked task changes to 'in-progress'",
-        "inprogress_to_done": "When ALL linked tasks reach 'done' status (100% completion)",
-        "manual_override": "Allow manual status changes with validation and audit trail",
-        "rollback_protection": "Prevent status regression without explicit user confirmation"
-      }
+      "description": "TaskMaster AI PRD Lifecycle Tracking Schema"
     }
   }
 }

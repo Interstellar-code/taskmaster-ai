@@ -1,0 +1,36 @@
+# Task ID: 67
+# Title: Implement TaskCard Component with Metadata Display
+# Status: pending
+# Dependencies: 61, 66
+# Priority: high
+# PRD Source: prd_kanban_webapp.md
+# PRD Path: C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md
+# Parsed Date: 2025-06-02T21:47:10.025Z
+# File Hash: 26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936
+# File Size: 21070 bytes
+# Description: Implement the `TaskCard` component to display individual task metadata including title, description, priority, and dependencies.
+# Details:
+Create a `TaskCard` React component that accepts a task object as props. Use shadcn/ui Card components for the visual structure. Display the task's `title`, a truncated `description`, `priority` (e.g., with a colored badge), and a list of `dependencies` (if any). Ensure the card is visually appealing and clearly presents key information.
+
+# Test Strategy:
+Render several `TaskCard` components with different task data (varying priorities, dependencies, and descriptions). Verify that all specified metadata fields are displayed correctly and that the styling is consistent with shadcn/ui and Tailwind CSS.
+
+# Subtasks:
+## 1. Create TaskCard Component Structure [pending]
+### Dependencies: None
+### Description: Develop the basic structure of the TaskCard component using the shadcn/ui Card component.
+### Details:
+Set up the initial component structure in the codebase, ensuring it is ready to incorporate task metadata.
+
+## 2. Implement Task Metadata Display [pending]
+### Dependencies: 67.1
+### Description: Display task metadata including title, description, priority, and dependencies within the TaskCard component.
+### Details:
+Ensure that the TaskCard component correctly retrieves and displays all relevant task metadata fields.
+
+## 3. Add Responsive Styling and Visual Indicators [pending]
+### Dependencies: 67.1, 67.2
+### Description: Enhance the TaskCard component with responsive styling and visual indicators for task priority and dependencies.
+### Details:
+Use CSS and design principles to ensure the TaskCard is visually appealing and adapts to different screen sizes.
+

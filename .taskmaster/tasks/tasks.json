@@ -14,38 +14,2113 @@
     },
     {
       "id": 60,
-      "title": "Test Task 1 from PRD",
-      "description": "This is a test task created from a PRD to test the linking functionality",
-      "details": "",
-      "testStrategy": "",
-      "status": "pending",
+      "title": "Initialize React Application with Vite and TypeScript",
+      "description": "Initialize a new React application using Vite with TypeScript, setting up the basic project structure and configuration files.",
+      "details": "Use `npm create vite@latest` to scaffold a new React project. Select 'React' and 'TypeScript' as options. Configure `tsconfig.json` for strict type checking and ensure proper alias resolution if needed. Set up basic folder structure for components, pages, and utilities.",
+      "testStrategy": "Verify that the React development server starts successfully and displays the default Vite welcome page. Check TypeScript compilation for any errors.",
+      "priority": "high",
       "dependencies": [],
-      "priority": "medium",
-      "subtasks": [],
+      "status": "in-progress",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create a new Vite React TypeScript project",
+          "description": "Initialize a new project using Vite with React and TypeScript to set up the foundation for the TaskMaster Kanban Web Application.",
+          "dependencies": [],
+          "details": "Use the Vite CLI to create a new project with React and TypeScript templates. Ensure the project is set up in the designated repository.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 2,
+          "title": "Configure TypeScript and project structure",
+          "description": "Set up TypeScript configuration and organize the project structure to align with modern React development practices.",
+          "dependencies": [
+            1
+          ],
+          "details": "Modify the tsconfig.json file to include necessary compiler options. Organize the project folders for components, hooks, and utilities.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 3,
+          "title": "Set up initial development environment",
+          "description": "Prepare the development environment with necessary tools and configurations for efficient development.",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "Install and configure ESLint, Prettier, and other development tools. Set up scripts for development and build processes.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        }
+      ],
       "prdSource": {
-        "prdId": "prd_001",
-        "fileName": "test-prd.txt",
-        "filePath": ".taskmaster/prd/pending/test-prd.txt",
-        "fileHash": "abc123",
-        "parsedDate": "2025-06-02T16:30:00.000Z"
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+        "fileName": "prd_kanban_webapp.md",
+        "parsedDate": "2025-06-02T21:47:10.025Z",
+        "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+        "fileSize": 21070
       }
     },
     {
       "id": 61,
-      "title": "Test Task 2 from PRD",
-      "description": "This is another test task created from a PRD to test the linking functionality",
-      "details": "",
-      "testStrategy": "",
+      "title": "Setup shadcn/ui and Tailwind CSS Integration",
+      "description": "Integrate shadcn/ui component library and configure Tailwind CSS for styling within the React application.",
+      "details": "Follow shadcn/ui installation instructions, which typically involve installing Tailwind CSS, PostCSS, and Autoprefixer, then initializing shadcn/ui components. Configure `tailwind.config.js` to include shadcn/ui presets and custom styles. Ensure `index.css` or `globals.css` imports Tailwind directives.",
+      "testStrategy": "Add a simple shadcn/ui component (e.g., Button) to `App.tsx` and verify it renders correctly with Tailwind CSS applied. Check for proper styling and responsiveness in the browser.",
+      "priority": "high",
+      "dependencies": [
+        60
+      ],
       "status": "pending",
-      "dependencies": [],
-      "priority": "medium",
-      "subtasks": [],
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Install Tailwind CSS and PostCSS Dependencies",
+          "description": "Install Tailwind CSS, PostCSS, and Autoprefixer as dependencies in the React application.",
+          "dependencies": [],
+          "details": "Run the command `npm install tailwindcss postcss autoprefixer` to add the necessary styling dependencies. Ensure that the package.json file is updated with these dependencies.",
+          "status": "pending",
+          "testStrategy": "Verify that the dependencies are listed in package.json and that there are no installation errors.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 2,
+          "title": "Configure Tailwind CSS",
+          "description": "Set up the Tailwind CSS configuration by creating and editing the `tailwind.config.js` file.",
+          "dependencies": [
+            1
+          ],
+          "details": "Create a `tailwind.config.js` file in the root directory. Add the necessary content paths and include shadcn/ui presets. Customize the theme as needed for the application.",
+          "status": "pending",
+          "testStrategy": "Check that the configuration file is correctly set up and that it includes the necessary paths and presets.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 3,
+          "title": "Install and Initialize shadcn/ui Components",
+          "description": "Install the shadcn/ui component library and initialize it within the React application.",
+          "dependencies": [
+            2
+          ],
+          "details": "Run the command `npm install shadcn/ui` to add the component library. Follow the library's initialization instructions to set up the components within the application.",
+          "status": "pending",
+          "testStrategy": "Ensure that the components are correctly installed and can be imported into the application without errors.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 4,
+          "title": "Set Up Component Imports and Styling",
+          "description": "Import Tailwind CSS directives and shadcn/ui components into the application for styling.",
+          "dependencies": [
+            3
+          ],
+          "details": "Edit the `index.css` or `globals.css` file to include Tailwind's base, components, and utilities directives. Import shadcn/ui components into the relevant React components and apply Tailwind CSS classes for styling.",
+          "status": "pending",
+          "testStrategy": "Check that the styles are applied correctly in the application and that the components render as expected with the integrated styles.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        }
+      ],
       "prdSource": {
-        "prdId": "prd_001",
-        "fileName": "test-prd.txt",
-        "filePath": ".taskmaster/prd/pending/test-prd.txt",
-        "fileHash": "abc123",
-        "parsedDate": "2025-06-02T16:30:00.000Z"
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+        "fileName": "prd_kanban_webapp.md",
+        "parsedDate": "2025-06-02T21:47:10.025Z",
+        "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+        "fileSize": 21070
+      }
+    },
+    {
+      "id": 62,
+      "title": "Create Express.js API Server with Basic Routing",
+      "description": "Create an Express.js API server with a basic routing structure to handle incoming requests.",
+      "details": "Initialize a new Node.js project for the backend. Install `express` and `cors`. Create `server.js` (or `app.ts` if using TypeScript for backend) and set up a basic Express app. Define a root route (e.g., `/`) to return a simple JSON response to confirm the server is running. Implement CORS middleware to allow frontend requests.",
+      "testStrategy": "Start the Express server and use a tool like Postman or `curl` to send a GET request to the root endpoint. Verify that the server responds with the expected JSON message and that CORS headers are correctly set.",
+      "priority": "high",
+      "dependencies": [],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Set Up Express.js Project Structure and Dependencies",
+          "description": "Initialize a new Express.js project and set up the necessary project structure and dependencies.",
+          "dependencies": [],
+          "details": "Create a new directory for the project, initialize it with npm, and install Express.js along with any other necessary dependencies such as dotenv for environment variables.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 2,
+          "title": "Create Basic Server Configuration with CORS and Middleware",
+          "description": "Configure the Express.js server with basic settings, including CORS and middleware.",
+          "dependencies": [
+            1
+          ],
+          "details": "Set up the server to use middleware for JSON parsing, logging, and CORS to handle cross-origin requests. Ensure the server can read environment variables for configuration.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 3,
+          "title": "Implement Initial API Routes and Error Handling",
+          "description": "Develop initial API routes and implement basic error handling mechanisms.",
+          "dependencies": [
+            2
+          ],
+          "details": "Create a few basic API routes to handle requests and responses. Implement error handling middleware to catch and respond to errors gracefully.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+        "fileName": "prd_kanban_webapp.md",
+        "parsedDate": "2025-06-02T21:47:10.025Z",
+        "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+        "fileSize": 21070
+      }
+    },
+    {
+      "id": 63,
+      "title": "Integrate TaskMaster Core Functions with API",
+      "description": "Integrate existing TaskMaster core functions into the Express.js API server as middleware or utility functions.",
+      "details": "Identify the relevant TaskMaster core functions for task management (e.g., reading `tasks.json`, updating task status). Create a wrapper module or service in the backend that imports and exposes these functions. Ensure proper error handling and data serialization/deserialization when interacting with the core functions.",
+      "testStrategy": "Write a simple test route in the Express server that calls a TaskMaster core function (e.g., to read all tasks). Verify that the function executes without errors and returns data in the expected format. Mock core functions if necessary for isolated testing.",
+      "priority": "high",
+      "dependencies": [
+        62
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Set Up TaskMaster Core Module Imports and Configuration",
+          "description": "Configure the TaskMaster core modules to be imported correctly and ensure they are set up according to the project's requirements.",
+          "dependencies": [],
+          "details": "Review the existing project structure and determine the necessary configuration changes to import TaskMaster core modules. Ensure compatibility with the current setup.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 2,
+          "title": "Create API Middleware for TaskMaster Function Calls",
+          "description": "Develop middleware to facilitate API calls to TaskMaster core functions, ensuring smooth communication between the front-end and back-end.",
+          "dependencies": [
+            1
+          ],
+          "details": "Design and implement middleware that handles requests and responses for TaskMaster core functions, ensuring they are accessible via the API.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 3,
+          "title": "Implement Error Handling for Core Function Integration",
+          "description": "Develop robust error handling mechanisms for the integration of TaskMaster core functions to ensure system stability and reliability.",
+          "dependencies": [
+            2
+          ],
+          "details": "Identify potential failure points in the integration process and implement error handling strategies to manage exceptions and errors gracefully.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 4,
+          "title": "Add Logging and Monitoring for Core Function Usage",
+          "description": "Implement logging and monitoring to track the usage and performance of TaskMaster core functions, aiding in maintenance and debugging.",
+          "dependencies": [
+            3
+          ],
+          "details": "Set up logging to capture detailed information about core function calls and integrate monitoring tools to observe performance metrics.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+        "fileName": "prd_kanban_webapp.md",
+        "parsedDate": "2025-06-02T21:47:10.025Z",
+        "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+        "fileSize": 21070
+      }
+    },
+    {
+      "id": 64,
+      "title": "Implement Basic Task Data Retrieval API Endpoints",
+      "description": "Implement API endpoints for retrieving task data from the `tasks.json` file.",
+      "details": "Create a GET endpoint at `/api/v1/tasks` that reads the `tasks.json` file using the TaskMaster core integration. Parse the JSON data and return it as a response. Implement error handling for file not found or parsing errors. Ensure the data structure matches the frontend's expectations.",
+      "testStrategy": "Use Postman or `curl` to send a GET request to `/api/v1/tasks`. Verify that the API returns a JSON array of tasks, matching the content of your `tasks.json` file. Test with an empty or malformed `tasks.json` to ensure robust error handling.",
+      "priority": "high",
+      "dependencies": [
+        63
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create GET Endpoint for Retrieving All Tasks",
+          "description": "Develop a GET API endpoint to retrieve all tasks from the database.",
+          "dependencies": [],
+          "details": "This endpoint should connect to the database, fetch all task records, and return them in a JSON format.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 2,
+          "title": "Implement Task Data Parsing and Formatting",
+          "description": "Parse and format task data retrieved from the database for API response.",
+          "dependencies": [
+            1
+          ],
+          "details": "Ensure the task data is correctly parsed and formatted to meet the API response standards, including necessary fields and data types.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 3,
+          "title": "Add Error Handling and Response Validation",
+          "description": "Implement error handling and validate API responses for the task retrieval endpoint.",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "Ensure that the API handles errors gracefully and validates responses to ensure they meet the expected format and contain all required information.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+        "fileName": "prd_kanban_webapp.md",
+        "parsedDate": "2025-06-02T21:47:10.025Z",
+        "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+        "fileSize": 21070
+      }
+    },
+    {
+      "id": 65,
+      "title": "Setup Development Environment with Hot Reload and Build Scripts",
+      "description": "Configure the development environment for both frontend and backend with hot reload and build scripts.",
+      "details": "For the frontend, Vite provides hot module replacement (HMR) out-of-the-box. For the backend, use `nodemon` or `ts-node-dev` to enable hot reloading of the Express server. Configure `package.json` scripts for `dev` (running both frontend and backend concurrently, e.g., using `concurrently`) and `build` (for production builds of both).",
+      "testStrategy": "Run the combined `dev` script. Make a change in a React component and verify the browser updates without a full refresh. Make a change in an Express route and verify the server restarts automatically. Run the `build` script and ensure production-ready bundles are generated for both frontend and backend.",
+      "priority": "high",
+      "dependencies": [
+        60,
+        62
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Configure Vite Development Server with Hot Module Replacement",
+          "description": "Set up the Vite development server to enable hot module replacement for efficient development.",
+          "dependencies": [],
+          "details": "Ensure that the Vite server is configured to automatically reload modules during development without a full page refresh.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 2,
+          "title": "Set Up Build Scripts for Development and Production",
+          "description": "Create build scripts to handle both development and production environments.",
+          "dependencies": [
+            1
+          ],
+          "details": "Develop scripts that can build the application for development with source maps and for production with optimizations.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 3,
+          "title": "Configure Environment Variables and API Endpoints",
+          "description": "Set up environment variables and configure API endpoints for different environments.",
+          "dependencies": [
+            2
+          ],
+          "details": "Ensure that environment variables are correctly set up for development, testing, and production environments, and that API endpoints are configured accordingly.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 4,
+          "title": "Set Up Development Tools and Debugging Configuration",
+          "description": "Configure development tools and debugging settings to enhance the development workflow.",
+          "dependencies": [
+            3
+          ],
+          "details": "Integrate tools such as linters, formatters, and debuggers to streamline the development process and improve code quality.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+        "fileName": "prd_kanban_webapp.md",
+        "parsedDate": "2025-06-02T21:47:10.025Z",
+        "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+        "fileSize": 21070
+      }
+    },
+    {
+      "id": 66,
+      "title": "Create Responsive Three-Column Kanban Board Layout",
+      "description": "Develop the main Kanban board layout component with three columns for 'pending', 'in-progress', and 'done' task statuses.",
+      "details": "Create a `KanbanBoard` React component. Use Tailwind CSS grid or flexbox utilities to create a responsive three-column layout. Each column should represent a task status. Fetch tasks from the `/api/v1/tasks` endpoint and distribute them into the respective columns based on their `status` property. Display a task count in each column header.",
+      "testStrategy": "Render the `KanbanBoard` component. Verify that three columns are displayed and tasks are correctly categorized into 'pending', 'in-progress', and 'done' based on their status. Test responsiveness by resizing the browser window to ensure the layout adapts correctly.",
+      "priority": "high",
+      "dependencies": [
+        61,
+        64
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Main Kanban Board Container",
+          "description": "Develop the main `KanbanBoard` React component with a responsive grid layout using Tailwind CSS.",
+          "dependencies": [],
+          "details": "Set up a new React component named `KanbanBoard`. Use Tailwind CSS to create a responsive grid or flexbox layout that will house three columns. Ensure the layout adjusts for different screen sizes, maintaining a three-column layout on larger screens and stacking columns vertically on smaller screens.",
+          "status": "pending",
+          "testStrategy": "Verify the layout adjusts correctly across various screen sizes using browser developer tools.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 2,
+          "title": "Implement Individual Column Components",
+          "description": "Create separate components for each task status column: 'Pending', 'In-Progress', and 'Done'.",
+          "dependencies": [
+            1
+          ],
+          "details": "Develop three React components, one for each task status: `PendingColumn`, `InProgressColumn`, and `DoneColumn`. Each component should accept a list of tasks as props and display them. Ensure these components integrate seamlessly into the `KanbanBoard` layout.",
+          "status": "pending",
+          "testStrategy": "Render each column with mock data to ensure tasks are displayed correctly in their respective columns.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 3,
+          "title": "Add Column Headers with Task Counts",
+          "description": "Enhance each column component with a header that displays the column title and the count of tasks within that column.",
+          "dependencies": [
+            2
+          ],
+          "details": "Modify each column component to include a header section. Use Tailwind CSS for styling. The header should display the column name and dynamically update to show the number of tasks in that column. Ensure the styling is consistent with the overall design of the Kanban board.",
+          "status": "pending",
+          "testStrategy": "Check that the task count updates correctly when tasks are added or removed from the column.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 4,
+          "title": "Implement Responsive Design for Mobile and Tablet Views",
+          "description": "Ensure the Kanban board layout is fully responsive and provides a good user experience on mobile and tablet devices.",
+          "dependencies": [
+            3
+          ],
+          "details": "Use Tailwind CSS utilities to adjust the layout for smaller screens. Implement media queries if necessary to ensure the columns stack vertically on smaller devices. Test the layout on various screen sizes to ensure usability and readability.",
+          "status": "pending",
+          "testStrategy": "Use browser developer tools to simulate different screen sizes and ensure the layout is responsive and user-friendly on all devices.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+        "fileName": "prd_kanban_webapp.md",
+        "parsedDate": "2025-06-02T21:47:10.025Z",
+        "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+        "fileSize": 21070
+      }
+    },
+    {
+      "id": 67,
+      "title": "Implement TaskCard Component with Metadata Display",
+      "description": "Implement the `TaskCard` component to display individual task metadata including title, description, priority, and dependencies.",
+      "details": "Create a `TaskCard` React component that accepts a task object as props. Use shadcn/ui Card components for the visual structure. Display the task's `title`, a truncated `description`, `priority` (e.g., with a colored badge), and a list of `dependencies` (if any). Ensure the card is visually appealing and clearly presents key information.",
+      "testStrategy": "Render several `TaskCard` components with different task data (varying priorities, dependencies, and descriptions). Verify that all specified metadata fields are displayed correctly and that the styling is consistent with shadcn/ui and Tailwind CSS.",
+      "priority": "high",
+      "dependencies": [
+        61,
+        66
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create TaskCard Component Structure",
+          "description": "Develop the basic structure of the TaskCard component using the shadcn/ui Card component.",
+          "dependencies": [],
+          "details": "Set up the initial component structure in the codebase, ensuring it is ready to incorporate task metadata.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 2,
+          "title": "Implement Task Metadata Display",
+          "description": "Display task metadata including title, description, priority, and dependencies within the TaskCard component.",
+          "dependencies": [
+            1
+          ],
+          "details": "Ensure that the TaskCard component correctly retrieves and displays all relevant task metadata fields.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 3,
+          "title": "Add Responsive Styling and Visual Indicators",
+          "description": "Enhance the TaskCard component with responsive styling and visual indicators for task priority and dependencies.",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "Use CSS and design principles to ensure the TaskCard is visually appealing and adapts to different screen sizes.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+        "fileName": "prd_kanban_webapp.md",
+        "parsedDate": "2025-06-02T21:47:10.025Z",
+        "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+        "fileSize": 21070
+      }
+    },
+    {
+      "id": 68,
+      "title": "Setup @dnd-kit Library with Drag-and-Drop Context",
+      "description": "Set up the @dnd-kit library with necessary context providers for drag-and-drop functionality.",
+      "details": "Wrap the `KanbanBoard` component (or a higher-level component) with `DndContext` from `@dnd-kit/core`. Configure `DndContext` with `sensors` (e.g., `PointerSensor`, `KeyboardSensor`) and `collisionDetection` (e.g., `closestCorners`). Define `onDragEnd` and `onDragOver` handlers to manage drag operations.",
+      "testStrategy": "Verify that the `DndContext` is correctly initialized by adding a simple draggable element within the context. Log drag events to the console to confirm that `onDragStart`, `onDragOver`, and `onDragEnd` callbacks are triggered as expected.",
+      "priority": "high",
+      "dependencies": [
+        66
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Install @dnd-kit Packages and Dependencies",
+          "description": "Install the necessary @dnd-kit packages and any required dependencies to enable drag-and-drop functionality in the TaskMaster Kanban application.",
+          "dependencies": [],
+          "details": "Use npm or yarn to install @dnd-kit/core and any other related packages required for setting up the drag-and-drop context.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 2,
+          "title": "Set Up DndContext Provider",
+          "description": "Configure the DndContext provider with appropriate sensors and collision detection mechanisms.",
+          "dependencies": [
+            1
+          ],
+          "details": "Integrate the DndContext provider into the application, ensuring that sensors for drag-and-drop interactions are correctly set up and collision detection is configured to handle item interactions.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 3,
+          "title": "Configure Drag Overlay and Accessibility Features",
+          "description": "Implement drag overlay and ensure accessibility features are in place for the drag-and-drop functionality.",
+          "dependencies": [
+            2
+          ],
+          "details": "Set up a drag overlay to provide visual feedback during drag operations and ensure that the drag-and-drop functionality is accessible, including keyboard navigation and screen reader support.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+        "fileName": "prd_kanban_webapp.md",
+        "parsedDate": "2025-06-02T21:47:10.025Z",
+        "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+        "fileSize": 21070
+      }
+    },
+    {
+      "id": 69,
+      "title": "Implement Drag-and-Drop Functionality Between Status Columns",
+      "description": "Implement drag-and-drop functionality to allow users to move tasks between status columns.",
+      "details": "Within each Kanban column, define a `Droppable` component from `@dnd-kit/core`. Make each `TaskCard` a `Draggable` component. In the `onDragEnd` handler of `DndContext`, update the task's status based on the `Droppable` column it was dropped into. Manage the state of tasks in the frontend to reflect the new status immediately.",
+      "testStrategy": "Drag a task from 'pending' to 'in-progress', then to 'done'. Verify that the task visually moves to the correct column and that the frontend state updates accordingly. Test dragging tasks within the same column and ensure no unintended changes occur.",
+      "priority": "high",
+      "dependencies": [
+        67,
+        68
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Modify Core Logic to Accept ID Parameters",
+          "description": "Update the core logic to handle specific task IDs as input parameters for complexity analysis.",
+          "dependencies": [],
+          "details": "Ensure the logic can filter and process tasks based on provided IDs, handling edge cases and parameter combinations.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 2,
+          "title": "Implement Report Merging Functionality",
+          "description": "Develop functionality to merge reports generated from different task IDs into a cohesive output.",
+          "dependencies": [
+            1
+          ],
+          "details": "Design the merging logic to ensure data consistency and accuracy across combined reports.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 3,
+          "title": "Update CLI Interface",
+          "description": "Revise the Command Line Interface to support new parameters for task ID input and report merging options.",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "Ensure the CLI is user-friendly and provides clear instructions for using the new features.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 4,
+          "title": "Integrate with MCP Tool",
+          "description": "Ensure the modified complexity analysis integrates smoothly with the existing MCP tool.",
+          "dependencies": [
+            1,
+            2,
+            3
+          ],
+          "details": "Test integration points and resolve any compatibility issues with the MCP tool.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 5,
+          "title": "Update Documentation",
+          "description": "Revise and expand documentation to cover new features and usage instructions for the enhanced complexity analysis.",
+          "dependencies": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "details": "Include examples and edge case scenarios to aid users in understanding the new functionality.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+        "fileName": "prd_kanban_webapp.md",
+        "parsedDate": "2025-06-02T21:47:10.025Z",
+        "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+        "fileSize": 21070
+      }
+    },
+    {
+      "id": 70,
+      "title": "Create Task Status Update API Endpoints",
+      "description": "Create API endpoints for updating the status of a specific task.",
+      "details": "Implement a PATCH endpoint at `/api/v1/tasks/:id/status`. This endpoint should accept a JSON payload containing the new `status` for the task. Use the TaskMaster core integration to update the task's status in `tasks.json`. Return the updated task or a success message. Implement validation for the task ID and status value.",
+      "testStrategy": "Use Postman or `curl` to send PATCH requests to update task statuses. Verify that the `tasks.json` file is updated correctly and that the API returns the expected response. Test with invalid task IDs and statuses to ensure proper error handling.",
+      "priority": "high",
+      "dependencies": [
+        63
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Command Interface and Parameter Handling",
+          "description": "Design and implement the command interface for the 'diagram' command, including parsing and validating input parameters.",
+          "dependencies": [],
+          "details": "Ensure the command interface can accept parameters such as task IDs, output format, and optional filters. Validate inputs for correctness and completeness.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 2,
+          "title": "Task Data Extraction and Transformation to Mermaid Syntax",
+          "description": "Extract task data from the database and transform it into Mermaid syntax for diagram generation.",
+          "dependencies": [
+            1
+          ],
+          "details": "Retrieve necessary task details, including dependencies and status, and convert them into a format compatible with Mermaid.js for diagram creation.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 3,
+          "title": "Diagram Rendering with Status Color Coding",
+          "description": "Implement the rendering of diagrams with color coding based on task status.",
+          "dependencies": [
+            2
+          ],
+          "details": "Use Mermaid.js to render diagrams, applying different colors to tasks based on their status (e.g., pending, in-progress, completed).",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+        "fileName": "prd_kanban_webapp.md",
+        "parsedDate": "2025-06-02T21:47:10.025Z",
+        "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+        "fileSize": 21070
+      }
+    },
+    {
+      "id": 71,
+      "title": "Integrate Frontend Drag-and-Drop with Backend API Calls",
+      "description": "Connect the frontend drag-and-drop actions with the backend API calls to persist status changes.",
+      "details": "In the `onDragEnd` handler of the `DndContext`, after updating the frontend state, make an asynchronous PATCH request to the `/api/v1/tasks/:id/status` endpoint. Pass the task ID and the new status. Implement error handling for API failures, potentially reverting the frontend state if the update fails.",
+      "testStrategy": "Drag a task between columns. Observe network requests in the browser's developer tools to confirm a PATCH request is sent to the correct API endpoint with the updated status. Verify that the change persists after refreshing the page, indicating `tasks.json` was updated.",
+      "priority": "high",
+      "dependencies": [
+        69,
+        70
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create API Client Function for Task Status Updates",
+          "description": "Develop a reusable API client function to handle PATCH requests for updating task statuses.",
+          "dependencies": [],
+          "details": "Implement a function in the API client module that takes a task ID and a new status as parameters. Use the Fetch API to send a PATCH request to the `/api/v1/tasks/:id/status` endpoint. Ensure the function returns a promise that resolves with the response data or rejects with an error.",
+          "status": "pending",
+          "testStrategy": "Write unit tests to mock the Fetch API and verify that the function correctly constructs the request and handles responses and errors.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 2,
+          "title": "Implement Optimistic UI Updates",
+          "description": "Update the frontend state immediately upon drag-and-drop actions to reflect the new task status before the API call completes.",
+          "dependencies": [
+            1
+          ],
+          "details": "Modify the `onDragEnd` handler to update the local state of the task list immediately after a drag-and-drop action. This should reflect the new status of the task optimistically, assuming the API call will succeed.",
+          "status": "pending",
+          "testStrategy": "Test that the UI updates immediately upon drag-and-drop and that the state reflects the expected changes before the API response is received.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 3,
+          "title": "Handle API Errors and Implement Rollback Mechanism",
+          "description": "Implement error handling in the `onDragEnd` handler to revert the UI state if the API call fails.",
+          "dependencies": [
+            2
+          ],
+          "details": "In the `onDragEnd` handler, catch any errors from the API client function. If an error occurs, revert the task status in the local state to its previous value. Display an error message to inform the user of the failure.",
+          "status": "pending",
+          "testStrategy": "Simulate API failures and verify that the UI state is correctly reverted and that an error message is displayed to the user.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 4,
+          "title": "Add Loading States During API Calls",
+          "description": "Indicate loading states in the UI while the API request is in progress.",
+          "dependencies": [
+            3
+          ],
+          "details": "Introduce a loading state variable in the component's state. Set this variable to true when the API call is initiated and false when it completes. Use this state to display a loading indicator or disable interactions with the task being updated.",
+          "status": "pending",
+          "testStrategy": "Check that the loading indicator appears during the API call and disappears once the call completes, regardless of success or failure.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 5,
+          "title": "Implement Retry Logic for Failed Requests",
+          "description": "Add retry logic to the API client function to attempt the request again if it fails.",
+          "dependencies": [
+            4
+          ],
+          "details": "Enhance the API client function to include a retry mechanism using exponential backoff. Allow a configurable number of retries before ultimately failing. Ensure that retries are logged for debugging purposes.",
+          "status": "pending",
+          "testStrategy": "Test the retry logic by simulating intermittent network failures and verifying that the function retries the request the specified number of times before failing.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+        "fileName": "prd_kanban_webapp.md",
+        "parsedDate": "2025-06-02T21:47:10.025Z",
+        "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+        "fileSize": 21070
+      }
+    },
+    {
+      "id": 72,
+      "title": "Add Visual Feedback for Drag Operations",
+      "description": "Add visual feedback mechanisms for drag operations, such as hover states for drop zones and a visual representation of the dragged item.",
+      "details": "Use `@dnd-kit/core`'s `useDraggable` and `useDroppable` hooks to apply CSS classes or inline styles based on drag state. For draggable items, change opacity or add a shadow when dragging. For droppable areas, change background color or border when an item is hovered over them. Consider using `DragOverlay` for a smooth visual representation of the dragged item.",
+      "testStrategy": "Perform drag operations. Visually confirm that draggable items change appearance when picked up and that droppable columns highlight when a task is dragged over them. Ensure the visual feedback is clear and intuitive.",
+      "priority": "medium",
+      "dependencies": [
+        69
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Implement Drag Overlay and Ghost Elements",
+          "description": "Create visual elements that appear during drag operations to enhance user feedback.",
+          "dependencies": [],
+          "details": "Design and implement overlay and ghost elements that follow the cursor during drag operations. Ensure these elements are visually distinct and provide clear feedback to the user.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 2,
+          "title": "Add Hover States and Drop Zone Indicators",
+          "description": "Enhance visual feedback by highlighting potential drop zones and providing hover states.",
+          "dependencies": [
+            1
+          ],
+          "details": "Implement visual cues that indicate valid drop zones when a draggable element is hovered over them. Ensure hover states are clear and intuitive.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 3,
+          "title": "Create Smooth Animations and Transitions",
+          "description": "Develop animations and transitions to ensure a smooth drag-and-drop experience.",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "Implement animations that provide a seamless transition between drag start, movement, and drop. Focus on performance and user experience.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+        "fileName": "prd_kanban_webapp.md",
+        "parsedDate": "2025-06-02T21:47:10.025Z",
+        "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+        "fileSize": 21070
+      }
+    },
+    {
+      "id": 73,
+      "title": "Implement Dependency Validation for Task Status Changes",
+      "description": "Implement logic to prevent invalid task moves based on defined task dependencies.",
+      "details": "Before allowing a task status update (both in frontend drag-and-drop and backend API), check if the task has any pending dependencies. For example, a task cannot be moved to 'done' if its dependencies are not yet 'done'. Implement this validation logic in both the frontend (for immediate user feedback) and the backend (for data integrity).",
+      "testStrategy": "Create tasks with dependencies. Attempt to drag a task to 'done' when its dependencies are still 'pending' or 'in-progress'. Verify that the move is prevented and appropriate user feedback (e.g., a toast message) is displayed. Test valid moves to ensure they are not blocked.",
+      "priority": "high",
+      "dependencies": [
+        71
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": "73.1",
+          "title": "Create dependency validation utility functions",
+          "description": "Create utility functions to check task dependencies recursively and validate status transitions",
+          "details": "Implement functions like `checkTaskDependencies(taskId, tasks)`, `validateStatusTransition(task, newStatus, allTasks)`, and `getDependencyChain(taskId, tasks)` to handle dependency logic",
+          "testStrategy": "Unit test with various dependency scenarios including circular dependencies, deep chains, and edge cases",
+          "status": "pending",
+          "priority": "high",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": "73.2",
+          "title": "Implement frontend dependency validation in drag-and-drop handlers",
+          "description": "Add dependency validation logic to the onDragEnd handler to prevent invalid moves with immediate user feedback",
+          "details": "Before updating task status in the drag-and-drop handler, call dependency validation functions and show toast notifications for invalid moves",
+          "testStrategy": "Test dragging tasks with pending dependencies to 'done' status and verify prevention with user feedback",
+          "status": "pending",
+          "priority": "high",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": "73.3",
+          "title": "Add backend dependency validation to API endpoints",
+          "description": "Implement dependency validation in the PATCH /api/v1/tasks/:id/status endpoint for data integrity",
+          "details": "Add validation middleware to check dependencies before allowing status updates, return appropriate error responses for invalid transitions",
+          "testStrategy": "Test API endpoints with invalid dependency scenarios and verify proper error responses",
+          "status": "pending",
+          "priority": "high",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": "73.4",
+          "title": "Create user feedback components for dependency violations",
+          "description": "Implement toast notifications and visual indicators for dependency validation failures",
+          "details": "Create reusable components for showing dependency error messages, highlight dependent tasks, and provide clear guidance to users",
+          "testStrategy": "Verify clear, actionable error messages are shown when dependency validation fails",
+          "status": "pending",
+          "priority": "medium",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": "73.5",
+          "title": "Add visual dependency indicators in TaskCard components",
+          "description": "Display dependency information and status in task cards to help users understand task relationships",
+          "details": "Show dependency badges, highlight blocking/blocked tasks, and add visual cues for dependency status in the Kanban board",
+          "testStrategy": "Verify dependency relationships are clearly visible and intuitive in the UI",
+          "status": "pending",
+          "priority": "medium",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": "73.6",
+          "title": "Implement comprehensive dependency validation testing",
+          "description": "Create comprehensive test suite for all dependency validation scenarios and edge cases",
+          "details": "Test complex dependency chains, circular dependencies, concurrent updates, and error recovery scenarios",
+          "testStrategy": "Automated test suite covering all dependency validation logic with edge cases and integration tests",
+          "status": "pending",
+          "priority": "medium",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 7,
+          "title": "Create Dependency Validation Utility Functions",
+          "description": "Develop utility functions to check if a task can be moved based on its dependencies.",
+          "dependencies": [],
+          "details": "Implement utility functions that take a task and its dependencies as input and return whether the task can be moved to a new status. These functions should be reusable across both frontend and backend.",
+          "status": "pending",
+          "testStrategy": "Write unit tests to ensure the utility functions correctly identify valid and invalid task moves based on various dependency scenarios.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 8,
+          "title": "Integrate Validation in Frontend Drag-and-Drop",
+          "description": "Incorporate dependency validation in the frontend drag-and-drop handlers to provide immediate feedback to users.",
+          "dependencies": [
+            7
+          ],
+          "details": "Modify the drag-and-drop event handlers to call the dependency validation utility functions before allowing a task to be moved. Display an error message or visual cue if the move is invalid.",
+          "status": "pending",
+          "testStrategy": "Test the drag-and-drop functionality to ensure that tasks cannot be moved to invalid states and appropriate feedback is provided.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 9,
+          "title": "Implement Backend Validation in API Endpoints",
+          "description": "Add dependency validation logic to the backend API endpoints to ensure data integrity during task status updates.",
+          "dependencies": [
+            7
+          ],
+          "details": "Update the task status update API endpoints to use the dependency validation utility functions. Return an error response if a task move is invalid due to unmet dependencies.",
+          "status": "pending",
+          "testStrategy": "Perform integration tests to verify that the API correctly prevents invalid task status updates and returns appropriate error messages.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 10,
+          "title": "Develop User Feedback Mechanisms",
+          "description": "Create user feedback mechanisms to inform users why a task move is invalid.",
+          "dependencies": [
+            8
+          ],
+          "details": "Design and implement UI components that display error messages or tooltips explaining why a task cannot be moved due to unmet dependencies.",
+          "status": "pending",
+          "testStrategy": "Conduct user testing to ensure that feedback is clear and informative, and that users understand why a task move is blocked.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 11,
+          "title": "Add Visual Dependency Indicators",
+          "description": "Enhance the UI to visually indicate task dependencies, helping users understand task relationships.",
+          "dependencies": [],
+          "details": "Implement visual indicators such as icons or lines connecting dependent tasks. Ensure these indicators are clear and do not clutter the UI.",
+          "status": "pending",
+          "testStrategy": "Verify that dependency indicators are displayed correctly and are intuitive for users to understand task dependencies.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 12,
+          "title": "Conduct Comprehensive Testing",
+          "description": "Perform comprehensive testing to ensure all aspects of dependency validation are functioning correctly.",
+          "dependencies": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "details": "Execute a combination of unit, integration, and user acceptance tests to validate the entire dependency validation feature. Ensure that both frontend and backend validations are robust and user feedback is effective.",
+          "status": "pending",
+          "testStrategy": "Use automated testing tools to run regression tests and manual testing to validate user experience and edge cases.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+        "fileName": "prd_kanban_webapp.md",
+        "parsedDate": "2025-06-02T21:47:10.025Z",
+        "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+        "fileSize": 21070
+      }
+    },
+    {
+      "id": 74,
+      "title": "Create Task Detail Modal Component",
+      "description": "Create a modal component using shadcn/ui Dialog to display detailed task information.",
+      "details": "Create a `TaskModal` React component. Use shadcn/ui's `Dialog` component for the modal structure. This modal should open when a `TaskCard` is clicked. It should display all task properties: `title`, `description`, `details`, `testStrategy`, `dependencies`, `priority`, `status`, `id`.",
+      "testStrategy": "Click on a `TaskCard`. Verify that the modal opens and displays all the task's properties correctly. Ensure the modal can be closed by clicking outside or using a close button.",
+      "priority": "high",
+      "dependencies": [
+        61,
+        67
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Modal Component Structure",
+          "description": "Develop the basic structure of the TaskModal component using shadcn/ui's Dialog component.",
+          "dependencies": [],
+          "details": "Initialize a new React component named TaskModal. Utilize the Dialog component from shadcn/ui to form the basic modal structure. Ensure the modal can be opened and closed, but initially, it will not be connected to any specific task data.",
+          "status": "pending",
+          "testStrategy": "Verify that the modal opens and closes correctly using a button or a mock trigger.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 2,
+          "title": "Implement Modal Trigger and State Management",
+          "description": "Set up the modal to open when a TaskCard is clicked, managing the modal's open/close state.",
+          "dependencies": [
+            1
+          ],
+          "details": "Integrate the TaskModal component with the TaskCard component. Use React state to manage the open/close state of the modal. Ensure that clicking a TaskCard sets the state to open the modal, and clicking outside the modal or a close button sets the state to close it.",
+          "status": "pending",
+          "testStrategy": "Test by clicking on various TaskCards to ensure the modal opens with each click and closes correctly.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 3,
+          "title": "Add Modal Layout and Responsive Design",
+          "description": "Design the layout of the modal to display task details and ensure it is responsive.",
+          "dependencies": [
+            2
+          ],
+          "details": "Within the TaskModal, layout the task properties: title, description, details, testStrategy, dependencies, priority, status, and id. Use CSS or a styling library to ensure the modal is responsive and visually appealing across different screen sizes.",
+          "status": "pending",
+          "testStrategy": "Check the modal's appearance on various devices and screen sizes to ensure all task details are displayed correctly and the design remains consistent.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+        "fileName": "prd_kanban_webapp.md",
+        "parsedDate": "2025-06-02T21:47:10.025Z",
+        "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+        "fileSize": 21070
+      }
+    },
+    {
+      "id": 75,
+      "title": "Implement Task Metadata Display in Modal",
+      "description": "Implement the display of all task metadata within the task detail modal.",
+      "details": "Populate the `TaskModal` with input fields or display elements for each task property. For editable fields like `title`, `description`, `details`, and `testStrategy`, use appropriate input components. For `priority`, `status`, and `dependencies`, display them clearly, potentially using badges or lists.",
+      "testStrategy": "Open the task modal for various tasks with different data. Verify that all fields are populated correctly and that the data matches the task selected. Check for proper formatting of dependencies and priorities.",
+      "priority": "medium",
+      "dependencies": [
+        74
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Form Fields for Task Properties",
+          "description": "Design and implement form fields for task properties such as title, description, priority, and status in the modal.",
+          "dependencies": [],
+          "details": "Ensure the form fields are user-friendly and align with the overall design of the TaskMaster Kanban Web Application.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 2,
+          "title": "Implement Data Binding and Initial Value Population",
+          "description": "Set up data binding for the form fields to ensure they reflect the current task properties and populate initial values when the modal is opened.",
+          "dependencies": [
+            1
+          ],
+          "details": "Use the existing data model to bind task properties to the form fields and ensure that any changes are reflected in the task data.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 3,
+          "title": "Add Field Validation and Formatting",
+          "description": "Implement validation rules and formatting for the form fields to ensure data integrity and user input accuracy.",
+          "dependencies": [
+            2
+          ],
+          "details": "Include checks for required fields, valid data types, and appropriate formatting for each task property.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+        "fileName": "prd_kanban_webapp.md",
+        "parsedDate": "2025-06-02T21:47:10.025Z",
+        "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+        "fileSize": 21070
+      }
+    },
+    {
+      "id": 76,
+      "title": "Integrate Tiptap Rich Text Editor for Task Details and Description",
+      "description": "Integrate the Tiptap rich text editor for the task details and description fields within the modal.",
+      "details": "Install `tiptap` and its React integration (`@tiptap/react`). Replace standard textareas for `description` and `details` fields in the `TaskModal` with the Tiptap editor component. Configure a basic set of extensions (e.g., `StarterKit` for bold, italic, lists). Ensure the editor can load existing content and emit updated content.",
+      "testStrategy": "Open the task modal. Verify that the rich text editor loads for the description and details fields. Type some text, apply formatting (bold, italic), and create lists. Ensure the formatting is applied correctly within the editor.",
+      "priority": "high",
+      "dependencies": [
+        75
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Install and Configure Tiptap with Essential Extensions",
+          "description": "Set up the Tiptap rich text editor and configure it with necessary extensions for the TaskMaster Kanban Web Application.",
+          "dependencies": [],
+          "details": "Ensure Tiptap is installed and configured with extensions like Bold, Italic, and Link to meet the PRD requirements.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 2,
+          "title": "Create Rich Text Editor Component with Toolbar",
+          "description": "Develop a reusable component for the rich text editor, including a toolbar for text formatting options.",
+          "dependencies": [
+            1
+          ],
+          "details": "Design and implement a component that integrates Tiptap with a customizable toolbar for user interactions.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 3,
+          "title": "Implement Content Serialization and Deserialization",
+          "description": "Enable the conversion of editor content to and from a storable format.",
+          "dependencies": [
+            2
+          ],
+          "details": "Ensure that the rich text content can be serialized to JSON for storage and deserialized back into the editor.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 4,
+          "title": "Add Editor Styling and Responsive Design",
+          "description": "Apply styles to the rich text editor to ensure it is visually appealing and responsive.",
+          "dependencies": [
+            2
+          ],
+          "details": "Implement CSS styling to match the application's design guidelines and ensure the editor is responsive across devices.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+        "fileName": "prd_kanban_webapp.md",
+        "parsedDate": "2025-06-02T21:47:10.025Z",
+        "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+        "fileSize": 21070
+      }
+    },
+    {
+      "id": 77,
+      "title": "Create Task Update API Endpoints",
+      "description": "Create API endpoints for updating all properties of a specific task.",
+      "details": "Implement a PUT endpoint at `/api/v1/tasks/:id`. This endpoint should accept a JSON payload containing all editable task properties. Use the TaskMaster core integration to update the task in `tasks.json`. Ensure robust validation for all incoming fields and handle potential errors during file write operations.",
+      "testStrategy": "Use Postman or `curl` to send PUT requests with various task updates (e.g., changing title, description, priority). Verify that `tasks.json` is updated correctly and that the API returns the updated task or a success message. Test with invalid data to ensure validation works.",
+      "priority": "high",
+      "dependencies": [
+        63
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create PUT/PATCH Endpoints for Task Content Updates",
+          "description": "Develop API endpoints to handle updates to task content, allowing users to modify task details using PUT or PATCH requests.",
+          "dependencies": [],
+          "details": "Design and implement the necessary API routes and handlers to support task content updates. Ensure the endpoints are RESTful and adhere to the application's existing API structure.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 2,
+          "title": "Implement Validation for Task Data and Rich Text Content",
+          "description": "Ensure that all task data, including rich text content, is validated before being processed by the API.",
+          "dependencies": [
+            1
+          ],
+          "details": "Develop validation logic to check for data integrity and compliance with the application's data model. This includes validating text formatting, length, and any other constraints defined in the PRD.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 3,
+          "title": "Add Versioning and Conflict Resolution for Concurrent Updates",
+          "description": "Implement a system to handle versioning of task updates and resolve conflicts when multiple updates occur simultaneously.",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "Design a mechanism to track changes to tasks and manage version history. Implement conflict resolution strategies to ensure data consistency and integrity when concurrent updates are detected.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+        "fileName": "prd_kanban_webapp.md",
+        "parsedDate": "2025-06-02T21:47:10.025Z",
+        "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+        "fileSize": 21070
+      }
+    },
+    {
+      "id": 78,
+      "title": "Implement Form Validation and Error Handling for Task Updates",
+      "description": "Implement form validation and error handling for task updates within the modal.",
+      "details": "Add client-side validation to the `TaskModal` form before submitting updates to the API. For example, ensure the title is not empty. Display clear error messages to the user if validation fails. Implement error handling for API responses, showing user-friendly messages for network errors or backend validation failures.",
+      "testStrategy": "Attempt to save a task with invalid data (e.g., empty title). Verify that client-side validation prevents submission and displays an error. Simulate an API error (e.g., by temporarily disabling the backend) and verify that the frontend handles it gracefully and informs the user.",
+      "priority": "medium",
+      "dependencies": [
+        76,
+        77
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Form Validation Schemas and Rules",
+          "description": "Develop the validation schemas and rules for the TaskModal form to ensure data integrity before submission.",
+          "dependencies": [],
+          "details": "Use a library like Yup to define validation schemas for the form fields. Ensure that the title field is required and not empty. Define additional rules as necessary based on the form's requirements.",
+          "status": "pending",
+          "testStrategy": "Write unit tests to verify that the validation rules correctly identify invalid input and allow valid input.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 2,
+          "title": "Implement Real-Time Validation Feedback",
+          "description": "Add real-time validation feedback to the TaskModal form to provide immediate user feedback on input errors.",
+          "dependencies": [
+            1
+          ],
+          "details": "Integrate the validation schemas with the form using a library like Formik. Display error messages next to the form fields as the user types, updating in real-time based on the validation results.",
+          "status": "pending",
+          "testStrategy": "Test the form in the browser to ensure that error messages appear and disappear correctly as the user interacts with the form.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 3,
+          "title": "Add Error Boundary Components for Error Handling",
+          "description": "Implement error boundary components to catch and handle errors gracefully within the TaskModal component.",
+          "dependencies": [],
+          "details": "Create a React error boundary component that wraps the TaskModal. Ensure it catches any rendering errors and displays a fallback UI to the user.",
+          "status": "pending",
+          "testStrategy": "Simulate errors in the TaskModal to verify that the error boundary catches them and displays the fallback UI.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 4,
+          "title": "Create User-Friendly Error Messages and Recovery Options",
+          "description": "Develop user-friendly error messages and provide recovery options for both client-side validation errors and API response errors.",
+          "dependencies": [
+            1,
+            2,
+            3
+          ],
+          "details": "Design clear and concise error messages for validation errors. For API errors, display messages that explain the issue and suggest possible recovery actions, such as retrying the operation.",
+          "status": "pending",
+          "testStrategy": "Test various error scenarios to ensure that the messages are displayed correctly and that recovery options are functional.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+        "fileName": "prd_kanban_webapp.md",
+        "parsedDate": "2025-06-02T21:47:10.025Z",
+        "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+        "fileSize": 21070
+      }
+    },
+    {
+      "id": 79,
+      "title": "Add Save/Cancel Functionality with Optimistic UI Updates",
+      "description": "Add save and cancel functionality to the task detail modal, including optimistic UI updates.",
+      "details": "Implement 'Save' and 'Cancel' buttons in the `TaskModal`. On 'Save', trigger the API call to update the task. Implement optimistic UI updates: immediately reflect changes in the frontend after 'Save' is clicked, and only revert if the API call fails. On 'Cancel', discard any unsaved changes and close the modal.",
+      "testStrategy": "Open a task modal, make changes, and click 'Save'. Verify that the changes are immediately reflected on the Kanban board. Then, simulate an API failure and verify that the changes are reverted on the frontend. Test 'Cancel' to ensure changes are discarded.",
+      "priority": "high",
+      "dependencies": [
+        78
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Save/Cancel Button Components",
+          "description": "Develop the 'Save' and 'Cancel' button components for the TaskModal with appropriate states.",
+          "dependencies": [],
+          "details": "Design and implement reusable button components for 'Save' and 'Cancel'. Ensure they have states for default, hover, active, and disabled. Integrate these buttons into the TaskModal.",
+          "status": "pending",
+          "testStrategy": "Verify button states visually and ensure they trigger the correct events when clicked.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 2,
+          "title": "Implement Optimistic UI Updates",
+          "description": "Enable immediate UI updates upon clicking 'Save', reflecting changes optimistically before API confirmation.",
+          "dependencies": [
+            1
+          ],
+          "details": "On 'Save' button click, update the UI to reflect changes immediately. Use a temporary state to hold these changes and revert them only if the API call fails.",
+          "status": "pending",
+          "testStrategy": "Simulate API success and failure scenarios to ensure UI updates correctly and reverts on failure.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 3,
+          "title": "Manage Form State and Dirty Checking",
+          "description": "Implement form state management and dirty checking to track unsaved changes in the TaskModal.",
+          "dependencies": [
+            1
+          ],
+          "details": "Use a state management library or custom hooks to track form changes. Implement dirty checking to determine if there are unsaved changes when the modal is closed.",
+          "status": "pending",
+          "testStrategy": "Test with various form inputs to ensure dirty state is accurately detected.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 4,
+          "title": "Add Confirmation Dialog for Unsaved Changes",
+          "description": "Prompt the user with a confirmation dialog if they attempt to close the modal with unsaved changes.",
+          "dependencies": [
+            3
+          ],
+          "details": "Integrate a modal or dialog component that triggers when unsaved changes are detected and the user attempts to close the TaskModal. Provide options to discard changes or continue editing.",
+          "status": "pending",
+          "testStrategy": "Attempt to close the modal with and without changes to verify the dialog appears correctly.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 5,
+          "title": "Implement Auto-Save with Debouncing",
+          "description": "Add an auto-save feature that saves changes automatically after a delay, using debouncing to prevent excessive API calls.",
+          "dependencies": [
+            2,
+            3
+          ],
+          "details": "Implement a debounced function that triggers the save operation after a specified delay when changes are detected. Ensure this function is efficient and does not trigger unnecessary API calls.",
+          "status": "pending",
+          "testStrategy": "Modify form inputs and observe the auto-save behavior, ensuring it triggers correctly and respects the debounce delay.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+        "fileName": "prd_kanban_webapp.md",
+        "parsedDate": "2025-06-02T21:47:10.025Z",
+        "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+        "fileSize": 21070
+      }
+    },
+    {
+      "id": 80,
+      "title": "Implement Responsive Design for Mobile and Tablet Devices",
+      "description": "Implement responsive design principles to ensure the Kanban board and task details are usable on mobile and tablet devices.",
+      "details": "Utilize Tailwind CSS responsive utilities (e.g., `sm:`, `md:`, `lg:`) to adjust column layouts, font sizes, and component spacing for different screen sizes. For smaller screens, consider stacking Kanban columns vertically or implementing a horizontal scroll. Ensure the `TaskModal` is fully responsive and readable on mobile.",
+      "testStrategy": "Use browser developer tools to simulate various mobile and tablet screen sizes. Verify that the Kanban board layout adapts gracefully, tasks are readable, and the drag-and-drop functionality remains usable. Ensure the task detail modal is fully functional and well-formatted on small screens.",
+      "priority": "medium",
+      "dependencies": [
+        66,
+        74
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Responsive Breakpoints and Mobile-First CSS",
+          "description": "Develop responsive breakpoints and implement mobile-first CSS to ensure the application adapts to various screen sizes.",
+          "dependencies": [],
+          "details": "Define breakpoints for common device widths and apply CSS styles that prioritize mobile devices first, then scale up for larger screens.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 2,
+          "title": "Adapt Kanban Board Layout for Smaller Screens",
+          "description": "Modify the Kanban board layout to be user-friendly and functional on smaller screens such as mobile phones and tablets.",
+          "dependencies": [
+            1
+          ],
+          "details": "Ensure that columns and cards are easily navigable and readable on smaller screens, possibly by stacking columns vertically or using a carousel approach.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 3,
+          "title": "Optimize Touch Interactions for Mobile Devices",
+          "description": "Enhance touch interactions to improve user experience on mobile devices.",
+          "dependencies": [
+            2
+          ],
+          "details": "Implement touch-friendly gestures such as swipe to scroll, drag-and-drop for cards, and tap to open details, ensuring smooth and responsive interactions.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 4,
+          "title": "Test and Refine Responsive Behavior Across Devices",
+          "description": "Conduct thorough testing of the responsive design on various devices and refine as necessary.",
+          "dependencies": [
+            3
+          ],
+          "details": "Use a range of devices and emulators to test the application's responsiveness, identifying and fixing any layout or interaction issues.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+        "fileName": "prd_kanban_webapp.md",
+        "parsedDate": "2025-06-02T21:47:10.025Z",
+        "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+        "fileSize": 21070
+      }
+    },
+    {
+      "id": 81,
+      "title": "Add Loading States, Error Boundaries, and User Feedback Systems",
+      "description": "Add loading states, error boundaries, and user feedback systems (e.g., toast notifications) for a better user experience.",
+      "details": "Implement loading indicators (e.g., spinners) for API calls and data fetching. Use React Error Boundaries to gracefully handle unexpected errors in components and display fallback UI. Integrate a toast notification library (e.g., `react-hot-toast` or shadcn/ui's `Toast`) to provide ephemeral feedback for successful operations, warnings, and errors.",
+      "testStrategy": "Simulate slow network conditions to verify loading states appear. Introduce a controlled error in a component to test the error boundary. Trigger various actions (e.g., saving a task, failing an API call) and verify that appropriate toast notifications are displayed to the user.",
+      "priority": "medium",
+      "dependencies": [
+        79
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Loading Spinner and Skeleton Components",
+          "description": "Develop reusable loading spinner and skeleton components to enhance user experience during data fetching.",
+          "dependencies": [],
+          "details": "Design and implement loading spinner and skeleton components that can be used across the application to indicate loading states.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 2,
+          "title": "Implement React Error Boundaries",
+          "description": "Add React error boundaries to handle errors gracefully and prevent the application from crashing.",
+          "dependencies": [],
+          "details": "Implement error boundaries in key components to catch JavaScript errors anywhere in their child component tree, log those errors, and display a fallback UI.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 3,
+          "title": "Add Toast Notifications for User Feedback",
+          "description": "Integrate a toast notification system to provide users with feedback on their actions and system events.",
+          "dependencies": [],
+          "details": "Implement a toast notification library to display messages for successful operations, errors, and other important events.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 4,
+          "title": "Create Loading States for All Async Operations",
+          "description": "Ensure all asynchronous operations have appropriate loading states to inform users of ongoing processes.",
+          "dependencies": [
+            1
+          ],
+          "details": "Review all asynchronous operations in the application and apply loading states using the previously created spinner and skeleton components.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+        "fileName": "prd_kanban_webapp.md",
+        "parsedDate": "2025-06-02T21:47:10.025Z",
+        "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+        "fileSize": 21070
+      }
+    },
+    {
+      "id": 82,
+      "title": "Optimize Build Process and Create Production Deployment Scripts",
+      "description": "Optimize the build process for the React application and Node.js server, and create production deployment scripts.",
+      "details": "For the React frontend, ensure Vite is configured for optimal production builds (e.g., minification, tree-shaking). For the Node.js backend, ensure `package.json` includes a `start` script that runs the compiled JavaScript (e.g., `node dist/server.js`). Create a comprehensive `build` script that builds both frontend and backend sequentially.",
+      "testStrategy": "Run the production `build` script. Verify that optimized static files are generated for the frontend and compiled JavaScript for the backend. Serve the built application locally (e.g., using `serve` for static files and `node dist/server.js` for backend) and verify all functionalities work as expected in a production-like environment.",
+      "priority": "medium",
+      "dependencies": [
+        65
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Configure Vite Build Optimization and Code Splitting",
+          "description": "Optimize the build process by configuring Vite for code splitting and other performance enhancements.",
+          "dependencies": [],
+          "details": "Review the current Vite configuration and implement code splitting and other optimizations to improve build performance and application load times.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 2,
+          "title": "Set Up Production Environment Variables and Configuration",
+          "description": "Establish a robust configuration for production environment variables to ensure smooth deployment.",
+          "dependencies": [
+            1
+          ],
+          "details": "Define and document all necessary environment variables for production. Ensure that sensitive information is handled securely and that the configuration aligns with the PRD requirements.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 3,
+          "title": "Create Deployment Scripts and CI/CD Pipeline Setup",
+          "description": "Develop deployment scripts and set up a CI/CD pipeline for automated production deployments.",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "Write scripts to automate the deployment process and configure a CI/CD pipeline to streamline production deployments. Ensure the pipeline includes steps for building, testing, and deploying the application.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+        "fileName": "prd_kanban_webapp.md",
+        "parsedDate": "2025-06-02T21:47:10.025Z",
+        "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+        "fileSize": 21070
+      }
+    },
+    {
+      "id": 83,
+      "title": "Create Comprehensive Documentation and Setup Instructions",
+      "description": "Create comprehensive documentation including setup instructions, build process, and usage guidelines for the TaskMaster Kanban Web Application.",
+      "details": "Develop a `README.md` file at the root of the project. Include sections for project overview, technology stack, setup instructions (prerequisites, installation steps for both frontend and backend), development scripts, build process, and how to use the application. Add troubleshooting tips and future enhancements.",
+      "testStrategy": "Have a new developer or team member follow the documentation to set up and run the application from scratch. Verify that all steps are clear, accurate, and lead to a working application. Ensure all key features and functionalities are explained.",
+      "priority": "medium",
+      "dependencies": [
+        82
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create README with Setup and Installation Instructions",
+          "description": "Develop a comprehensive README file that includes detailed setup and installation instructions for the TaskMaster Kanban Web Application.",
+          "dependencies": [],
+          "details": "The README should cover prerequisites, installation steps, and initial configuration to get the application running.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 2,
+          "title": "Write API Documentation and Usage Examples",
+          "description": "Document the API endpoints of the TaskMaster Kanban Web Application, including usage examples and expected responses.",
+          "dependencies": [
+            1
+          ],
+          "details": "Include detailed descriptions of each API endpoint, parameters, request/response formats, and example usage scenarios.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 3,
+          "title": "Create User Guide and Troubleshooting Documentation",
+          "description": "Develop a user guide that explains how to use the TaskMaster Kanban Web Application, along with troubleshooting tips for common issues.",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "The user guide should include step-by-step instructions for common tasks and a troubleshooting section for resolving frequent problems.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+        "fileName": "prd_kanban_webapp.md",
+        "parsedDate": "2025-06-02T21:47:10.025Z",
+        "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+        "fileSize": 21070
       }
     }
   ]
