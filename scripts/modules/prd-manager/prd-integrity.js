@@ -1,10 +1,13 @@
 import fs from 'fs';
 import path from 'path';
-import { 
-    readPrdsMetadata, 
+import {
+    readPrdsMetadata,
     writePrdsMetadata,
     calculateFileHash,
-    getFileSize
+    getFileSize,
+    getPRDsJsonPath,
+    getPRDStatusDirectory,
+    getTasksJsonPath
 } from './prd-utils.js';
 import { readJSON, log } from '../utils.js';
 
@@ -15,20 +18,34 @@ import { readJSON, log } from '../utils.js';
  */
 function checkPrdFileIntegrity(prd) {
     const issues = [];
-    
+
     try {
-        // Check if file exists
+        // Try to resolve the correct file path
+        let actualFilePath = prd.filePath;
+
+        // If the file doesn't exist at the recorded path, try to find it in the new structure
         if (!fs.existsSync(prd.filePath)) {
-            issues.push({
-                type: 'missing_file',
-                message: `PRD file not found: ${prd.filePath}`,
-                severity: 'error'
-            });
-            return { valid: false, issues };
+            // Extract status and filename from the old path
+            const pathParts = prd.filePath.split(/[\/\\]/);
+            const fileName = pathParts[pathParts.length - 1];
+            const status = pathParts[pathParts.length - 2];
+
+            // Try the new directory structure
+            const newPath = path.join(getPRDStatusDirectory(status), fileName);
+            if (fs.existsSync(newPath)) {
+                actualFilePath = newPath;
+            } else {
+                issues.push({
+                    type: 'missing_file',
+                    message: `PRD file not found: ${prd.filePath}`,
+                    severity: 'error'
+                });
+                return { valid: false, issues };
+            }
         }
 
         // Check file hash
-        const currentHash = calculateFileHash(prd.filePath);
+        const currentHash = calculateFileHash(actualFilePath);
         if (currentHash !== prd.fileHash) {
             issues.push({
                 type: 'hash_mismatch',
@@ -40,7 +57,7 @@ function checkPrdFileIntegrity(prd) {
         }
 
         // Check file size
-        const currentSize = getFileSize(prd.filePath);
+        const currentSize = getFileSize(actualFilePath);
         if (currentSize !== prd.fileSize) {
             issues.push({
                 type: 'size_mismatch',
@@ -84,13 +101,7 @@ function checkPrdFileIntegrity(prd) {
  * @returns {string} Expected directory path
  */
 function getStatusDirectory(status) {
-    const statusDirs = {
-        'pending': 'prd/pending',
-        'in-progress': 'prd/in-progress',
-        'done': 'prd/done',
-        'archived': 'prd/archived'
-    };
-    return statusDirs[status] || 'prd/pending';
+    return getPRDStatusDirectory(status);
 }
 
 /**
@@ -99,13 +110,16 @@ function getStatusDirectory(status) {
  * @param {string} prdsPath - Path to prds.json
  * @returns {Object} Consistency check result
  */
-function checkTaskPrdLinkingConsistency(tasksPath = 'tasks/tasks.json', prdsPath = 'prd/prds.json') {
+function checkTaskPrdLinkingConsistency(tasksPath = null, prdsPath = null) {
     const issues = [];
     
     try {
         // Read tasks and PRDs data
-        const tasksData = readJSON(tasksPath);
-        const prdsData = readPrdsMetadata(prdsPath);
+        const resolvedTasksPath = tasksPath || getTasksJsonPath();
+        const resolvedPrdsPath = prdsPath || getPRDsJsonPath();
+
+        const tasksData = readJSON(resolvedTasksPath);
+        const prdsData = readPrdsMetadata(resolvedPrdsPath);
         
         if (!tasksData || !tasksData.tasks) {
             issues.push({
@@ -118,9 +132,13 @@ function checkTaskPrdLinkingConsistency(tasksPath = 'tasks/tasks.json', prdsPath
 
         // Check each PRD's linked tasks
         for (const prd of prdsData.prds) {
-            for (const taskId of prd.linkedTaskIds) {
+            // Use linkedTasks if it exists and has data, otherwise use linkedTaskIds
+            const linkedTaskIds = (prd.linkedTasks && prd.linkedTasks.length > 0) ?
+                                  prd.linkedTasks : prd.linkedTaskIds || [];
+
+            for (const taskId of linkedTaskIds) {
                 const task = tasksData.tasks.find(t => t.id === taskId || t.id === Number(taskId));
-                
+
                 if (!task) {
                     issues.push({
                         type: 'orphaned_task_link',
@@ -158,15 +176,21 @@ function checkTaskPrdLinkingConsistency(tasksPath = 'tasks/tasks.json', prdsPath
                         taskId: task.id,
                         prdFileName: task.prdSource.fileName
                     });
-                } else if (!prd.linkedTaskIds.includes(task.id) && 
-                          !prd.linkedTaskIds.includes(String(task.id))) {
-                    issues.push({
-                        type: 'missing_task_link',
-                        message: `PRD ${prd.id} missing link to task ${task.id}`,
-                        severity: 'warning',
-                        prdId: prd.id,
-                        taskId: task.id
-                    });
+                } else {
+                    // Use linkedTasks if it exists and has data, otherwise use linkedTaskIds
+                    const linkedTaskIds = (prd.linkedTasks && prd.linkedTasks.length > 0) ?
+                                          prd.linkedTasks : prd.linkedTaskIds || [];
+
+                    if (!linkedTaskIds.includes(task.id) &&
+                        !linkedTaskIds.includes(String(task.id))) {
+                        issues.push({
+                            type: 'missing_task_link',
+                            message: `PRD ${prd.id} missing link to task ${task.id}`,
+                            severity: 'warning',
+                            prdId: prd.id,
+                            taskId: task.id
+                        });
+                    }
                 }
             }
         }
@@ -192,10 +216,13 @@ function checkTaskPrdLinkingConsistency(tasksPath = 'tasks/tasks.json', prdsPath
  * @param {string} prdsPath - Path to prds.json
  * @returns {Object} Update result
  */
-function updatePrdTaskStatistics(prdId, tasksPath = 'tasks/tasks.json', prdsPath = 'prd/prds.json') {
+function updatePrdTaskStatistics(prdId, tasksPath = null, prdsPath = null) {
     try {
-        const tasksData = readJSON(tasksPath);
-        const prdsData = readPrdsMetadata(prdsPath);
+        const resolvedTasksPath = tasksPath || getTasksJsonPath();
+        const resolvedPrdsPath = prdsPath || getPRDsJsonPath();
+
+        const tasksData = readJSON(resolvedTasksPath);
+        const prdsData = readPrdsMetadata(resolvedPrdsPath);
         
         const prd = prdsData.prds.find(p => p.id === prdId);
         if (!prd) {
@@ -205,10 +232,13 @@ function updatePrdTaskStatistics(prdId, tasksPath = 'tasks/tasks.json', prdsPath
             };
         }
 
-        // Get linked tasks
-        const linkedTasks = tasksData.tasks.filter(task => 
-            prd.linkedTaskIds.includes(task.id) || 
-            prd.linkedTaskIds.includes(String(task.id))
+        // Get linked tasks - use linkedTasks if it exists and has data, otherwise use linkedTaskIds
+        const linkedTaskIds = (prd.linkedTasks && prd.linkedTasks.length > 0) ?
+                              prd.linkedTasks : prd.linkedTaskIds || [];
+
+        const linkedTasks = tasksData.tasks.filter(task =>
+            linkedTaskIds.includes(task.id) ||
+            linkedTaskIds.includes(String(task.id))
         );
 
         // Calculate statistics
@@ -230,7 +260,7 @@ function updatePrdTaskStatistics(prdId, tasksPath = 'tasks/tasks.json', prdsPath
         prdsData.prds[prdIndex].lastModified = new Date().toISOString();
 
         // Write back to file
-        writePrdsMetadata(prdsData, prdsPath);
+        writePrdsMetadata(prdsData, resolvedPrdsPath);
 
         log('info', `Updated task statistics for PRD ${prdId}: ${stats.completionPercentage}% complete`);
         return {
@@ -253,7 +283,7 @@ function updatePrdTaskStatistics(prdId, tasksPath = 'tasks/tasks.json', prdsPath
  * @param {string} prdsPath - Path to prds.json
  * @returns {Object} Comprehensive integrity report
  */
-function performIntegrityCheck(tasksPath = 'tasks/tasks.json', prdsPath = 'prd/prds.json') {
+function performIntegrityCheck(tasksPath = null, prdsPath = null) {
     const report = {
         timestamp: new Date().toISOString(),
         overall: { valid: true, errorCount: 0, warningCount: 0 },
@@ -263,7 +293,10 @@ function performIntegrityCheck(tasksPath = 'tasks/tasks.json', prdsPath = 'prd/p
     };
 
     try {
-        const prdsData = readPrdsMetadata(prdsPath);
+        const resolvedTasksPath = tasksPath || getTasksJsonPath();
+        const resolvedPrdsPath = prdsPath || getPRDsJsonPath();
+
+        const prdsData = readPrdsMetadata(resolvedPrdsPath);
 
         // Check file integrity for each PRD
         for (const prd of prdsData.prds) {
@@ -282,7 +315,7 @@ function performIntegrityCheck(tasksPath = 'tasks/tasks.json', prdsPath = 'prd/p
         }
 
         // Check task-PRD linking consistency
-        const linkingCheck = checkTaskPrdLinkingConsistency(tasksPath, prdsPath);
+        const linkingCheck = checkTaskPrdLinkingConsistency(resolvedTasksPath, resolvedPrdsPath);
         report.linkingConsistency = linkingCheck;
 
         const linkingErrors = linkingCheck.issues.filter(i => i.severity === 'error').length;

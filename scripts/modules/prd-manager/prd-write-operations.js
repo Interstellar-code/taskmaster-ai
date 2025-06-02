@@ -16,7 +16,7 @@ import { log } from '../utils.js';
  * @param {string} prdsPath - Path to prds.json file
  * @returns {Object} Result with success flag and data/error
  */
-function addPrd(prdData, prdsPath = 'prd/prds.json') {
+function addPrd(prdData, prdsPath = null) {
     try {
         // Validate the PRD data
         const validation = validatePrdMetadata(prdData);
@@ -67,7 +67,7 @@ function addPrd(prdData, prdsPath = 'prd/prds.json') {
  * @param {string} prdsPath - Path to prds.json file
  * @returns {Object} Result with success flag and data/error
  */
-function updatePrd(prdId, updateData, prdsPath = 'prd/prds.json') {
+function updatePrd(prdId, updateData, prdsPath = null) {
     try {
         // Read existing PRDs metadata
         const prdsData = readPrdsMetadata(prdsPath);
@@ -124,7 +124,7 @@ function updatePrd(prdId, updateData, prdsPath = 'prd/prds.json') {
  * @param {string} prdsPath - Path to prds.json file
  * @returns {Object} Result with success flag and data/error
  */
-function removePrd(prdId, prdsPath = 'prd/prds.json') {
+function removePrd(prdId, prdsPath = null) {
     try {
         // Read existing PRDs metadata
         const prdsData = readPrdsMetadata(prdsPath);
@@ -165,7 +165,7 @@ function removePrd(prdId, prdsPath = 'prd/prds.json') {
  * @param {string} prdsPath - Path to prds.json file
  * @returns {Object} Result with success flag and data/error
  */
-function updatePrdStatus(prdId, newStatus, prdsPath = 'prd/prds.json') {
+function updatePrdStatus(prdId, newStatus, prdsPath = null) {
     const validStatuses = ['pending', 'in-progress', 'done', 'archived'];
     
     if (!validStatuses.includes(newStatus)) {
@@ -185,7 +185,7 @@ function updatePrdStatus(prdId, newStatus, prdsPath = 'prd/prds.json') {
  * @param {string} prdsPath - Path to prds.json file
  * @returns {Object} Result with success flag and data/error
  */
-function addTaskToPrd(prdId, taskId, prdsPath = 'prd/prds.json') {
+function addTaskToPrd(prdId, taskId, prdsPath = null) {
     try {
         // Read existing PRDs metadata
         const prdsData = readPrdsMetadata(prdsPath);
@@ -229,7 +229,7 @@ function addTaskToPrd(prdId, taskId, prdsPath = 'prd/prds.json') {
  * @param {string} prdsPath - Path to prds.json file
  * @returns {Object} Result with success flag and data/error
  */
-function removeTaskFromPrd(prdId, taskId, prdsPath = 'prd/prds.json') {
+function removeTaskFromPrd(prdId, taskId, prdsPath = null) {
     try {
         // Read existing PRDs metadata
         const prdsData = readPrdsMetadata(prdsPath);
@@ -267,7 +267,7 @@ function removeTaskFromPrd(prdId, taskId, prdsPath = 'prd/prds.json') {
  * @param {string} prdsPath - Path to prds.json file
  * @returns {Object} Result with success flag and data/error
  */
-function createPrdFromFile(filePath, additionalData = {}, prdsPath = 'prd/prds.json') {
+function createPrdFromFile(filePath, additionalData = {}, prdsPath = null) {
     try {
         if (!fs.existsSync(filePath)) {
             return {

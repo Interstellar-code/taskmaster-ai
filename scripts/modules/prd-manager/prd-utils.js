@@ -4,6 +4,58 @@ import crypto from 'crypto';
 import { z } from 'zod';
 import { readJSON, writeJSON, log } from '../utils.js';
 
+/**
+ * Get the correct prds.json path based on the new directory structure
+ * @param {string} projectRoot - Project root directory (optional, defaults to current working directory)
+ * @returns {string} - Path to prds.json file
+ */
+function getPRDsJsonPath(projectRoot = process.cwd()) {
+    // Try new structure first
+    const newPath = path.join(projectRoot, '.taskmaster', 'prd', 'prds.json');
+    if (fs.existsSync(newPath)) {
+        return newPath;
+    }
+
+    // Fall back to old structure
+    const oldPath = path.join(projectRoot, 'prd', 'prds.json');
+    return oldPath;
+}
+
+/**
+ * Get the correct PRD directory path based on status and directory structure
+ * @param {string} status - PRD status (pending, in-progress, done, archived)
+ * @param {string} projectRoot - Project root directory (optional, defaults to current working directory)
+ * @returns {string} - Path to PRD status directory
+ */
+function getPRDStatusDirectory(status, projectRoot = process.cwd()) {
+    // Try new structure first
+    const newBasePath = path.join(projectRoot, '.taskmaster', 'prd');
+    if (fs.existsSync(newBasePath)) {
+        return path.join(newBasePath, status);
+    }
+
+    // Fall back to old structure
+    const oldBasePath = path.join(projectRoot, 'prd');
+    return path.join(oldBasePath, status);
+}
+
+/**
+ * Get the correct tasks.json path based on the new directory structure
+ * @param {string} projectRoot - Project root directory (optional, defaults to current working directory)
+ * @returns {string} - Path to tasks.json file
+ */
+function getTasksJsonPath(projectRoot = process.cwd()) {
+    // Try new structure first
+    const newPath = path.join(projectRoot, '.taskmaster', 'tasks', 'tasks.json');
+    if (fs.existsSync(newPath)) {
+        return newPath;
+    }
+
+    // Fall back to old structure
+    const oldPath = path.join(projectRoot, 'tasks', 'tasks.json');
+    return oldPath;
+}
+
 // Define Zod schema for task statistics
 const taskStatsSchema = z.object({
     totalTasks: z.number().int().min(0).default(0),
@@ -99,12 +151,13 @@ function getFileSize(filePath) {
 
 /**
  * Generate unique sequential PRD ID
- * @param {string} prdsPath - Path to prds.json
+ * @param {string} prdsPath - Path to prds.json (optional, will auto-resolve if not provided)
  * @returns {string} Unique sequential PRD ID (e.g., prd_001, prd_002)
  */
-function generatePrdId(prdsPath = 'prd/prds.json') {
+function generatePrdId(prdsPath = null) {
     try {
-        const prdsData = readPrdsMetadata(prdsPath);
+        const resolvedPath = prdsPath || getPRDsJsonPath();
+        const prdsData = readPrdsMetadata(resolvedPath);
 
         // Find the highest existing PRD number
         let maxNumber = 0;
@@ -139,12 +192,13 @@ function isValidPrdId(prdId) {
 
 /**
  * Read PRDs metadata from prds.json
- * @param {string} prdsPath - Path to prds.json file
+ * @param {string} prdsPath - Path to prds.json file (optional, will auto-resolve if not provided)
  * @returns {Object} PRDs metadata object
  */
-function readPrdsMetadata(prdsPath = 'prd/prds.json') {
+function readPrdsMetadata(prdsPath = null) {
     try {
-        const data = readJSON(prdsPath);
+        const resolvedPath = prdsPath || getPRDsJsonPath();
+        const data = readJSON(resolvedPath);
         if (!data) {
             // Return default structure if file doesn't exist
             return {
@@ -156,7 +210,7 @@ function readPrdsMetadata(prdsPath = 'prd/prds.json') {
                 }
             };
         }
-        
+
         // Validate with Zod schema
         const validationResult = prdsMetadataSchema.safeParse(data);
         if (!validationResult.success) {
@@ -176,15 +230,17 @@ function readPrdsMetadata(prdsPath = 'prd/prds.json') {
  * @param {Object} prdsData - PRDs metadata object
  * @param {string} prdsPath - Path to prds.json file
  */
-function writePrdsMetadata(prdsData, prdsPath = 'prd/prds.json') {
+function writePrdsMetadata(prdsData, prdsPath = null) {
     try {
+        const resolvedPath = prdsPath || getPRDsJsonPath();
+
         // Validate with Zod schema before writing
         const validationResult = prdsMetadataSchema.safeParse(prdsData);
         if (!validationResult.success) {
             log('error', 'PRDs metadata validation failed before write:', validationResult.error.message);
             throw new Error(`Invalid PRDs metadata structure: ${validationResult.error.message}`);
         }
-        
+
         // Update metadata
         const dataToWrite = {
             ...validationResult.data,
@@ -194,11 +250,17 @@ function writePrdsMetadata(prdsData, prdsPath = 'prd/prds.json') {
                 totalPrds: validationResult.data.prds.length
             }
         };
-        
-        writeJSON(prdsPath, dataToWrite);
-        log('info', `Successfully wrote PRDs metadata to ${prdsPath}`);
+
+        // Ensure directory exists
+        const dir = path.dirname(resolvedPath);
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+        }
+
+        writeJSON(resolvedPath, dataToWrite);
+        log('info', `Successfully wrote PRDs metadata to ${resolvedPath}`);
     } catch (error) {
-        log('error', `Error writing PRDs metadata to ${prdsPath}:`, error.message);
+        log('error', `Error writing PRDs metadata to ${prdsPath || 'auto-resolved path'}:`, error.message);
         throw error;
     }
 }
@@ -252,7 +314,7 @@ function validatePrdsMetadata(prdsData) {
  * @param {string} prdsPath - Path to prds.json file
  * @returns {Object} Default PRDs metadata structure
  */
-function initializePrdsMetadata(prdsPath = 'prd/prds.json') {
+function initializePrdsMetadata(prdsPath = null) {
     const defaultStructure = {
         prds: [],
         metadata: {
@@ -315,7 +377,7 @@ function initializePrdsMetadata(prdsPath = 'prd/prds.json') {
  * @param {string} prdsPath - Path to prds.json file
  * @returns {Object|null} PRD metadata object or null if not found
  */
-function findPrdById(prdId, prdsPath = 'prd/prds.json') {
+function findPrdById(prdId, prdsPath = null) {
     try {
         const prdsData = readPrdsMetadata(prdsPath);
         const prd = prdsData.prds.find(p => p.id === prdId);
@@ -332,7 +394,7 @@ function findPrdById(prdId, prdsPath = 'prd/prds.json') {
  * @param {string} prdsPath - Path to prds.json file
  * @returns {Array} Array of PRD metadata objects
  */
-function findPrdsByStatus(status, prdsPath = 'prd/prds.json') {
+function findPrdsByStatus(status, prdsPath = null) {
     try {
         const prdsData = readPrdsMetadata(prdsPath);
         return prdsData.prds.filter(p => p.status === status);
@@ -348,7 +410,7 @@ function findPrdsByStatus(status, prdsPath = 'prd/prds.json') {
  * @param {string} prdsPath - Path to prds.json file
  * @returns {Array} Array of PRD metadata objects
  */
-function findPrdsByFileName(fileName, prdsPath = 'prd/prds.json') {
+function findPrdsByFileName(fileName, prdsPath = null) {
     try {
         const prdsData = readPrdsMetadata(prdsPath);
         return prdsData.prds.filter(p => p.fileName === fileName);
@@ -364,7 +426,7 @@ function findPrdsByFileName(fileName, prdsPath = 'prd/prds.json') {
  * @param {string} prdsPath - Path to prds.json file
  * @returns {Array} Array of PRD metadata objects
  */
-function findPrdsByTaskId(taskId, prdsPath = 'prd/prds.json') {
+function findPrdsByTaskId(taskId, prdsPath = null) {
     try {
         const prdsData = readPrdsMetadata(prdsPath);
         return prdsData.prds.filter(p => {
@@ -385,7 +447,7 @@ function findPrdsByTaskId(taskId, prdsPath = 'prd/prds.json') {
  * @param {string} prdsPath - Path to prds.json file
  * @returns {Array} Array of PRD metadata objects
  */
-function getAllPrds(filters = {}, prdsPath = 'prd/prds.json') {
+function getAllPrds(filters = {}, prdsPath = null) {
     try {
         const prdsData = readPrdsMetadata(prdsPath);
         let prds = prdsData.prds;
@@ -418,7 +480,7 @@ function getAllPrds(filters = {}, prdsPath = 'prd/prds.json') {
  * @param {string} prdsPath - Path to prds.json file
  * @returns {Object} Statistics object
  */
-function getPrdStatistics(prdsPath = 'prd/prds.json') {
+function getPrdStatistics(prdsPath = null) {
     try {
         const prdsData = readPrdsMetadata(prdsPath);
         const prds = prdsData.prds;
@@ -466,6 +528,9 @@ export {
     taskStatsSchema,
     calculateFileHash,
     getFileSize,
+    getPRDsJsonPath,
+    getPRDStatusDirectory,
+    getTasksJsonPath,
     generatePrdId,
     isValidPrdId,
     readPrdsMetadata,

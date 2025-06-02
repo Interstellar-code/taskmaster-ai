@@ -1916,14 +1916,15 @@ async function handlePrdSync(sessionState) {
  */
 async function handlePrdArchive(sessionState) {
     try {
-        // Import the interactive archive function
+        // Import the interactive archive function and path utilities
         const { interactivePrdArchive } = await import('../../scripts/modules/prd-manager/prd-archiving.js');
+        const { getPRDsJsonPath, getTasksJsonPath, getPRDStatusDirectory } = await import('../../scripts/modules/prd-manager/prd-utils.js');
 
-        // Run the interactive archive process
+        // Run the interactive archive process with proper path resolution
         const result = await interactivePrdArchive({
-            prdsPath: 'prd/prds.json',
-            tasksPath: 'tasks/tasks.json',
-            archiveDir: 'prd/archived'
+            prdsPath: getPRDsJsonPath(),
+            tasksPath: getTasksJsonPath(),
+            archiveDir: getPRDStatusDirectory('archived')
         });
 
         if (result.cancelled) {

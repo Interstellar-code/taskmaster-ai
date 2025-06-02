@@ -7,12 +7,15 @@ import fs from 'fs';
 import path from 'path';
 import chalk from 'chalk';
 import Table from 'cli-table3';
-import { 
+import {
     readPrdsMetadata,
     findPrdById,
     findPrdsByStatus,
     getAllPrds,
-    getPrdStatistics
+    getPrdStatistics,
+    getPRDsJsonPath,
+    getPRDStatusDirectory,
+    getTasksJsonPath
 } from './prd-manager/prd-utils.js';
 import { 
     addPrd,
@@ -237,7 +240,7 @@ function syncPrdStatus(prdId, options = {}) {
 
         if (prdId) {
             // Sync specific PRD
-            const result = updatePrdStatusBasedOnTasks(prdId, 'tasks/tasks.json', 'prd/prds.json', {
+            const result = updatePrdStatusBasedOnTasks(prdId, getTasksJsonPath(), getPRDsJsonPath(), {
                 force,
                 dryRun
             });
@@ -254,7 +257,7 @@ function syncPrdStatus(prdId, options = {}) {
             }
         } else {
             // Sync all PRDs
-            const result = updateAllPrdStatuses('tasks/tasks.json', 'prd/prds.json', {
+            const result = updateAllPrdStatuses(getTasksJsonPath(), getPRDsJsonPath(), {
                 force,
                 dryRun
             });
@@ -281,7 +284,7 @@ function organizePrds(options = {}) {
     try {
         const { dryRun = false } = options;
 
-        const result = organizeAllPrdFiles('prd/prds.json', { dryRun });
+        const result = organizeAllPrdFiles(getPRDsJsonPath(), { dryRun });
 
         if (result.success) {
             const action = dryRun ? 'Would organize' : 'Organized';
@@ -606,7 +609,7 @@ async function syncPrdFileMetadataCommand(prdId, options = {}) {
         console.log(chalk.blue('🔄 Syncing PRD file metadata headers...'));
 
         // Read PRDs metadata
-        const prdsData = readPrdsMetadata('prd/prds.json');
+        const prdsData = readPrdsMetadata();
         if (!prdsData || !prdsData.prds) {
             console.error(chalk.red('❌ Failed to read PRDs metadata'));
             return;
@@ -616,7 +619,7 @@ async function syncPrdFileMetadataCommand(prdId, options = {}) {
 
         if (prdId) {
             // Sync specific PRD
-            const prd = findPrdById(prdId, 'prd/prds.json');
+            const prd = findPrdById(prdId);
             if (!prd) {
                 console.error(chalk.red(`❌ PRD not found: ${prdId}`));
                 return;
@@ -642,9 +645,10 @@ async function syncPrdFileMetadataCommand(prdId, options = {}) {
                 let found = false;
 
                 for (const statusDir of statusDirs) {
-                    const possiblePath = path.join('prd', statusDir, prd.fileName);
-                    if (fs.existsSync(possiblePath)) {
-                        filePath = possiblePath;
+                    const possiblePath = getPRDStatusDirectory(statusDir);
+                    const fullPath = path.join(possiblePath, prd.fileName);
+                    if (fs.existsSync(fullPath)) {
+                        filePath = fullPath;
                         found = true;
                         break;
                     }
@@ -704,9 +708,9 @@ async function archivePrdCommand(prdId, options = {}) {
         if (!prdId && interactive) {
             // Interactive mode - show selection interface
             const result = await interactivePrdArchive({
-                prdsPath: 'prd/prds.json',
-                tasksPath: 'tasks/tasks.json',
-                archiveDir: 'prd/archived',
+                prdsPath: getPRDsJsonPath(),
+                tasksPath: getTasksJsonPath(),
+                archiveDir: getPRDStatusDirectory('archived'),
                 force,
                 dryRun
             });
@@ -726,7 +730,7 @@ async function archivePrdCommand(prdId, options = {}) {
 
         if (!prdId) {
             console.error(chalk.red('❌ PRD ID is required when not in interactive mode.'));
-            console.log(chalk.gray('Use --interactive flag for selection interface.'));
+            console.log(chalk.gray('Remove --no-interactive flag for selection interface.'));
             process.exit(1);
         }
 
@@ -734,9 +738,9 @@ async function archivePrdCommand(prdId, options = {}) {
         console.log(chalk.blue(`📦 Archiving PRD ${prdId}...`));
 
         const result = await archivePrd(prdId, {
-            prdsPath: 'prd/prds.json',
-            tasksPath: 'tasks/tasks.json',
-            archiveDir: 'prd/archived',
+            prdsPath: getPRDsJsonPath(),
+            tasksPath: getTasksJsonPath(),
+            archiveDir: getPRDStatusDirectory('archived'),
             force,
             dryRun
         });

@@ -3,11 +3,14 @@ import path from 'path';
 import zlib from 'zlib';
 import { pipeline } from 'stream/promises';
 import { createReadStream, createWriteStream } from 'fs';
-import { 
-    readPrdsMetadata, 
+import {
+    readPrdsMetadata,
     writePrdsMetadata,
     findPrdById,
-    findPrdsByStatus
+    findPrdsByStatus,
+    getPRDsJsonPath,
+    getPRDStatusDirectory,
+    getTasksJsonPath
 } from './prd-utils.js';
 import { 
     getTasksLinkedToPrd 
@@ -26,17 +29,20 @@ import boxen from 'boxen';
  * @param {string} archiveDir - Directory to store the archive
  * @returns {Promise<Object>} Archive creation result
  */
-async function createPrdArchive(prdId, prd, linkedTasks, archiveDir = 'prd/archived') {
+async function createPrdArchive(prdId, prd, linkedTasks, archiveDir = null) {
     try {
+        // Resolve archive directory path
+        const resolvedArchiveDir = archiveDir || getPRDStatusDirectory('archived');
+
         // Ensure archive directory exists
-        if (!fs.existsSync(archiveDir)) {
-            fs.mkdirSync(archiveDir, { recursive: true });
+        if (!fs.existsSync(resolvedArchiveDir)) {
+            fs.mkdirSync(resolvedArchiveDir, { recursive: true });
         }
 
         // Create timestamped archive filename
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
         const archiveFileName = `${prdId}_${timestamp}.zip`;
-        const archivePath = path.join(archiveDir, archiveFileName);
+        const archivePath = path.join(resolvedArchiveDir, archiveFileName);
 
         // Create archive metadata
         const archiveMetadata = {
@@ -68,7 +74,8 @@ async function createPrdArchive(prdId, prd, linkedTasks, archiveDir = 'prd/archi
         // Read task files content
         for (const task of linkedTasks) {
             const taskFileName = `task_${task.id.toString().padStart(3, '0')}.txt`;
-            const taskFilePath = path.join('tasks', taskFileName);
+            const tasksDir = path.dirname(getTasksJsonPath());
+            const taskFilePath = path.join(tasksDir, taskFileName);
             
             if (fs.existsSync(taskFilePath)) {
                 archiveData.taskFiles.push({
@@ -108,7 +115,7 @@ async function createPrdArchive(prdId, prd, linkedTasks, archiveDir = 'prd/archi
  * @param {string} prdsPath - Path to prds.json
  * @returns {Array} Array of PRDs ready for archiving
  */
-function getArchivablePrds(prdsPath = 'prd/prds.json') {
+function getArchivablePrds(prdsPath = null) {
     try {
         const donePrds = findPrdsByStatus('done', prdsPath);
         return donePrds.filter(prd => {
@@ -143,7 +150,7 @@ function validateTasksForArchiving(linkedTasks) {
  * @param {string} prdsPath - Path to prds.json
  * @returns {Object} Removal result
  */
-function removePrdFromTracking(prdId, prdsPath = 'prd/prds.json') {
+function removePrdFromTracking(prdId, prdsPath = null) {
     try {
         const prdsData = readPrdsMetadata(prdsPath);
         const prdIndex = prdsData.prds.findIndex(p => p.id === prdId);
@@ -189,9 +196,10 @@ function removePrdFromTracking(prdId, prdsPath = 'prd/prds.json') {
  * @param {string} tasksPath - Path to tasks.json
  * @returns {Object} Removal result
  */
-function removeTasksFromTracking(taskIds, tasksPath = 'tasks/tasks.json') {
+function removeTasksFromTracking(taskIds, tasksPath = null) {
     try {
-        const tasksData = readJSON(tasksPath);
+        const resolvedTasksPath = tasksPath || getTasksJsonPath();
+        const tasksData = readJSON(resolvedTasksPath);
         const originalCount = tasksData.tasks.length;
         
         // Remove tasks with matching IDs
@@ -200,7 +208,7 @@ function removeTasksFromTracking(taskIds, tasksPath = 'tasks/tasks.json') {
         const removedCount = originalCount - tasksData.tasks.length;
         
         // Write updated data
-        writeJSON(tasksPath, tasksData);
+        writeJSON(resolvedTasksPath, tasksData);
 
         log('info', `Removed ${removedCount} tasks from active tracking`);
         return {
@@ -235,7 +243,8 @@ function deleteTaskFiles(taskIds) {
     for (const taskId of taskIds) {
         try {
             const taskFileName = `task_${taskId.toString().padStart(3, '0')}.txt`;
-            const taskFilePath = path.join('tasks', taskFileName);
+            const tasksDir = path.dirname(getTasksJsonPath());
+            const taskFilePath = path.join(tasksDir, taskFileName);
             
             if (fs.existsSync(taskFilePath)) {
                 fs.unlinkSync(taskFilePath);
@@ -263,16 +272,21 @@ function deleteTaskFiles(taskIds) {
  */
 async function archivePrd(prdId, options = {}) {
     const {
-        prdsPath = 'prd/prds.json',
-        tasksPath = 'tasks/tasks.json',
-        archiveDir = 'prd/archived',
+        prdsPath = null,
+        tasksPath = null,
+        archiveDir = null,
         force = false,
         dryRun = false
     } = options;
 
     try {
+        // Resolve paths
+        const resolvedPrdsPath = prdsPath || getPRDsJsonPath();
+        const resolvedTasksPath = tasksPath || getTasksJsonPath();
+        const resolvedArchiveDir = archiveDir || getPRDStatusDirectory('archived');
+
         // Find the PRD
-        const prd = findPrdById(prdId, prdsPath);
+        const prd = findPrdById(prdId, resolvedPrdsPath);
         if (!prd) {
             return {
                 success: false,
@@ -289,7 +303,7 @@ async function archivePrd(prdId, options = {}) {
         }
 
         // Get linked tasks
-        const linkedTasks = getTasksLinkedToPrd(prdId, tasksPath, prdsPath);
+        const linkedTasks = getTasksLinkedToPrd(prdId, resolvedTasksPath, resolvedPrdsPath);
 
         // Validate tasks are ready for archiving
         const taskValidation = validateTasksForArchiving(linkedTasks);
@@ -329,28 +343,28 @@ async function archivePrd(prdId, options = {}) {
 
         // Create backup before starting
         const backupSuffix = `.backup.${Date.now()}`;
-        const prdsBackup = `${prdsPath}${backupSuffix}`;
-        const tasksBackup = `${tasksPath}${backupSuffix}`;
+        const prdsBackup = `${resolvedPrdsPath}${backupSuffix}`;
+        const tasksBackup = `${resolvedTasksPath}${backupSuffix}`;
 
-        fs.copyFileSync(prdsPath, prdsBackup);
-        fs.copyFileSync(tasksPath, tasksBackup);
+        fs.copyFileSync(resolvedPrdsPath, prdsBackup);
+        fs.copyFileSync(resolvedTasksPath, tasksBackup);
 
         try {
             // Step 1: Create archive
-            const archiveResult = await createPrdArchive(prdId, prd, linkedTasks, archiveDir);
+            const archiveResult = await createPrdArchive(prdId, prd, linkedTasks, resolvedArchiveDir);
             if (!archiveResult.success) {
                 throw new Error(`Archive creation failed: ${archiveResult.error}`);
             }
 
             // Step 2: Remove PRD from tracking
-            const prdRemovalResult = removePrdFromTracking(prdId, prdsPath);
+            const prdRemovalResult = removePrdFromTracking(prdId, resolvedPrdsPath);
             if (!prdRemovalResult.success) {
                 throw new Error(`PRD removal failed: ${prdRemovalResult.error}`);
             }
 
             // Step 3: Remove tasks from tracking
             const taskIds = linkedTasks.map(t => t.id);
-            const taskRemovalResult = removeTasksFromTracking(taskIds, tasksPath);
+            const taskRemovalResult = removeTasksFromTracking(taskIds, resolvedTasksPath);
             if (!taskRemovalResult.success) {
                 throw new Error(`Task removal failed: ${taskRemovalResult.error}`);
             }
@@ -384,8 +398,8 @@ async function archivePrd(prdId, options = {}) {
             log('error', `Archive process failed, rolling back: ${error.message}`);
 
             try {
-                fs.copyFileSync(prdsBackup, prdsPath);
-                fs.copyFileSync(tasksBackup, tasksPath);
+                fs.copyFileSync(prdsBackup, resolvedPrdsPath);
+                fs.copyFileSync(tasksBackup, resolvedTasksPath);
                 fs.unlinkSync(prdsBackup);
                 fs.unlinkSync(tasksBackup);
                 log('info', 'Successfully rolled back changes');

@@ -1,11 +1,13 @@
 import fs from 'fs';
 import path from 'path';
-import { 
-    readPrdsMetadata, 
+import {
+    readPrdsMetadata,
     writePrdsMetadata,
     findPrdById,
     calculateFileHash,
-    getFileSize
+    getFileSize,
+    getPRDsJsonPath,
+    getPRDStatusDirectory
 } from './prd-utils.js';
 import { updatePrd } from './prd-write-operations.js';
 import { atomicFileOperation } from './prd-thread-safety.js';
@@ -17,13 +19,7 @@ import { log } from '../utils.js';
  * @returns {string} Directory path
  */
 function getStatusDirectory(status) {
-    const statusDirs = {
-        'pending': 'prd/pending',
-        'in-progress': 'prd/in-progress',
-        'done': 'prd/done',
-        'archived': 'prd/archived'
-    };
-    return statusDirs[status] || 'prd/pending';
+    return getPRDStatusDirectory(status);
 }
 
 /**
@@ -50,7 +46,7 @@ function ensureStatusDirectory(status) {
  * @param {Object} options - Movement options
  * @returns {Object} Movement result
  */
-function movePrdFileToStatusDirectory(prdId, newStatus, prdsPath = 'prd/prds.json', options = {}) {
+function movePrdFileToStatusDirectory(prdId, newStatus, prdsPath = null, options = {}) {
     const {
         createBackup = true,
         updateMetadata = true,
@@ -67,12 +63,54 @@ function movePrdFileToStatusDirectory(prdId, newStatus, prdsPath = 'prd/prds.jso
             };
         }
 
-        const currentPath = prd.filePath;
+        let currentPath = prd.filePath;
         const targetDir = ensureStatusDirectory(newStatus);
         const targetPath = path.join(targetDir, prd.fileName);
 
+        // Try to resolve the actual current file path if the recorded path doesn't exist
+        if (!fs.existsSync(currentPath)) {
+            // First, try to find the file in the directory that matches the PRD's current status
+            const currentStatusPath = path.join(getPRDStatusDirectory(prd.status), prd.fileName);
+            if (fs.existsSync(currentStatusPath)) {
+                currentPath = currentStatusPath;
+            } else {
+                // If not found in current status directory, try the old path structure
+                const pathParts = currentPath.split(/[\/\\]/);
+                const fileName = pathParts[pathParts.length - 1];
+                const status = pathParts[pathParts.length - 2];
+
+                // Try the new directory structure with the old status
+                const newPath = path.join(getPRDStatusDirectory(status), fileName);
+                if (fs.existsSync(newPath)) {
+                    currentPath = newPath;
+                } else {
+                    return {
+                        success: false,
+                        error: `Source PRD file not found: ${prd.filePath}`
+                    };
+                }
+            }
+        }
+
         // Check if file is already in the correct location
         if (path.resolve(currentPath) === path.resolve(targetPath)) {
+            // Even if the file is in the correct location, update metadata if the recorded path is wrong
+            if (updateMetadata && currentPath !== prd.filePath) {
+                const updateResult = updatePrd(prdId, {
+                    filePath: targetPath,
+                    lastModified: new Date().toISOString(),
+                    fileHash: calculateFileHash(currentPath),
+                    fileSize: getFileSize(currentPath)
+                }, prdsPath);
+
+                if (!updateResult.success) {
+                    return {
+                        success: false,
+                        error: `Failed to update metadata: ${updateResult.error}`
+                    };
+                }
+            }
+
             return {
                 success: true,
                 data: {
@@ -80,16 +118,9 @@ function movePrdFileToStatusDirectory(prdId, newStatus, prdsPath = 'prd/prds.jso
                     moved: false,
                     message: 'File is already in the correct location',
                     currentPath: currentPath,
-                    targetPath: targetPath
+                    targetPath: targetPath,
+                    metadataUpdated: updateMetadata && currentPath !== prd.filePath
                 }
-            };
-        }
-
-        // Check if source file exists
-        if (!fs.existsSync(currentPath)) {
-            return {
-                success: false,
-                error: `Source PRD file not found: ${currentPath}`
             };
         }
 
@@ -168,7 +199,7 @@ function movePrdFileToStatusDirectory(prdId, newStatus, prdsPath = 'prd/prds.jso
  * @param {Object} options - Options
  * @returns {Object} Result
  */
-function movePrdAndUpdateStatus(prdId, newStatus, prdsPath = 'prd/prds.json', options = {}) {
+function movePrdAndUpdateStatus(prdId, newStatus, prdsPath = null, options = {}) {
     return movePrdFileToStatusDirectory(prdId, newStatus, prdsPath, {
         ...options,
         updateMetadata: true
@@ -181,7 +212,7 @@ function movePrdAndUpdateStatus(prdId, newStatus, prdsPath = 'prd/prds.json', op
  * @param {Object} options - Organization options
  * @returns {Object} Organization result
  */
-function organizeAllPrdFiles(prdsPath = 'prd/prds.json', options = {}) {
+function organizeAllPrdFiles(prdsPath = null, options = {}) {
     const {
         dryRun = false,
         createBackup = true
