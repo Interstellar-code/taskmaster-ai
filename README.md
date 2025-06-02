@@ -32,9 +32,22 @@ Using the research model is optional but highly recommended. You will need at le
 
 ## Quick Start
 
-### Option 1: Local Installation (Recommended)
+### Option 1: Install from npm (Recommended)
 
-This is a personal fork of TaskMaster AI with custom modifications. Install it locally to use your customized version.
+Install the published package globally:
+
+```bash
+# Install globally from npm
+npm install -g task-hero-ai
+
+# Verify installation
+task-hero --version
+task-hero menu
+```
+
+### Option 2: Local Development Installation
+
+For development and customization of this fork:
 
 #### 1. Clone and Install Locally
 
@@ -61,6 +74,9 @@ task-master --help
 
 # Launch interactive menu
 task-master menu
+
+# Or run verification script
+node scripts/verify-installation.js
 ```
 
 #### 3. Uninstalling (if needed)
@@ -73,7 +89,19 @@ npm unlink
 # Your local repository remains unchanged
 ```
 
-### Option 2: MCP Integration (For AI Editors)
+### Option 3: Install from GitHub
+
+Install directly from this repository:
+
+```bash
+# Install from main branch
+npm install -g git+https://github.com/Interstellar-code/taskmaster-ai.git
+
+# Install from specific branch
+npm install -g git+https://github.com/Interstellar-code/taskmaster-ai.git#dev_rohit
+```
+
+### Option 4: MCP Integration (For AI Editors)
 
 MCP (Model Control Protocol) lets you run Task Master directly from your editor.
 
@@ -177,7 +205,7 @@ Use your AI assistant to:
 
 [More examples on how to use Task Master in chat](docs/examples.md)
 
-### Option 3: Command Line Usage
+### Option 5: Command Line Usage
 
 After installing locally (Option 1), you can use TaskMaster from the command line.
 
@@ -247,6 +275,7 @@ task-master generate
 
 For more detailed information, check out the documentation in the `docs` directory:
 
+- [Installation & Publishing Guide](docs/installation-and-publishing.md) - Complete guide for local installation and npm publishing
 - [Interactive Menu Guide](docs/interactive-menu.md) - Complete guide to the menu system
 - [Augment AI Integration](docs/augment-integration.md) - Using TaskMaster with Augment AI
 - [Configuration Guide](docs/configuration.md) - Set up environment variables and customize Task Master
@@ -254,6 +283,17 @@ For more detailed information, check out the documentation in the `docs` directo
 - [Command Reference](docs/command-reference.md) - Complete list of all available commands
 - [Task Structure](docs/task-structure.md) - Understanding the task format and features
 - [Example Interactions](docs/examples.md) - Common Cursor AI interaction examples
+
+## Publishing Your Fork
+
+If you want to publish your own version of TaskMaster AI to npm:
+
+1. **Prepare the package**: `node scripts/prepare-npm-package.js`
+2. **Test locally**: `npm pack --dry-run`
+3. **Login to npm**: `npm login`
+4. **Publish**: `npm publish`
+
+See the [Installation & Publishing Guide](docs/installation-and-publishing.md) for detailed instructions.
 
 ## Troubleshooting
 

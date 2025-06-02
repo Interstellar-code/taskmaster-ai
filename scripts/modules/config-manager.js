@@ -56,7 +56,7 @@ function getConfigPath(projectRoot) {
 // Define valid providers dynamically from the loaded MODEL_MAP
 const VALID_PROVIDERS = Object.keys(MODEL_MAP || {});
 
-// Default configuration values (used if .taskmasterconfig is missing or incomplete)
+// Default configuration values (used if config file is missing or incomplete)
 const DEFAULTS = {
 	models: {
 		main: {
@@ -195,13 +195,13 @@ function _loadAndValidateConfig(explicitRoot = null) {
 			// Only warn if an explicit root was *expected*.
 			console.warn(
 				chalk.yellow(
-					`Warning: ${CONFIG_FILE_NAME} not found at provided project root (${explicitRoot}). Using default configuration. Run 'task-master models --setup' to configure.`
+					`Warning: Config file not found at provided project root (${explicitRoot}). Using default configuration. Run 'task-master models --setup' to configure.`
 				)
 			);
 		} else {
 			console.warn(
 				chalk.yellow(
-					`Warning: ${CONFIG_FILE_NAME} not found at derived root (${rootToUse}). Using defaults.`
+					`Warning: Config file not found at derived root (${rootToUse}). Using defaults.`
 				)
 			);
 		}
@@ -672,7 +672,7 @@ function writeConfig(config, explicitRoot = null) {
 }
 
 /**
- * Checks if the .taskmasterconfig file exists at the project root
+ * Checks if the config file exists at the project root
  * @param {string|null} explicitRoot - Optional explicit path to the project root
  * @returns {boolean} True if the file exists, false otherwise
  */

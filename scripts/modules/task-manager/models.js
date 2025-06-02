@@ -150,21 +150,22 @@ async function getModelConfiguration(options = {}) {
 	};
 
 	// Check if configuration file exists using provided project root
-	let configPath;
 	let configExists = false;
 
 	if (projectRoot) {
-		configPath = path.join(projectRoot, '.taskmasterconfig');
+		// Use the config manager's getConfigPath function to get the correct path
+		const { getConfigPath } = await import('../config-manager.js');
+		const configPath = getConfigPath(projectRoot);
 		configExists = fs.existsSync(configPath);
 		report(
 			'info',
-			`Checking for .taskmasterconfig at: ${configPath}, exists: ${configExists}`
+			`Checking for config file at: ${configPath}, exists: ${configExists}`
 		);
 	} else {
 		configExists = isConfigFilePresent();
 		report(
 			'info',
-			`Checking for .taskmasterconfig using isConfigFilePresent(), exists: ${configExists}`
+			`Checking for config file using isConfigFilePresent(), exists: ${configExists}`
 		);
 	}
 
@@ -174,7 +175,7 @@ async function getModelConfiguration(options = {}) {
 			error: {
 				code: 'CONFIG_MISSING',
 				message:
-					'The .taskmasterconfig file is missing. Run "task-master models --setup" to create it.'
+					'The config file is missing. Run "task-master models --setup" to create it.'
 			}
 		};
 	}
@@ -287,21 +288,22 @@ async function getAvailableModelsList(options = {}) {
 	};
 
 	// Check if configuration file exists using provided project root
-	let configPath;
 	let configExists = false;
 
 	if (projectRoot) {
-		configPath = path.join(projectRoot, '.taskmasterconfig');
+		// Use the config manager's getConfigPath function to get the correct path
+		const { getConfigPath } = await import('../config-manager.js');
+		const configPath = getConfigPath(projectRoot);
 		configExists = fs.existsSync(configPath);
 		report(
 			'info',
-			`Checking for .taskmasterconfig at: ${configPath}, exists: ${configExists}`
+			`Checking for config file at: ${configPath}, exists: ${configExists}`
 		);
 	} else {
 		configExists = isConfigFilePresent();
 		report(
 			'info',
-			`Checking for .taskmasterconfig using isConfigFilePresent(), exists: ${configExists}`
+			`Checking for config file using isConfigFilePresent(), exists: ${configExists}`
 		);
 	}
 
@@ -311,7 +313,7 @@ async function getAvailableModelsList(options = {}) {
 			error: {
 				code: 'CONFIG_MISSING',
 				message:
-					'The .taskmasterconfig file is missing. Run "task-master models --setup" to create it.'
+					'The config file is missing. Run "task-master models --setup" to create it.'
 			}
 		};
 	}
@@ -387,21 +389,22 @@ async function setModel(role, modelId, options = {}) {
 	};
 
 	// Check if configuration file exists using provided project root
-	let configPath;
 	let configExists = false;
 
 	if (projectRoot) {
-		configPath = path.join(projectRoot, '.taskmasterconfig');
+		// Use the config manager's getConfigPath function to get the correct path
+		const { getConfigPath } = await import('../config-manager.js');
+		const configPath = getConfigPath(projectRoot);
 		configExists = fs.existsSync(configPath);
 		report(
 			'info',
-			`Checking for .taskmasterconfig at: ${configPath}, exists: ${configExists}`
+			`Checking for config file at: ${configPath}, exists: ${configExists}`
 		);
 	} else {
 		configExists = isConfigFilePresent();
 		report(
 			'info',
-			`Checking for .taskmasterconfig using isConfigFilePresent(), exists: ${configExists}`
+			`Checking for config file using isConfigFilePresent(), exists: ${configExists}`
 		);
 	}
 
