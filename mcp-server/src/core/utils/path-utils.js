@@ -319,9 +319,18 @@ export function findPRDDocumentPath(projectRoot, explicitPath, log) {
 	}
 
 	// Common locations and file patterns for PRD documents
+	// Priority order: new structure first, then legacy structure
 	const commonLocations = [
+		'.taskmaster/prd/pending/',
+		'.taskmaster/prd/in-progress/',
+		'.taskmaster/prd/done/',
+		'.taskmaster/prd/',
+		'prd/pending/',
+		'prd/in-progress/',
+		'prd/done/',
+		'prd/',
+		'scripts/',
 		'', // Project root
-		'scripts/'
 	];
 
 	const commonFileNames = ['PRD.md', 'prd.md', 'PRD.txt', 'prd.txt'];

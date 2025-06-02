@@ -1072,13 +1072,20 @@ async function browsePRDFiles() {
         const fs = await import('fs');
         const path = await import('path');
 
-        // Common PRD file locations
+        // Common PRD file locations - prioritize new structure
         const searchPaths = [
+            '.taskmaster/prd/pending',
+            '.taskmaster/prd/in-progress',
+            '.taskmaster/prd/done',
+            '.taskmaster/prd',
+            'prd/pending',
+            'prd/in-progress',
+            'prd/done',
+            'prd',
             'scripts',
             'docs',
             'requirements',
-            '.',
-            'prd'
+            '.'
         ];
 
         const prdFiles = [];
@@ -1712,35 +1719,10 @@ async function handlePrdManagement(sessionState) {
                     await handleListPrds(sessionState);
                     break;
                 case 'show':
-                    await executeCommandWithParams('prd-show', [
-                        {
-                            name: 'prdId',
-                            type: 'input',
-                            message: 'Enter PRD ID (e.g., prd_001, prd_002):',
-                            validate: (input) => input.trim().length > 0 ? true : 'PRD ID cannot be empty'
-                        }
-                    ], { projectRoot: sessionState.projectRoot });
+                    await handlePrdShow(sessionState);
                     break;
                 case 'status':
-                    await executeCommandWithParams('prd-status', [
-                        {
-                            name: 'prdId',
-                            type: 'input',
-                            message: 'Enter PRD ID (e.g., prd_001, prd_002):',
-                            validate: (input) => input.trim().length > 0 ? true : 'PRD ID cannot be empty'
-                        },
-                        {
-                            name: 'status',
-                            type: 'list',
-                            message: 'Select new status:',
-                            choices: [
-                                { name: 'Pending', value: 'pending' },
-                                { name: 'In Progress', value: 'in-progress' },
-                                { name: 'Done', value: 'done' },
-                                { name: 'Archived', value: 'archived' }
-                            ]
-                        }
-                    ], { projectRoot: sessionState.projectRoot });
+                    await handlePrdStatus(sessionState);
                     break;
                 case 'sync':
                     await handlePrdSync(sessionState);
@@ -1764,6 +1746,63 @@ async function handlePrdManagement(sessionState) {
         }
     } finally {
         sessionState.menuPath.pop();
+    }
+}
+
+/**
+ * Handle PRD Show Details
+ */
+async function handlePrdShow(sessionState) {
+    try {
+        const { prdId } = await inquirer.prompt([
+            {
+                type: 'input',
+                name: 'prdId',
+                message: 'Enter PRD ID (e.g., prd_001, prd_002):',
+                validate: (input) => input.trim().length > 0 ? true : 'PRD ID cannot be empty'
+            }
+        ]);
+
+        // Execute the command with the PRD ID as a positional argument
+        await executeCommand('prd-show', [prdId], { projectRoot: sessionState.projectRoot });
+
+    } catch (error) {
+        console.error(chalk.red('Error showing PRD details:'), error.message);
+        logError('PRD show error', error, { sessionState: sessionState.menuPath });
+    }
+}
+
+/**
+ * Handle PRD Status Update
+ */
+async function handlePrdStatus(sessionState) {
+    try {
+        const { prdId, status } = await inquirer.prompt([
+            {
+                type: 'input',
+                name: 'prdId',
+                message: 'Enter PRD ID (e.g., prd_001, prd_002):',
+                validate: (input) => input.trim().length > 0 ? true : 'PRD ID cannot be empty'
+            },
+            {
+                type: 'list',
+                name: 'status',
+                message: 'Select new status:',
+                choices: [
+                    { name: 'Pending', value: 'pending' },
+                    { name: 'In Progress', value: 'in-progress' },
+                    { name: 'Done', value: 'done' },
+                    { name: 'Archived', value: 'archived' }
+                ]
+            }
+        ]);
+
+        // Execute the command with both PRD ID and status as positional arguments
+        await executeCommand('prd-status', [prdId, status], { projectRoot: sessionState.projectRoot });
+
+    } catch (error) {
+        console.error(chalk.red('Error updating PRD status:'), error.message);
+        logError('PRD status error', error, { sessionState: sessionState.menuPath });
     }
 }
 
