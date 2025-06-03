@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import archiver from 'archiver';
 import extractZip from 'extract-zip';
+import zlib from 'zlib';
 import {
     readPrdsMetadata,
     writePrdsMetadata,
@@ -11,14 +12,150 @@ import {
     getPRDStatusDirectory,
     getTasksJsonPath
 } from './prd-utils.js';
-import { 
-    getTasksLinkedToPrd 
+import {
+    getTasksLinkedToPrd
 } from './task-prd-linking.js';
 import { readJSON, writeJSON, log } from '../utils.js';
 import { atomicFileOperation } from './prd-thread-safety.js';
 import inquirer from 'inquirer';
 import chalk from 'chalk';
 import boxen from 'boxen';
+
+/**
+ * Check if a file is a legacy GZIP archive (old format) or proper ZIP archive
+ * @param {string} archivePath - Path to the archive file
+ * @returns {Object} Archive format information
+ */
+function detectArchiveFormat(archivePath) {
+    try {
+        if (!fs.existsSync(archivePath)) {
+            return { exists: false, format: 'unknown' };
+        }
+
+        const buffer = fs.readFileSync(archivePath);
+
+        // Check for ZIP signature (PK)
+        if (buffer[0] === 0x50 && buffer[1] === 0x4B) {
+            return { exists: true, format: 'zip', isValid: true };
+        }
+
+        // Check for GZIP signature (legacy format)
+        if (buffer[0] === 0x1f && buffer[1] === 0x8b) {
+            return { exists: true, format: 'gzip', isValid: false, isLegacy: true };
+        }
+
+        return { exists: true, format: 'unknown', isValid: false };
+    } catch (error) {
+        log('error', `Error detecting archive format for ${archivePath}:`, error.message);
+        return { exists: false, format: 'error', error: error.message };
+    }
+}
+
+/**
+ * Read legacy GZIP archive (old format)
+ * @param {string} archivePath - Path to the legacy archive file
+ * @returns {Promise<Object>} Archive data
+ */
+async function readLegacyGzipArchive(archivePath) {
+    try {
+        const buffer = fs.readFileSync(archivePath);
+        const decompressed = zlib.gunzipSync(buffer);
+        const archiveData = JSON.parse(decompressed.toString('utf8'));
+
+        return {
+            success: true,
+            data: archiveData.metadata,
+            archiveData: archiveData
+        };
+    } catch (error) {
+        log('error', `Error reading legacy GZIP archive ${archivePath}:`, error.message);
+        return {
+            success: false,
+            error: error.message
+        };
+    }
+}
+
+/**
+ * Migrate legacy GZIP archive to proper ZIP format
+ * @param {string} legacyArchivePath - Path to the legacy GZIP archive
+ * @returns {Promise<Object>} Migration result
+ */
+async function migrateLegacyArchive(legacyArchivePath) {
+    try {
+        log('info', `Migrating legacy archive: ${legacyArchivePath}`);
+
+        // Read the legacy archive
+        const legacyResult = await readLegacyGzipArchive(legacyArchivePath);
+        if (!legacyResult.success) {
+            throw new Error(`Failed to read legacy archive: ${legacyResult.error}`);
+        }
+
+        const archiveData = legacyResult.archiveData;
+        const metadata = archiveData.metadata;
+
+        // Create new ZIP archive path
+        const archiveDir = path.dirname(legacyArchivePath);
+        const newArchivePath = legacyArchivePath; // Keep same name but proper ZIP format
+        const backupPath = `${legacyArchivePath}.legacy.backup`;
+
+        // Backup the legacy file
+        fs.copyFileSync(legacyArchivePath, backupPath);
+
+        // Create proper ZIP archive
+        return new Promise((resolve, reject) => {
+            const output = fs.createWriteStream(newArchivePath);
+            const archive = archiver('zip', {
+                zlib: { level: 9 }
+            });
+
+            output.on('close', () => {
+                log('info', `Migrated legacy archive to ZIP format: ${newArchivePath} (${archive.pointer()} bytes)`);
+                resolve({
+                    success: true,
+                    data: {
+                        originalPath: legacyArchivePath,
+                        newPath: newArchivePath,
+                        backupPath: backupPath,
+                        size: archive.pointer(),
+                        metadata: metadata
+                    }
+                });
+            });
+
+            archive.on('error', (err) => {
+                log('error', `Error migrating legacy archive: ${err.message}`);
+                reject(err);
+            });
+
+            archive.pipe(output);
+
+            // Add metadata
+            archive.append(JSON.stringify(metadata, null, 2), { name: 'metadata.json' });
+
+            // Add PRD file content if available
+            if (archiveData.prdFile) {
+                archive.append(archiveData.prdFile.content, { name: archiveData.prdFile.fileName });
+            }
+
+            // Add task files if available
+            if (archiveData.taskFiles && archiveData.taskFiles.length > 0) {
+                for (const taskFile of archiveData.taskFiles) {
+                    archive.append(taskFile.content, { name: `tasks/${taskFile.fileName}` });
+                }
+            }
+
+            archive.finalize();
+        });
+
+    } catch (error) {
+        log('error', `Error migrating legacy archive ${legacyArchivePath}:`, error.message);
+        return {
+            success: false,
+            error: error.message
+        };
+    }
+}
 
 /**
  * Create a ZIP archive containing PRD and associated task files
@@ -114,7 +251,7 @@ async function createPrdArchive(prdId, prd, linkedTasks, archiveDir = null) {
 }
 
 /**
- * Read metadata from a PRD ZIP archive
+ * Read metadata from a PRD archive (supports both ZIP and legacy GZIP formats)
  * @param {string} archivePath - Path to the archive file
  * @returns {Promise<Object>} Archive metadata
  */
@@ -124,35 +261,46 @@ async function readPrdArchive(archivePath) {
             throw new Error(`Archive file not found: ${archivePath}`);
         }
 
-        // Create a temporary directory to extract metadata
-        const tempDir = path.join(path.dirname(archivePath), `temp_${Date.now()}`);
+        // Detect archive format
+        const formatInfo = detectArchiveFormat(archivePath);
 
-        try {
-            // Extract the ZIP file
-            await extractZip(archivePath, { dir: tempDir });
+        if (formatInfo.format === 'gzip' && formatInfo.isLegacy) {
+            // Handle legacy GZIP format
+            log('info', `Reading legacy GZIP archive: ${archivePath}`);
+            return await readLegacyGzipArchive(archivePath);
+        } else if (formatInfo.format === 'zip') {
+            // Handle proper ZIP format
+            const tempDir = path.join(path.dirname(archivePath), `temp_${Date.now()}`);
 
-            // Read metadata.json
-            const metadataPath = path.join(tempDir, 'metadata.json');
-            if (!fs.existsSync(metadataPath)) {
-                throw new Error('metadata.json not found in archive');
-            }
+            try {
+                // Extract the ZIP file
+                await extractZip(archivePath, { dir: tempDir });
 
-            const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
+                // Read metadata.json
+                const metadataPath = path.join(tempDir, 'metadata.json');
+                if (!fs.existsSync(metadataPath)) {
+                    throw new Error('metadata.json not found in archive');
+                }
 
-            // Clean up temp directory
-            fs.rmSync(tempDir, { recursive: true, force: true });
+                const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
 
-            return {
-                success: true,
-                data: metadata
-            };
-
-        } catch (extractError) {
-            // Clean up temp directory on error
-            if (fs.existsSync(tempDir)) {
+                // Clean up temp directory
                 fs.rmSync(tempDir, { recursive: true, force: true });
+
+                return {
+                    success: true,
+                    data: metadata
+                };
+
+            } catch (extractError) {
+                // Clean up temp directory on error
+                if (fs.existsSync(tempDir)) {
+                    fs.rmSync(tempDir, { recursive: true, force: true });
+                }
+                throw extractError;
             }
-            throw extractError;
+        } else {
+            throw new Error(`Unsupported archive format: ${formatInfo.format}`);
         }
 
     } catch (error) {
@@ -711,6 +859,91 @@ async function interactivePrdArchive(options = {}) {
     }
 }
 
+/**
+ * Migrate all legacy GZIP archives in a directory to proper ZIP format
+ * @param {string} archiveDir - Directory containing archive files
+ * @returns {Promise<Object>} Migration result
+ */
+async function migrateAllLegacyArchives(archiveDir = null) {
+    try {
+        const resolvedArchiveDir = archiveDir || getPRDStatusDirectory('archived');
+
+        if (!fs.existsSync(resolvedArchiveDir)) {
+            return {
+                success: true,
+                message: 'No archive directory found',
+                migrated: 0
+            };
+        }
+
+        const files = fs.readdirSync(resolvedArchiveDir);
+        const zipFiles = files.filter(file => file.endsWith('.zip'));
+
+        const results = {
+            success: true,
+            migrated: 0,
+            skipped: 0,
+            errors: [],
+            details: []
+        };
+
+        for (const file of zipFiles) {
+            const filePath = path.join(resolvedArchiveDir, file);
+            const formatInfo = detectArchiveFormat(filePath);
+
+            if (formatInfo.format === 'gzip' && formatInfo.isLegacy) {
+                try {
+                    log('info', `Migrating legacy archive: ${file}`);
+                    const migrationResult = await migrateLegacyArchive(filePath);
+
+                    if (migrationResult.success) {
+                        results.migrated++;
+                        results.details.push({
+                            file: file,
+                            status: 'migrated',
+                            backupPath: migrationResult.data.backupPath
+                        });
+                    } else {
+                        results.errors.push({
+                            file: file,
+                            error: migrationResult.error
+                        });
+                        results.success = false;
+                    }
+                } catch (error) {
+                    results.errors.push({
+                        file: file,
+                        error: error.message
+                    });
+                    results.success = false;
+                }
+            } else if (formatInfo.format === 'zip') {
+                results.skipped++;
+                results.details.push({
+                    file: file,
+                    status: 'skipped',
+                    reason: 'already proper ZIP format'
+                });
+            } else {
+                results.errors.push({
+                    file: file,
+                    error: `Unknown format: ${formatInfo.format}`
+                });
+            }
+        }
+
+        log('info', `Migration complete: ${results.migrated} migrated, ${results.skipped} skipped, ${results.errors.length} errors`);
+        return results;
+
+    } catch (error) {
+        log('error', `Error migrating legacy archives:`, error.message);
+        return {
+            success: false,
+            error: error.message
+        };
+    }
+}
+
 export {
     createPrdArchive,
     readPrdArchive,
@@ -721,5 +954,9 @@ export {
     removeTasksFromTracking,
     deleteTaskFiles,
     archivePrd,
-    interactivePrdArchive
+    interactivePrdArchive,
+    detectArchiveFormat,
+    readLegacyGzipArchive,
+    migrateLegacyArchive,
+    migrateAllLegacyArchives
 };

@@ -7,6 +7,7 @@ import fs from 'fs';
 import path from 'path';
 import chalk from 'chalk';
 import Table from 'cli-table3';
+import boxen from 'boxen';
 import {
     readPrdsMetadata,
     findPrdById,
@@ -46,7 +47,8 @@ import {
     archivePrd,
     interactivePrdArchive,
     readPrdArchive,
-    extractPrdArchive
+    extractPrdArchive,
+    migrateAllLegacyArchives
 } from './prd-manager/prd-archiving.js';
 import {
     trackFileChanges,
@@ -873,6 +875,73 @@ async function extractPrdArchiveCommand(archivePath, options = {}) {
     }
 }
 
+/**
+ * Migrate legacy GZIP archives to proper ZIP format
+ * @param {Object} options - Command options
+ */
+async function migrateLegacyArchivesCommand(options = {}) {
+    try {
+        const { archiveDir = null, dryRun = false } = options;
+
+        console.log(chalk.blue('🔄 Migrating legacy archive files to proper ZIP format...'));
+
+        if (dryRun) {
+            console.log(chalk.yellow('📋 DRY RUN MODE - No files will be modified\n'));
+        }
+
+        const result = await migrateAllLegacyArchives(archiveDir);
+
+        if (result.success) {
+            console.log(chalk.green('\n✅ Migration completed successfully!'));
+
+            const summaryBox = boxen(
+                `${chalk.bold('Migration Summary:')}\n` +
+                `Archives Migrated: ${chalk.green(result.migrated)}\n` +
+                `Already Proper ZIP: ${chalk.blue(result.skipped)}\n` +
+                `Errors: ${chalk.red(result.errors.length)}\n` +
+                `${result.migrated > 0 ? chalk.gray('Legacy backups created with .legacy.backup extension') : ''}`,
+                {
+                    padding: 1,
+                    margin: 1,
+                    borderStyle: 'round',
+                    borderColor: result.errors.length > 0 ? 'yellow' : 'green'
+                }
+            );
+
+            console.log(summaryBox);
+
+            if (result.details.length > 0) {
+                console.log(chalk.cyan('\n📋 Migration Details:'));
+                result.details.forEach(detail => {
+                    const statusIcon = detail.status === 'migrated' ? '✅' : '⏭️';
+                    const reason = detail.reason ? ` (${detail.reason})` : '';
+                    console.log(`  ${statusIcon} ${detail.file}: ${detail.status}${reason}`);
+                });
+            }
+
+            if (result.errors.length > 0) {
+                console.log(chalk.red('\n❌ Errors:'));
+                result.errors.forEach(error => {
+                    console.log(`  ❌ ${error.file}: ${error.error}`);
+                });
+            }
+
+            if (result.migrated > 0) {
+                console.log(chalk.green('\n🎉 All legacy archives have been converted to proper ZIP format!'));
+                console.log(chalk.gray('These files can now be opened in Windows Explorer and other standard ZIP tools.'));
+            } else if (result.skipped > 0 && result.errors.length === 0) {
+                console.log(chalk.blue('\n✨ All archives are already in proper ZIP format!'));
+            }
+
+        } else {
+            console.log(chalk.red('\n❌ Migration failed:'), result.error);
+        }
+
+    } catch (error) {
+        console.log(chalk.red('\n❌ Error during migration:'), error.message);
+    }
+}
+
 export {
     listPrds,
     showPrd,
@@ -886,5 +955,6 @@ export {
     comparePrdVersions,
     syncPrdFileMetadataCommand,
     archivePrdCommand,
-    extractPrdArchiveCommand
+    extractPrdArchiveCommand,
+    migrateLegacyArchivesCommand
 };

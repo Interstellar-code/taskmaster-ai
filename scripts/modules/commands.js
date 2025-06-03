@@ -95,7 +95,8 @@ import {
 	comparePrdVersions,
 	syncPrdFileMetadataCommand,
 	archivePrdCommand,
-	extractPrdArchiveCommand
+	extractPrdArchiveCommand,
+	migrateLegacyArchivesCommand
 } from './prd-commands.js';
 
 /**
@@ -2977,6 +2978,19 @@ Examples:
 		.action(async (archivePath, options) => {
 			await extractPrdArchiveCommand(archivePath, {
 				outputDir: options.output
+			});
+		});
+
+	// prd migrate-archives command
+	programInstance
+		.command('prd-migrate-archives')
+		.description('Migrate legacy GZIP archives to proper ZIP format')
+		.option('-d, --dry-run', 'Show what would be migrated without making changes')
+		.option('--archive-dir <dir>', 'Custom archive directory path')
+		.action(async (options) => {
+			await migrateLegacyArchivesCommand({
+				archiveDir: options.archiveDir,
+				dryRun: options.dryRun
 			});
 		});
 
