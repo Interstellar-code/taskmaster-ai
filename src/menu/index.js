@@ -1517,10 +1517,14 @@ async function handleKanbanBoard(sessionState) {
         let prdFilter = null;
 
         if (viewType === 'prd') {
-            // Import the function to get unique PRD references
+            // Import the function to get unique PRD references and the path utility
             const { getUniquePRDReferences } = await import('../kanban/kanban-board.js');
             const projectRoot = sessionState.projectRoot;
-            const tasksPath = path.join(projectRoot, 'tasks', 'tasks.json');
+
+            // Use the same path resolution logic as the Kanban board
+            const newPath = path.join(projectRoot, '.taskmaster', 'tasks', 'tasks.json');
+            const tasksPath = fs.existsSync(newPath) ? newPath : path.join(projectRoot, 'tasks', 'tasks.json');
+
             const prdReferences = getUniquePRDReferences(tasksPath);
 
             if (prdReferences.length === 0) {
