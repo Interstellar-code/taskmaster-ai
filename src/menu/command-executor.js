@@ -13,7 +13,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 /**
- * Execute a TaskMaster command
+ * Execute a TaskHero command
  * @param {string} command - The command to execute (e.g., 'list', 'next')
  * @param {Array} args - Command arguments
  * @param {Object} options - Execution options
@@ -34,7 +34,7 @@ export async function executeCommand(command, args = [], options = {}) {
         const commandArgs = [devScriptPath, command, ...args];
         
         if (showOutput) {
-            console.log(chalk.blue(`\n🔄 Executing: task-master ${command} ${args.join(' ')}`));
+            console.log(chalk.blue(`\n🔄 Executing: task-hero ${command} ${args.join(' ')}`));
             console.log(chalk.gray('─'.repeat(50)));
         }
 

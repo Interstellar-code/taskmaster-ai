@@ -1,6 +1,6 @@
 /**
  * utils.js
- * Utility functions for the Task Master CLI
+ * Utility functions for the TaskHero CLI
  */
 
 import fs from 'fs';
@@ -63,12 +63,12 @@ function resolveEnvVariable(key, session = null, projectRoot = null) {
  * Finds the project root directory by searching upwards from a given starting point
  * for a marker file or directory (e.g., 'package.json', '.git').
  * @param {string} [startPath=process.cwd()] - The directory to start searching from.
- * @param {string[]} [markers=['package.json', '.git', '.taskmasterconfig']] - Marker files/dirs to look for.
+ * @param {string[]} [markers=['package.json', '.git', '.taskheroconfig']] - Marker files/dirs to look for.
  * @returns {string|null} The path to the project root directory, or null if not found.
  */
 function findProjectRoot(
 	startPath = process.cwd(),
-	markers = ['package.json', '.git', '.taskmasterconfig', '.taskmaster']
+	markers = ['package.json', '.git', '.taskheroconfig', '.taskmaster']
 ) {
 	// Check for TASK_MASTER_PROJECT_ROOT environment variable first
 	const envProjectRoot = process.env.TASK_MASTER_PROJECT_ROOT;

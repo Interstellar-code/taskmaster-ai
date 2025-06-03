@@ -1,6 +1,6 @@
-# Task Master AI - Personal Fork
+# TaskHero AI - Personal Fork
 
-> **Note**: This is a personal fork of TaskMaster AI with custom modifications. For the original project, visit [eyaltoledano/claude-task-master](https://github.com/eyaltoledano/claude-task-master).
+> **Note**: This is a personal fork of TaskHero AI with custom modifications. For the original project, visit [eyaltoledano/claude-task-master](https://github.com/eyaltoledano/claude-task-master).
 
 [![License: MIT with Commons Clause](https://img.shields.io/badge/license-MIT%20with%20Commons%20Clause-blue.svg)](LICENSE)
 
@@ -15,7 +15,7 @@ This fork includes personal customizations and modifications for enhanced functi
 
 ## Requirements
 
-Taskmaster utilizes AI across several commands, and those require a separate API key. You can use a variety of models from different AI providers provided you add your API keys. For example, if you want to use Claude 3.7, you'll need an Anthropic API key.
+TaskHero utilizes AI across several commands, and those require a separate API key. You can use a variety of models from different AI providers provided you add your API keys. For example, if you want to use Claude 3.7, you'll need an Anthropic API key.
 
 You can define 3 types of models to be used: the main model, the research model, and the fallback model (in case either the main or research fail). Whatever model you use, its provider API key must be present in either mcp.json or .env.
 
@@ -67,13 +67,13 @@ npm link
 
 ```bash
 # Check version
-task-master --version
+task-hero --version
 
 # View help
-task-master --help
+task-hero --help
 
 # Launch interactive menu
-task-master menu
+task-hero menu
 
 # Or run verification script
 node scripts/verify-installation.js
@@ -85,7 +85,7 @@ node scripts/verify-installation.js
 # Unlink the global installation
 npm unlink
 
-# This removes the global task-master command
+# This removes the global task-hero command
 # Your local repository remains unchanged
 ```
 
@@ -103,7 +103,7 @@ npm install -g git+https://github.com/Interstellar-code/taskmaster-ai.git#dev_ro
 
 ### Option 4: MCP Integration (For AI Editors)
 
-MCP (Model Control Protocol) lets you run Task Master directly from your editor.
+MCP (Model Control Protocol) lets you run TaskHero directly from your editor.
 
 #### 1. Add your MCP config at the following path depending on your editor
 
@@ -119,8 +119,8 @@ MCP (Model Control Protocol) lets you run Task Master directly from your editor.
 ```jsonc
 {
 	"mcpServers": {
-		"taskmaster-ai": {
-			"command": "task-master-mcp",
+		"taskhero-ai": {
+			"command": "task-hero-mcp",
 			"env": {
 				"ANTHROPIC_API_KEY": "YOUR_ANTHROPIC_API_KEY_HERE",
 				"PERPLEXITY_API_KEY": "YOUR_PERPLEXITY_API_KEY_HERE",
@@ -144,8 +144,8 @@ MCP (Model Control Protocol) lets you run Task Master directly from your editor.
 ```jsonc
 {
 	"servers": {
-		"taskmaster-ai": {
-			"command": "task-master-mcp",
+		"taskhero-ai": {
+			"command": "task-hero-mcp",
 			"env": {
 				"ANTHROPIC_API_KEY": "YOUR_ANTHROPIC_API_KEY_HERE",
 				"PERPLEXITY_API_KEY": "YOUR_PERPLEXITY_API_KEY_HERE",
@@ -164,9 +164,9 @@ MCP (Model Control Protocol) lets you run Task Master directly from your editor.
 
 > 🔑 Replace `YOUR_…_KEY_HERE` with your real API keys. You can remove keys you don't use.
 
-#### 2. (Cursor-only) Enable Taskmaster MCP
+#### 2. (Cursor-only) Enable TaskHero MCP
 
-Open Cursor Settings (Ctrl+Shift+J) ➡ Click on MCP tab on the left ➡ Enable task-master-ai with the toggle
+Open Cursor Settings (Ctrl+Shift+J) ➡ Click on MCP tab on the left ➡ Enable taskhero-ai with the toggle
 
 #### 3. (Optional) Configure the models you want to use
 
@@ -178,12 +178,12 @@ Change the main, research and fallback models to <model_name>, <model_name> and 
 
 [Table of available models](docs/models.md)
 
-#### 4. Initialize Task Master
+#### 4. Initialize TaskHero
 
 In your editor’s AI chat pane, say:
 
 ```txt
-Initialize taskmaster-ai in my project
+Initialize taskhero-ai in my project
 ```
 
 #### 5. Make sure you have a PRD in `<project_folder>/scripts/prd.txt`
@@ -203,30 +203,30 @@ Use your AI assistant to:
 - Implement a task: `Can you help me implement task 3?`
 - Expand a task: `Can you help me expand task 4?`
 
-[More examples on how to use Task Master in chat](docs/examples.md)
+[More examples on how to use TaskHero in chat](docs/examples.md)
 
 ### Option 5: Command Line Usage
 
-After installing locally (Option 1), you can use TaskMaster from the command line.
+After installing locally (Option 1), you can use TaskHero from the command line.
 
 #### Initialize a new project
 
 ```bash
-task-master init
+task-hero init
 ```
 
 This will prompt you for project details and set up a new project with the necessary files and structure.
 
 #### AI Editor Integration
 
-TaskMaster automatically sets up workspace guidelines and rules for popular AI-powered editors:
+TaskHero automatically sets up workspace guidelines and rules for popular AI-powered editors:
 
-- **🤖 Augment AI** - Creates `.augment-guidelines` with TaskMaster-specific context
+- **🤖 Augment AI** - Creates `.augment-guidelines` with TaskHero-specific context
 - **🎯 Cursor** - Generates comprehensive `.cursor/rules/` directory
 - **🌊 Windsurf** - Sets up `.windsurfrules` for AI assistance
 - **🦘 Roo Code** - Creates `.roo/` directory with mode-specific rules
 
-These files help AI assistants understand your project structure and provide more accurate, context-aware suggestions when working with TaskMaster projects.
+These files help AI assistants understand your project structure and provide more accurate, context-aware suggestions when working with TaskHero projects.
 
 #### Interactive Menu (Recommended)
 
@@ -234,11 +234,11 @@ For the best user experience, use the interactive menu system:
 
 ```bash
 # Launch interactive menu
-task-master menu
+task-hero menu
 
 # OR use the shorthand flag
-task-master --menu
-task-master -m
+task-hero --menu
+task-hero -m
 ```
 
 The interactive menu provides:
@@ -256,19 +256,19 @@ The interactive menu provides:
 
 ```bash
 # Initialize a new project
-task-master init
+task-hero init
 
 # Parse a PRD and generate tasks
-task-master parse-prd your-prd.txt
+task-hero parse-prd your-prd.txt
 
 # List all tasks
-task-master list
+task-hero list
 
 # Show the next task to work on
-task-master next
+task-hero next
 
 # Generate task files
-task-master generate
+task-hero generate
 ```
 
 ## Documentation
@@ -277,16 +277,16 @@ For more detailed information, check out the documentation in the `docs` directo
 
 - [Installation & Publishing Guide](docs/installation-and-publishing.md) - Complete guide for local installation and npm publishing
 - [Interactive Menu Guide](docs/interactive-menu.md) - Complete guide to the menu system
-- [Augment AI Integration](docs/augment-integration.md) - Using TaskMaster with Augment AI
-- [Configuration Guide](docs/configuration.md) - Set up environment variables and customize Task Master
-- [Tutorial](docs/tutorial.md) - Step-by-step guide to getting started with Task Master
+- [Augment AI Integration](docs/augment-integration.md) - Using TaskHero with Augment AI
+- [Configuration Guide](docs/configuration.md) - Set up environment variables and customize TaskHero
+- [Tutorial](docs/tutorial.md) - Step-by-step guide to getting started with TaskHero
 - [Command Reference](docs/command-reference.md) - Complete list of all available commands
 - [Task Structure](docs/task-structure.md) - Understanding the task format and features
 - [Example Interactions](docs/examples.md) - Common Cursor AI interaction examples
 
 ## Publishing Your Fork
 
-If you want to publish your own version of TaskMaster AI to npm:
+If you want to publish your own version of TaskHero AI to npm:
 
 1. **Prepare the package**: `node scripts/prepare-npm-package.js`
 2. **Test locally**: `npm pack --dry-run`
@@ -297,7 +297,7 @@ See the [Installation & Publishing Guide](docs/installation-and-publishing.md) f
 
 ## Troubleshooting
 
-### If `task-master init` doesn't respond:
+### If `task-hero init` doesn't respond:
 
 Try running it with Node directly from your local installation:
 
@@ -321,7 +321,7 @@ npm link
 ## Contributors
 
 <a href="https://github.com/Interstellar-code/taskmaster-ai/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=Interstellar-code/taskmaster-ai" alt="Task Master project contributors" />
+  <img src="https://contrib.rocks/image?repo=Interstellar-code/taskmaster-ai" alt="TaskHero project contributors" />
 </a>
 
 *Original project contributors can be found at [eyaltoledano/claude-task-master](https://github.com/eyaltoledano/claude-task-master/graphs/contributors)*
@@ -332,19 +332,19 @@ npm link
 
 ## Licensing
 
-Task Master is licensed under the MIT License with Commons Clause. This means you can:
+TaskHero is licensed under the MIT License with Commons Clause. This means you can:
 
 ✅ **Allowed**:
 
-- Use Task Master for any purpose (personal, commercial, academic)
+- Use TaskHero for any purpose (personal, commercial, academic)
 - Modify the code
 - Distribute copies
-- Create and sell products built using Task Master
+- Create and sell products built using TaskHero
 
 ❌ **Not Allowed**:
 
-- Sell Task Master itself
-- Offer Task Master as a hosted service
-- Create competing products based on Task Master
+- Sell TaskHero itself
+- Offer TaskHero as a hosted service
+- Create competing products based on TaskHero
 
 See the [LICENSE](LICENSE) file for the complete license text and [licensing details](docs/licensing.md) for more information.

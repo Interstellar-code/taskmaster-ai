@@ -1,6 +1,6 @@
 /**
  * commands.js
- * Command-line interface for the Task Master CLI
+ * Command-line interface for the TaskHero CLI
  */
 
 import { program } from 'commander';
@@ -81,7 +81,7 @@ import {
 	isValidTaskStatus,
 	TASK_STATUS_OPTIONS
 } from '../../src/constants/task-status.js';
-import { getTaskMasterVersion } from '../../src/utils/getVersion.js';
+import { getTaskHeroVersion } from '../../src/utils/getVersion.js';
 import {
 	listPrds,
 	showPrd,
@@ -98,13 +98,13 @@ import {
 } from './prd-commands.js';
 
 /**
- * Setup gitignore rules for TaskMaster in parent project
+ * Setup gitignore rules for TaskHero in parent project
  * @param {Object} options - Command options
  */
 function setupGitignoreCommand(options) {
 	const targetDir = process.cwd();
 	const projectRoot = path.dirname(targetDir);
-	const taskMasterDirName = options.directory || path.basename(targetDir);
+	const taskHeroDirName = options.directory || path.basename(targetDir);
 	const projectGitignore = path.join(projectRoot, '.gitignore');
 
 	// Check if we're in a subdirectory of another project
@@ -123,36 +123,36 @@ function setupGitignoreCommand(options) {
 		gitignoreContent = fs.readFileSync(projectGitignore, 'utf8');
 	}
 
-	// Define the gitignore rules for TaskMaster subdirectory
-	const taskMasterRules = `
-# TaskMaster AI - Ignore everything in ${taskMasterDirName}/ except prd/ and tasks/
-${taskMasterDirName}/
-!${taskMasterDirName}/prd/
-!${taskMasterDirName}/tasks/
-!${taskMasterDirName}/prd/**
-!${taskMasterDirName}/tasks/**
+	// Define the gitignore rules for TaskHero subdirectory
+	const taskHeroRules = `
+# TaskHero AI - Ignore everything in ${taskHeroDirName}/ except prd/ and tasks/
+${taskHeroDirName}/
+!${taskHeroDirName}/prd/
+!${taskHeroDirName}/tasks/
+!${taskHeroDirName}/prd/**
+!${taskHeroDirName}/tasks/**
 `;
 
-	// Check if TaskMaster rules already exist
-	if (gitignoreContent.includes(`# TaskMaster AI - Ignore everything in ${taskMasterDirName}/`)) {
-		console.log(chalk.green('TaskMaster gitignore rules already exist in parent project.'));
+	// Check if TaskHero rules already exist
+	if (gitignoreContent.includes(`# TaskHero AI - Ignore everything in ${taskHeroDirName}/`)) {
+		console.log(chalk.green('TaskHero gitignore rules already exist in parent project.'));
 		return;
 	}
 
 	if (options.dryRun) {
 		console.log(chalk.blue('DRY RUN: Would add the following to parent .gitignore:'));
-		console.log(chalk.gray(taskMasterRules));
+		console.log(chalk.gray(taskHeroRules));
 		return;
 	}
 
-	// Append TaskMaster rules
-	const updatedContent = gitignoreContent.trim() + '\n' + taskMasterRules;
+	// Append TaskHero rules
+	const updatedContent = gitignoreContent.trim() + '\n' + taskHeroRules;
 	fs.writeFileSync(projectGitignore, updatedContent);
 
-	console.log(chalk.green(`✅ Updated ${projectGitignore} with TaskMaster-specific rules`));
-	console.log(chalk.blue(`📁 TaskMaster directory will be ignored except for prd/ and tasks/ folders`));
+	console.log(chalk.green(`✅ Updated ${projectGitignore} with TaskHero-specific rules`));
+	console.log(chalk.blue(`📁 TaskHero directory will be ignored except for prd/ and tasks/ folders`));
 	console.log(chalk.gray('Rules added:'));
-	console.log(chalk.gray(taskMasterRules));
+	console.log(chalk.gray(taskHeroRules));
 }
 
 /**
@@ -992,7 +992,7 @@ function registerCommands(programInstance) {
 					if (tasksPath === '.taskmaster/tasks/tasks.json') {
 						console.log(
 							chalk.yellow(
-								'Hint: Run task-master init or task-master parse-prd to create tasks.json first'
+								'Hint: Run task-hero init or task-hero parse-prd to create tasks.json first'
 							)
 						);
 					} else {
@@ -1145,7 +1145,7 @@ function registerCommands(programInstance) {
 					if (tasksPath === '.taskmaster/tasks/tasks.json') {
 						console.log(
 							chalk.yellow(
-								'Hint: Run task-master init or task-master parse-prd to create tasks.json first'
+								'Hint: Run task-hero init or task-hero parse-prd to create tasks.json first'
 							)
 						);
 					} else {
@@ -1963,8 +1963,8 @@ function registerCommands(programInstance) {
 					'  --skip-generate           Skip regenerating task files\n\n' +
 					chalk.cyan('Examples:') +
 					'\n' +
-					'  task-master add-subtask --parent=5 --task-id=8\n' +
-					'  task-master add-subtask -p 5 -t "Implement login UI" -d "Create the login form"',
+					'  task-hero add-subtask --parent=5 --task-id=8\n' +
+					'  task-hero add-subtask -p 5 -t "Implement login UI" -d "Create the login form"',
 				{ padding: 1, borderColor: 'blue', borderStyle: 'round' }
 			)
 		);
@@ -2100,7 +2100,7 @@ function registerCommands(programInstance) {
 					'\n\n' +
 					chalk.cyan('Usage:') +
 					'\n' +
-					`  task-master remove-subtask --id=<parentId.subtaskId> [options]\n\n` +
+					`  task-hero remove-subtask --id=<parentId.subtaskId> [options]\n\n` +
 					chalk.cyan('Options:') +
 					'\n' +
 					'  -i, --id <id>       Subtask ID(s) to remove in format "parentId.subtaskId" (can be comma-separated, required)\n' +
@@ -2109,9 +2109,9 @@ function registerCommands(programInstance) {
 					'  --skip-generate     Skip regenerating task files\n\n' +
 					chalk.cyan('Examples:') +
 					'\n' +
-					'  task-master remove-subtask --id=5.2\n' +
-					'  task-master remove-subtask --id=5.2,6.3,7.1\n' +
-					'  task-master remove-subtask --id=5.2 --convert',
+					'  task-hero remove-subtask --id=5.2\n' +
+					'  task-hero remove-subtask --id=5.2,6.3,7.1\n' +
+					'  task-hero remove-subtask --id=5.2 --convert',
 				{ padding: 1, borderColor: 'blue', borderStyle: 'round' }
 			)
 		);
@@ -2368,7 +2368,7 @@ function registerCommands(programInstance) {
 	// init command (Directly calls the implementation from init.js)
 	programInstance
 		.command('init')
-		.description('Initialize a new project with Task Master structure')
+		.description('Initialize a new project with TaskHero structure')
 		.option('-y, --yes', 'Skip prompts and use default values')
 		.option('-n, --name <name>', 'Project name')
 		.option('-d, --description <description>', 'Project description')
@@ -2376,7 +2376,7 @@ function registerCommands(programInstance) {
 		.option('-a, --author <author>', 'Author name')
 		.option('--skip-install', 'Skip installing dependencies')
 		.option('--dry-run', 'Show what would be done without making changes')
-		.option('--aliases', 'Add shell aliases (tm, taskmaster)')
+		.option('--aliases', 'Add shell aliases (th, taskhero)')
 		.option('--reset', 'Reset project data (clear all tasks, PRDs, reports, and tests)')
 		.action(async (cmdOptions) => {
 			// cmdOptions contains parsed arguments
@@ -2686,7 +2686,7 @@ Examples:
 		.action(async (options) => {
 			if (!options.prd) {
 				console.error(chalk.red('Error: --prd option is required'));
-				console.log(chalk.yellow('Usage: task-master update-prd-metadata --prd=<prd-file-path>'));
+				console.log(chalk.yellow('Usage: task-hero update-prd-metadata --prd=<prd-file-path>'));
 				process.exit(1);
 			}
 			const { updatePRDMetadata } = await import('./task-manager/prd-monitor.js');
@@ -2981,8 +2981,8 @@ Examples:
 	// gitignore management command
 	programInstance
 		.command('setup-gitignore')
-		.description('Setup gitignore rules for TaskMaster in parent project')
-		.option('-d, --directory <dir>', 'TaskMaster directory name', path.basename(process.cwd()))
+		.description('Setup gitignore rules for TaskHero in parent project')
+		.option('-d, --directory <dir>', 'TaskHero directory name', path.basename(process.cwd()))
 		.option('--dry-run', 'Show what would be added without making changes')
 		.action((options) => {
 			setupGitignoreCommand(options);
@@ -3101,7 +3101,7 @@ function setupCLI() {
  */
 async function checkForUpdate() {
 	// Get current version from package.json ONLY
-	const currentVersion = getTaskMasterVersion();
+	const currentVersion = getTaskHeroVersion();
 
 	// Skip update check for local installations (personal forks)
 	// Check if this is a local installation by looking for git repository
@@ -3251,7 +3251,7 @@ async function runCLI(argv = process.argv) {
 
 		// Setup and parse
 		// NOTE: getConfig() might be called during setupCLI->registerCommands if commands need config
-		// This means the ConfigurationError might be thrown here if .taskmasterconfig is missing.
+		// This means the ConfigurationError might be thrown here if .taskmaster/config.json is missing.
 		const programInstance = setupCLI();
 		await programInstance.parseAsync(argv);
 
@@ -3281,8 +3281,8 @@ async function runCLI(argv = process.argv) {
 				boxen(
 					chalk.red.bold('Configuration Update Required!') +
 						'\n\n' +
-						chalk.white('Taskmaster now uses the ') +
-						chalk.yellow.bold('.taskmasterconfig') +
+						chalk.white('TaskHero now uses the ') +
+						chalk.yellow.bold('.taskmaster/config.json') +
 						chalk.white(
 							' file in your project root for AI model choices and settings.\n\n' +
 								'This file appears to be '
@@ -3291,12 +3291,12 @@ async function runCLI(argv = process.argv) {
 						chalk.white('. No worries though.\n\n') +
 						chalk.cyan.bold('To create this file, run the interactive setup:') +
 						'\n' +
-						chalk.green('   task-master models --setup') +
+						chalk.green('   task-hero models --setup') +
 						'\n\n' +
 						chalk.white.bold('Key Points:') +
 						'\n' +
 						chalk.white('*   ') +
-						chalk.yellow.bold('.taskmasterconfig') +
+						chalk.yellow.bold('.taskmaster/config.json') +
 						chalk.white(
 							': Stores your AI model settings (do not manually edit)\n'
 						) +
@@ -3306,10 +3306,10 @@ async function runCLI(argv = process.argv) {
 						chalk.red.bold('only') +
 						chalk.white(' for your AI provider API keys.\n\n') +
 						chalk.cyan(
-							'`task-master models` to check your config & available models\n'
+							'`task-hero models` to check your config & available models\n'
 						) +
 						chalk.cyan(
-							'`task-master models --setup` to adjust the AI models used by Taskmaster'
+							'`task-hero models --setup` to adjust the AI models used by TaskHero'
 						),
 					{
 						padding: 1,

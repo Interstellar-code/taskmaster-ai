@@ -1,6 +1,6 @@
 # Task ID: 91
 # Title: Update Installation and Usage Examples
-# Status: pending
+# Status: done
 # Dependencies: 90
 # Priority: medium
 # PRD Source: prd_002_taskhero_ui_rebrand.md

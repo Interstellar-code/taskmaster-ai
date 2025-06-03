@@ -1,6 +1,6 @@
 /**
  * ui.js
- * User interface functions for the Task Master CLI
+ * User interface functions for the TaskHero CLI
  */
 
 import chalk from 'chalk';
@@ -24,7 +24,7 @@ import {
 } from './task-manager.js';
 import { getProjectName, getDefaultSubtasks } from './config-manager.js';
 import { TASK_STATUS_OPTIONS } from '../../src/constants/task-status.js';
-import { getTaskMasterVersion } from '../../src/utils/getVersion.js';
+import { getTaskHeroVersion } from '../../src/utils/getVersion.js';
 
 // Create a color gradient for the banner
 const coolGradient = gradient(['#00b4d8', '#0077b6', '#03045e']);
@@ -37,7 +37,7 @@ function displayBanner() {
 	if (isSilentMode()) return;
 
 	console.clear();
-	const bannerText = figlet.textSync('Task Master', {
+	const bannerText = figlet.textSync('TaskHero', {
 		font: 'Standard',
 		horizontalLayout: 'default',
 		verticalLayout: 'default'
@@ -51,7 +51,7 @@ function displayBanner() {
 	);
 
 	// Read version directly from package.json
-	const version = getTaskMasterVersion();
+	const version = getTaskHeroVersion();
 
 	console.log(
 		boxen(
@@ -385,7 +385,7 @@ function displayHelp() {
 	const terminalWidth = process.stdout.columns || 100; // Default to 100 if can't detect
 
 	console.log(
-		boxen(chalk.white.bold('Task Master CLI'), {
+		boxen(chalk.white.bold('TaskHero CLI'), {
 			padding: 1,
 			borderColor: 'blue',
 			borderStyle: 'round',
@@ -402,7 +402,7 @@ function displayHelp() {
 				{
 					name: 'init',
 					args: '[--name=<name>] [--description=<desc>] [-y]',
-					desc: 'Initialize a new project with Task Master structure'
+					desc: 'Initialize a new project with TaskHero structure'
 				},
 				{
 					name: 'models',
@@ -686,7 +686,7 @@ function displayHelp() {
 
 	configTable.push(
 		[
-			`${chalk.yellow('.taskmasterconfig')}${chalk.reset('')}`,
+			`${chalk.yellow('.taskmaster/config.json')}${chalk.reset('')}`,
 			`${chalk.white('AI model configuration file (project root)')}${chalk.reset('')}`,
 			`${chalk.dim('Managed by models cmd')}${chalk.reset('')}`
 		],
@@ -711,19 +711,19 @@ function displayHelp() {
 			chalk.white.bold('Quick Start:') +
 				'\n\n' +
 				chalk.cyan('1. Create Project: ') +
-				chalk.white('task-master init') +
+				chalk.white('task-hero init') +
 				'\n' +
 				chalk.cyan('2. Setup Models: ') +
-				chalk.white('task-master models --setup') +
+				chalk.white('task-hero models --setup') +
 				'\n' +
 				chalk.cyan('3. Parse PRD: ') +
-				chalk.white('task-master parse-prd --input=<prd-file>') +
+				chalk.white('task-hero parse-prd --input=<prd-file>') +
 				'\n' +
 				chalk.cyan('4. List Tasks: ') +
-				chalk.white('task-master list') +
+				chalk.white('task-hero list') +
 				'\n' +
 				chalk.cyan('5. Find Next Task: ') +
-				chalk.white('task-master next'),
+				chalk.white('task-hero next'),
 			{
 				padding: 1,
 				borderColor: 'yellow',
@@ -994,7 +994,7 @@ async function displayNextTask(tasksPath, complexityReportPath = null) {
 				chalk.yellow('No subtasks found. Consider breaking down this task:') +
 					'\n' +
 					chalk.white(
-						`Run: ${chalk.cyan(`task-master expand --id=${nextTask.id}`)}`
+						`Run: ${chalk.cyan(`task-hero expand --id=${nextTask.id}`)}`
 					),
 				{
 					padding: { top: 0, bottom: 0, left: 1, right: 1 },
@@ -1011,17 +1011,17 @@ async function displayNextTask(tasksPath, complexityReportPath = null) {
 	if (isSubtask) {
 		// Suggested actions for a subtask
 		suggestedActionsContent +=
-			`${chalk.cyan('1.')} Mark as in-progress: ${chalk.yellow(`task-master set-status --id=${nextTask.id} --status=in-progress`)}\n` +
-			`${chalk.cyan('2.')} Mark as done when completed: ${chalk.yellow(`task-master set-status --id=${nextTask.id} --status=done`)}\n` +
-			`${chalk.cyan('3.')} View parent task: ${chalk.yellow(`task-master show --id=${nextTask.parentId}`)}`;
+			`${chalk.cyan('1.')} Mark as in-progress: ${chalk.yellow(`task-hero set-status --id=${nextTask.id} --status=in-progress`)}\n` +
+			`${chalk.cyan('2.')} Mark as done when completed: ${chalk.yellow(`task-hero set-status --id=${nextTask.id} --status=done`)}\n` +
+			`${chalk.cyan('3.')} View parent task: ${chalk.yellow(`task-hero show --id=${nextTask.parentId}`)}`;
 	} else {
 		// Suggested actions for a parent task
 		suggestedActionsContent +=
-			`${chalk.cyan('1.')} Mark as in-progress: ${chalk.yellow(`task-master set-status --id=${nextTask.id} --status=in-progress`)}\n` +
-			`${chalk.cyan('2.')} Mark as done when completed: ${chalk.yellow(`task-master set-status --id=${nextTask.id} --status=done`)}\n` +
+			`${chalk.cyan('1.')} Mark as in-progress: ${chalk.yellow(`task-hero set-status --id=${nextTask.id} --status=in-progress`)}\n` +
+			`${chalk.cyan('2.')} Mark as done when completed: ${chalk.yellow(`task-hero set-status --id=${nextTask.id} --status=done`)}\n` +
 			(nextTask.subtasks && nextTask.subtasks.length > 0
-				? `${chalk.cyan('3.')} Update subtask status: ${chalk.yellow(`task-master set-status --id=${nextTask.id}.1 --status=done`)}` // Example: first subtask
-				: `${chalk.cyan('3.')} Break down into subtasks: ${chalk.yellow(`task-master expand --id=${nextTask.id}`)}`);
+				? `${chalk.cyan('3.')} Update subtask status: ${chalk.yellow(`task-hero set-status --id=${nextTask.id}.1 --status=done`)}` // Example: first subtask
+				: `${chalk.cyan('3.')} Break down into subtasks: ${chalk.yellow(`task-hero expand --id=${nextTask.id}`)}`);
 	}
 
 	console.log(
@@ -1168,9 +1168,9 @@ async function displayTaskById(
 			boxen(
 				chalk.white.bold('Suggested Actions:') +
 					'\n' +
-					`${chalk.cyan('1.')} Mark as in-progress: ${chalk.yellow(`task-master set-status --id=${task.parentTask.id}.${task.id} --status=in-progress`)}\n` +
-					`${chalk.cyan('2.')} Mark as done when completed: ${chalk.yellow(`task-master set-status --id=${task.parentTask.id}.${task.id} --status=done`)}\n` +
-					`${chalk.cyan('3.')} View parent task: ${chalk.yellow(`task-master show --id=${task.parentTask.id}`)}`,
+					`${chalk.cyan('1.')} Mark as in-progress: ${chalk.yellow(`task-hero set-status --id=${task.parentTask.id}.${task.id} --status=in-progress`)}\n` +
+					`${chalk.cyan('2.')} Mark as done when completed: ${chalk.yellow(`task-hero set-status --id=${task.parentTask.id}.${task.id} --status=done`)}\n` +
+					`${chalk.cyan('3.')} View parent task: ${chalk.yellow(`task-hero show --id=${task.parentTask.id}`)}`,
 				{
 					padding: { top: 0, bottom: 0, left: 1, right: 1 },
 					borderColor: 'green',
@@ -1420,7 +1420,7 @@ async function displayTaskById(
 					chalk.yellow('No subtasks found. Consider breaking down this task:') +
 						'\n' +
 						chalk.white(
-							`Run: ${chalk.cyan(`task-master expand --id=${task.id}`)}`
+							`Run: ${chalk.cyan(`task-hero expand --id=${task.id}`)}`
 						),
 					{
 						padding: { top: 0, bottom: 0, left: 1, right: 1 },
@@ -1511,12 +1511,12 @@ async function displayTaskById(
 		boxen(
 			chalk.white.bold('Suggested Actions:') +
 				'\n' +
-				`${chalk.cyan('1.')} Mark as in-progress: ${chalk.yellow(`task-master set-status --id=${task.id} --status=in-progress`)}\n` +
-				`${chalk.cyan('2.')} Mark as done when completed: ${chalk.yellow(`task-master set-status --id=${task.id} --status=done`)}\n` +
+				`${chalk.cyan('1.')} Mark as in-progress: ${chalk.yellow(`task-hero set-status --id=${task.id} --status=in-progress`)}\n` +
+				`${chalk.cyan('2.')} Mark as done when completed: ${chalk.yellow(`task-hero set-status --id=${task.id} --status=done`)}\n` +
 				// Determine action 3 based on whether subtasks *exist* (use the source list for progress)
 				(subtasksForProgress && subtasksForProgress.length > 0
-					? `${chalk.cyan('3.')} Update subtask status: ${chalk.yellow(`task-master set-status --id=${task.id}.1 --status=done`)}` // Example uses .1
-					: `${chalk.cyan('3.')} Break down into subtasks: ${chalk.yellow(`task-master expand --id=${task.id}`)}`),
+					? `${chalk.cyan('3.')} Update subtask status: ${chalk.yellow(`task-hero set-status --id=${task.id}.1 --status=done`)}` // Example uses .1
+					: `${chalk.cyan('3.')} Break down into subtasks: ${chalk.yellow(`task-hero expand --id=${task.id}`)}`),
 			{
 				padding: { top: 0, bottom: 0, left: 1, right: 1 },
 				borderColor: 'green',
@@ -1706,7 +1706,7 @@ async function displayComplexityReport(reportPath) {
 
 	// When adding rows, don't truncate the expansion command
 	tasksNeedingExpansion.forEach((task) => {
-		const expansionCommand = `task-master expand --id=${task.taskId} --num=${task.recommendedSubtasks}${task.expansionPrompt ? ` --prompt="${task.expansionPrompt}"` : ''}`;
+		const expansionCommand = `task-hero expand --id=${task.taskId} --num=${task.recommendedSubtasks}${task.expansionPrompt ? ` --prompt="${task.expansionPrompt}"` : ''}`;
 
 		complexTable.push([
 			task.taskId,
@@ -1758,9 +1758,9 @@ async function displayComplexityReport(reportPath) {
 		boxen(
 			chalk.white.bold('Suggested Actions:') +
 				'\n\n' +
-				`${chalk.cyan('1.')} Expand all complex tasks: ${chalk.yellow(`task-master expand --all`)}\n` +
-				`${chalk.cyan('2.')} Expand a specific task: ${chalk.yellow(`task-master expand --id=<id>`)}\n` +
-				`${chalk.cyan('3.')} Regenerate with research: ${chalk.yellow(`task-master analyze-complexity --research`)}`,
+				`${chalk.cyan('1.')} Expand all complex tasks: ${chalk.yellow(`task-hero expand --all`)}\n` +
+				`${chalk.cyan('2.')} Expand a specific task: ${chalk.yellow(`task-hero expand --id=<id>`)}\n` +
+				`${chalk.cyan('3.')} Regenerate with research: ${chalk.yellow(`task-hero analyze-complexity --research`)}`,
 			{
 				padding: 1,
 				borderColor: 'cyan',
@@ -1883,7 +1883,7 @@ function displayApiKeyStatus(statusReport) {
 	console.log(table.toString());
 	console.log(
 		chalk.gray(
-			'  Note: Some providers (e.g., Azure, Ollama) may require additional endpoint configuration in .taskmasterconfig.'
+			'  Note: Some providers (e.g., Azure, Ollama) may require additional endpoint configuration in .taskmaster/config.json.'
 		)
 	);
 }
@@ -2031,23 +2031,23 @@ function displayAvailableModels(availableModels) {
 			chalk.white.bold('Next Steps:') +
 				'\n' +
 				chalk.cyan(
-					`1. Set main model: ${chalk.yellow('task-master models --set-main <model_id>')}`
+					`1. Set main model: ${chalk.yellow('task-hero models --set-main <model_id>')}`
 				) +
 				'\n' +
 				chalk.cyan(
-					`2. Set research model: ${chalk.yellow('task-master models --set-research <model_id>')}`
+					`2. Set research model: ${chalk.yellow('task-hero models --set-research <model_id>')}`
 				) +
 				'\n' +
 				chalk.cyan(
-					`3. Set fallback model: ${chalk.yellow('task-master models --set-fallback <model_id>')}`
+					`3. Set fallback model: ${chalk.yellow('task-hero models --set-fallback <model_id>')}`
 				) +
 				'\n' +
 				chalk.cyan(
-					`4. Run interactive setup: ${chalk.yellow('task-master models --setup')}`
+					`4. Run interactive setup: ${chalk.yellow('task-hero models --setup')}`
 				) +
 				'\n' +
 				chalk.cyan(
-					`5. Use custom ollama/openrouter models: ${chalk.yellow('task-master models --openrouter|ollama --set-main|research|fallback <model_id>')}`
+					`5. Use custom ollama/openrouter models: ${chalk.yellow('task-hero models --openrouter|ollama --set-main|research|fallback <model_id>')}`
 				),
 			{
 				padding: 1,

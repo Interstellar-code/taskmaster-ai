@@ -1,6 +1,6 @@
 # Task ID: 85
 # Title: Rename Binary Files
-# Status: pending
+# Status: done
 # Dependencies: 84
 # Priority: medium
 # PRD Source: prd_002_taskhero_ui_rebrand.md
@@ -16,31 +16,31 @@ Rename bin/task-master.js to bin/task-hero.js. Update any references to the bina
 Ensure the renamed binary file executes correctly and all references are updated.
 
 # Subtasks:
-## 1. Identify All References to Binary File [pending]
+## 1. Identify All References to Binary File [done]
 ### Dependencies: None
 ### Description: Locate all instances where the binary file 'task-master.js' is referenced in the codebase.
 ### Details:
 Search the entire codebase for 'task-master.js' using a code search tool or command-line utility like grep. Document all locations where this file is referenced, including scripts, documentation, and configuration files.
 
-## 2. Rename Binary File [pending]
+## 2. Rename Binary File [done]
 ### Dependencies: 85.1
 ### Description: Rename the binary file from 'task-master.js' to 'task-hero.js'.
 ### Details:
 Use a file renaming command or tool to change the file name from 'task-master.js' to 'task-hero.js' in the 'bin' directory.
 
-## 3. Update Codebase References [pending]
+## 3. Update Codebase References [done]
 ### Dependencies: 85.1, 85.2
 ### Description: Update all references in the codebase from 'task-master.js' to 'task-hero.js'.
 ### Details:
 Edit each file identified in subtask 1 to replace 'task-master.js' with 'task-hero.js'. Ensure all scripts, documentation, and configuration files are updated.
 
-## 4. Verify Functionality [pending]
+## 4. Verify Functionality [done]
 ### Dependencies: 85.3
 ### Description: Ensure that the renamed binary file and updated references function as expected.
 ### Details:
 Execute the binary file using the new name 'task-hero.js' and test all functionalities to ensure they work as intended. Check that scripts and configurations that rely on the binary execute without errors.
 
-## 5. Update Documentation [pending]
+## 5. Update Documentation [done]
 ### Dependencies: 85.4
 ### Description: Revise any documentation to reflect the new binary file name.
 ### Details:

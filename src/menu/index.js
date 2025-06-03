@@ -1,6 +1,6 @@
 /**
  * Interactive Menu System
- * Main entry point for the TaskMaster interactive menu
+ * Main entry point for the TaskHero interactive menu
  */
 
 import chalk from 'chalk';
@@ -184,7 +184,7 @@ function renderMenuHeader(sessionState) {
         margin: 1,
         borderStyle: 'round',
         borderColor: 'blue',
-        title: 'TaskMaster Interactive Menu',
+        title: 'TaskHero Interactive Menu',
         titleAlignment: 'center'
     });
 
@@ -1593,17 +1593,17 @@ async function showCommandReference() {
     console.log(chalk.white('═'.repeat(50)));
 
     const commands = [
-        { cmd: 'task-master init', desc: 'Initialize a new project' },
-        { cmd: 'task-master list', desc: 'List all tasks' },
-        { cmd: 'task-master next', desc: 'Show next task to work on' },
-        { cmd: 'task-master show <id>', desc: 'Show task details' },
-        { cmd: 'task-master set-status --id=<id> --status=<status>', desc: 'Update task status' },
-        { cmd: 'task-master add-task --prompt="<text>"', desc: 'Add a new task' },
-        { cmd: 'task-master parse-prd --input=<file>', desc: 'Generate tasks from PRD' },
-        { cmd: 'task-master models --setup', desc: 'Configure AI models' },
-        { cmd: 'task-master list-prds', desc: 'List all PRD files' },
-        { cmd: 'task-master tasks-from-prd --prd=<file>', desc: 'Show tasks from specific PRD' },
-        { cmd: 'task-master check-prd-changes', desc: 'Check for PRD file changes' }
+        { cmd: 'task-hero init', desc: 'Initialize a new project' },
+        { cmd: 'task-hero list', desc: 'List all tasks' },
+        { cmd: 'task-hero next', desc: 'Show next task to work on' },
+        { cmd: 'task-hero show <id>', desc: 'Show task details' },
+        { cmd: 'task-hero set-status --id=<id> --status=<status>', desc: 'Update task status' },
+        { cmd: 'task-hero add-task --prompt="<text>"', desc: 'Add a new task' },
+        { cmd: 'task-hero parse-prd --input=<file>', desc: 'Generate tasks from PRD' },
+        { cmd: 'task-hero models --setup', desc: 'Configure AI models' },
+        { cmd: 'task-hero list-prds', desc: 'List all PRD files' },
+        { cmd: 'task-hero tasks-from-prd --prd=<file>', desc: 'Show tasks from specific PRD' },
+        { cmd: 'task-hero check-prd-changes', desc: 'Check for PRD file changes' }
     ];
 
     commands.forEach(({ cmd, desc }) => {

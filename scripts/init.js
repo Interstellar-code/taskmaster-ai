@@ -52,7 +52,7 @@ function displayBanner() {
 	if (isSilentMode()) return;
 
 	console.clear();
-	const bannerText = figlet.textSync('Task Master AI', {
+	const bannerText = figlet.textSync('TaskHero AI', {
 		font: 'Standard',
 		horizontalLayout: 'default',
 		verticalLayout: 'default'

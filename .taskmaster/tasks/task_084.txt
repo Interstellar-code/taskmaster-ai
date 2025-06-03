@@ -1,6 +1,6 @@
 # Task ID: 84
 # Title: Update Package Configuration
-# Status: pending
+# Status: done
 # Dependencies: None
 # Priority: high
 # PRD Source: prd_002_taskhero_ui_rebrand.md
@@ -16,31 +16,31 @@ Modify package.json to reflect TaskHero branding. Change the binary command from
 Verify that the npm package installs correctly and the task-hero command is available.
 
 # Subtasks:
-## 1. Backup Existing Configuration [in-progress]
+## 1. Backup Existing Configuration [done]
 ### Dependencies: None
 ### Description: Create a backup of the current package.json file and any related configuration files.
 ### Details:
 Copy the existing package.json file to a backup location to ensure changes can be reverted if necessary.
 
-## 2. Update Package Name in package.json [pending]
+## 2. Update Package Name in package.json [done]
 ### Dependencies: 84.1
 ### Description: Modify the 'name' field in package.json to 'task-hero-ai'.
 ### Details:
 Open package.json and change the value of the 'name' field from its current value to 'task-hero-ai'.
 
-## 3. Update Binary Command [pending]
+## 3. Update Binary Command [done]
 ### Dependencies: 84.2
 ### Description: Change the binary command from 'task-master' to 'task-hero'.
 ### Details:
 Locate the 'bin' field in package.json and update the command from 'task-master' to 'task-hero'.
 
-## 4. Update Branding Information [pending]
+## 4. Update Branding Information [done]
 ### Dependencies: 84.3
 ### Description: Modify any branding-related fields in package.json to reflect TaskHero branding.
 ### Details:
 Review fields such as 'description', 'author', and 'homepage' in package.json and update them to align with TaskHero branding guidelines.
 
-## 5. Test and Validate Configuration [pending]
+## 5. Test and Validate Configuration [done]
 ### Dependencies: 84.4
 ### Description: Test the updated package configuration to ensure all changes are correctly applied and functional.
 ### Details:

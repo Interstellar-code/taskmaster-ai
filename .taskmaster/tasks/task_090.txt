@@ -1,6 +1,6 @@
 # Task ID: 90
 # Title: Update Documentation Files
-# Status: pending
+# Status: done
 # Dependencies: 88, 89
 # Priority: medium
 # PRD Source: prd_002_taskhero_ui_rebrand.md

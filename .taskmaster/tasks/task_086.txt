@@ -1,6 +1,6 @@
 # Task ID: 86
 # Title: Update MCP Server Configuration
-# Status: pending
+# Status: done
 # Dependencies: 84
 # Priority: medium
 # PRD Source: prd_002_taskhero_ui_rebrand.md
@@ -14,3 +14,29 @@ Modify MCP server configuration files to replace TaskMaster references with Task
 
 # Test Strategy:
 Validate that the MCP server operates correctly with the updated configuration.
+
+# Subtasks:
+## 1. Draft Migration Guide [done]
+### Dependencies: None
+### Description: Create a comprehensive guide to assist users in transitioning to the new system.
+### Details:
+The guide should include step-by-step instructions, potential pitfalls, and solutions for common issues.
+
+## 2. Update User Documentation [done]
+### Dependencies: 86.1
+### Description: Revise the user documentation to include explanations of the new configuration fields.
+### Details:
+Ensure that the documentation clearly explains the purpose and usage of each new configuration field.
+
+## 3. Modify Schema Validation Logic [done]
+### Dependencies: None
+### Description: Update the schema validation logic in config-manager.js to accommodate new configuration fields.
+### Details:
+Ensure that the validation logic correctly handles new fields and maintains backward compatibility.
+
+## 4. Test and Validate Backward Compatibility [done]
+### Dependencies: 86.3
+### Description: Conduct thorough testing to ensure backward compatibility and validate error messaging.
+### Details:
+Perform tests to confirm that existing configurations are supported and that error messages are informative and accurate.
+

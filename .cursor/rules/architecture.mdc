@@ -79,7 +79,7 @@ alwaysApply: false
 
 - **Data Flow and Module Dependencies (Updated)**:
 
-  - **CLI**: `bin/task-master.js` -> `scripts/dev.js` (loads `.env`) -> `scripts/modules/commands.js` -> Core Logic (`scripts/modules/*`) -> Unified AI Service (`ai-services-unified.js`) -> Provider Adapters -> LLM API.
+  - **CLI**: `bin/task-hero.js` -> `scripts/dev.js` (loads `.env`) -> `scripts/modules/commands.js` -> Core Logic (`scripts/modules/*`) -> Unified AI Service (`ai-services-unified.js`) -> Provider Adapters -> LLM API.
   - **MCP**: External Tool -> `mcp-server/server.js` -> Tool (`mcp-server/src/tools/*`) -> Direct Function (`mcp-server/src/core/direct-functions/*`) -> Core Logic (`scripts/modules/*`) -> Unified AI Service (`ai-services-unified.js`) -> Provider Adapters -> LLM API.
   - **Configuration**: Core logic needing non-AI settings calls `config-manager.js` getters (passing `session.env` via `explicitRoot` if from MCP). Unified AI Service internally calls `config-manager.js` getters (using `role`) for AI params and `utils.js` (`resolveEnvVariable` with `session.env`) for API keys.
 

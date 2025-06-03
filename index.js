@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Task Master
+ * TaskHero
  * Copyright (c) 2025 Eyal Toledano, Ralph Khreish
  *
  * This software is licensed under the MIT License with Commons Clause.
@@ -16,7 +16,7 @@
  */
 
 /**
- * Claude Task Master
+ * TaskHero
  * A task management system for AI-driven development with Claude
  */
 
@@ -68,8 +68,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 	const program = new Command();
 
 	program
-		.name('task-master')
-		.description('Claude Task Master CLI')
+		.name('task-hero')
+		.description('TaskHero CLI')
 		.version(version);
 
 	program
@@ -82,7 +82,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 		.option('-a, --author <author>', 'Author name')
 		.option('--skip-install', 'Skip installing dependencies')
 		.option('--dry-run', 'Show what would be done without making changes')
-		.option('--aliases', 'Add shell aliases (tm, taskmaster)')
+		.option('--aliases', 'Add shell aliases (th, taskhero)')
 		.option('--reset', 'Reset project data (clear all tasks, PRDs, reports, and tests)')
 		.action(async (cmdOptions) => {
 			try {

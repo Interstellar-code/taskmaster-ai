@@ -1,6 +1,6 @@
 # Task ID: 87
 # Title: Rebrand CLI Command Help Text
-# Status: pending
+# Status: done
 # Dependencies: 85
 # Priority: medium
 # PRD Source: prd_002_taskhero_ui_rebrand.md
@@ -16,31 +16,31 @@ Modify help text, descriptions, and user messages in the CLI to reflect TaskHero
 Run all CLI commands and verify that help text and descriptions display TaskHero branding.
 
 # Subtasks:
-## 1. Audit Current CLI Help Text [pending]
+## 1. Audit Current CLI Help Text [done]
 ### Dependencies: None
 ### Description: Identify all instances of TaskMaster in the CLI help text and descriptions.
 ### Details:
 Review the CLI source code and documentation to locate all occurrences of TaskMaster in help text, descriptions, and user messages. Document these instances for updating.
 
-## 2. Update CLI Help Text to TaskHero [pending]
+## 2. Update CLI Help Text to TaskHero [done]
 ### Dependencies: 87.1
 ### Description: Replace all instances of TaskMaster with TaskHero in the CLI help text and descriptions.
 ### Details:
 Using the list from the audit, systematically update each instance of TaskMaster to TaskHero in the source code. Ensure consistency in branding across all help text and descriptions.
 
-## 3. Update User Messages in CLI [pending]
+## 3. Update User Messages in CLI [done]
 ### Dependencies: 87.1
 ### Description: Modify user-facing messages in the CLI to reflect TaskHero branding.
 ### Details:
 Identify and update all user-facing messages in the CLI source code to replace TaskMaster with TaskHero. Ensure that the tone and style remain consistent with the new branding.
 
-## 4. Review and Refactor Code for Consistency [pending]
+## 4. Review and Refactor Code for Consistency [done]
 ### Dependencies: 87.2, 87.3
 ### Description: Ensure all code changes maintain consistency and do not introduce errors.
 ### Details:
 Conduct a thorough review of the updated code to ensure all changes are consistent with TaskHero branding and do not affect functionality. Refactor any code that may have been impacted by the text changes.
 
-## 5. Update Documentation and Release Notes [pending]
+## 5. Update Documentation and Release Notes [done]
 ### Dependencies: 87.4
 ### Description: Update any related documentation and prepare release notes for the branding changes.
 ### Details:

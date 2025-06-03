@@ -12,6 +12,8 @@ import {
 	isValidTaskStatus,
 	TASK_STATUS_OPTIONS
 } from '../../../src/constants/task-status.js';
+import { updatePrdStatusBasedOnTasks } from '../prd-manager/prd-status-automation.js';
+import { readPrdsMetadata } from '../prd-manager/prd-utils.js';
 
 /**
  * Set the status of a task
@@ -73,6 +75,13 @@ async function setTaskStatus(tasksPath, taskIdInput, newStatus, options = {}) {
 			mcpLog: options.mcpLog
 		});
 
+		// Auto-update PRD status based on task status changes
+		try {
+			await updatePrdStatusForChangedTasks(updatedTasks, newStatus, tasksPath, options, data);
+		} catch (error) {
+			log('warn', `PRD auto-update failed: ${error.message}`);
+		}
+
 		// Display success message - only in CLI mode
 		if (!isMcpMode) {
 			for (const id of updatedTasks) {
@@ -117,6 +126,113 @@ async function setTaskStatus(tasksPath, taskIdInput, newStatus, options = {}) {
 			// In MCP mode, throw the error for the caller to handle
 			throw error;
 		}
+	}
+}
+
+/**
+ * Auto-update PRD status when task status changes
+ * @param {Array} updatedTaskIds - Array of task IDs that were updated
+ * @param {string} newStatus - The new status that was set
+ * @param {string} tasksPath - Path to tasks.json
+ * @param {Object} options - Options object
+ */
+async function updatePrdStatusForChangedTasks(updatedTaskIds, newStatus, tasksPath, options = {}, tasksData = null) {
+	try {
+		log('info', `PRD auto-update triggered for tasks: ${updatedTaskIds.join(', ')} with status: ${newStatus}`);
+
+		// Only trigger PRD status updates for specific status changes
+		const triggerStatuses = ['in-progress', 'done', 'pending'];
+		if (!triggerStatuses.includes(newStatus)) {
+			log('info', `Skipping PRD auto-update - status '${newStatus}' not in trigger list`);
+			return;
+		}
+
+		const isMcpMode = !!options?.mcpLog;
+		const projectRoot = path.dirname(path.dirname(path.dirname(tasksPath)));
+		const prdsPath = path.join(projectRoot, '.taskmaster', 'prd', 'prds.json');
+
+		// Check if PRDs metadata file exists
+		try {
+			const prdsData = readPrdsMetadata(prdsPath);
+			if (!prdsData || !prdsData.prds || prdsData.prds.length === 0) {
+				// No PRDs to update
+				return;
+			}
+		} catch (error) {
+			// PRDs file doesn't exist or is invalid, skip PRD updates
+			log('debug', 'No PRDs metadata found, skipping PRD status updates');
+			return;
+		}
+
+		// Find PRDs that are linked to the updated tasks
+		const data = tasksData || readJSON(tasksPath);
+		const affectedPrdIds = new Set();
+
+		for (const taskId of updatedTaskIds) {
+			const task = findTaskById(data.tasks, taskId);
+			log('info', `Checking task ${taskId}: ${task ? 'found' : 'not found'}`);
+
+			if (task && task.prdSource && task.prdSource.fileName) {
+				// Extract PRD ID from fileName (format: "prd_kanban_webapp.md" -> "prd_001")
+				const fileName = task.prdSource.fileName;
+				log('info', `Task ${taskId} has PRD source: ${fileName}`);
+
+				// Try to match the PRD by fileName to get the actual PRD ID
+				const prdsData = readPrdsMetadata(prdsPath);
+				const matchingPrd = prdsData.prds.find(prd => prd.fileName === fileName);
+				if (matchingPrd) {
+					log('info', `Found matching PRD: ${matchingPrd.id} for file: ${fileName}`);
+					affectedPrdIds.add(matchingPrd.id);
+				} else {
+					log('info', `No matching PRD found for file: ${fileName}`);
+				}
+			} else {
+				log('info', `Task ${taskId} has no PRD source or fileName`);
+			}
+		}
+
+		// Update status for each affected PRD
+		for (const prdId of affectedPrdIds) {
+			try {
+				const updateResult = updatePrdStatusBasedOnTasks(prdId, tasksPath, prdsPath, {
+					allowManualOverride: false // Don't override manual status changes
+				});
+
+				if (updateResult.success && updateResult.data.changed) {
+					const { previousStatus, newStatus: prdNewStatus } = updateResult.data;
+
+					if (!isMcpMode) {
+						console.log(
+							boxen(
+								chalk.blue.bold(`📋 PRD Auto-Update`) +
+								'\n\n' +
+								chalk.white(`PRD ${prdId} status automatically updated:`) +
+								'\n' +
+								chalk.white(`From: ${chalk.yellow(previousStatus)}`) +
+								'\n' +
+								chalk.white(`To:   ${chalk.green(prdNewStatus)}`) +
+								'\n\n' +
+								chalk.gray(`Triggered by task ${updatedTaskIds.join(', ')} → ${newStatus}`),
+								{
+									padding: 1,
+									borderColor: 'blue',
+									borderStyle: 'round',
+									margin: { top: 1 }
+								}
+							)
+						);
+					}
+
+					log('info', `Auto-updated PRD ${prdId} status from ${previousStatus} to ${prdNewStatus} due to task status change`);
+				}
+			} catch (error) {
+				log('warn', `Failed to auto-update PRD ${prdId} status: ${error.message}`);
+			}
+		}
+
+	} catch (error) {
+		log('warn', `Error in PRD auto-status update: ${error.message}`);
+		// Don't fail the main task status update if PRD update fails
 	}
 }
 

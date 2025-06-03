@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import TaskMasterMCPServer from './src/index.js';
+import TaskHeroMCPServer from './src/index.js';
 import dotenv from 'dotenv';
 import logger from './src/logger.js';
 
@@ -11,7 +11,7 @@ dotenv.config();
  * Start the MCP server
  */
 async function startServer() {
-	const server = new TaskMasterMCPServer();
+	const server = new TaskHeroMCPServer();
 
 	// Handle graceful shutdown
 	process.on('SIGINT', async () => {

@@ -1,6 +1,6 @@
 # Task ID: 92
 # Title: Update Template Files and Example Configurations
-# Status: pending
+# Status: done
 # Dependencies: 91
 # Priority: medium
 # PRD Source: prd_002_taskhero_ui_rebrand.md

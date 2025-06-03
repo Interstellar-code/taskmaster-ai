@@ -1,12 +1,12 @@
 # Configuration
 
-Taskmaster uses two primary methods for configuration:
+TaskHero uses two primary methods for configuration:
 
-1.  **`.taskmasterconfig` File (Project Root - Recommended for most settings)**
+1.  **`.taskmaster/config.json` File (Project Root - Recommended for most settings)**
 
     - This JSON file stores most configuration settings, including AI model selections, parameters, logging levels, and project defaults.
-    - **Location:** This file is created in the root directory of your project when you run the `task-master models --setup` interactive setup. You typically do this during the initialization sequence. Do not manually edit this file beyond adjusting Temperature and Max Tokens depending on your model.
-    - **Management:** Use the `task-master models --setup` command (or `models` MCP tool) to interactively create and manage this file. You can also set specific models directly using `task-master models --set-<role>=<model_id>`, adding `--ollama` or `--openrouter` flags for custom models. Manual editing is possible but not recommended unless you understand the structure.
+    - **Location:** This file is created in the root directory of your project when you run the `task-hero models --setup` interactive setup. You typically do this during the initialization sequence. Do not manually edit this file beyond adjusting Temperature and Max Tokens depending on your model.
+    - **Management:** Use the `task-hero models --setup` command (or `models` MCP tool) to interactively create and manage this file. You can also set specific models directly using `task-hero models --set-<role>=<model_id>`, adding `--ollama` or `--openrouter` flags for custom models. Manual editing is possible but not recommended unless you understand the structure.
     - **Example Structure:**
       ```json
       {
@@ -59,16 +59,16 @@ Taskmaster uses two primary methods for configuration:
       - `OPENROUTER_API_KEY`: Your OpenRouter API key.
       - `XAI_API_KEY`: Your X-AI API key.
     - **Optional Endpoint Overrides:**
-      - **Per-role `baseUrl` in `.taskmasterconfig`:** You can add a `baseUrl` property to any model role (`main`, `research`, `fallback`) to override the default API endpoint for that provider. If omitted, the provider's standard endpoint is used.
+      - **Per-role `baseUrl` in `.taskmaster/config.json`:** You can add a `baseUrl` property to any model role (`main`, `research`, `fallback`) to override the default API endpoint for that provider. If omitted, the provider's standard endpoint is used.
       - `AZURE_OPENAI_ENDPOINT`: Required if using Azure OpenAI key (can also be set as `baseUrl` for the Azure model role).
       - `OLLAMA_BASE_URL`: Override the default Ollama API URL (Default: `http://localhost:11434/api`).
 
-**Important:** Settings like model ID selections (`main`, `research`, `fallback`), `maxTokens`, `temperature`, `logLevel`, `defaultSubtasks`, `defaultPriority`, and `projectName` are **managed in `.taskmasterconfig`**, not environment variables.
+**Important:** Settings like model ID selections (`main`, `research`, `fallback`), `maxTokens`, `temperature`, `logLevel`, `defaultSubtasks`, `defaultPriority`, and `projectName` are **managed in `.taskmaster/config.json`**, not environment variables.
 
 ## Example `.env` File (for API Keys)
 
 ```
-# Required API keys for providers configured in .taskmasterconfig
+# Required API keys for providers configured in .taskmaster/config.json
 ANTHROPIC_API_KEY=sk-ant-api03-your-key-here
 PERPLEXITY_API_KEY=pplx-your-key-here
 # OPENAI_API_KEY=sk-your-key-here
@@ -84,15 +84,15 @@ PERPLEXITY_API_KEY=pplx-your-key-here
 
 ### Configuration Errors
 
-- If Task Master reports errors about missing configuration or cannot find `.taskmasterconfig`, run `task-master models --setup` in your project root to create or repair the file.
-- Ensure API keys are correctly placed in your `.env` file (for CLI) or `.cursor/mcp.json` (for MCP) and are valid for the providers selected in `.taskmasterconfig`.
+- If TaskHero reports errors about missing configuration or cannot find `.taskmaster/config.json`, run `task-hero models --setup` in your project root to create or repair the file.
+- Ensure API keys are correctly placed in your `.env` file (for CLI) or `.cursor/mcp.json` (for MCP) and are valid for the providers selected in `.taskmaster/config.json`.
 
-### If `task-master init` doesn't respond:
+### If `task-hero init` doesn't respond:
 
 Try running it with Node directly:
 
 ```bash
-node node_modules/claude-task-master/scripts/init.js
+node node_modules/task-hero-ai/scripts/init.js
 ```
 
 Or clone the repository and run:

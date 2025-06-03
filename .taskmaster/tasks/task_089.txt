@@ -1,6 +1,6 @@
 # Task ID: 89
 # Title: Update Error Messages and User Feedback
-# Status: pending
+# Status: done
 # Dependencies: 87
 # Priority: medium
 # PRD Source: prd_002_taskhero_ui_rebrand.md

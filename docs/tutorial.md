@@ -1,19 +1,19 @@
-# Task Master Tutorial
+# TaskHero Tutorial
 
-This tutorial will guide you through setting up and using Task Master for AI-driven development.
+This tutorial will guide you through setting up and using TaskHero for AI-driven development.
 
 ## Initial Setup
 
-There are two ways to set up Task Master: using MCP (recommended) or via npm installation.
+There are two ways to set up TaskHero: using MCP (recommended) or via npm installation.
 
 ### Option 1: Using MCP (Recommended)
 
-MCP (Model Control Protocol) provides the easiest way to get started with Task Master directly in your editor.
+MCP (Model Control Protocol) provides the easiest way to get started with TaskHero directly in your editor.
 
 1. **Install the package**
 
 ```bash
-npm i -g task-master-ai
+npm i -g task-hero-ai
 ```
 
 2. **Add the MCP config to your IDE/MCP Client** (Cursor is recommended, but it works with other clients):
@@ -21,9 +21,9 @@ npm i -g task-master-ai
 ```json
 {
 	"mcpServers": {
-		"taskmaster-ai": {
+		"taskhero-ai": {
 			"command": "npx",
-			"args": ["-y", "--package=task-master-ai", "task-master-ai"],
+			"args": ["-y", "--package=task-hero-ai", "task-hero-ai"],
 			"env": {
 				"ANTHROPIC_API_KEY": "YOUR_ANTHROPIC_API_KEY_HERE",
 				"PERPLEXITY_API_KEY": "YOUR_PERPLEXITY_API_KEY_HERE",
@@ -39,7 +39,7 @@ npm i -g task-master-ai
 }
 ```
 
-**IMPORTANT:** An API key is _required_ for each AI provider you plan on using. Run the `task-master models` command to see your selected models and the status of your API keys across .env and mcp.json
+**IMPORTANT:** An API key is _required_ for each AI provider you plan on using. Run the `task-hero models` command to see your selected models and the status of your API keys across .env and mcp.json
 
 **To use AI commands in CLI** you MUST have API keys in the .env file
 **To use AI commands in MCP** you MUST have API keys in the .mcp.json file (or MCP config equivalent)
@@ -48,10 +48,10 @@ We recommend having keys in both places and adding mcp.json to your gitignore so
 
 3. **Enable the MCP** in your editor settings
 
-4. **Prompt the AI** to initialize Task Master:
+4. **Prompt the AI** to initialize TaskHero:
 
 ```
-Can you please initialize taskmaster-ai into my project?
+Can you please initialize taskhero-ai into my project?
 ```
 
 The AI will:
@@ -62,7 +62,7 @@ The AI will:
 
 5. Place your PRD document in the `scripts/` directory (e.g., `scripts/prd.txt`)
 
-6. **Use natural language commands** to interact with Task Master:
+6. **Use natural language commands** to interact with TaskHero:
 
 ```
 Can you parse my PRD at scripts/prd.txt?
@@ -76,49 +76,49 @@ If you prefer to use the command line interface directly:
 
 ```bash
 # Install globally
-npm install -g task-master-ai
+npm install -g task-hero-ai
 
 # OR install locally within your project
-npm install task-master-ai
+npm install task-hero-ai
 ```
 
 Initialize a new project:
 
 ```bash
 # If installed globally
-task-master init
+task-hero init
 
 # If installed locally
-npx task-master init
+npx task-hero init
 ```
 
 This will prompt you for project details and set up a new project with the necessary files and structure.
 
 ## Common Commands
 
-After setting up Task Master, you can use these commands (either via AI prompts or CLI):
+After setting up TaskHero, you can use these commands (either via AI prompts or CLI):
 
 ```bash
 # Parse a PRD and generate tasks
-task-master parse-prd your-prd.txt
+task-hero parse-prd your-prd.txt
 
 # List all tasks
-task-master list
+task-hero list
 
 # Show the next task to work on
-task-master next
+task-hero next
 
 # Generate task files
-task-master generate
+task-hero generate
 ```
 
 ## Setting up Cursor AI Integration
 
-Task Master is designed to work seamlessly with [Cursor AI](https://www.cursor.so/), providing a structured workflow for AI-driven development.
+TaskHero is designed to work seamlessly with [Cursor AI](https://www.cursor.so/), providing a structured workflow for AI-driven development.
 
 ### Using Cursor with MCP (Recommended)
 
-If you've already set up Task Master with MCP in Cursor, the integration is automatic. You can simply use natural language to interact with Task Master:
+If you've already set up TaskHero with MCP in Cursor, the integration is automatic. You can simply use natural language to interact with TaskHero:
 
 ```
 What tasks are available to work on next?
@@ -143,25 +143,25 @@ You can also set up the MCP server in Cursor settings:
 2. Navigate to the MCP section
 3. Click on "Add New MCP Server"
 4. Configure with the following details:
-   - Name: "Task Master"
+   - Name: "TaskHero"
    - Type: "Command"
-   - Command: "npx -y --package=task-master-ai task-master-ai"
+   - Command: "npx -y --package=task-hero-ai task-hero-ai"
 5. Save the settings
 
-Once configured, you can interact with Task Master's task management commands directly through Cursor's interface, providing a more integrated experience.
+Once configured, you can interact with TaskHero's task management commands directly through Cursor's interface, providing a more integrated experience.
 
 ## Initial Task Generation
 
 In Cursor's AI chat, instruct the agent to generate tasks from your PRD:
 
 ```
-Please use the task-master parse-prd command to generate tasks from my PRD. The PRD is located at scripts/prd.txt.
+Please use the task-hero parse-prd command to generate tasks from my PRD. The PRD is located at scripts/prd.txt.
 ```
 
 The agent will execute:
 
 ```bash
-task-master parse-prd scripts/prd.txt
+task-hero parse-prd scripts/prd.txt
 ```
 
 This will:
@@ -181,7 +181,7 @@ Please generate individual task files from tasks.json
 The agent will execute:
 
 ```bash
-task-master generate
+task-hero generate
 ```
 
 This creates individual task files in the `tasks/` directory (e.g., `task_001.txt`, `task_002.txt`), making it easier to reference specific tasks.
@@ -200,8 +200,8 @@ What tasks are available to work on next?
 
 The agent will:
 
-- Run `task-master list` to see all tasks
-- Run `task-master next` to determine the next task to work on
+- Run `task-hero list` to see all tasks
+- Run `task-hero next` to determine the next task to work on
 - Analyze dependencies to determine which tasks are ready to be worked on
 - Prioritize tasks based on priority level and ID order
 - Suggest the next task(s) to implement
@@ -240,7 +240,7 @@ Task 3 is now complete. Please update its status.
 The agent will execute:
 
 ```bash
-task-master set-status --id=3 --status=done
+task-hero set-status --id=3 --status=done
 ```
 
 ### 5. Handling Implementation Drift
@@ -260,10 +260,10 @@ We've decided to use MongoDB instead of PostgreSQL. Can you update all future ta
 The agent will execute:
 
 ```bash
-task-master update --from=4 --prompt="Now we are using MongoDB instead of PostgreSQL."
+task-hero update --from=4 --prompt="Now we are using MongoDB instead of PostgreSQL."
 
 # OR, if research is needed to find best practices for MongoDB:
-task-master update --from=4 --prompt="Update to use MongoDB, researching best practices" --research
+task-hero update --from=4 --prompt="Update to use MongoDB, researching best practices" --research
 ```
 
 This will rewrite or re-scope subsequent tasks in tasks.json while preserving completed work.
@@ -279,7 +279,7 @@ I think subtask 5.2 would fit better as part of task 7 instead. Can you move it 
 The agent will execute:
 
 ```bash
-task-master move --from=5.2 --to=7.3
+task-hero move --from=5.2 --to=7.3
 ```
 
 You can reorganize tasks in various ways:
@@ -315,9 +315,9 @@ The agent will help you:
 
 ```bash
 # Move your tasks to new positions (e.g., 16-18)
-task-master move --from=10 --to=16
-task-master move --from=11 --to=17
-task-master move --from=12 --to=18
+task-hero move --from=10 --to=16
+task-hero move --from=11 --to=17
+task-hero move --from=12 --to=18
 ```
 
 This approach preserves everyone's work while maintaining a clean task structure, making it much easier to handle task conflicts than trying to manually merge JSON files.
@@ -333,7 +333,7 @@ Task 5 seems complex. Can you break it down into subtasks?
 The agent will execute:
 
 ```bash
-task-master expand --id=5 --num=3
+task-hero expand --id=5 --num=3
 ```
 
 You can provide additional context:
@@ -345,7 +345,7 @@ Please break down task 5 with a focus on security considerations.
 The agent will execute:
 
 ```bash
-task-master expand --id=5 --prompt="Focus on security aspects"
+task-hero expand --id=5 --prompt="Focus on security aspects"
 ```
 
 You can also expand all pending tasks:
@@ -357,7 +357,7 @@ Please break down all pending tasks into subtasks.
 The agent will execute:
 
 ```bash
-task-master expand --all
+task-hero expand --all
 ```
 
 For research-backed subtask generation using the configured research model:
@@ -369,7 +369,7 @@ Please break down task 5 using research-backed generation.
 The agent will execute:
 
 ```bash
-task-master expand --id=5 --research
+task-hero expand --id=5 --research
 ```
 
 ## Example Cursor AI Interactions
@@ -377,7 +377,7 @@ task-master expand --id=5 --research
 ### Starting a new project
 
 ```
-I've just initialized a new project with Claude Task Master. I have a PRD at scripts/prd.txt.
+I've just initialized a new project with Claude TaskHero. I have a PRD at scripts/prd.txt.
 Can you help me parse it and set up the initial tasks?
 ```
 

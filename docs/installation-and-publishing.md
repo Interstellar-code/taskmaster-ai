@@ -100,8 +100,8 @@ Update the binary commands in `package.json`:
 ```json
 {
   "bin": {
-    "task-hero": "bin/task-master.js",
-    "task-hero-ai": "bin/task-master.js",
+    "task-hero": "bin/task-hero.js",
+    "task-hero-ai": "bin/task-hero.js",
     "task-hero-mcp": "mcp-server/server.js"
   }
 }

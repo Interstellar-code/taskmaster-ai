@@ -13,7 +13,7 @@ task-master --menu
 task-master -m
 
 # Method 2: Local project (always works)
-node bin/task-master.js menu
+node bin/task-hero.js menu
 
 # Method 3: NPM script (in project directory)
 npm run menu
@@ -32,7 +32,7 @@ npm uninstall -g task-master-ai
 npm install -g task-master-ai
 
 # Solution 2: Use local command
-node bin/task-master.js menu
+node bin/task-hero.js menu
 
 # Solution 3: Use npm script
 npm run menu

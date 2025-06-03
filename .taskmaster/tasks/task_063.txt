@@ -1,6 +1,6 @@
 # Task ID: 63
 # Title: Integrate TaskMaster Core Functions with API
-# Status: pending
+# Status: in-progress
 # Dependencies: 62
 # Priority: high
 # PRD Source: prd_kanban_webapp.md

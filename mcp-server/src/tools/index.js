@@ -1,6 +1,6 @@
 /**
  * tools/index.js
- * Export all Task Master CLI tools for MCP server
+ * Export all TaskHero CLI tools for MCP server
  */
 
 import { registerListTasksTool } from './get-tasks.js';
@@ -31,10 +31,10 @@ import { registerModelsTool } from './models.js';
 import { registerMoveTaskTool } from './move-task.js';
 
 /**
- * Register all Task Master tools with the MCP server
+ * Register all TaskHero tools with the MCP server
  * @param {Object} server - FastMCP server instance
  */
-export function registerTaskMasterTools(server) {
+export function registerTaskHeroTools(server) {
 	try {
 		// Register each tool in a logical workflow order
 
@@ -75,11 +75,11 @@ export function registerTaskMasterTools(server) {
 		registerValidateDependenciesTool(server);
 		registerFixDependenciesTool(server);
 	} catch (error) {
-		logger.error(`Error registering Task Master tools: ${error.message}`);
+		logger.error(`Error registering TaskHero tools: ${error.message}`);
 		throw error;
 	}
 }
 
 export default {
-	registerTaskMasterTools
+	registerTaskHeroTools
 };

@@ -28,7 +28,7 @@ try {
 	process.exit(1); // Exit if models can't be loaded
 }
 
-const CONFIG_FILE_NAME = '.taskmasterconfig';
+const CONFIG_FILE_NAME = '.taskheroconfig';
 const NEW_CONFIG_FILE = 'config.json';
 
 /**
@@ -84,7 +84,7 @@ const DEFAULTS = {
 		debug: false,
 		defaultSubtasks: 5,
 		defaultPriority: 'medium',
-		projectName: 'Task Master',
+		projectName: 'TaskHero',
 		ollamaBaseUrl: 'http://localhost:11434/api'
 	}
 };
@@ -498,7 +498,7 @@ function isApiKeySet(providerName, session = null, projectRoot = null) {
 
 /**
  * Checks the API key status within .cursor/mcp.json for a given provider.
- * Reads the mcp.json file, finds the taskmaster-ai server config, and checks the relevant env var.
+ * Reads the mcp.json file, finds the task-hero-ai server config, and checks the relevant env var.
  * @param {string} providerName The name of the provider.
  * @param {string|null} projectRoot - Optional explicit path to the project root.
  * @returns {boolean} True if the key exists and is not a placeholder, false otherwise.
@@ -522,9 +522,9 @@ function getMcpApiKeyStatus(providerName, projectRoot = null) {
 		const mcpConfigRaw = fs.readFileSync(mcpConfigPath, 'utf-8');
 		const mcpConfig = JSON.parse(mcpConfigRaw);
 
-		const mcpEnv = mcpConfig?.mcpServers?.['taskmaster-ai']?.env;
+		const mcpEnv = mcpConfig?.mcpServers?.['task-hero-ai']?.env;
 		if (!mcpEnv) {
-			// console.warn(chalk.yellow('Warning: Could not find taskmaster-ai env in mcp.json.'));
+			// console.warn(chalk.yellow('Warning: Could not find task-hero-ai env in mcp.json.'));
 			return false; // Structure missing
 		}
 

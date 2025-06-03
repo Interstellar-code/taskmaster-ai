@@ -1,6 +1,6 @@
 # Task ID: 64
 # Title: Implement Basic Task Data Retrieval API Endpoints
-# Status: pending
+# Status: in-progress
 # Dependencies: 63
 # Priority: high
 # PRD Source: prd_kanban_webapp.md
