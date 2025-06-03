@@ -1,6 +1,6 @@
 # Task ID: 61
 # Title: Setup shadcn/ui and Tailwind CSS Integration
-# Status: in-progress
+# Status: pending
 # Dependencies: 60
 # Priority: high
 # PRD Source: prd_kanban_webapp.md
