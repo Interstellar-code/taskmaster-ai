@@ -97,6 +97,18 @@ export async function addTaskDirect(args, log, context = {}) {
 		let telemetryData;
 
 		if (isManualCreation) {
+			// Validate description length
+			if (args.description.trim().length < 32) {
+				disableSilentMode();
+				return {
+					success: false,
+					error: {
+						code: 'VALIDATION_ERROR',
+						message: 'Task description must be at least 32 characters long'
+					}
+				};
+			}
+
 			// Create manual task data object
 			manualTaskData = {
 				title: args.title,

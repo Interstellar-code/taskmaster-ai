@@ -265,6 +265,13 @@ async function addTask(
 					'Manual task data must include at least a title and description.'
 				);
 			}
+
+			// Validate description length
+			if (taskData.description.trim().length < 32) {
+				throw new Error(
+					'Task description must be at least 32 characters long'
+				);
+			}
 		} else {
 			report('DEBUG: Taking AI task generation path.', 'debug');
 			// --- Refactored AI Interaction ---

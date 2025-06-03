@@ -42,7 +42,8 @@ export function registerComplexityReportTool(server) {
 					? path.resolve(args.projectRoot, args.file)
 					: path.resolve(
 							args.projectRoot,
-							'scripts',
+							'.taskmaster',
+							'reports',
 							'task-complexity-report.json'
 						);
 

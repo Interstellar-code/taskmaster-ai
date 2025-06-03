@@ -1,6 +1,6 @@
 {
   "name": "task-hero-ai",
-  "version": "0.15.9",
+  "version": "0.16.0",
   "description": "TaskHero AI - A task management system for ambitious AI-driven development",
   "main": "index.js",
   "type": "module",

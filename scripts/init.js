@@ -362,7 +362,7 @@ function copyTemplateFile(templateName, targetPath, replacements = {}) {
 			sourcePath = path.join(__dirname, '..', 'assets', 'roocode', '.roomodes');
 			break;
 		case 'augment-guidelines':
-			sourcePath = path.join(__dirname, '..', 'templates', 'augment-guidelines');
+			sourcePath = path.join(__dirname, '..', '.taskmaster', 'templates', 'augment-guidelines');
 			break;
 		case 'architect-rules':
 		case 'ask-rules':
@@ -714,8 +714,86 @@ function createProjectStructure(addAliases, dryRun) {
 		ensureDirectoryExists(path.join(targetDir, '.roo', `rules-${mode}`));
 	}
 
+	// Create TaskMaster directory structure
+	ensureDirectoryExists(path.join(targetDir, '.taskmaster'));
+	ensureDirectoryExists(path.join(targetDir, '.taskmaster', 'tasks'));
+	ensureDirectoryExists(path.join(targetDir, '.taskmaster', 'reports'));
+	ensureDirectoryExists(path.join(targetDir, '.taskmaster', 'templates'));
+	ensureDirectoryExists(path.join(targetDir, '.taskmaster', 'prd'));
+	ensureDirectoryExists(path.join(targetDir, '.taskmaster', 'prd', 'pending'));
+	ensureDirectoryExists(path.join(targetDir, '.taskmaster', 'prd', 'in-progress'));
+	ensureDirectoryExists(path.join(targetDir, '.taskmaster', 'prd', 'done'));
+	ensureDirectoryExists(path.join(targetDir, '.taskmaster', 'prd', 'archived'));
+
+	// Create legacy directories for backward compatibility
 	ensureDirectoryExists(path.join(targetDir, 'scripts'));
 	ensureDirectoryExists(path.join(targetDir, 'tasks'));
+
+	// Create test directories
+	ensureDirectoryExists(path.join(targetDir, 'tests'));
+	ensureDirectoryExists(path.join(targetDir, 'tests', 'unit'));
+	ensureDirectoryExists(path.join(targetDir, 'tests', 'integration'));
+	ensureDirectoryExists(path.join(targetDir, 'tests', 'e2e'));
+
+	// Create default data files
+	log('info', 'Creating default data files...');
+
+	// Create default tasks.json in new structure
+	const tasksJsonContent = {
+		tasks: [],
+		metadata: {
+			version: '1.0.0',
+			lastUpdated: new Date().toISOString(),
+			totalTasks: 0
+		}
+	};
+
+	const newTasksJsonPath = path.join(targetDir, '.taskmaster', 'tasks', 'tasks.json');
+	if (!fs.existsSync(newTasksJsonPath)) {
+		fs.writeFileSync(newTasksJsonPath, JSON.stringify(tasksJsonContent, null, 2));
+		log('success', `Created default tasks.json at ${newTasksJsonPath}`);
+	}
+
+	// Create default prds.json in new structure
+	const prdsJsonContent = {
+		prds: [],
+		metadata: {
+			version: '1.0.0',
+			lastUpdated: new Date().toISOString(),
+			totalPrds: 0,
+			schema: {
+				version: '1.0.0',
+				description: 'TaskHero AI PRD Lifecycle Tracking Schema'
+			}
+		}
+	};
+
+	const newPrdsJsonPath = path.join(targetDir, '.taskmaster', 'prd', 'prds.json');
+	if (!fs.existsSync(newPrdsJsonPath)) {
+		fs.writeFileSync(newPrdsJsonPath, JSON.stringify(prdsJsonContent, null, 2));
+		log('success', `Created default prds.json at ${newPrdsJsonPath}`);
+	}
+
+	// Create default config.json in new structure
+	const configJsonContent = {
+		version: "1.0.0",
+		models: {
+			primary: "claude-3-5-sonnet-20241022",
+			research: "claude-3-5-sonnet-20241022",
+			fallback: "gpt-4o"
+		},
+		settings: {
+			maxTokens: 4000,
+			temperature: 0.7,
+			enableResearch: true
+		}
+	};
+
+	const configJsonPath = path.join(targetDir, '.taskmaster', 'config.json');
+	if (!fs.existsSync(configJsonPath)) {
+		fs.writeFileSync(configJsonPath, JSON.stringify(configJsonContent, null, 2));
+		log('success', `Created default config.json at ${configJsonPath}`);
+	}
 
 	// Setup MCP configuration for integration with Cursor
 	setupMCPConfiguration(targetDir);
@@ -853,20 +931,20 @@ function createProjectStructure(addAliases, dryRun) {
 			'Running interactive model setup. Please select your preferred AI models.'
 		);
 		try {
-			execSync('npx task-master models --setup', {
+			execSync('npx task-hero models --setup', {
 				stdio: 'inherit',
 				cwd: targetDir
 			});
 			log('success', 'AI Models configured.');
 		} catch (error) {
 			log('error', 'Failed to configure AI models:', error.message);
-			log('warn', 'You may need to run "task-master models --setup" manually.');
+			log('warn', 'You may need to run "task-hero models --setup" manually.');
 		}
 	} else if (isSilentMode() && !dryRun) {
 		log('info', 'Skipping interactive model setup in silent (MCP) mode.');
 		log(
 			'warn',
-			'Please configure AI models using "task-master models --set-..." or the "models" MCP tool.'
+			'Please configure AI models using "task-hero models --set-..." or the "models" MCP tool.'
 		);
 	} else if (dryRun) {
 		log('info', 'DRY RUN: Skipping interactive model setup.');
@@ -904,7 +982,7 @@ function createProjectStructure(addAliases, dryRun) {
 					) +
 					'\n' +
 					chalk.white('   â”œâ”€ ') +
-					chalk.dim('Models: Use `task-master models` commands') +
+					chalk.dim('Models: Use `task-hero models` commands') +
 					'\n' +
 					chalk.white('   â””â”€ ') +
 					chalk.dim(
@@ -925,7 +1003,7 @@ function createProjectStructure(addAliases, dryRun) {
 					chalk.dim('MCP Tool: ') +
 					chalk.cyan('parse_prd') +
 					chalk.dim(' | CLI: ') +
-					chalk.cyan('task-master parse-prd scripts/prd.txt') +
+					chalk.cyan('task-hero parse-prd scripts/prd.txt') +
 					'\n' +
 					chalk.white('4. ') +
 					chalk.yellow(
@@ -936,7 +1014,7 @@ function createProjectStructure(addAliases, dryRun) {
 					chalk.dim('MCP Tool: ') +
 					chalk.cyan('analyze_project_complexity') +
 					chalk.dim(' | CLI: ') +
-					chalk.cyan('task-master analyze-complexity') +
+					chalk.cyan('task-hero analyze-complexity') +
 					'\n' +
 					chalk.white('5. ') +
 					chalk.yellow(
@@ -964,7 +1042,7 @@ function createProjectStructure(addAliases, dryRun) {
 					) +
 					'\n' +
 					chalk.dim(
-						'* Use the task-master command without arguments to see all available commands.'
+						'* Use the task-hero command without arguments to see all available commands.'
 					),
 				{
 					padding: 1,

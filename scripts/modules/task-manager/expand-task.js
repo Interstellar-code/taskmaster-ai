@@ -436,7 +436,7 @@ async function promptForComplexityAnalysis(task, tasksPath, context, outputForma
 		// Run complexity analysis for this specific task
 		const result = await analyzeTaskComplexity({
 			file: tasksPath,
-			output: path.join(projectRoot || path.dirname(path.dirname(tasksPath)), 'scripts/task-complexity-report.json'),
+			output: path.join(projectRoot || path.dirname(path.dirname(tasksPath)), '.taskmaster/reports/task-complexity-report.json'),
 			threshold: 1, // Analyze all tasks
 			research: false // Use standard analysis for speed
 		}, { session, mcpLog });
@@ -559,7 +559,7 @@ async function expandTask(
 
 		const complexityReportPath = path.join(
 			projectRoot,
-			'scripts/task-complexity-report.json'
+			'.taskmaster/reports/task-complexity-report.json'
 		);
 		let taskAnalysis = null;
 

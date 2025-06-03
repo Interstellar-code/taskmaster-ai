@@ -1,7 +1,8 @@
 import chalk from 'chalk';
 
 import { log } from '../utils.js';
-import { isValidTaskStatus } from '../../../src/constants/task-status.js';
+import { isValidTaskStatus, TASK_STATUS_OPTIONS } from '../../../src/constants/task-status.js';
+import { validateTaskStatusTransition } from '../dependency-manager.js';
 
 /**
  * Update the status of a single task
@@ -22,6 +23,12 @@ async function updateSingleTaskStatus(
 		throw new Error(
 			`Error: Invalid status value: ${newStatus}. Use one of: ${TASK_STATUS_OPTIONS.join(', ')}`
 		);
+	}
+
+	// Validate dependencies before status change
+	const dependencyValidation = validateTaskStatusTransition(data.tasks, taskIdInput, newStatus);
+	if (!dependencyValidation.valid) {
+		throw new Error(dependencyValidation.error);
 	}
 
 	// Check if it's a subtask (e.g., "1.2")

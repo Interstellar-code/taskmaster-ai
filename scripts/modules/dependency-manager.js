@@ -494,6 +494,56 @@ function validateTaskDependencies(tasks) {
 }
 
 /**
+ * Validate task dependencies before status change
+ * @param {Array} tasks - Array of all tasks
+ * @param {string|number} taskId - Task ID to validate
+ * @param {string} newStatus - Target status
+ * @returns {Object} Validation result with valid flag and error details
+ */
+function validateTaskStatusTransition(tasks, taskId, newStatus) {
+	const task = tasks.find(t => String(t.id) === String(taskId));
+
+	if (!task) {
+		return {
+			valid: false,
+			error: `Task ${taskId} not found`
+		};
+	}
+
+	// Only validate dependencies for "in-progress" and "done" status changes
+	if (newStatus !== 'in-progress' && newStatus !== 'done') {
+		return { valid: true };
+	}
+
+	// Check if all dependencies are completed for "in-progress" or "done"
+	if (task.dependencies && task.dependencies.length > 0) {
+		const incompleteDeps = [];
+
+		for (const depId of task.dependencies) {
+			const depTask = tasks.find(t => String(t.id) === String(depId));
+			if (depTask && depTask.status !== 'done' && depTask.status !== 'in-progress') {
+				incompleteDeps.push({
+					id: depId,
+					title: depTask.title,
+					status: depTask.status
+				});
+			}
+		}
+
+		if (incompleteDeps.length > 0) {
+			const depList = incompleteDeps.map(dep => `Task ${dep.id} (${dep.status})`).join(', ');
+			return {
+				valid: false,
+				error: `Cannot start Task ${taskId}. Dependencies not met: ${depList}`,
+				incompleteDependencies: incompleteDeps
+			};
+		}
+	}
+
+	return { valid: true };
+}
+
+/**
  * Remove duplicate dependencies from tasks
  * @param {Object} tasksData - Tasks data object with tasks array
  * @returns {Object} Updated tasks data with duplicates removed
@@ -1234,6 +1284,7 @@ export {
 	removeDependency,
 	isCircularDependency,
 	validateTaskDependencies,
+	validateTaskStatusTransition,
 	validateDependenciesCommand,
 	fixDependenciesCommand,
 	removeDuplicateDependencies,

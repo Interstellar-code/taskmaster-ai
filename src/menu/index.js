@@ -474,7 +474,6 @@ async function handleTaskManagement(sessionState) {
                     choices: [
                         { name: chalk.green('➕ Add Task'), value: 'add-task' },
                         { name: chalk.blue('✏️ Update Task'), value: 'update-task' },
-                        { name: chalk.yellow('🔄 Update Multiple'), value: 'update' },
                         { name: chalk.red('🗑️ Remove Task'), value: 'remove-task' },
                         { name: chalk.magenta('📦 Move Task'), value: 'move' },
                         new inquirer.Separator(),
@@ -502,25 +501,6 @@ async function handleTaskManagement(sessionState) {
                 case 'update-task':
                     await executeCommandWithParams('update-task', [
                         COMMON_PARAMS.taskId,
-                        {
-                            name: 'prompt',
-                            type: 'input',
-                            message: 'Enter update context:',
-                            validate: (input) => input.trim().length > 0 ? true : 'Update context cannot be empty'
-                        }
-                    ], { projectRoot: sessionState.projectRoot });
-                    break;
-                case 'update':
-                    await executeCommandWithParams('update', [
-                        {
-                            name: 'from',
-                            type: 'input',
-                            message: 'Enter starting task ID:',
-                            validate: (input) => {
-                                const num = parseInt(input);
-                                return !isNaN(num) && num > 0 ? true : 'Please enter a valid task ID';
-                            }
-                        },
                         {
                             name: 'prompt',
                             type: 'input',
@@ -584,6 +564,7 @@ async function handleSubtaskOperations(sessionState) {
                     choices: [
                         { name: chalk.green('➕ Add Subtask'), value: 'add-subtask' },
                         { name: chalk.blue('✏️ Update Subtask'), value: 'update-subtask' },
+                        { name: chalk.cyan('🔄 Set Subtask Status'), value: 'set-subtask-status' },
                         { name: chalk.red('🗑️ Remove Subtask'), value: 'remove-subtask' },
                         { name: chalk.yellow('🔍 Expand Task'), value: 'expand' },
                         { name: chalk.magenta('🧹 Clear Subtasks'), value: 'clear-subtasks' },
@@ -641,6 +622,34 @@ async function handleSubtaskOperations(sessionState) {
                             type: 'input',
                             message: 'Enter update context:',
                             validate: (input) => input.trim().length > 0 ? true : 'Update context cannot be empty'
+                        }
+                    ], { projectRoot: sessionState.projectRoot });
+                    break;
+                case 'set-subtask-status':
+                    await executeCommandWithParams('set-status', [
+                        {
+                            name: 'id',
+                            type: 'input',
+                            message: 'Enter subtask ID (format: parentId.subtaskId):',
+                            validate: (input) => {
+                                const parts = input.split('.');
+                                return parts.length === 2 && !isNaN(parseInt(parts[0])) && !isNaN(parseInt(parts[1]))
+                                    ? true : 'Please enter a valid subtask ID (e.g., 1.2)';
+                            }
+                        },
+                        {
+                            name: 'status',
+                            type: 'list',
+                            message: 'Select new status:',
+                            choices: [
+                                { name: 'Pending', value: 'pending' },
+                                { name: 'In Progress', value: 'in-progress' },
+                                { name: 'Done', value: 'done' },
+                                { name: 'Review', value: 'review' },
+                                { name: 'Blocked', value: 'blocked' },
+                                { name: 'Deferred', value: 'deferred' },
+                                { name: 'Cancelled', value: 'cancelled' }
+                            ]
                         }
                     ], { projectRoot: sessionState.projectRoot });
                     break;

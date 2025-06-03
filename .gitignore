@@ -108,3 +108,10 @@ test-reset-project/
 # Note: tasks/ and prd/ directories are intentionally NOT ignored
 # These contain your project's task definitions and PRD files
 # and should be tracked in version control
+
+# TaskMaster AI - Ignore everything in test-init/ except prd/ and tasks/
+test-init/
+!test-init/prd/
+!test-init/tasks/
+!test-init/prd/**
+!test-init/tasks/**
