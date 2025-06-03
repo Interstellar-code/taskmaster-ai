@@ -1,6 +1,6 @@
 # Task ID: 62
 # Title: Create Express.js API Server with Basic Routing
-# Status: pending
+# Status: done
 # Dependencies: None
 # Priority: high
 # PRD Source: prd_kanban_webapp.md
@@ -16,19 +16,19 @@ Initialize a new Node.js project for the backend. Install `express` and `cors`. 
 Start the Express server and use a tool like Postman or `curl` to send a GET request to the root endpoint. Verify that the server responds with the expected JSON message and that CORS headers are correctly set.
 
 # Subtasks:
-## 1. Set Up Express.js Project Structure and Dependencies [pending]
+## 1. Set Up Express.js Project Structure and Dependencies [done]
 ### Dependencies: None
 ### Description: Initialize a new Express.js project and set up the necessary project structure and dependencies.
 ### Details:
 Create a new directory for the project, initialize it with npm, and install Express.js along with any other necessary dependencies such as dotenv for environment variables.
 
-## 2. Create Basic Server Configuration with CORS and Middleware [pending]
+## 2. Create Basic Server Configuration with CORS and Middleware [done]
 ### Dependencies: 62.1
 ### Description: Configure the Express.js server with basic settings, including CORS and middleware.
 ### Details:
 Set up the server to use middleware for JSON parsing, logging, and CORS to handle cross-origin requests. Ensure the server can read environment variables for configuration.
 
-## 3. Implement Initial API Routes and Error Handling [pending]
+## 3. Implement Initial API Routes and Error Handling [done]
 ### Dependencies: 62.2
 ### Description: Develop initial API routes and implement basic error handling mechanisms.
 ### Details:

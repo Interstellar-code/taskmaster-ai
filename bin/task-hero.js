@@ -311,6 +311,46 @@ program
 		}
 	});
 
+// Add web interface commands
+program
+	.command('web')
+	.description('Start web interface')
+	.option('-p, --port <port>', 'Port to run on', '3000')
+	.option('-d, --dev', 'Development mode with hot reload')
+	.option('--no-open', 'Don\'t open browser automatically')
+	.action(async (options) => {
+		try {
+			const { startWebInterface } = await import('../src/web/server.js');
+			await startWebInterface(options);
+		} catch (err) {
+			console.error(chalk.red('Error starting web interface:'), err.message);
+			process.exit(1);
+		}
+	});
+
+program
+	.command('start')
+	.description('Start TaskHero')
+	.option('--web', 'Start with web interface')
+	.option('-p, --port <port>', 'Port for web interface', '3000')
+	.option('-d, --dev', 'Development mode (web only)')
+	.option('--no-open', 'Don\'t open browser automatically (web only)')
+	.action(async (options) => {
+		try {
+			if (options.web) {
+				const { startWebInterface } = await import('../src/web/server.js');
+				await startWebInterface(options);
+			} else {
+				// Current CLI behavior
+				const { initializeInteractiveMenu } = await import('../src/menu/index.js');
+				await initializeInteractiveMenu();
+			}
+		} catch (err) {
+			console.error(chalk.red('Error starting TaskHero:'), err.message);
+			process.exit(1);
+		}
+	});
+
 // Add menu option flag
 program
 	.option('-m, --menu', 'Launch interactive menu system');
@@ -321,7 +361,7 @@ registerCommands(tempProgram);
 
 // For each command in the temp instance, add a modified version to our actual program
 tempProgram.commands.forEach((cmd) => {
-	if (['dev', 'menu'].includes(cmd.name())) {
+	if (['dev', 'menu', 'web', 'start'].includes(cmd.name())) {
 		// Skip commands we've already defined specially
 		return;
 	}
