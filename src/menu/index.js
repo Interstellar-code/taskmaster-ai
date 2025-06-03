@@ -1599,10 +1599,13 @@ async function handleKanbanBoard(sessionState) {
  */
 async function showCommandReference() {
     console.log(chalk.blue('\n📖 Command Reference'));
-    console.log(chalk.white('═'.repeat(50)));
+    console.log(chalk.white('═'.repeat(100)));
 
-    const commands = [
+    // Enhanced command list with more commands
+    const allCommands = [
+        // Essential Commands
         { cmd: 'task-hero init', desc: 'Initialize a new project' },
+        { cmd: 'task-hero menu', desc: 'Launch interactive menu' },
         { cmd: 'task-hero list', desc: 'List all tasks' },
         { cmd: 'task-hero next', desc: 'Show next task to work on' },
         { cmd: 'task-hero show <id>', desc: 'Show task details' },
@@ -1610,35 +1613,125 @@ async function showCommandReference() {
         { cmd: 'task-hero add-task --prompt="<text>"', desc: 'Add a new task' },
         { cmd: 'task-hero parse-prd --input=<file>', desc: 'Generate tasks from PRD' },
         { cmd: 'task-hero models --setup', desc: 'Configure AI models' },
+        { cmd: 'task-hero expand --id=<id>', desc: 'Break task into subtasks' },
+
+        // Task Management
+        { cmd: 'task-hero update-task --id=<id> --prompt="<context>"', desc: 'Update specific task' },
+        { cmd: 'task-hero remove-task --id=<id>', desc: 'Delete task' },
+        { cmd: 'task-hero move-task --id=<id> --after=<target-id>', desc: 'Reorder tasks' },
+        { cmd: 'task-hero add-dependency --id=<id> --depends-on=<id>', desc: 'Add dependencies' },
+        { cmd: 'task-hero validate-dependencies', desc: 'Check dependency integrity' },
+        { cmd: 'task-hero fix-dependencies', desc: 'Fix broken dependencies' },
+
+        // PRD Management
+        { cmd: 'task-hero prd', desc: 'List PRDs with filtering' },
+        { cmd: 'task-hero prd-show <prd-id>', desc: 'Show detailed PRD information' },
+        { cmd: 'task-hero prd-status <prd-id> <status>', desc: 'Update PRD status' },
+        { cmd: 'task-hero prd-sync', desc: 'Synchronize PRD statuses' },
         { cmd: 'task-hero list-prds', desc: 'List all PRD files' },
         { cmd: 'task-hero tasks-from-prd --prd=<file>', desc: 'Show tasks from specific PRD' },
-        { cmd: 'task-hero check-prd-changes', desc: 'Check for PRD file changes' }
+
+        // Advanced Features
+        { cmd: 'task-hero analyze-complexity', desc: 'Analyze task complexity' },
+        { cmd: 'task-hero generate', desc: 'Generate task files from tasks.json' },
+        { cmd: 'task-hero check-prd-changes', desc: 'Check for PRD file changes' },
+        { cmd: 'task-hero prd-integrity', desc: 'Check and fix PRD file integrity' }
     ];
 
-    commands.forEach(({ cmd, desc }) => {
-        console.log(chalk.cyan(`  ${cmd}`));
-        console.log(chalk.gray(`    ${desc}\n`));
-    });
+    // Split commands into two columns
+    const midPoint = Math.ceil(allCommands.length / 2);
+    const leftColumn = allCommands.slice(0, midPoint);
+    const rightColumn = allCommands.slice(midPoint);
+
+    // Display in two columns
+    const maxRows = Math.max(leftColumn.length, rightColumn.length);
+
+    for (let i = 0; i < maxRows; i++) {
+        let line = '';
+
+        // Left column
+        if (i < leftColumn.length) {
+            const { cmd, desc } = leftColumn[i];
+            const leftContent = `${chalk.cyan(cmd)}\n    ${chalk.gray(desc)}`;
+            line += leftContent.padEnd(60); // Adjust padding as needed
+        } else {
+            line += ' '.repeat(60);
+        }
+
+        // Right column
+        if (i < rightColumn.length) {
+            const { cmd, desc } = rightColumn[i];
+            const rightContent = `${chalk.cyan(cmd)}\n    ${chalk.gray(desc)}`;
+            line += rightContent;
+        }
+
+        console.log(line);
+        if (i < maxRows - 1) console.log(); // Add spacing between rows
+    }
 }
 
 async function showQuickStartGuide() {
     console.log(chalk.green('\n🚀 Quick Start Guide'));
-    console.log(chalk.white('═'.repeat(50)));
+    console.log(chalk.white('═'.repeat(70)));
 
-    const steps = [
-        '1. Initialize project: task-master init',
-        '2. Configure models: task-master models --setup',
-        '3. Parse PRD file: task-master parse-prd --input=<file>',
-        '4. List tasks: task-master list',
-        '5. Find next task: task-master next',
-        '6. Set task status: task-master set-status --id=<id> --status=in-progress'
+    console.log(chalk.cyan('\n📋 TaskHero + AI Coding Agent Integration Workflow'));
+    console.log(chalk.gray('─'.repeat(70)));
+
+    const phases = [
+        {
+            title: '🏗️ Phase 1: Project Setup',
+            steps: [
+                '1. Initialize project: task-hero init',
+                '2. Configure AI models: task-hero models --setup',
+                '3. Launch interactive menu: task-hero menu'
+            ]
+        },
+        {
+            title: '📄 Phase 2: PRD Analysis & Task Generation',
+            steps: [
+                '4. Provide PRD to AI Coding Agent for analysis',
+                '5. AI Agent: Parse PRD: task-hero parse-prd --input=<file>',
+                '6. AI Agent: Analyze complexity: task-hero analyze-complexity',
+                '7. AI Agent: Expand tasks: task-hero expand --id=<id>'
+            ]
+        },
+        {
+            title: '⚡ Phase 3: Task Execution',
+            steps: [
+                '8. AI Agent: Find next task: task-hero next',
+                '9. AI Agent: Set status: task-hero set-status --id=<id> --status=in-progress',
+                '10. AI Agent: Implement changes and test',
+                '11. AI Agent: Mark complete: task-hero set-status --id=<id> --status=done'
+            ]
+        },
+        {
+            title: '📊 Phase 4: Progress Monitoring',
+            steps: [
+                '12. Monitor progress: task-hero list',
+                '13. Check PRD status: task-hero prd-show <prd-id>',
+                '14. Sync completion: task-hero prd-sync'
+            ]
+        }
     ];
 
-    steps.forEach(step => {
-        console.log(chalk.yellow(`  ${step}`));
+    phases.forEach(({ title, steps }) => {
+        console.log(chalk.yellow(`\n${title}`));
+        steps.forEach(step => {
+            console.log(chalk.white(`  ${step}`));
+        });
     });
 
-    console.log(chalk.white('\n💡 Tip: Use the interactive menu (task-master menu) for easier navigation!'));
+    console.log(chalk.cyan('\n🤖 AI Integration Notes:'));
+    console.log(chalk.gray('  • AI Coding Agent performs analysis and heavy lifting'));
+    console.log(chalk.gray('  • TaskHero focuses on task/PRD tracking and management'));
+    console.log(chalk.gray('  • Works even without API keys configured (pure tracking)'));
+    console.log(chalk.gray('  • Use interactive menu (task-hero menu) for easier navigation'));
+
+    console.log(chalk.green('\n✨ Pro Tips:'));
+    console.log(chalk.white('  • Start with PRD analysis rather than project initialization'));
+    console.log(chalk.white('  • Let AI Agent handle complexity analysis autonomously'));
+    console.log(chalk.white('  • Use dependency validation for proper task execution order'));
+    console.log(chalk.white('  • Monitor PRD completion percentage for project progress'));
 }
 
 async function showKeyboardShortcuts() {
@@ -1663,17 +1756,17 @@ async function showConfigurationHelp() {
     console.log(chalk.white('═'.repeat(50)));
 
     console.log(chalk.white('Configuration Files:'));
-    console.log(chalk.cyan('  .taskmasterconfig') + chalk.gray(' - AI model configuration'));
+    console.log(chalk.cyan('  .taskmaster/config.json') + chalk.gray(' - AI model configuration'));
     console.log(chalk.cyan('  .env') + chalk.gray(' - API keys (ANTHROPIC_API_KEY, etc.)'));
-    console.log(chalk.cyan('  tasks/tasks.json') + chalk.gray(' - Task data'));
+    console.log(chalk.cyan('  .taskmaster/tasks/tasks.json') + chalk.gray(' - Task data'));
 
     console.log(chalk.white('\nPRD Management Files:'));
-    console.log(chalk.cyan('  prd/prds.json') + chalk.gray(' - PRD metadata and tracking'));
-    console.log(chalk.cyan('  prd/pending/') + chalk.gray(' - New or not-yet-started PRDs'));
-    console.log(chalk.cyan('  prd/in-progress/') + chalk.gray(' - PRDs with active tasks'));
-    console.log(chalk.cyan('  prd/done/') + chalk.gray(' - Completed PRDs (ready for archive)'));
-    console.log(chalk.cyan('  prd/archived/') + chalk.gray(' - Archived PRDs and task bundles'));
-    console.log(chalk.cyan('  prd/templates/') + chalk.gray(' - PRD templates for consistent creation'));
+    console.log(chalk.cyan('  .taskmaster/prd/prds.json') + chalk.gray(' - PRD metadata and tracking'));
+    console.log(chalk.cyan('  .taskmaster/prd/pending/') + chalk.gray(' - New or not-yet-started PRDs'));
+    console.log(chalk.cyan('  .taskmaster/prd/in-progress/') + chalk.gray(' - PRDs with active tasks'));
+    console.log(chalk.cyan('  .taskmaster/prd/done/') + chalk.gray(' - Completed PRDs (ready for archive)'));
+    console.log(chalk.cyan('  .taskmaster/prd/archived/') + chalk.gray(' - Archived PRDs and task bundles'));
+    console.log(chalk.cyan('  .taskmaster/templates/') + chalk.gray(' - PRD templates for consistent creation'));
 
     console.log(chalk.white('\nAI Integration Files:'));
     console.log(chalk.cyan('  .cursor/rules/') + chalk.gray(' - Cursor AI workspace rules'));
@@ -1683,14 +1776,20 @@ async function showConfigurationHelp() {
 
     console.log(chalk.white('\nRequired Setup:'));
     console.log(chalk.yellow('  1. Set API keys in .env file'));
-    console.log(chalk.yellow('  2. Run: task-master models --setup'));
-    console.log(chalk.yellow('  3. Initialize project: task-master init'));
+    console.log(chalk.yellow('  2. Run: task-hero models --setup'));
+    console.log(chalk.yellow('  3. Initialize project: task-hero init'));
 
     console.log(chalk.white('\nAI Editor Integration:'));
     console.log(chalk.gray('  • Cursor: Uses .cursor/rules/ for context'));
     console.log(chalk.gray('  • Augment: Uses .augment-guidelines for workspace context'));
     console.log(chalk.gray('  • Windsurf: Uses .windsurfrules for AI assistance'));
     console.log(chalk.gray('  • Roo Code: Uses .roo/ directory for mode-specific rules'));
+
+    console.log(chalk.white('\nRepository & Updates:'));
+    console.log(chalk.cyan('  Repository: ') + chalk.gray('https://github.com/Interstellar-code/taskmaster-ai'));
+    console.log(chalk.cyan('  NPM Package: ') + chalk.gray('task-hero-ai'));
+    console.log(chalk.cyan('  Update: ') + chalk.gray('npm update -g task-hero-ai'));
+    console.log(chalk.cyan('  Issues: ') + chalk.gray('https://github.com/Interstellar-code/taskmaster-ai/issues'));
 }
 
 /**

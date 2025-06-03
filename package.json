@@ -55,6 +55,7 @@
     "@aws-sdk/credential-providers": "^3.817.0",
     "@openrouter/ai-sdk-provider": "^0.4.5",
     "ai": "^4.3.10",
+    "archiver": "^7.0.1",
     "boxen": "^8.0.1",
     "chalk": "^5.4.1",
     "cli-table3": "^0.6.5",
@@ -62,6 +63,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.21.2",
+    "extract-zip": "^2.0.1",
     "fastmcp": "^1.20.5",
     "figlet": "^1.8.0",
     "fuse.js": "^7.1.0",
@@ -74,6 +76,7 @@
     "openai": "^4.89.0",
     "ora": "^8.2.0",
     "uuid": "^11.1.0",
+    "yauzl": "^3.2.0",
     "zod": "^3.23.8"
   },
   "engines": {

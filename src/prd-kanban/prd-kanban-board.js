@@ -16,6 +16,7 @@ import { createPRDOperationsHandler } from './handlers/prd-operations.js';
 import { createPRDStatusBar } from './components/prd-status-bar.js';
 import { createPRDDetailsPopup } from './components/prd-details-popup.js';
 import { createPRDHelpPopup } from './components/prd-help-popup.js';
+import { createPRDConfirmationPopup } from './components/prd-confirmation-popup.js';
 
 /**
  * Get the correct prds.json path based on the new directory structure
@@ -73,6 +74,7 @@ export class PRDKanbanBoard {
         this.statusBar = createPRDStatusBar();
         this.prdDetailsPopup = createPRDDetailsPopup();
         this.helpPopup = createPRDHelpPopup();
+        this.confirmationPopup = createPRDConfirmationPopup();
     }
 
     /**
@@ -131,7 +133,7 @@ export class PRDKanbanBoard {
     render() {
         // Get current board state for status bar
         const boardState = this.getBoardState();
-        this.boardLayout.render(this.statusBar, this.prdDetailsPopup, this.helpPopup, boardState);
+        this.boardLayout.render(this.statusBar, this.prdDetailsPopup, this.helpPopup, boardState, this.confirmationPopup);
     }
 
     /**
@@ -173,6 +175,46 @@ export class PRDKanbanBoard {
 
     showStatistics() {
         return this.operationsHandler.showStatistics();
+    }
+
+    /**
+     * Show archive confirmation dialog
+     */
+    showArchiveConfirmation() {
+        const selectedPRD = this.getSelectedPRD();
+        if (!selectedPRD) {
+            return { success: false, message: 'No PRD selected' };
+        }
+
+        const title = '⚠️ Archive PRD';
+        const message = `Are you sure you want to archive PRD ${selectedPRD.id}?\n\nThis will move it to the archived folder and remove it from the active board.`;
+
+        this.confirmationPopup.show(
+            title,
+            message,
+            async () => {
+                // User confirmed - proceed with archiving
+                const result = await this.operationsHandler.archivePRD();
+                if (result && result.success) {
+                    console.log(chalk.green(result.message));
+                    setTimeout(() => {
+                        this.render();
+                    }, 1500);
+                } else if (result && !result.success) {
+                    console.log(chalk.red(result.message));
+                    setTimeout(() => {
+                        this.render();
+                    }, 2000);
+                }
+            },
+            () => {
+                // User cancelled - just re-render
+                this.render();
+            }
+        );
+
+        this.render();
+        return { success: true, message: 'Archive confirmation shown' };
     }
 
     showHelp() {

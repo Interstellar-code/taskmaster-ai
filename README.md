@@ -1,10 +1,9 @@
 # TaskHero AI - Personal Fork
 
-> **Note**: This is a personal fork of TaskHero AI with custom modifications. For the original project, visit [eyaltoledano/claude-task-master](https://github.com/eyaltoledano/claude-task-master).
-
+> **Note**: This is a personal fork of Taskmaster AI with custom modifications. 
 [![License: MIT with Commons Clause](https://img.shields.io/badge/license-MIT%20with%20Commons%20Clause-blue.svg)](LICENSE)
 
-### Original Authors: [@eyaltoledano](https://x.com/eyaltoledano) & [@RalphEcom](https://x.com/RalphEcom)
+
 
 [![Twitter Follow](https://img.shields.io/twitter/follow/eyaltoledano?style=flat)](https://x.com/eyaltoledano)
 [![Twitter Follow](https://img.shields.io/twitter/follow/RalphEcom?style=flat)](https://x.com/RalphEcom)
@@ -345,6 +344,6 @@ TaskHero is licensed under the MIT License with Commons Clause. This means you c
 
 - Sell TaskHero itself
 - Offer TaskHero as a hosted service
-- Create competing products based on TaskHero
+
 
 See the [LICENSE](LICENSE) file for the complete license text and [licensing details](docs/licensing.md) for more information.

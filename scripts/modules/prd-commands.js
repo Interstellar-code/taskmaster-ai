@@ -44,7 +44,9 @@ import {
 } from './prd-manager/prd-migration.js';
 import {
     archivePrd,
-    interactivePrdArchive
+    interactivePrdArchive,
+    readPrdArchive,
+    extractPrdArchive
 } from './prd-manager/prd-archiving.js';
 import {
     trackFileChanges,
@@ -827,6 +829,50 @@ async function archivePrdCommand(prdId, options = {}) {
     }
 }
 
+/**
+ * Extract a PRD archive command
+ * @param {string} archivePath - Path to archive file
+ * @param {Object} options - Extract options
+ */
+async function extractPrdArchiveCommand(archivePath, options = {}) {
+    try {
+        if (!archivePath) {
+            console.error(chalk.red('❌ Archive path is required'));
+            process.exit(1);
+        }
+
+        const { outputDir = './extracted' } = options;
+
+        console.log(chalk.blue(`📦 Extracting PRD archive: ${archivePath}`));
+        console.log(chalk.gray(`Output directory: ${outputDir}`));
+
+        const result = await extractPrdArchive(archivePath, outputDir);
+
+        if (result.success) {
+            console.log(chalk.green('✅ Archive extracted successfully!'));
+            console.log(chalk.cyan('\n📋 Extracted files:'));
+            result.data.extractedFiles.forEach(file => {
+                console.log(chalk.gray(`  • ${file}`));
+            });
+
+            if (result.data.metadata) {
+                console.log(chalk.cyan('\n📊 Archive metadata:'));
+                console.log(chalk.gray(`  PRD ID: ${result.data.metadata.prdId}`));
+                console.log(chalk.gray(`  Title: ${result.data.metadata.prdTitle}`));
+                console.log(chalk.gray(`  Archived: ${result.data.metadata.archivedDate}`));
+                console.log(chalk.gray(`  Tasks: ${result.data.metadata.taskCount}`));
+            }
+        } else {
+            console.error(chalk.red(`❌ Extraction failed: ${result.error}`));
+            process.exit(1);
+        }
+
+    } catch (error) {
+        console.error(chalk.red('❌ Error extracting archive:'), error.message);
+        process.exit(1);
+    }
+}
+
 export {
     listPrds,
     showPrd,
@@ -839,5 +885,6 @@ export {
     trackPrdChanges,
     comparePrdVersions,
     syncPrdFileMetadataCommand,
-    archivePrdCommand
+    archivePrdCommand,
+    extractPrdArchiveCommand
 };

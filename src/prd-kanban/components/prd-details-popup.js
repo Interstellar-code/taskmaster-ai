@@ -188,35 +188,39 @@ export class PRDDetailsPopup {
             const tasksJson = JSON.parse(tasksData);
             const allTasks = tasksJson.tasks || [];
 
-            // Find tasks linked to this PRD
+            // Find tasks linked to this PRD using multiple approaches
             const linkedTasks = allTasks.filter(task => {
-                // Check if task has prdSource that matches this PRD
-                return task.prdSource && task.prdSource.prdId === this.prd.id;
+                // Approach 1: Check if task has prdSource.prdId that matches this PRD
+                if (task.prdSource && task.prdSource.prdId === this.prd.id) {
+                    return true;
+                }
+
+                // Approach 2: Check if task ID is in PRD's linkedTaskIds array
+                if (this.prd.linkedTaskIds && this.prd.linkedTaskIds.includes(task.id)) {
+                    return true;
+                }
+
+                // Approach 3: Check if task's prdSource fileName matches PRD fileName (fallback)
+                if (task.prdSource && task.prdSource.fileName === this.prd.fileName) {
+                    return true;
+                }
+
+                return false;
             });
 
             if (linkedTasks.length > 0) {
                 linkedTasks.forEach((task, index) => {
                     const statusIcon = this.getTaskStatusIcon(task.status);
-                    const statusLabel = this.getTaskStatusLabel(task.status);
 
-                    // Task line with ID and title
-                    const taskLine = `${statusIcon} Task ${task.id}: ${task.title || 'Untitled Task'}`;
-                    this.contentLines.push(chalk.white(`   ${taskLine}`));
+                    // Build compact task line: [icon] Task ID: Title [D:deps]
+                    let taskLine = `${statusIcon} Task ${task.id}: ${task.title || 'Untitled Task'}`;
 
-                    // Status line
-                    const statusLine = `Status: ${statusLabel}`;
-                    this.contentLines.push(chalk.dim(`      ${statusLine}`));
-
-                    // Dependencies if any
+                    // Add dependencies at the end if any
                     if (task.dependencies && task.dependencies.length > 0) {
-                        const depLine = `Dependencies: ${task.dependencies.join(', ')}`;
-                        this.contentLines.push(chalk.dim(`      ${depLine}`));
+                        taskLine += ` ${chalk.dim(`D:${task.dependencies.join(',')}`)}`;
                     }
 
-                    // Add spacing between tasks (except for the last one)
-                    if (index < linkedTasks.length - 1) {
-                        this.contentLines.push('');
-                    }
+                    this.contentLines.push(chalk.white(`   ${taskLine}`));
                 });
 
                 this.contentLines.push('');
@@ -239,9 +243,9 @@ export class PRDDetailsPopup {
      */
     getTaskStatusIcon(status) {
         const statusIcons = {
-            'pending': '○',
-            'in-progress': '●',
-            'done': '✓',
+            'pending': '📋',
+            'in-progress': '🔄',
+            'done': '✅',
             'blocked': '🚫',
             'deferred': '⏸️',
             'cancelled': '❌',

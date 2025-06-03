@@ -323,7 +323,7 @@ export class PRDKanbanColumn {
     }
 
     /**
-     * Render a PRD card within the column - Following task card pattern
+     * Render a PRD card within the column - Enhanced with user-friendly verbiage
      * @param {Object} prd - PRD object
      * @param {boolean} isSelected - Whether this PRD is selected
      */
@@ -338,44 +338,75 @@ export class PRDKanbanColumn {
             // Top border of PRD card
             cardLines.push(createRoundedHorizontalLine(cardWidth, true, false));
 
-            // PRD content
+            // PRD content with enhanced user-friendly format
             if (this.width < 30) {
                 // Compact mode for narrow columns
                 const compactLine = this.createCompactPRDSummary(prd, cardWidth - 2);
                 cardLines.push(createVerticalLine(chalk.bgBlue.white(compactLine), cardWidth));
             } else {
-                // Standard mode with title and metadata lines
-                const titleLine = this.formatPRDTitle(prd.title, cardWidth - 2, prd.id);
-                const metadataLine = this.createPRDMetadataLine(prd, cardWidth - 2, this.width < 40);
-
-                cardLines.push(createVerticalLine(chalk.bgBlue.white(titleLine), cardWidth));
-                if (metadataLine) {
-                    cardLines.push(createVerticalLine(chalk.bgBlue.white(metadataLine), cardWidth));
-                }
+                // Enhanced mode with detailed user-friendly information
+                const lines = this.createEnhancedPRDContent(prd, cardWidth - 2);
+                lines.forEach(line => {
+                    cardLines.push(createVerticalLine(chalk.bgBlue.white(line), cardWidth));
+                });
             }
 
             // Bottom border of PRD card
             cardLines.push(createRoundedHorizontalLine(cardWidth, false, false));
 
         } else {
-            // Regular PRD card without borders
+            // Regular PRD card without borders - also enhanced
             if (this.width < 30) {
                 // Compact mode for narrow columns
                 const compactLine = this.createCompactPRDSummary(prd, contentWidth);
                 cardLines.push(this.padToWidth(compactLine, contentWidth));
             } else {
-                // Standard mode with title and metadata lines
-                const titleLine = this.formatPRDTitle(prd.title, contentWidth, prd.id);
-                const metadataLine = this.createPRDMetadataLine(prd, contentWidth, this.width < 40);
-
-                cardLines.push(this.padToWidth(titleLine, contentWidth));
-                if (metadataLine) {
-                    cardLines.push(this.padToWidth(metadataLine, contentWidth));
-                }
+                // Enhanced mode with detailed information
+                const lines = this.createEnhancedPRDContent(prd, contentWidth);
+                lines.forEach(line => {
+                    cardLines.push(this.padToWidth(line, contentWidth));
+                });
             }
         }
 
         return cardLines;
+    }
+
+    /**
+     * Create enhanced PRD content with user-friendly verbiage
+     */
+    createEnhancedPRDContent(prd, maxWidth) {
+        const lines = [];
+
+        // Header line with PRD card indicator
+        const cardHeader = `📄 PRD Card ${prd.id}:`;
+        lines.push(chalk.bold(cardHeader));
+
+        // Title line
+        const title = prd.title || 'Untitled PRD';
+        const titleLine = `  Title: ${title}`;
+        if (titleLine.length > maxWidth) {
+            lines.push(`  Title: ${title.substring(0, maxWidth - 11)}...`);
+        } else {
+            lines.push(titleLine);
+        }
+
+        // Get data for display
+        const completion = prd.taskStats ? prd.taskStats.completionPercentage || 0 : (prd.completion || 0);
+        const taskCount = prd.taskStats ? prd.taskStats.totalTasks || 0 : (prd.linkedTaskIds ? prd.linkedTaskIds.length : 0);
+
+        // Standard metadata line only
+        const statusIcon = this.getStatusIcon(prd.status);
+        const priorityIcon = this.getPriorityIcon(prd.priority);
+        const complexityIcon = this.getComplexityIcon(prd.complexity);
+        const standardLine = `  Status: ${statusIcon} ${priorityIcon} ${complexityIcon} 📋${taskCount} ${completion}%`;
+        lines.push(standardLine);
+
+        // Tasks summary line
+        const tasksLine = `  Tasks: ${taskCount}, Completion: ${completion}%`;
+        lines.push(tasksLine);
+
+        return lines;
     }
 
     /**
@@ -401,16 +432,23 @@ export class PRDKanbanColumn {
     createPRDMetadataLine(prd, maxWidth, isCompact) {
         const priority = prd.priority || 'medium';
         const complexity = prd.complexity || 'medium';
-        const completion = prd.completion || 0;
 
+        // Get completion percentage from task statistics
+        const completion = prd.taskStats ? prd.taskStats.completionPercentage || 0 : (prd.completion || 0);
+
+        // Get task count from task statistics
+        const taskCount = prd.taskStats ? prd.taskStats.totalTasks || 0 : (prd.linkedTaskIds ? prd.linkedTaskIds.length : 0);
+
+        const statusIcon = this.getStatusIcon(prd.status);
         const priorityIcon = this.getPriorityIcon(priority);
         const complexityIcon = this.getComplexityIcon(complexity);
+        const taskCountText = `📋${taskCount}`;
         const completionText = `${completion}%`;
 
         if (isCompact) {
-            return chalk.dim(`${priorityIcon}${complexityIcon} ${completionText}`);
+            return chalk.dim(`${statusIcon}${priorityIcon}${complexityIcon} ${taskCountText} ${completionText}`);
         } else {
-            return chalk.dim(`${priorityIcon} ${complexityIcon} ${completionText}`);
+            return chalk.dim(`${statusIcon} ${priorityIcon} ${complexityIcon} ${taskCountText} ${completionText}`);
         }
     }
 
@@ -419,11 +457,18 @@ export class PRDKanbanColumn {
      */
     createCompactPRDSummary(prd, maxWidth) {
         const id = prd.id || '???';
-        const completion = prd.completion || 0;
+
+        // Get completion percentage from task statistics
+        const completion = prd.taskStats ? prd.taskStats.completionPercentage || 0 : (prd.completion || 0);
+
+        // Get task count from task statistics
+        const taskCount = prd.taskStats ? prd.taskStats.totalTasks || 0 : (prd.linkedTaskIds ? prd.linkedTaskIds.length : 0);
+
+        const statusIcon = this.getStatusIcon(prd.status);
         const priorityIcon = this.getPriorityIcon(prd.priority);
         const complexityIcon = this.getComplexityIcon(prd.complexity);
 
-        const summary = `${id} ${priorityIcon}${complexityIcon} ${completion}%`;
+        const summary = `${id} ${statusIcon}${priorityIcon}${complexityIcon} 📋${taskCount} ${completion}%`;
 
         if (summary.length > maxWidth) {
             return summary.substring(0, maxWidth - 3) + '...';
@@ -446,15 +491,32 @@ export class PRDKanbanColumn {
     }
 
     /**
+     * Get status icon
+     */
+    getStatusIcon(status) {
+        const icons = {
+            'pending': '📋',
+            'in-progress': '🔄',
+            'done': '✅',
+            'blocked': '🚫',
+            'deferred': '⏸️',
+            'cancelled': '❌',
+            'review': '👀',
+            'archived': '📦'
+        };
+        return icons[status] || '❓';
+    }
+
+    /**
      * Get priority icon
      */
     getPriorityIcon(priority) {
         const icons = {
-            'high': chalk.red('●'),
-            'medium': chalk.yellow('●'),
-            'low': chalk.green('●')
+            'high': '🔴',
+            'medium': '🟡',
+            'low': '🟢'
         };
-        return icons[priority] || chalk.gray('●');
+        return icons[priority] || '⚪';
     }
 
     /**
@@ -462,11 +524,11 @@ export class PRDKanbanColumn {
      */
     getComplexityIcon(complexity) {
         const icons = {
-            'high': chalk.red('◆'),
-            'medium': chalk.yellow('◆'),
-            'low': chalk.green('◆')
+            'high': '🔺',
+            'medium': '🔸',
+            'low': '🔹'
         };
-        return icons[complexity] || chalk.gray('◆');
+        return icons[complexity] || '⚪';
     }
 
     /**

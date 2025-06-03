@@ -1,8 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import zlib from 'zlib';
-import { pipeline } from 'stream/promises';
-import { createReadStream, createWriteStream } from 'fs';
+import archiver from 'archiver';
+import extractZip from 'extract-zip';
 import {
     readPrdsMetadata,
     writePrdsMetadata,
@@ -55,54 +54,173 @@ async function createPrdArchive(prdId, prd, linkedTasks, archiveDir = null) {
             archiveVersion: '1.0.0'
         };
 
-        // Create a simple ZIP-like archive using gzip
-        // Note: This is a simplified approach. For production, consider using a proper ZIP library
-        const archiveData = {
-            metadata: archiveMetadata,
-            prdFile: null,
-            taskFiles: []
-        };
+        // Create a proper ZIP archive
+        return new Promise((resolve, reject) => {
+            const output = fs.createWriteStream(archivePath);
+            const archive = archiver('zip', {
+                zlib: { level: 9 } // Maximum compression
+            });
 
-        // Read PRD file content
-        if (fs.existsSync(prd.filePath)) {
-            archiveData.prdFile = {
-                fileName: path.basename(prd.filePath),
-                content: fs.readFileSync(prd.filePath, 'utf8')
-            };
+            output.on('close', () => {
+                log('info', `Created ZIP archive: ${archivePath} (${archive.pointer()} bytes)`);
+                resolve({
+                    success: true,
+                    data: {
+                        archivePath: archivePath,
+                        archiveFileName: archiveFileName,
+                        metadata: archiveMetadata,
+                        size: archive.pointer()
+                    }
+                });
+            });
+
+            archive.on('error', (err) => {
+                log('error', `Error creating ZIP archive: ${err.message}`);
+                reject(err);
+            });
+
+            archive.pipe(output);
+
+            // Add metadata file
+            archive.append(JSON.stringify(archiveMetadata, null, 2), { name: 'metadata.json' });
+
+            // Add PRD file
+            if (fs.existsSync(prd.filePath)) {
+                archive.file(prd.filePath, { name: path.basename(prd.filePath) });
+            }
+
+            // Add task files
+            const tasksDir = path.dirname(getTasksJsonPath());
+            for (const task of linkedTasks) {
+                const taskFileName = `task_${task.id.toString().padStart(3, '0')}.txt`;
+                const taskFilePath = path.join(tasksDir, taskFileName);
+
+                if (fs.existsSync(taskFilePath)) {
+                    archive.file(taskFilePath, { name: `tasks/${taskFileName}` });
+                }
+            }
+
+            // Finalize the archive
+            archive.finalize();
+        });
+
+    } catch (error) {
+        log('error', `Error creating archive for PRD ${prdId}:`, error.message);
+        return {
+            success: false,
+            error: error.message
+        };
+    }
+}
+
+/**
+ * Read metadata from a PRD ZIP archive
+ * @param {string} archivePath - Path to the archive file
+ * @returns {Promise<Object>} Archive metadata
+ */
+async function readPrdArchive(archivePath) {
+    try {
+        if (!fs.existsSync(archivePath)) {
+            throw new Error(`Archive file not found: ${archivePath}`);
         }
 
-        // Read task files content
-        for (const task of linkedTasks) {
-            const taskFileName = `task_${task.id.toString().padStart(3, '0')}.txt`;
-            const tasksDir = path.dirname(getTasksJsonPath());
-            const taskFilePath = path.join(tasksDir, taskFileName);
-            
-            if (fs.existsSync(taskFilePath)) {
-                archiveData.taskFiles.push({
-                    fileName: taskFileName,
-                    taskId: task.id,
-                    content: fs.readFileSync(taskFilePath, 'utf8')
-                });
+        // Create a temporary directory to extract metadata
+        const tempDir = path.join(path.dirname(archivePath), `temp_${Date.now()}`);
+
+        try {
+            // Extract the ZIP file
+            await extractZip(archivePath, { dir: tempDir });
+
+            // Read metadata.json
+            const metadataPath = path.join(tempDir, 'metadata.json');
+            if (!fs.existsSync(metadataPath)) {
+                throw new Error('metadata.json not found in archive');
+            }
+
+            const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
+
+            // Clean up temp directory
+            fs.rmSync(tempDir, { recursive: true, force: true });
+
+            return {
+                success: true,
+                data: metadata
+            };
+
+        } catch (extractError) {
+            // Clean up temp directory on error
+            if (fs.existsSync(tempDir)) {
+                fs.rmSync(tempDir, { recursive: true, force: true });
+            }
+            throw extractError;
+        }
+
+    } catch (error) {
+        log('error', `Error reading archive ${archivePath}:`, error.message);
+        return {
+            success: false,
+            error: error.message
+        };
+    }
+}
+
+/**
+ * Extract files from a PRD ZIP archive to a specified directory
+ * @param {string} archivePath - Path to the archive file
+ * @param {string} extractDir - Directory to extract files to
+ * @returns {Promise<Object>} Extraction result
+ */
+async function extractPrdArchive(archivePath, extractDir) {
+    try {
+        if (!fs.existsSync(archivePath)) {
+            throw new Error(`Archive file not found: ${archivePath}`);
+        }
+
+        // Ensure extract directory exists
+        if (!fs.existsSync(extractDir)) {
+            fs.mkdirSync(extractDir, { recursive: true });
+        }
+
+        // Extract the ZIP file
+        await extractZip(archivePath, { dir: extractDir });
+
+        // Get list of extracted files
+        const extractedFiles = [];
+
+        function getFilesRecursively(dir) {
+            const files = fs.readdirSync(dir);
+            for (const file of files) {
+                const fullPath = path.join(dir, file);
+                if (fs.statSync(fullPath).isDirectory()) {
+                    getFilesRecursively(fullPath);
+                } else {
+                    extractedFiles.push(fullPath);
+                }
             }
         }
 
-        // Write compressed archive
-        const archiveJson = JSON.stringify(archiveData, null, 2);
-        const compressed = zlib.gzipSync(archiveJson);
-        fs.writeFileSync(archivePath, compressed);
+        getFilesRecursively(extractDir);
 
-        log('info', `Created archive: ${archivePath}`);
+        // Read metadata if available
+        let metadata = null;
+        const metadataPath = path.join(extractDir, 'metadata.json');
+        if (fs.existsSync(metadataPath)) {
+            metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
+        }
+
+        log('info', `Extracted ${extractedFiles.length} files from ${archivePath} to ${extractDir}`);
+
         return {
             success: true,
             data: {
-                archivePath: archivePath,
-                archiveFileName: archiveFileName,
-                metadata: archiveMetadata
+                extractedFiles: extractedFiles,
+                metadata: metadata,
+                extractDir: extractDir
             }
         };
 
     } catch (error) {
-        log('error', `Error creating archive for PRD ${prdId}:`, error.message);
+        log('error', `Error extracting archive ${archivePath}:`, error.message);
         return {
             success: false,
             error: error.message
@@ -595,6 +713,8 @@ async function interactivePrdArchive(options = {}) {
 
 export {
     createPrdArchive,
+    readPrdArchive,
+    extractPrdArchive,
     getArchivablePrds,
     validateTasksForArchiving,
     removePrdFromTracking,

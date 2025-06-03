@@ -133,7 +133,7 @@ export class PRDBoardLayout {
     /**
      * Render the entire board
      */
-    render(statusBar, prdDetailsPopup, helpPopup, boardState = {}) {
+    render(statusBar, prdDetailsPopup, helpPopup, boardState = {}, confirmationPopup = null) {
         if (!this.isInitialized) {
             return;
         }
@@ -160,6 +160,11 @@ export class PRDBoardLayout {
 
             if (helpPopup && helpPopup.isPopupOpen && helpPopup.isPopupOpen()) {
                 this.renderHelpPopupOverlay(helpPopup);
+            }
+
+            // Render confirmation popup (highest priority - renders on top)
+            if (confirmationPopup && confirmationPopup.isOpen && confirmationPopup.isOpen()) {
+                this.renderConfirmationPopupOverlay(confirmationPopup);
             }
 
         } catch (error) {
@@ -362,6 +367,19 @@ export class PRDBoardLayout {
             moveCursor(position.y + index, position.x);
             process.stdout.write(line);
         });
+    }
+
+    /**
+     * Render confirmation popup overlay on top of the board
+     * @param {Object} confirmationPopup - Confirmation popup component to render
+     */
+    renderConfirmationPopupOverlay(confirmationPopup) {
+        const popupContent = confirmationPopup.render();
+        if (!popupContent) return;
+
+        // The confirmation popup render method returns a string with ANSI escape codes
+        // for positioning, so we can write it directly
+        process.stdout.write(popupContent);
     }
 
     /**

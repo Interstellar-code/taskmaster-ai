@@ -177,12 +177,33 @@ export class PRDOperationsHandler {
             const tasksData = await readJSON(this.tasksPath);
             const tasks = tasksData.tasks || [];
 
-            // Find tasks linked to this PRD
+            // Get PRD details to access linkedTaskIds
+            const prd = this.board.getAllPRDs().find(p => p.id === prdId);
+
+            // Find tasks linked to this PRD using multiple approaches
             const linkedTasks = tasks.filter(task => {
-                // Check if task has prdSource that matches this PRD
-                return (task.prdSource && task.prdSource.prdId === prdId) ||
-                       (task.linkedTasks && task.linkedTasks.includes(prdId)) ||
-                       (task.metadata && task.metadata.prdSource === prdId);
+                // Approach 1: Check if task has prdSource.prdId that matches this PRD
+                if (task.prdSource && task.prdSource.prdId === prdId) {
+                    return true;
+                }
+
+                // Approach 2: Check if task ID is in PRD's linkedTaskIds array
+                if (prd && prd.linkedTaskIds && prd.linkedTaskIds.includes(task.id)) {
+                    return true;
+                }
+
+                // Approach 3: Check if task's prdSource fileName matches PRD fileName (fallback)
+                if (prd && task.prdSource && task.prdSource.fileName === prd.fileName) {
+                    return true;
+                }
+
+                // Approach 4: Check legacy fields for compatibility
+                if ((task.linkedTasks && task.linkedTasks.includes(prdId)) ||
+                    (task.metadata && task.metadata.prdSource === prdId)) {
+                    return true;
+                }
+
+                return false;
             });
 
             return linkedTasks;
@@ -315,6 +336,73 @@ export class PRDOperationsHandler {
         } catch (error) {
             console.error(chalk.red('Error getting all tasks:'), error.message);
             return [];
+        }
+    }
+
+    /**
+     * Archive PRD if it's in done status
+     */
+    async archivePRD() {
+        const selectedPRD = this.board.getSelectedPRD();
+        if (!selectedPRD) {
+            return {
+                success: false,
+                message: 'No PRD selected'
+            };
+        }
+
+        try {
+            // Check if PRD is in done status
+            if (selectedPRD.status !== 'done') {
+                return {
+                    success: false,
+                    message: `Cannot archive PRD ${selectedPRD.id}: PRD must be in 'done' status (currently: ${selectedPRD.status})`
+                };
+            }
+
+            // Check if all linked tasks are completed
+            const linkedTasks = await this.getLinkedTasks(selectedPRD.id);
+            const incompleteTasks = linkedTasks.filter(task =>
+                task.status !== 'done' && task.status !== 'completed'
+            );
+
+            if (incompleteTasks.length > 0) {
+                return {
+                    success: false,
+                    message: `Cannot archive PRD ${selectedPRD.id}: ${incompleteTasks.length} linked tasks are not completed`
+                };
+            }
+
+            // Import the archive function
+            const { archivePrd } = await import('../../../scripts/modules/prd-manager/prd-archiving.js');
+
+            // Archive the PRD with proper options
+            const result = await archivePrd(selectedPRD.id, {
+                prdsPath: this.prdsPath,
+                force: true // Force archive from Kanban board
+            });
+
+            if (result.success) {
+                // Refresh the board to reflect changes
+                await this.board.refreshBoard();
+
+                return {
+                    success: true,
+                    message: `PRD ${selectedPRD.id} archived successfully`
+                };
+            } else {
+                return {
+                    success: false,
+                    message: `Failed to archive PRD ${selectedPRD.id}: ${result.error}`
+                };
+            }
+
+        } catch (error) {
+            return {
+                success: false,
+                message: `Error archiving PRD: ${error.message}`,
+                error
+            };
         }
     }
 

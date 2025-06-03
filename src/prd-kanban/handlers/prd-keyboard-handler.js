@@ -48,8 +48,34 @@ export class PRDKeyboardHandler {
                 console.error(chalk.red('Error showing PRD details:'), error.message);
             }
         });
-        this.keyHandlers.set('t', () => this.board.showLinkedTasks());
-        this.keyHandlers.set('T', () => this.board.showLinkedTasks());
+        this.keyHandlers.set('t', async () => {
+            try {
+                await this.board.showLinkedTasks();
+            } catch (error) {
+                console.error(chalk.red('Error showing linked tasks:'), error.message);
+            }
+        });
+        this.keyHandlers.set('T', async () => {
+            try {
+                await this.board.showLinkedTasks();
+            } catch (error) {
+                console.error(chalk.red('Error showing linked tasks:'), error.message);
+            }
+        });
+        this.keyHandlers.set('a', () => {
+            try {
+                this.board.showArchiveConfirmation();
+            } catch (error) {
+                console.error(chalk.red('Error showing archive confirmation:'), error.message);
+            }
+        });
+        this.keyHandlers.set('A', () => {
+            try {
+                this.board.showArchiveConfirmation();
+            } catch (error) {
+                console.error(chalk.red('Error showing archive confirmation:'), error.message);
+            }
+        });
         this.keyHandlers.set('r', () => this.board.refreshBoard());
         this.keyHandlers.set('R', () => this.board.refreshBoard());
         this.keyHandlers.set('s', () => this.board.showStatistics());
@@ -120,6 +146,14 @@ export class PRDKeyboardHandler {
 
         try {
             // Check if popups are open and handle popup input first
+            if (this.board.confirmationPopup && this.board.confirmationPopup.isOpen()) {
+                const handled = this.board.confirmationPopup.handleKeyPress(key);
+                if (handled) {
+                    this.board.render();
+                    return;
+                }
+            }
+
             if (this.board.helpPopup && this.board.helpPopup.isPopupOpen()) {
                 const handled = this.board.helpPopup.handleKeyPress(key);
                 if (handled) {
@@ -234,6 +268,7 @@ export class PRDKeyboardHandler {
                 '1-3': 'Move PRD to status (1=Pending, 2=In Progress, 3=Done)',
                 'V': 'View PRD details',
                 'T': 'Show linked tasks',
+                'A': 'Archive PRD (if done)',
                 'S': 'Show statistics',
                 'R': 'Refresh board',
                 'H/?': 'Show help'

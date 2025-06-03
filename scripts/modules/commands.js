@@ -94,7 +94,8 @@ import {
 	trackPrdChanges,
 	comparePrdVersions,
 	syncPrdFileMetadataCommand,
-	archivePrdCommand
+	archivePrdCommand,
+	extractPrdArchiveCommand
 } from './prd-commands.js';
 
 /**
@@ -2968,6 +2969,17 @@ Examples:
 			});
 		});
 
+	// prd extract command
+	programInstance
+		.command('prd-extract <archive-path>')
+		.description('Extract a PRD archive to view its contents')
+		.option('-o, --output <dir>', 'Output directory for extracted files', './extracted')
+		.action(async (archivePath, options) => {
+			await extractPrdArchiveCommand(archivePath, {
+				outputDir: options.output
+			});
+		});
+
 	// prd sync-metadata command
 	programInstance
 		.command('prd-sync-metadata [prd-id]')
@@ -3125,7 +3137,7 @@ async function checkForUpdate() {
 		// Get the latest version from npm registry
 		const options = {
 			hostname: 'registry.npmjs.org',
-			path: '/task-master-ai',
+			path: '/task-hero-ai',
 			method: 'GET',
 			headers: {
 				Accept: 'application/vnd.npm.install-v1+json' // Lightweight response
@@ -3216,8 +3228,9 @@ function compareVersions(v1, v2) {
  */
 function displayUpgradeNotification(currentVersion, latestVersion) {
 	const message = boxen(
-		`${chalk.blue.bold('Update Available!')} ${chalk.dim(currentVersion)} → ${chalk.green(latestVersion)}\n\n` +
-			`Run ${chalk.cyan('npm i task-master-ai@latest -g')} to update to the latest version with new features and bug fixes.`,
+		`${chalk.blue.bold('TaskHero Update Available!')} ${chalk.dim(currentVersion)} → ${chalk.green(latestVersion)}\n\n` +
+			`Run ${chalk.cyan('npm update -g task-hero-ai')} to update to the latest version with new features and bug fixes.\n\n` +
+			`Repository: ${chalk.gray('https://github.com/Interstellar-code/taskmaster-ai')}`,
 		{
 			padding: 1,
 			margin: { top: 1, bottom: 1 },

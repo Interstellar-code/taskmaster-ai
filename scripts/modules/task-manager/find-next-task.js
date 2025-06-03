@@ -36,14 +36,21 @@ function findNextTask(tasks, complexityReport = null) {
 
 	// ---------- build completed-ID set (tasks *and* subtasks) --------------
 	const completedIds = new Set();
+	const satisfiedIds = new Set(); // Includes both completed and in-progress for dependency checking
 	tasks.forEach((t) => {
 		if (t.status === 'done' || t.status === 'completed') {
 			completedIds.add(String(t.id));
+			satisfiedIds.add(String(t.id));
+		} else if (t.status === 'in-progress') {
+			satisfiedIds.add(String(t.id)); // In-progress tasks can satisfy dependencies for next task selection
 		}
 		if (Array.isArray(t.subtasks)) {
 			t.subtasks.forEach((st) => {
 				if (st.status === 'done' || st.status === 'completed') {
 					completedIds.add(`${t.id}.${st.id}`);
+					satisfiedIds.add(`${t.id}.${st.id}`);
+				} else if (st.status === 'in-progress') {
+					satisfiedIds.add(`${t.id}.${st.id}`);
 				}
 			});
 		}
@@ -64,7 +71,7 @@ function findNextTask(tasks, complexityReport = null) {
 
 				const depsSatisfied =
 					fullDeps.length === 0 ||
-					fullDeps.every((depId) => completedIds.has(String(depId)));
+					fullDeps.every((depId) => satisfiedIds.has(String(depId)));
 
 				if (depsSatisfied) {
 					candidateSubtasks.push({
@@ -108,31 +115,46 @@ function findNextTask(tasks, complexityReport = null) {
 	// ---------- 2) fall back to top-level tasks with PRD priority logic ----
 	const eligibleTasks = tasks.filter((task) => {
 		const status = (task.status || 'pending').toLowerCase();
-		if (status !== 'pending' && status !== 'in-progress') return false;
+		// Only include pending tasks (not in-progress) for next task selection
+		if (status !== 'pending') return false;
 		const deps = task.dependencies ?? [];
-		return deps.every((depId) => completedIds.has(String(depId)));
+		return deps.every((depId) => satisfiedIds.has(String(depId)));
 	});
 
 	if (eligibleTasks.length === 0) return null;
 
-	// Enhanced sorting with PRD completion priority
+	// Enhanced sorting with PRD completion priority and last updated date
 	const nextTask = eligibleTasks.sort((a, b) => {
-		// 1. First priority: PRD completion logic
+		// 1. First priority: PRD completion logic (includes in-progress PRD priority)
 		const prdPriorityA = calculatePRDPriority(a, tasks);
 		const prdPriorityB = calculatePRDPriority(b, tasks);
 		if (prdPriorityA !== prdPriorityB) return prdPriorityB - prdPriorityA;
 
-		// 2. Second priority: task priority (high/medium/low)
+		// 2. Second priority: Last updated date for tasks from in-progress PRDs
+		const lastUpdatedA = getLastUpdatedDate(a, tasks);
+		const lastUpdatedB = getLastUpdatedDate(b, tasks);
+		if (lastUpdatedA && lastUpdatedB && prdPriorityA >= 1000 && prdPriorityB >= 1000) {
+			// For in-progress PRDs, prioritize more recently updated tasks
+			const dateComparison = new Date(lastUpdatedB) - new Date(lastUpdatedA);
+			if (dateComparison !== 0) return dateComparison;
+		}
+
+		// 3. Third priority: Sequential task order within PRD
+		const sequentialPriorityA = calculateSequentialPriority(a, tasks);
+		const sequentialPriorityB = calculateSequentialPriority(b, tasks);
+		if (sequentialPriorityA !== sequentialPriorityB) return sequentialPriorityB - sequentialPriorityA;
+
+		// 4. Fourth priority: task priority (high/medium/low)
 		const pa = priorityValues[a.priority || 'medium'] ?? 2;
 		const pb = priorityValues[b.priority || 'medium'] ?? 2;
 		if (pb !== pa) return pb - pa;
 
-		// 3. Third priority: dependency count (fewer dependencies first)
+		// 5. Fifth priority: dependency count (fewer dependencies first)
 		const da = (a.dependencies ?? []).length;
 		const db = (b.dependencies ?? []).length;
 		if (da !== db) return da - db;
 
-		// 4. Final tiebreaker: task ID (lower ID first)
+		// 6. Final tiebreaker: task ID (lower ID first)
 		return a.id - b.id;
 	})[0];
 
@@ -145,7 +167,7 @@ function findNextTask(tasks, complexityReport = null) {
 }
 
 /**
- * Calculate PRD completion priority for a task
+ * Calculate PRD completion priority for a task with enhanced logic
  * Higher values indicate higher priority for PRD completion
  * @param {Object} task - The task to evaluate
  * @param {Object[]} allTasks - All tasks in the project
@@ -158,14 +180,21 @@ function calculatePRDPriority(task, allTasks) {
 	}
 
 	const prdFileName = task.prdSource.fileName;
+	const prdId = task.prdSource.prdId;
 
 	// Find all tasks from the same PRD
 	const prdTasks = allTasks.filter(t =>
 		t.prdSource &&
-		t.prdSource.fileName === prdFileName
+		(t.prdSource.fileName === prdFileName || t.prdSource.prdId === prdId)
 	);
 
 	if (prdTasks.length === 0) return 0;
+
+	// Check if this PRD has any tasks currently in progress
+	const prdHasInProgressTasks = prdTasks.some(t => t.status === 'in-progress');
+
+	// PRIORITY 1: Tasks from PRDs with in-progress tasks get highest priority
+	let prdPriority = prdHasInProgressTasks ? 1000 : 0;
 
 	// Count completed tasks from this PRD
 	const completedPrdTasks = prdTasks.filter(t =>
@@ -175,9 +204,8 @@ function calculatePRDPriority(task, allTasks) {
 	// Calculate completion percentage for this PRD
 	const completionPercentage = completedPrdTasks.length / prdTasks.length;
 
-	// Higher priority if PRD is close to completion
-	// Scale: 0-100 based on completion percentage
-	let prdPriority = Math.floor(completionPercentage * 100);
+	// Add completion-based priority (0-100)
+	prdPriority += Math.floor(completionPercentage * 100);
 
 	// Bonus points for PRDs that are very close to completion (80%+)
 	if (completionPercentage >= 0.8) {
@@ -210,6 +238,93 @@ function calculatePRDPriority(task, allTasks) {
 	}
 
 	return prdPriority;
+}
+
+/**
+ * Get the last updated date for a task or its PRD
+ * @param {Object} task - The task to evaluate
+ * @param {Object[]} allTasks - All tasks in the project
+ * @returns {string|null} Last updated date or null
+ */
+function getLastUpdatedDate(task, allTasks) {
+	// Try to get last updated from task itself
+	if (task.lastUpdated) {
+		return task.lastUpdated;
+	}
+
+	// Try to get from PRD metadata
+	if (task.prdSource && task.prdSource.lastModified) {
+		return task.prdSource.lastModified;
+	}
+
+	// Try to get from PRD file system (if available)
+	if (task.prdSource && task.prdSource.fileName) {
+		try {
+			// This would require reading PRD metadata from the file system
+			// For now, we'll use a fallback approach
+			const prdTasks = allTasks.filter(t =>
+				t.prdSource &&
+				(t.prdSource.fileName === task.prdSource.fileName ||
+				 t.prdSource.prdId === task.prdSource.prdId)
+			);
+
+			// Find the most recently updated task in this PRD
+			const mostRecentTask = prdTasks
+				.filter(t => t.lastUpdated)
+				.sort((a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated))[0];
+
+			if (mostRecentTask) {
+				return mostRecentTask.lastUpdated;
+			}
+		} catch (error) {
+			// Ignore errors and continue
+		}
+	}
+
+	return null;
+}
+
+/**
+ * Calculate sequential priority for a task within its PRD
+ * @param {Object} task - The task to evaluate
+ * @param {Object[]} allTasks - All tasks in the project
+ * @returns {number} Sequential priority score (higher = more priority)
+ */
+function calculateSequentialPriority(task, allTasks) {
+	if (!task.prdSource || !task.prdSource.fileName) {
+		return 0;
+	}
+
+	const prdFileName = task.prdSource.fileName;
+	const prdId = task.prdSource.prdId;
+
+	// Find all tasks from the same PRD
+	const prdTasks = allTasks.filter(t =>
+		t.prdSource &&
+		(t.prdSource.fileName === prdFileName || t.prdSource.prdId === prdId)
+	);
+
+	if (prdTasks.length === 0) return 0;
+
+	// Sort tasks by ID to get sequential order
+	const sortedPrdTasks = prdTasks.sort((a, b) => a.id - b.id);
+	const taskIndex = sortedPrdTasks.findIndex(t => t.id === task.id);
+
+	if (taskIndex === -1) return 0;
+
+	// Check if all previous tasks in this PRD are completed
+	const previousTasksCompleted = sortedPrdTasks
+		.slice(0, taskIndex)
+		.every(t => t.status === 'done' || t.status === 'completed');
+
+	if (previousTasksCompleted) {
+		// Higher priority for tasks that are next in sequence
+		// Reverse the index so earlier tasks get higher priority
+		return (sortedPrdTasks.length - taskIndex) * 10;
+	}
+
+	// If previous tasks aren't completed, lower priority
+	return 0;
 }
 
 export default findNextTask;
