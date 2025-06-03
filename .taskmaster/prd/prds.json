@@ -54,12 +54,42 @@
       },
       "estimatedEffort": "2-4 hours",
       "priority": "medium"
+    },
+    {
+      "id": "prd_002",
+      "title": "prd_002_taskhero_ui_rebrand",
+      "fileName": "prd_002_taskhero_ui_rebrand.md",
+      "status": "pending",
+      "complexity": "medium",
+      "createdDate": "2025-06-03T05:22:21.586Z",
+      "lastModified": "2025-06-03T05:22:21.586Z",
+      "filePath": ".taskmaster/prd/pending/prd_002_taskhero_ui_rebrand.md",
+      "fileHash": "c9d8b1ae37bb6c9a88782908c6fa20534f40b720208dabaa0c49917172bd3491",
+      "fileSize": 9456,
+      "description": "PRD parsed and registered automatically during task generation",
+      "tags": [
+        "auto-generated",
+        "parsed"
+      ],
+      "linkedTaskIds": [],
+      "taskStats": {
+        "totalTasks": 0,
+        "completedTasks": 0,
+        "pendingTasks": 0,
+        "inProgressTasks": 0,
+        "blockedTasks": 0,
+        "deferredTasks": 0,
+        "cancelledTasks": 0,
+        "completionPercentage": 0
+      },
+      "estimatedEffort": "2-4 hours",
+      "priority": "medium"
     }
   ],
   "metadata": {
     "version": "1.0.0",
-    "lastUpdated": "2025-06-02T21:54:53.940Z",
-    "totalPrds": 1,
+    "lastUpdated": "2025-06-03T05:22:21.606Z",
+    "totalPrds": 2,
     "schema": {
       "version": "1.0.0",
       "description": "TaskMaster AI PRD Lifecycle Tracking Schema"

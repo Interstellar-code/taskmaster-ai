@@ -2122,6 +2122,474 @@
         "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
         "fileSize": 21070
       }
+    },
+    {
+      "id": 84,
+      "title": "Update Package Configuration",
+      "description": "Update package.json and binary command configuration for TaskHero branding.",
+      "details": "Modify package.json to reflect TaskHero branding. Change the binary command from task-master to task-hero. Ensure the npm package is configured as task-hero-ai.",
+      "testStrategy": "Verify that the npm package installs correctly and the task-hero command is available.",
+      "priority": "high",
+      "dependencies": [],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Backup Existing Configuration",
+          "description": "Create a backup of the current package.json file and any related configuration files.",
+          "dependencies": [],
+          "details": "Copy the existing package.json file to a backup location to ensure changes can be reverted if necessary.",
+          "status": "in-progress",
+          "testStrategy": "Verify that the backup file exists and is identical to the original.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_002_taskhero_ui_rebrand.md",
+            "fileName": "prd_002_taskhero_ui_rebrand.md",
+            "parsedDate": "2025-06-03T05:22:03.223Z",
+            "fileHash": "744710557c9cb26d5346ad5bd42c4468aa53809be98c999fcfce77f26701f8ed",
+            "fileSize": 9110
+          }
+        },
+        {
+          "id": 2,
+          "title": "Update Package Name in package.json",
+          "description": "Modify the 'name' field in package.json to 'task-hero-ai'.",
+          "dependencies": [
+            1
+          ],
+          "details": "Open package.json and change the value of the 'name' field from its current value to 'task-hero-ai'.",
+          "status": "pending",
+          "testStrategy": "Check that the 'name' field in package.json is updated correctly.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_002_taskhero_ui_rebrand.md",
+            "fileName": "prd_002_taskhero_ui_rebrand.md",
+            "parsedDate": "2025-06-03T05:22:03.223Z",
+            "fileHash": "744710557c9cb26d5346ad5bd42c4468aa53809be98c999fcfce77f26701f8ed",
+            "fileSize": 9110
+          }
+        },
+        {
+          "id": 3,
+          "title": "Update Binary Command",
+          "description": "Change the binary command from 'task-master' to 'task-hero'.",
+          "dependencies": [
+            2
+          ],
+          "details": "Locate the 'bin' field in package.json and update the command from 'task-master' to 'task-hero'.",
+          "status": "pending",
+          "testStrategy": "Ensure that running 'task-hero' in the command line executes the expected script.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_002_taskhero_ui_rebrand.md",
+            "fileName": "prd_002_taskhero_ui_rebrand.md",
+            "parsedDate": "2025-06-03T05:22:03.223Z",
+            "fileHash": "744710557c9cb26d5346ad5bd42c4468aa53809be98c999fcfce77f26701f8ed",
+            "fileSize": 9110
+          }
+        },
+        {
+          "id": 4,
+          "title": "Update Branding Information",
+          "description": "Modify any branding-related fields in package.json to reflect TaskHero branding.",
+          "dependencies": [
+            3
+          ],
+          "details": "Review fields such as 'description', 'author', and 'homepage' in package.json and update them to align with TaskHero branding guidelines.",
+          "status": "pending",
+          "testStrategy": "Verify that all branding fields in package.json are updated to reflect TaskHero.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_002_taskhero_ui_rebrand.md",
+            "fileName": "prd_002_taskhero_ui_rebrand.md",
+            "parsedDate": "2025-06-03T05:22:03.223Z",
+            "fileHash": "744710557c9cb26d5346ad5bd42c4468aa53809be98c999fcfce77f26701f8ed",
+            "fileSize": 9110
+          }
+        },
+        {
+          "id": 5,
+          "title": "Test and Validate Configuration",
+          "description": "Test the updated package configuration to ensure all changes are correctly applied and functional.",
+          "dependencies": [
+            4
+          ],
+          "details": "Run the package using npm commands to ensure that the new configuration works as expected. Check for any errors or issues.",
+          "status": "pending",
+          "testStrategy": "Perform a series of npm install and run commands to ensure the package installs and runs correctly with the new configuration.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_002_taskhero_ui_rebrand.md",
+            "fileName": "prd_002_taskhero_ui_rebrand.md",
+            "parsedDate": "2025-06-03T05:22:03.223Z",
+            "fileHash": "744710557c9cb26d5346ad5bd42c4468aa53809be98c999fcfce77f26701f8ed",
+            "fileSize": 9110
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_002_taskhero_ui_rebrand.md",
+        "fileName": "prd_002_taskhero_ui_rebrand.md",
+        "parsedDate": "2025-06-03T05:22:03.223Z",
+        "fileHash": "744710557c9cb26d5346ad5bd42c4468aa53809be98c999fcfce77f26701f8ed",
+        "fileSize": 9110
+      }
+    },
+    {
+      "id": 85,
+      "title": "Rename Binary Files",
+      "description": "Rename CLI binary files to reflect TaskHero branding.",
+      "details": "Rename bin/task-master.js to bin/task-hero.js. Update any references to the binary file in the codebase.",
+      "testStrategy": "Ensure the renamed binary file executes correctly and all references are updated.",
+      "priority": "medium",
+      "dependencies": [
+        84
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Identify All References to Binary File",
+          "description": "Locate all instances where the binary file 'task-master.js' is referenced in the codebase.",
+          "dependencies": [],
+          "details": "Search the entire codebase for 'task-master.js' using a code search tool or command-line utility like grep. Document all locations where this file is referenced, including scripts, documentation, and configuration files.",
+          "status": "pending",
+          "testStrategy": "Verify that all references to 'task-master.js' have been identified by cross-referencing with the codebase.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_002_taskhero_ui_rebrand.md",
+            "fileName": "prd_002_taskhero_ui_rebrand.md",
+            "parsedDate": "2025-06-03T05:22:03.223Z",
+            "fileHash": "744710557c9cb26d5346ad5bd42c4468aa53809be98c999fcfce77f26701f8ed",
+            "fileSize": 9110
+          }
+        },
+        {
+          "id": 2,
+          "title": "Rename Binary File",
+          "description": "Rename the binary file from 'task-master.js' to 'task-hero.js'.",
+          "dependencies": [
+            1
+          ],
+          "details": "Use a file renaming command or tool to change the file name from 'task-master.js' to 'task-hero.js' in the 'bin' directory.",
+          "status": "pending",
+          "testStrategy": "Check the 'bin' directory to ensure the file has been renamed correctly.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_002_taskhero_ui_rebrand.md",
+            "fileName": "prd_002_taskhero_ui_rebrand.md",
+            "parsedDate": "2025-06-03T05:22:03.223Z",
+            "fileHash": "744710557c9cb26d5346ad5bd42c4468aa53809be98c999fcfce77f26701f8ed",
+            "fileSize": 9110
+          }
+        },
+        {
+          "id": 3,
+          "title": "Update Codebase References",
+          "description": "Update all references in the codebase from 'task-master.js' to 'task-hero.js'.",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "Edit each file identified in subtask 1 to replace 'task-master.js' with 'task-hero.js'. Ensure all scripts, documentation, and configuration files are updated.",
+          "status": "pending",
+          "testStrategy": "Run a search in the codebase to confirm there are no remaining references to 'task-master.js'.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_002_taskhero_ui_rebrand.md",
+            "fileName": "prd_002_taskhero_ui_rebrand.md",
+            "parsedDate": "2025-06-03T05:22:03.223Z",
+            "fileHash": "744710557c9cb26d5346ad5bd42c4468aa53809be98c999fcfce77f26701f8ed",
+            "fileSize": 9110
+          }
+        },
+        {
+          "id": 4,
+          "title": "Verify Functionality",
+          "description": "Ensure that the renamed binary file and updated references function as expected.",
+          "dependencies": [
+            3
+          ],
+          "details": "Execute the binary file using the new name 'task-hero.js' and test all functionalities to ensure they work as intended. Check that scripts and configurations that rely on the binary execute without errors.",
+          "status": "pending",
+          "testStrategy": "Run a suite of tests or manual checks to verify that all functionalities dependent on the binary file are operational.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_002_taskhero_ui_rebrand.md",
+            "fileName": "prd_002_taskhero_ui_rebrand.md",
+            "parsedDate": "2025-06-03T05:22:03.223Z",
+            "fileHash": "744710557c9cb26d5346ad5bd42c4468aa53809be98c999fcfce77f26701f8ed",
+            "fileSize": 9110
+          }
+        },
+        {
+          "id": 5,
+          "title": "Update Documentation",
+          "description": "Revise any documentation to reflect the new binary file name.",
+          "dependencies": [
+            4
+          ],
+          "details": "Review all project documentation, including README files, user guides, and any other relevant documents, to update references from 'task-master.js' to 'task-hero.js'.",
+          "status": "pending",
+          "testStrategy": "Ensure that all documentation accurately reflects the new binary name and provides correct usage instructions.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_002_taskhero_ui_rebrand.md",
+            "fileName": "prd_002_taskhero_ui_rebrand.md",
+            "parsedDate": "2025-06-03T05:22:03.223Z",
+            "fileHash": "744710557c9cb26d5346ad5bd42c4468aa53809be98c999fcfce77f26701f8ed",
+            "fileSize": 9110
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_002_taskhero_ui_rebrand.md",
+        "fileName": "prd_002_taskhero_ui_rebrand.md",
+        "parsedDate": "2025-06-03T05:22:03.223Z",
+        "fileHash": "744710557c9cb26d5346ad5bd42c4468aa53809be98c999fcfce77f26701f8ed",
+        "fileSize": 9110
+      }
+    },
+    {
+      "id": 86,
+      "title": "Update MCP Server Configuration",
+      "description": "Update MCP server configuration files with TaskHero branding.",
+      "details": "Modify MCP server configuration files to replace TaskMaster references with TaskHero. Ensure all configurations are consistent with the new branding.",
+      "testStrategy": "Validate that the MCP server operates correctly with the updated configuration.",
+      "priority": "medium",
+      "dependencies": [
+        84
+      ],
+      "status": "pending",
+      "subtasks": [],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_002_taskhero_ui_rebrand.md",
+        "fileName": "prd_002_taskhero_ui_rebrand.md",
+        "parsedDate": "2025-06-03T05:22:03.223Z",
+        "fileHash": "744710557c9cb26d5346ad5bd42c4468aa53809be98c999fcfce77f26701f8ed",
+        "fileSize": 9110
+      }
+    },
+    {
+      "id": 87,
+      "title": "Rebrand CLI Command Help Text",
+      "description": "Update all CLI command help text and descriptions to TaskHero branding.",
+      "details": "Modify help text, descriptions, and user messages in the CLI to reflect TaskHero branding. Ensure all instances of TaskMaster are replaced with TaskHero.",
+      "testStrategy": "Run all CLI commands and verify that help text and descriptions display TaskHero branding.",
+      "priority": "medium",
+      "dependencies": [
+        85
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Audit Current CLI Help Text",
+          "description": "Identify all instances of TaskMaster in the CLI help text and descriptions.",
+          "dependencies": [],
+          "details": "Review the CLI source code and documentation to locate all occurrences of TaskMaster in help text, descriptions, and user messages. Document these instances for updating.",
+          "status": "pending",
+          "testStrategy": "Verify that all instances of TaskMaster have been identified by cross-referencing with existing documentation and running the CLI with various commands to check outputs.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_002_taskhero_ui_rebrand.md",
+            "fileName": "prd_002_taskhero_ui_rebrand.md",
+            "parsedDate": "2025-06-03T05:22:03.223Z",
+            "fileHash": "744710557c9cb26d5346ad5bd42c4468aa53809be98c999fcfce77f26701f8ed",
+            "fileSize": 9110
+          }
+        },
+        {
+          "id": 2,
+          "title": "Update CLI Help Text to TaskHero",
+          "description": "Replace all instances of TaskMaster with TaskHero in the CLI help text and descriptions.",
+          "dependencies": [
+            1
+          ],
+          "details": "Using the list from the audit, systematically update each instance of TaskMaster to TaskHero in the source code. Ensure consistency in branding across all help text and descriptions.",
+          "status": "pending",
+          "testStrategy": "Run the CLI and check that all help text and descriptions now reflect TaskHero branding.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_002_taskhero_ui_rebrand.md",
+            "fileName": "prd_002_taskhero_ui_rebrand.md",
+            "parsedDate": "2025-06-03T05:22:03.223Z",
+            "fileHash": "744710557c9cb26d5346ad5bd42c4468aa53809be98c999fcfce77f26701f8ed",
+            "fileSize": 9110
+          }
+        },
+        {
+          "id": 3,
+          "title": "Update User Messages in CLI",
+          "description": "Modify user-facing messages in the CLI to reflect TaskHero branding.",
+          "dependencies": [
+            1
+          ],
+          "details": "Identify and update all user-facing messages in the CLI source code to replace TaskMaster with TaskHero. Ensure that the tone and style remain consistent with the new branding.",
+          "status": "pending",
+          "testStrategy": "Execute various CLI commands to ensure all user messages now correctly display TaskHero branding.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_002_taskhero_ui_rebrand.md",
+            "fileName": "prd_002_taskhero_ui_rebrand.md",
+            "parsedDate": "2025-06-03T05:22:03.223Z",
+            "fileHash": "744710557c9cb26d5346ad5bd42c4468aa53809be98c999fcfce77f26701f8ed",
+            "fileSize": 9110
+          }
+        },
+        {
+          "id": 4,
+          "title": "Review and Refactor Code for Consistency",
+          "description": "Ensure all code changes maintain consistency and do not introduce errors.",
+          "dependencies": [
+            2,
+            3
+          ],
+          "details": "Conduct a thorough review of the updated code to ensure all changes are consistent with TaskHero branding and do not affect functionality. Refactor any code that may have been impacted by the text changes.",
+          "status": "pending",
+          "testStrategy": "Run a full suite of automated tests to ensure no functionality is broken and branding is consistent.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_002_taskhero_ui_rebrand.md",
+            "fileName": "prd_002_taskhero_ui_rebrand.md",
+            "parsedDate": "2025-06-03T05:22:03.223Z",
+            "fileHash": "744710557c9cb26d5346ad5bd42c4468aa53809be98c999fcfce77f26701f8ed",
+            "fileSize": 9110
+          }
+        },
+        {
+          "id": 5,
+          "title": "Update Documentation and Release Notes",
+          "description": "Update any related documentation and prepare release notes for the branding changes.",
+          "dependencies": [
+            4
+          ],
+          "details": "Update any CLI documentation to reflect the new TaskHero branding. Prepare release notes that detail the changes made to the CLI help text and user messages.",
+          "status": "pending",
+          "testStrategy": "Review the updated documentation and release notes to ensure accuracy and completeness.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_002_taskhero_ui_rebrand.md",
+            "fileName": "prd_002_taskhero_ui_rebrand.md",
+            "parsedDate": "2025-06-03T05:22:03.223Z",
+            "fileHash": "744710557c9cb26d5346ad5bd42c4468aa53809be98c999fcfce77f26701f8ed",
+            "fileSize": 9110
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_002_taskhero_ui_rebrand.md",
+        "fileName": "prd_002_taskhero_ui_rebrand.md",
+        "parsedDate": "2025-06-03T05:22:03.223Z",
+        "fileHash": "744710557c9cb26d5346ad5bd42c4468aa53809be98c999fcfce77f26701f8ed",
+        "fileSize": 9110
+      }
+    },
+    {
+      "id": 88,
+      "title": "Rebrand Interactive Menu System",
+      "description": "Update interactive menu system headers and options to TaskHero branding.",
+      "details": "Change menu headers, banners, and options to display TaskHero branding. Ensure all user interface elements reflect the new brand identity.",
+      "testStrategy": "Navigate through the interactive menu and confirm all elements show TaskHero branding.",
+      "priority": "medium",
+      "dependencies": [
+        87
+      ],
+      "status": "pending",
+      "subtasks": [],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_002_taskhero_ui_rebrand.md",
+        "fileName": "prd_002_taskhero_ui_rebrand.md",
+        "parsedDate": "2025-06-03T05:22:03.223Z",
+        "fileHash": "744710557c9cb26d5346ad5bd42c4468aa53809be98c999fcfce77f26701f8ed",
+        "fileSize": 9110
+      }
+    },
+    {
+      "id": 89,
+      "title": "Update Error Messages and User Feedback",
+      "description": "Update error messages and user feedback strings to TaskHero branding.",
+      "details": "Replace all instances of TaskMaster in error messages and user feedback with TaskHero. Ensure consistency across all user interactions.",
+      "testStrategy": "Trigger various error messages and feedback prompts to verify TaskHero branding is used.",
+      "priority": "medium",
+      "dependencies": [
+        87
+      ],
+      "status": "pending",
+      "subtasks": [],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_002_taskhero_ui_rebrand.md",
+        "fileName": "prd_002_taskhero_ui_rebrand.md",
+        "parsedDate": "2025-06-03T05:22:03.223Z",
+        "fileHash": "744710557c9cb26d5346ad5bd42c4468aa53809be98c999fcfce77f26701f8ed",
+        "fileSize": 9110
+      }
+    },
+    {
+      "id": 90,
+      "title": "Update Documentation Files",
+      "description": "Comprehensively update all user-facing documentation to TaskHero branding.",
+      "details": "Revise README.md and other documentation files to reflect TaskHero branding. Update installation instructions and examples to use task-hero commands.",
+      "testStrategy": "Review all documentation for accuracy and consistency with TaskHero branding.",
+      "priority": "medium",
+      "dependencies": [
+        88,
+        89
+      ],
+      "status": "pending",
+      "subtasks": [],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_002_taskhero_ui_rebrand.md",
+        "fileName": "prd_002_taskhero_ui_rebrand.md",
+        "parsedDate": "2025-06-03T05:22:03.223Z",
+        "fileHash": "744710557c9cb26d5346ad5bd42c4468aa53809be98c999fcfce77f26701f8ed",
+        "fileSize": 9110
+      }
+    },
+    {
+      "id": 91,
+      "title": "Update Installation and Usage Examples",
+      "description": "Revise installation and usage examples to reflect TaskHero branding.",
+      "details": "Ensure all installation guides and usage examples use task-hero commands and branding. Update any code snippets to reflect the new brand identity.",
+      "testStrategy": "Test installation and usage examples to confirm they work as expected with TaskHero branding.",
+      "priority": "medium",
+      "dependencies": [
+        90
+      ],
+      "status": "pending",
+      "subtasks": [],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_002_taskhero_ui_rebrand.md",
+        "fileName": "prd_002_taskhero_ui_rebrand.md",
+        "parsedDate": "2025-06-03T05:22:03.223Z",
+        "fileHash": "744710557c9cb26d5346ad5bd42c4468aa53809be98c999fcfce77f26701f8ed",
+        "fileSize": 9110
+      }
+    },
+    {
+      "id": 92,
+      "title": "Update Template Files and Example Configurations",
+      "description": "Update template files and example configurations to TaskHero branding.",
+      "details": "Modify template files and example configurations to use TaskHero branding. Ensure all references are consistent with the new identity.",
+      "testStrategy": "Validate that all templates and configurations work correctly with TaskHero branding.",
+      "priority": "medium",
+      "dependencies": [
+        91
+      ],
+      "status": "pending",
+      "subtasks": [],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_002_taskhero_ui_rebrand.md",
+        "fileName": "prd_002_taskhero_ui_rebrand.md",
+        "parsedDate": "2025-06-03T05:22:03.223Z",
+        "fileHash": "744710557c9cb26d5346ad5bd42c4468aa53809be98c999fcfce77f26701f8ed",
+        "fileSize": 9110
+      }
+    },
+    {
+      "id": 93,
+      "title": "Testing and Validation",
+      "description": "Conduct comprehensive testing and validation of all changes to ensure functionality and branding consistency.",
+      "details": "Perform functional testing on all CLI commands, interactive menus, and documentation. Ensure all elements reflect TaskHero branding and maintain existing functionality.",
+      "testStrategy": "Execute a full suite of tests to verify that all changes are correctly implemented and do not break existing functionality.",
+      "priority": "high",
+      "dependencies": [
+        92
+      ],
+      "status": "pending",
+      "subtasks": [],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_002_taskhero_ui_rebrand.md",
+        "fileName": "prd_002_taskhero_ui_rebrand.md",
+        "parsedDate": "2025-06-03T05:22:03.223Z",
+        "fileHash": "744710557c9cb26d5346ad5bd42c4468aa53809be98c999fcfce77f26701f8ed",
+        "fileSize": 9110
+      }
     }
   ]
 }

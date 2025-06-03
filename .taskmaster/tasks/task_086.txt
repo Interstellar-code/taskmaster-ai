@@ -1,0 +1,16 @@
+# Task ID: 86
+# Title: Update MCP Server Configuration
+# Status: pending
+# Dependencies: 84
+# Priority: medium
+# PRD Source: prd_002_taskhero_ui_rebrand.md
+# PRD Path: C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_002_taskhero_ui_rebrand.md
+# Parsed Date: 2025-06-03T05:22:03.223Z
+# File Hash: 744710557c9cb26d5346ad5bd42c4468aa53809be98c999fcfce77f26701f8ed
+# File Size: 9110 bytes
+# Description: Update MCP server configuration files with TaskHero branding.
+# Details:
+Modify MCP server configuration files to replace TaskMaster references with TaskHero. Ensure all configurations are consistent with the new branding.
+
+# Test Strategy:
+Validate that the MCP server operates correctly with the updated configuration.

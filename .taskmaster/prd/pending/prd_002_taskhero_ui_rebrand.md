@@ -1,3 +1,13 @@
+# PRD ID: prd_002
+# Title: undefined
+# Status: pending
+# Priority: medium
+# Complexity: medium
+# PRD Path: .taskmaster/prd/pending/prd_002_taskhero_ui_rebrand.md
+# File Hash: 744710557c9cb26d5346ad5bd42c4468aa53809be98c999fcfce77f26701f8ed
+# File Size: 9110 bytes
+# Last Modified: 2025-06-03T05:22:21.582Z
+# Last Parsed: 2025-06-03T05:22:21.581Z
 # TaskHero UI/UX Rebranding PRD
 
 **Document Version:** 1.0  

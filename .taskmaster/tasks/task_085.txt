@@ -1,0 +1,48 @@
+# Task ID: 85
+# Title: Rename Binary Files
+# Status: pending
+# Dependencies: 84
+# Priority: medium
+# PRD Source: prd_002_taskhero_ui_rebrand.md
+# PRD Path: C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_002_taskhero_ui_rebrand.md
+# Parsed Date: 2025-06-03T05:22:03.223Z
+# File Hash: 744710557c9cb26d5346ad5bd42c4468aa53809be98c999fcfce77f26701f8ed
+# File Size: 9110 bytes
+# Description: Rename CLI binary files to reflect TaskHero branding.
+# Details:
+Rename bin/task-master.js to bin/task-hero.js. Update any references to the binary file in the codebase.
+
+# Test Strategy:
+Ensure the renamed binary file executes correctly and all references are updated.
+
+# Subtasks:
+## 1. Identify All References to Binary File [pending]
+### Dependencies: None
+### Description: Locate all instances where the binary file 'task-master.js' is referenced in the codebase.
+### Details:
+Search the entire codebase for 'task-master.js' using a code search tool or command-line utility like grep. Document all locations where this file is referenced, including scripts, documentation, and configuration files.
+
+## 2. Rename Binary File [pending]
+### Dependencies: 85.1
+### Description: Rename the binary file from 'task-master.js' to 'task-hero.js'.
+### Details:
+Use a file renaming command or tool to change the file name from 'task-master.js' to 'task-hero.js' in the 'bin' directory.
+
+## 3. Update Codebase References [pending]
+### Dependencies: 85.1, 85.2
+### Description: Update all references in the codebase from 'task-master.js' to 'task-hero.js'.
+### Details:
+Edit each file identified in subtask 1 to replace 'task-master.js' with 'task-hero.js'. Ensure all scripts, documentation, and configuration files are updated.
+
+## 4. Verify Functionality [pending]
+### Dependencies: 85.3
+### Description: Ensure that the renamed binary file and updated references function as expected.
+### Details:
+Execute the binary file using the new name 'task-hero.js' and test all functionalities to ensure they work as intended. Check that scripts and configurations that rely on the binary execute without errors.
+
+## 5. Update Documentation [pending]
+### Dependencies: 85.4
+### Description: Revise any documentation to reflect the new binary file name.
+### Details:
+Review all project documentation, including README files, user guides, and any other relevant documents, to update references from 'task-master.js' to 'task-hero.js'.
+
