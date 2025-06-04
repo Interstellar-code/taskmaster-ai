@@ -505,24 +505,24 @@
     {
       "id": 66,
       "title": "Create Responsive Three-Column Kanban Board Layout",
-      "description": "Develop the main Kanban board layout component with three columns for 'pending', 'in-progress', and 'done' task statuses.",
-      "details": "Create a `KanbanBoard` React component. Use Tailwind CSS grid or flexbox utilities to create a responsive three-column layout. Each column should represent a task status. Fetch tasks from the `/api/v1/tasks` endpoint and distribute them into the respective columns based on their `status` property. Display a task count in each column header.",
-      "testStrategy": "Render the `KanbanBoard` component. Verify that three columns are displayed and tasks are correctly categorized into 'pending', 'in-progress', and 'done' based on their status. Test responsiveness by resizing the browser window to ensure the layout adapts correctly.",
-      "priority": "high",
+      "description": "Develop the main Kanban board layout component with three columns for 'pending', 'in-progress', and 'done' task statuses, leveraging the `react-dnd-kit-tailwind-shadcn-ui` library for drag-and-drop functionality.",
+      "status": "done",
       "dependencies": [
         61,
         64
       ],
-      "status": "in-progress",
+      "priority": "high",
+      "details": "Create a `KanbanBoard` React component using patterns and components from the `react-dnd-kit-tailwind-shadcn-ui` library. This includes setting up the `DndContext` and utilizing its pre-built components for a responsive three-column layout. Each column should represent a task status ('pending', 'in-progress', 'done'). Fetch tasks from the `/api/v1/tasks` endpoint and distribute them into the respective columns based on their `status` property. Display a task count in each column header. The layout should be compatible with the library's drag-and-drop system.",
+      "testStrategy": "Render the `KanbanBoard` component. Verify that three columns are displayed and tasks are correctly categorized into 'pending', 'in-progress', and 'done' based on their status. Test responsiveness by resizing the browser window to ensure the layout adapts correctly, utilizing the `react-dnd-kit-tailwind-shadcn-ui` library's responsive features. Ensure the basic drag-and-drop setup is functional (though full drag-and-drop functionality will be tested in subsequent tasks).",
       "subtasks": [
         {
           "id": 1,
-          "title": "Create Main Kanban Board Container",
-          "description": "Develop the main `KanbanBoard` React component with a responsive grid layout using Tailwind CSS.",
+          "title": "Create Main Kanban Board Container using react-dnd-kit-tailwind-shadcn-ui",
+          "description": "Develop the main `KanbanBoard` React component, setting up the `DndContext` and utilizing the responsive grid layout patterns provided by the `react-dnd-kit-tailwind-shadcn-ui` library.",
           "dependencies": [],
-          "details": "Set up a new React component named `KanbanBoard`. Use Tailwind CSS to create a responsive grid or flexbox layout that will house three columns. Ensure the layout adjusts for different screen sizes, maintaining a three-column layout on larger screens and stacking columns vertically on smaller screens.",
-          "status": "pending",
-          "testStrategy": "Verify the layout adjusts correctly across various screen sizes using browser developer tools.",
+          "details": "Set up a new React component named `KanbanBoard`. Integrate the `DndContext` from `@dnd-kit/core`. Use the grid or flexbox utilities and components from `react-dnd-kit-tailwind-shadcn-ui` to create a responsive layout that will house three columns. Ensure the layout adjusts for different screen sizes, maintaining a three-column layout on larger screens and stacking columns vertically on smaller screens, following the library's recommended patterns.",
+          "status": "done",
+          "testStrategy": "Verify the layout adjusts correctly across various screen sizes using browser developer tools, ensuring the `react-dnd-kit-tailwind-shadcn-ui` components behave as expected for responsiveness.",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -533,14 +533,14 @@
         },
         {
           "id": 2,
-          "title": "Implement Individual Column Components",
-          "description": "Create separate components for each task status column: 'Pending', 'In-Progress', and 'Done'.",
+          "title": "Implement Individual Column Components using react-dnd-kit-tailwind-shadcn-ui patterns",
+          "description": "Create separate components for each task status column: 'Pending', 'In-Progress', and 'Done', leveraging the column patterns from `react-dnd-kit-tailwind-shadcn-ui`.",
           "dependencies": [
             1
           ],
-          "details": "Develop three React components, one for each task status: `PendingColumn`, `InProgressColumn`, and `DoneColumn`. Each component should accept a list of tasks as props and display them. Ensure these components integrate seamlessly into the `KanbanBoard` layout.",
-          "status": "pending",
-          "testStrategy": "Render each column with mock data to ensure tasks are displayed correctly in their respective columns.",
+          "details": "Develop three React components, one for each task status: `PendingColumn`, `InProgressColumn`, and `DoneColumn`. These components should be built using the column components and patterns provided by `react-dnd-kit-tailwind-shadcn-ui` to ensure compatibility with the drag-and-drop system. Each component should accept a list of tasks as props and display them. Ensure these components integrate seamlessly into the `KanbanBoard` layout.",
+          "status": "done",
+          "testStrategy": "Render each column with mock data to ensure tasks are displayed correctly in their respective columns and that the column structure aligns with `react-dnd-kit-tailwind-shadcn-ui` expectations.",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -551,14 +551,14 @@
         },
         {
           "id": 3,
-          "title": "Add Column Headers with Task Counts",
-          "description": "Enhance each column component with a header that displays the column title and the count of tasks within that column.",
+          "title": "Add Column Headers with Task Counts using react-dnd-kit-tailwind-shadcn-ui styling",
+          "description": "Enhance each column component with a header that displays the column title and the count of tasks within that column, styled consistently with `react-dnd-kit-tailwind-shadcn-ui`.",
           "dependencies": [
             2
           ],
-          "details": "Modify each column component to include a header section. Use Tailwind CSS for styling. The header should display the column name and dynamically update to show the number of tasks in that column. Ensure the styling is consistent with the overall design of the Kanban board.",
-          "status": "pending",
-          "testStrategy": "Check that the task count updates correctly when tasks are added or removed from the column.",
+          "details": "Modify each column component to include a header section. Use Tailwind CSS and shadcn/ui components, as integrated by `react-dnd-kit-tailwind-shadcn-ui`, for styling. The header should display the column name and dynamically update to show the number of tasks in that column. Ensure the styling is consistent with the overall design of the Kanban board and the library's aesthetic.",
+          "status": "done",
+          "testStrategy": "Check that the task count updates correctly when tasks are added or removed from the column, and that the header styling is consistent with the `react-dnd-kit-tailwind-shadcn-ui` theme.",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -569,14 +569,14 @@
         },
         {
           "id": 4,
-          "title": "Implement Responsive Design for Mobile and Tablet Views",
-          "description": "Ensure the Kanban board layout is fully responsive and provides a good user experience on mobile and tablet devices.",
+          "title": "Implement Responsive Design for Mobile and Tablet Views using react-dnd-kit-tailwind-shadcn-ui",
+          "description": "Ensure the Kanban board layout is fully responsive and provides a good user experience on mobile and tablet devices, leveraging the responsive features of `react-dnd-kit-tailwind-shadcn-ui`.",
           "dependencies": [
             3
           ],
-          "details": "Use Tailwind CSS utilities to adjust the layout for smaller screens. Implement media queries if necessary to ensure the columns stack vertically on smaller devices. Test the layout on various screen sizes to ensure usability and readability.",
-          "status": "pending",
-          "testStrategy": "Use browser developer tools to simulate different screen sizes and ensure the layout is responsive and user-friendly on all devices.",
+          "details": "Utilize the responsive utilities and components provided by `react-dnd-kit-tailwind-shadcn-ui` (which in turn uses Tailwind CSS) to adjust the layout for smaller screens. Implement media queries or responsive classes as demonstrated in the library's examples to ensure the columns stack vertically on smaller devices. Test the layout on various screen sizes to ensure usability and readability.",
+          "status": "done",
+          "testStrategy": "Use browser developer tools to simulate different screen sizes and ensure the layout is responsive and user-friendly on all devices, specifically verifying the responsive behavior of the `react-dnd-kit-tailwind-shadcn-ui` components.",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -597,15 +597,15 @@
     {
       "id": 67,
       "title": "Implement TaskCard Component with Metadata Display",
-      "description": "Implement the `TaskCard` component to display individual task metadata including title, description, priority, and dependencies.",
-      "details": "Create a `TaskCard` React component that accepts a task object as props. Use shadcn/ui Card components for the visual structure. Display the task's `title`, a truncated `description`, `priority` (e.g., with a colored badge), and a list of `dependencies` (if any). Ensure the card is visually appealing and clearly presents key information.",
-      "testStrategy": "Render several `TaskCard` components with different task data (varying priorities, dependencies, and descriptions). Verify that all specified metadata fields are displayed correctly and that the styling is consistent with shadcn/ui and Tailwind CSS.",
-      "priority": "high",
+      "description": "Implement the `TaskCard` component to display individual task metadata including title, description, priority, and dependencies, and integrate it with drag-and-drop functionality using `react-dnd-kit-tailwind-shadcn-ui`.",
+      "status": "pending",
       "dependencies": [
         61,
         66
       ],
-      "status": "pending",
+      "priority": "high",
+      "details": "Create a `TaskCard` React component that accepts a task object as props. Use `shadcn/ui` Card components for the visual structure. Display the task's `title`, a truncated `description`, `priority` (e.g., with a colored badge), and a list of `dependencies` (if any). The component must be compatible with `react-dnd-kit-tailwind-shadcn-ui` for drag-and-drop, ensuring proper data attributes, styling, and event handling for draggable items. Ensure the card is visually appealing and clearly presents key information.",
+      "testStrategy": "Render several `TaskCard` components with different task data (varying priorities, dependencies, and descriptions). Verify that all specified metadata fields are displayed correctly and that the styling is consistent with `shadcn/ui` and Tailwind CSS. Test drag-and-drop functionality by attempting to drag `TaskCard` instances within a simulated `DndContext` environment, ensuring they are recognized as draggable items and their visual feedback is correct.",
       "subtasks": [
         {
           "id": 1,
@@ -656,6 +656,24 @@
             "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
             "fileSize": 21070
           }
+        },
+        {
+          "id": 4,
+          "title": "Integrate TaskCard with react-dnd-kit-tailwind-shadcn-ui",
+          "description": "Modify the TaskCard component to be compatible with the drag-and-drop system provided by `react-dnd-kit-tailwind-shadcn-ui`.",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "Implement the necessary hooks and properties (e.g., `useDraggable`) from `react-dnd-kit` as per the `react-dnd-kit-tailwind-shadcn-ui` patterns. Ensure the `TaskCard` component correctly exposes its draggable properties and responds to drag events. Add appropriate data attributes and styling for drag feedback.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
         }
       ],
       "prdSource": {
@@ -669,14 +687,14 @@
     {
       "id": 68,
       "title": "Setup @dnd-kit Library with Drag-and-Drop Context",
-      "description": "Set up the @dnd-kit library with necessary context providers for drag-and-drop functionality.",
-      "details": "Wrap the `KanbanBoard` component (or a higher-level component) with `DndContext` from `@dnd-kit/core`. Configure `DndContext` with `sensors` (e.g., `PointerSensor`, `KeyboardSensor`) and `collisionDetection` (e.g., `closestCorners`). Define `onDragEnd` and `onDragOver` handlers to manage drag operations.",
-      "testStrategy": "Verify that the `DndContext` is correctly initialized by adding a simple draggable element within the context. Log drag events to the console to confirm that `onDragStart`, `onDragOver`, and `onDragEnd` callbacks are triggered as expected.",
-      "priority": "high",
+      "description": "Integrate the `react-dnd-kit-tailwind-shadcn-ui` library to provide drag-and-drop functionality for the Kanban board, leveraging its pre-built components and patterns.",
+      "status": "pending",
       "dependencies": [
         66
       ],
-      "status": "pending",
+      "priority": "high",
+      "details": "Instead of setting up `@dnd-kit` from scratch, install and configure the `react-dnd-kit-tailwind-shadcn-ui` library. This library includes all necessary `@dnd-kit` dependencies and provides ready-to-use components and patterns for Kanban boards. The task involves installing the library, understanding its component structure, and setting up the `DndContext` using the library's recommended patterns and examples. This will simplify the implementation of drag-and-drop for tasks and columns.",
+      "testStrategy": "Verify that the `DndContext` is correctly initialized by integrating a simple draggable element using the `react-dnd-kit-tailwind-shadcn-ui` components. Confirm that drag operations (e.g., `onDragStart`, `onDragOver`, `onDragEnd`) are triggered and handled as expected by observing console logs or visual feedback. Ensure basic drag-and-drop of items functions correctly within the provided context.",
       "subtasks": [
         {
           "id": 1,
@@ -718,6 +736,55 @@
             2
           ],
           "details": "Set up a drag overlay to provide visual feedback during drag operations and ensure that the drag-and-drop functionality is accessible, including keyboard navigation and screen reader support.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 4,
+          "title": "Install react-dnd-kit-tailwind-shadcn-ui Library",
+          "description": "Install the specialized `react-dnd-kit-tailwind-shadcn-ui` library which provides pre-built components and patterns for drag-and-drop Kanban boards.",
+          "dependencies": [],
+          "details": "Use npm or yarn to install `react-dnd-kit-tailwind-shadcn-ui`. This library will replace the need for manual `@dnd-kit` setup and provide integrated solutions for DndContext, sensors, and collision detection.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 5,
+          "title": "Understand and Integrate Library's DndContext Patterns",
+          "description": "Familiarize with the `react-dnd-kit-tailwind-shadcn-ui` library's recommended patterns for setting up `DndContext` and integrating its components.",
+          "dependencies": [
+            4
+          ],
+          "details": "Review the documentation and examples provided by `react-dnd-kit-tailwind-shadcn-ui` to understand how to properly wrap the Kanban board components with the library's `DndContext` equivalent. Identify how to configure sensors, collision detection, and drag event handlers (`onDragEnd`, `onDragOver`) using the library's abstractions.",
+          "status": "pending",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 6,
+          "title": "Replace Manual @dnd-kit Setup with Library Components",
+          "description": "Refactor existing or planned `@dnd-kit` setup to utilize the components and hooks provided by `react-dnd-kit-tailwind-shadcn-ui`.",
+          "dependencies": [
+            5
+          ],
+          "details": "Instead of directly using `@dnd-kit/core` components, integrate the pre-built `react-dnd-kit-tailwind-shadcn-ui` components for draggable items, droppable containers, and the overall drag-and-drop context. Ensure that the visual and functional aspects of drag-and-drop are maintained or improved.",
           "status": "pending",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",

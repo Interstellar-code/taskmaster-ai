@@ -8,12 +8,12 @@
 # Parsed Date: 2025-06-02T21:47:10.025Z
 # File Hash: 26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936
 # File Size: 21070 bytes
-# Description: Set up the @dnd-kit library with necessary context providers for drag-and-drop functionality.
+# Description: Integrate the `react-dnd-kit-tailwind-shadcn-ui` library to provide drag-and-drop functionality for the Kanban board, leveraging its pre-built components and patterns.
 # Details:
-Wrap the `KanbanBoard` component (or a higher-level component) with `DndContext` from `@dnd-kit/core`. Configure `DndContext` with `sensors` (e.g., `PointerSensor`, `KeyboardSensor`) and `collisionDetection` (e.g., `closestCorners`). Define `onDragEnd` and `onDragOver` handlers to manage drag operations.
+Instead of setting up `@dnd-kit` from scratch, install and configure the `react-dnd-kit-tailwind-shadcn-ui` library. This library includes all necessary `@dnd-kit` dependencies and provides ready-to-use components and patterns for Kanban boards. The task involves installing the library, understanding its component structure, and setting up the `DndContext` using the library's recommended patterns and examples. This will simplify the implementation of drag-and-drop for tasks and columns.
 
 # Test Strategy:
-Verify that the `DndContext` is correctly initialized by adding a simple draggable element within the context. Log drag events to the console to confirm that `onDragStart`, `onDragOver`, and `onDragEnd` callbacks are triggered as expected.
+Verify that the `DndContext` is correctly initialized by integrating a simple draggable element using the `react-dnd-kit-tailwind-shadcn-ui` components. Confirm that drag operations (e.g., `onDragStart`, `onDragOver`, `onDragEnd`) are triggered and handled as expected by observing console logs or visual feedback. Ensure basic drag-and-drop of items functions correctly within the provided context.
 
 # Subtasks:
 ## 1. Install @dnd-kit Packages and Dependencies [pending]
@@ -33,4 +33,22 @@ Integrate the DndContext provider into the application, ensuring that sensors fo
 ### Description: Implement drag overlay and ensure accessibility features are in place for the drag-and-drop functionality.
 ### Details:
 Set up a drag overlay to provide visual feedback during drag operations and ensure that the drag-and-drop functionality is accessible, including keyboard navigation and screen reader support.
+
+## 4. Install react-dnd-kit-tailwind-shadcn-ui Library [pending]
+### Dependencies: None
+### Description: Install the specialized `react-dnd-kit-tailwind-shadcn-ui` library which provides pre-built components and patterns for drag-and-drop Kanban boards.
+### Details:
+Use npm or yarn to install `react-dnd-kit-tailwind-shadcn-ui`. This library will replace the need for manual `@dnd-kit` setup and provide integrated solutions for DndContext, sensors, and collision detection.
+
+## 5. Understand and Integrate Library's DndContext Patterns [pending]
+### Dependencies: 68.4
+### Description: Familiarize with the `react-dnd-kit-tailwind-shadcn-ui` library's recommended patterns for setting up `DndContext` and integrating its components.
+### Details:
+Review the documentation and examples provided by `react-dnd-kit-tailwind-shadcn-ui` to understand how to properly wrap the Kanban board components with the library's `DndContext` equivalent. Identify how to configure sensors, collision detection, and drag event handlers (`onDragEnd`, `onDragOver`) using the library's abstractions.
+
+## 6. Replace Manual @dnd-kit Setup with Library Components [pending]
+### Dependencies: 68.5
+### Description: Refactor existing or planned `@dnd-kit` setup to utilize the components and hooks provided by `react-dnd-kit-tailwind-shadcn-ui`.
+### Details:
+Instead of directly using `@dnd-kit/core` components, integrate the pre-built `react-dnd-kit-tailwind-shadcn-ui` components for draggable items, droppable containers, and the overall drag-and-drop context. Ensure that the visual and functional aspects of drag-and-drop are maintained or improved.
 

@@ -20,7 +20,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3003;
 
 // Create logger instance
 const logger = createLogger('TaskMaster-API');
@@ -58,7 +58,7 @@ app.use(limiter);
 
 // CORS configuration
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:3000'],
+  origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -77,13 +77,21 @@ app.use((req, res, next) => {
 // Helper function to read TaskMaster tasks (using core integration)
 async function readTaskMasterTasks() {
   try {
-    if (isTaskMasterInitialized) {
-      return await taskMasterCore.readTasksData();
-    } else {
-      // Fallback to direct file reading if core not initialized
-      const data = await fs.readFile(TASKS_FILE_PATH, 'utf8');
-      return JSON.parse(data);
+    if (isTaskMasterInitialized && tasksJsonPath) {
+      // Use the direct function to read tasks
+      const result = await listTasksDirect({ tasksJsonPath }, logger);
+      if (result.success) {
+        return {
+          tasks: result.data.tasks || [],
+          summary: result.data.summary,
+          lastUpdated: new Date().toISOString()
+        };
+      }
     }
+
+    // Fallback to direct file reading if core not initialized
+    const data = await fs.readFile(TASKS_FILE_PATH, 'utf8');
+    return JSON.parse(data);
   } catch (error) {
     console.error('Error reading TaskMaster tasks:', error);
     return { tasks: [] };
@@ -93,13 +101,10 @@ async function readTaskMasterTasks() {
 // Helper function to write TaskMaster tasks (using core integration)
 async function writeTaskMasterTasks(tasksData) {
   try {
-    if (isTaskMasterInitialized) {
-      return await taskMasterCore.writeTasksData(tasksData);
-    } else {
-      // Fallback to direct file writing if core not initialized
-      await fs.writeFile(TASKS_FILE_PATH, JSON.stringify(tasksData, null, 2));
-      return true;
-    }
+    // For now, always use direct file writing since we don't have a write function in the core
+    // This could be enhanced later to use MCP functions for writing
+    await fs.writeFile(TASKS_FILE_PATH, JSON.stringify(tasksData, null, 2));
+    return true;
   } catch (error) {
     console.error('Error writing TaskMaster tasks:', error);
     return false;
@@ -547,6 +552,102 @@ app.get('/api/core/tasks/next', async (req, res) => {
 });
 
 // ============================================================================
+// SIMPLE FALLBACK API ROUTES (for when MCP core is not available)
+// ============================================================================
+
+// Simple fallback tasks endpoint
+app.get('/api/v1/tasks', async (req, res) => {
+  try {
+    const tasksData = await readTaskMasterTasks();
+    const tasks = tasksData.tasks || [];
+
+    res.json({
+      success: true,
+      data: {
+        tasks: tasks,
+        summary: {
+          totalTasks: tasks.length,
+          statusCounts: tasks.reduce((acc, task) => {
+            acc[task.status] = (acc[task.status] || 0) + 1;
+            return acc;
+          }, {})
+        }
+      },
+      source: isTaskMasterInitialized ? 'TaskMaster Core' : 'Fallback Mode',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch tasks',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+// Simple fallback task status update endpoint
+app.patch('/api/v1/tasks/:id/status', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!status) {
+      return res.status(400).json({
+        success: false,
+        error: 'Validation error',
+        message: 'status is required',
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    const tasksData = await readTaskMasterTasks();
+    const tasks = tasksData.tasks || [];
+    const taskIndex = tasks.findIndex(t => t.id === id);
+
+    if (taskIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        error: 'Task not found',
+        message: `Task with ID ${id} does not exist`,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    // Update task status
+    tasks[taskIndex].status = status;
+    tasks[taskIndex].updatedAt = new Date().toISOString();
+
+    // Write back to file
+    const writeSuccess = await writeTaskMasterTasks({ ...tasksData, tasks });
+
+    if (!writeSuccess) {
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to update task',
+        message: 'Could not write to tasks file',
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    res.json({
+      success: true,
+      data: tasks[taskIndex],
+      message: 'Task status updated successfully',
+      source: isTaskMasterInitialized ? 'TaskMaster Core' : 'Fallback Mode',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Failed to update task status',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+// ============================================================================
 // MCP API ROUTES - All TaskMaster MCP Direct Functions as REST Endpoints
 // ============================================================================
 app.use('/api/v1', mcpApiRoutes);
@@ -578,15 +679,28 @@ app.listen(PORT, async () => {
   logger.info(`📚 API docs: http://localhost:${PORT}/api`);
   logger.info(`⏰ Started at: ${new Date().toISOString()}`);
 
-  // Initialize TaskMaster Core Integration
-  const initResult = await initializeTaskMasterCore();
+  // Initialize TaskMaster Core Integration (with timeout)
+  try {
+    const initPromise = initializeTaskMasterCore();
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Initialization timeout')), 10000)
+    );
 
-  logger.info(`🎯 TaskMaster Core Status: ${isTaskMasterInitialized ? 'Active' : 'Fallback Mode'}`);
-  if (isTaskMasterInitialized) {
-    logger.info(`📁 Project Root: ${projectRoot}`);
-    logger.info(`📄 Tasks File: ${tasksJsonPath}`);
-    logger.info(`🔧 Available Functions: ${getAvailableFunctions().length}`);
+    const initResult = await Promise.race([initPromise, timeoutPromise]);
+
+    logger.info(`🎯 TaskMaster Core Status: ${isTaskMasterInitialized ? 'Active' : 'Fallback Mode'}`);
+    if (isTaskMasterInitialized) {
+      logger.info(`📁 Project Root: ${projectRoot}`);
+      logger.info(`📄 Tasks File: ${tasksJsonPath}`);
+      logger.info(`🔧 Available Functions: ${getAvailableFunctions().length}`);
+    }
+  } catch (error) {
+    logger.error(`❌ TaskMaster Core initialization failed: ${error.message}`);
+    logger.info(`⚠️  Running in fallback mode`);
+    isTaskMasterInitialized = false;
+    app.locals.taskMasterInitialized = false;
   }
+
   logger.info(`🧪 Test endpoints: http://localhost:${PORT}/api/core/status`);
   logger.info(`📋 List tasks: http://localhost:${PORT}/api/core/tasks/list`);
   logger.info(`➡️  Next task: http://localhost:${PORT}/api/core/tasks/next`);
