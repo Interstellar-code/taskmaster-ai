@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import {
   DndContext,
   DragOverlay,
@@ -33,7 +34,7 @@ import { hasDraggableData } from './dnd/utils';
 import { coordinateGetter } from './dnd/multipleContainersKeyboardPreset';
 
 export const KanbanBoard: React.FC = () => {
-  const { columns, loading, error, updateTaskStatus } = useKanban();
+  const { columns, loading, error, updateTaskStatus, isTaskUpdating, isTaskRecentlyDropped } = useKanban();
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const pickedUpTaskColumn = useRef<TaskStatus | null>(null);
 
@@ -191,36 +192,60 @@ export const KanbanBoard: React.FC = () => {
   );
 
   return (
-    <div className="h-screen w-full p-6 bg-background">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold">TaskMaster Kanban</h1>
-        <p className="text-muted-foreground mt-2">
-          Manage your tasks with drag-and-drop functionality
-        </p>
-      </div>
-
-      <DndContext
-        accessibility={{
-          announcements,
-        }}
-        sensors={sensors}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-      >
-        <div className="px-2 md:px-0 flex lg:justify-center pb-4">
-          <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory">
-            {mainColumns.map((column) => (
-              <KanbanColumn key={column.id} column={column} />
-            ))}
-          </div>
+    <div className="min-h-screen w-full" style={{ backgroundColor: 'hsl(var(--kanban-bg))' }}>
+      <div className="p-6">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-white">TaskMaster Kanban</h1>
+          <p className="text-gray-400 mt-2">
+            Manage your tasks with drag-and-drop functionality
+          </p>
         </div>
 
-        <DragOverlay>
-          {activeTask ? (
-            <TaskCard task={activeTask} isOverlay />
-          ) : null}
-        </DragOverlay>
-      </DndContext>
+        <DndContext
+          accessibility={{
+            announcements,
+          }}
+          sensors={sensors}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+        >
+          <div className="flex gap-6 overflow-x-auto pb-4">
+            {mainColumns.map((column) => (
+              <KanbanColumn
+                key={column.id}
+                column={column}
+                isTaskUpdating={isTaskUpdating}
+                isTaskRecentlyDropped={isTaskRecentlyDropped}
+              />
+            ))}
+          </div>
+
+          <DragOverlay>
+            {activeTask ? (
+              <div className="transform rotate-6 scale-110 animate-drag-lift transition-all duration-300 ease-out">
+                <TaskCard
+                  task={activeTask}
+                  isOverlay
+                  isUpdating={isTaskUpdating(activeTask.id)}
+                />
+              </div>
+            ) : null}
+          </DragOverlay>
+
+          {/* Enhanced portal-based drag overlay for better rendering */}
+          {typeof window !== 'undefined' && activeTask && createPortal(
+            <div className="fixed inset-0 pointer-events-none z-50">
+              <div className="absolute top-4 right-4 bg-black/80 text-white px-3 py-2 rounded-lg text-sm backdrop-blur-sm">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                  Dragging: {activeTask.title}
+                </div>
+              </div>
+            </div>,
+            document.body
+          )}
+        </DndContext>
+      </div>
     </div>
   );
 };

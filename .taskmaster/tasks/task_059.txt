@@ -1,6 +1,6 @@
 # Task ID: 59
 # Title: Integrate v0.16.0 upstream changes selectively
-# Status: done
+# Status: 60
 # Dependencies: None
 # Priority: high
 # PRD Source: None (manually created)

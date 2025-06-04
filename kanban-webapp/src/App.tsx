@@ -2,7 +2,7 @@ import { KanbanBoard } from './components/KanbanBoard';
 
 function App() {
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'hsl(var(--background))', color: 'hsl(var(--foreground))' }}>
+    <div className="min-h-screen">
       <KanbanBoard />
     </div>
   );

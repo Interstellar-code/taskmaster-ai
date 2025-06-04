@@ -1,6 +1,6 @@
 # Task ID: 70
 # Title: Create Task Status Update API Endpoints
-# Status: pending
+# Status: done
 # Dependencies: 63
 # Priority: high
 # PRD Source: prd_kanban_webapp.md
@@ -16,19 +16,19 @@ Implement a PATCH endpoint at `/api/v1/tasks/:id/status`. This endpoint should a
 Use Postman or `curl` to send PATCH requests to update task statuses. Verify that the `tasks.json` file is updated correctly and that the API returns the expected response. Test with invalid task IDs and statuses to ensure proper error handling.
 
 # Subtasks:
-## 1. Command Interface and Parameter Handling [pending]
+## 1. Command Interface and Parameter Handling [done]
 ### Dependencies: None
 ### Description: Design and implement the command interface for the 'diagram' command, including parsing and validating input parameters.
 ### Details:
 Ensure the command interface can accept parameters such as task IDs, output format, and optional filters. Validate inputs for correctness and completeness.
 
-## 2. Task Data Extraction and Transformation to Mermaid Syntax [pending]
+## 2. Task Data Extraction and Transformation to Mermaid Syntax [done]
 ### Dependencies: 70.1
 ### Description: Extract task data from the database and transform it into Mermaid syntax for diagram generation.
 ### Details:
 Retrieve necessary task details, including dependencies and status, and convert them into a format compatible with Mermaid.js for diagram creation.
 
-## 3. Diagram Rendering with Status Color Coding [pending]
+## 3. Diagram Rendering with Status Color Coding [done]
 ### Dependencies: 70.2
 ### Description: Implement the rendering of diagrams with color coding based on task status.
 ### Details:

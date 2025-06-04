@@ -1,6 +1,6 @@
 # Task ID: 60
 # Title: Initialize React Application with Vite and TypeScript
-# Status: done
+# Status: 60
 # Dependencies: None
 # Priority: high
 # PRD Source: prd_kanban_webapp.md

@@ -16,6 +16,8 @@ export const useKanban = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [updatingTasks, setUpdatingTasks] = useState<Set<number | string>>(new Set());
+  const [recentlyDroppedTasks, setRecentlyDroppedTasks] = useState<Set<number | string>>(new Set());
 
   // Create columns from tasks
   const columns: KanbanColumn[] = Object.entries(COLUMN_CONFIG).map(([status, config]) => ({
@@ -39,8 +41,14 @@ export const useKanban = () => {
     }
   }, []);
 
-  // Update task status with optimistic updates
+  // Update task status with optimistic updates and loading states
   const updateTaskStatus = useCallback(async (taskId: number | string, newStatus: TaskStatus) => {
+    // Add task to updating set
+    setUpdatingTasks(prev => new Set(prev).add(taskId));
+
+    // Store original task for potential rollback
+    const originalTask = tasks.find(task => task.id === taskId);
+
     // Optimistic update
     setTasks(prevTasks =>
       prevTasks.map(task =>
@@ -52,19 +60,55 @@ export const useKanban = () => {
 
     try {
       await TaskService.updateTaskStatus(taskId, newStatus);
+
+      // Add to recently dropped tasks for settle animation
+      setRecentlyDroppedTasks(prev => new Set(prev).add(taskId));
+
+      // Remove from recently dropped after animation duration
+      setTimeout(() => {
+        setRecentlyDroppedTasks(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(taskId);
+          return newSet;
+        });
+      }, 400); // Match the drop-settle animation duration
+
       // Optionally refresh tasks to ensure consistency
       // await loadTasks();
     } catch (err) {
       // Revert optimistic update on error
+      if (originalTask) {
+        setTasks(prevTasks =>
+          prevTasks.map(task =>
+            task.id === taskId ? originalTask : task
+          )
+        );
+      }
       setError(err instanceof Error ? err.message : 'Failed to update task');
-      await loadTasks(); // Reload to get correct state
+    } finally {
+      // Remove task from updating set
+      setUpdatingTasks(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(taskId);
+        return newSet;
+      });
     }
-  }, [loadTasks]);
+  }, [tasks]);
 
   // Initial load
   useEffect(() => {
     loadTasks();
   }, [loadTasks]);
+
+  // Helper function to check if a task is being updated
+  const isTaskUpdating = useCallback((taskId: number | string) => {
+    return updatingTasks.has(taskId);
+  }, [updatingTasks]);
+
+  // Helper function to check if a task was recently dropped
+  const isTaskRecentlyDropped = useCallback((taskId: number | string) => {
+    return recentlyDroppedTasks.has(taskId);
+  }, [recentlyDroppedTasks]);
 
   return {
     columns,
@@ -72,6 +116,9 @@ export const useKanban = () => {
     loading,
     error,
     loadTasks,
-    updateTaskStatus
+    updateTaskStatus,
+    isTaskUpdating,
+    isTaskRecentlyDropped,
+    updatingTasks
   };
 };

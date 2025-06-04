@@ -74,6 +74,7 @@ function listTasks(
 				? data.tasks.filter(
 						(task) =>
 							task.status &&
+							typeof task.status === 'string' &&
 							task.status.toLowerCase() === statusFilter.toLowerCase()
 					)
 				: data.tasks; // Default to all tasks if no filter or filter is 'all'
@@ -729,7 +730,7 @@ function listTasks(
 							cancelled: chalk.gray
 						};
 						const statusColor =
-							statusColors[status.toLowerCase()] || chalk.white;
+							statusColors[typeof status === 'string' ? status.toLowerCase() : 'pending'] || chalk.white;
 						// Ensure subtask ID is displayed correctly using parent ID from the original task object
 						return `${chalk.cyan(`${parentTaskForSubtasks.id}.${subtask.id}`)} [${statusColor(status)}] ${subtask.title}`;
 					})

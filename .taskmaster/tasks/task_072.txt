@@ -1,6 +1,6 @@
 # Task ID: 72
 # Title: Add Visual Feedback for Drag Operations
-# Status: pending
+# Status: done
 # Dependencies: 69
 # Priority: medium
 # PRD Source: prd_kanban_webapp.md
@@ -16,19 +16,19 @@ Use `@dnd-kit/core`'s `useDraggable` and `useDroppable` hooks to apply CSS class
 Perform drag operations. Visually confirm that draggable items change appearance when picked up and that droppable columns highlight when a task is dragged over them. Ensure the visual feedback is clear and intuitive.
 
 # Subtasks:
-## 1. Implement Drag Overlay and Ghost Elements [pending]
+## 1. Implement Drag Overlay and Ghost Elements [done]
 ### Dependencies: None
 ### Description: Create visual elements that appear during drag operations to enhance user feedback.
 ### Details:
 Design and implement overlay and ghost elements that follow the cursor during drag operations. Ensure these elements are visually distinct and provide clear feedback to the user.
 
-## 2. Add Hover States and Drop Zone Indicators [pending]
+## 2. Add Hover States and Drop Zone Indicators [done]
 ### Dependencies: 72.1
 ### Description: Enhance visual feedback by highlighting potential drop zones and providing hover states.
 ### Details:
 Implement visual cues that indicate valid drop zones when a draggable element is hovered over them. Ensure hover states are clear and intuitive.
 
-## 3. Create Smooth Animations and Transitions [pending]
+## 3. Create Smooth Animations and Transitions [done]
 ### Dependencies: 72.1, 72.2
 ### Description: Develop animations and transitions to ensure a smooth drag-and-drop experience.
 ### Details:

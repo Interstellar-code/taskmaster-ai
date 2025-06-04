@@ -63,8 +63,9 @@ function findNextTask(tasks, complexityReport = null) {
 		.filter((t) => t.status === 'in-progress' && Array.isArray(t.subtasks))
 		.forEach((parent) => {
 			parent.subtasks.forEach((st) => {
-				const stStatus = (st.status || 'pending').toLowerCase();
-				if (stStatus !== 'pending' && stStatus !== 'in-progress') return;
+				const stStatus = (st.status || 'pending');
+				const stStatusLower = typeof stStatus === 'string' ? stStatus.toLowerCase() : 'pending';
+				if (stStatusLower !== 'pending' && stStatusLower !== 'in-progress') return;
 
 				const fullDeps =
 					st.dependencies?.map((d) => toFullSubId(parent.id, d)) ?? [];

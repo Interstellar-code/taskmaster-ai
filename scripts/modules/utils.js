@@ -454,6 +454,7 @@ function findTaskById(
 		filteredTask.subtasks = task.subtasks.filter(
 			(subtask) =>
 				subtask.status &&
+				typeof subtask.status === 'string' &&
 				subtask.status.toLowerCase() === statusFilter.toLowerCase()
 		);
 

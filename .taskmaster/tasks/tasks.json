@@ -6,12 +6,12 @@
       "description": "Integrate bug fixes and improvements from upstream v0.16.0 release while preserving unique custom features including: Kanban board functionality, PRD lifecycle tracking, interactive menu systems, custom AI editor integrations (.augment-guidelines, .cursor/rules, .roo/rules, .windsurfrules), custom task templates and workflow, and enhanced project management features. Focus on: 1) New directory structure (.taskmaster/ consolidation), 2) AWS Bedrock support, 3) Google Vertex AI support, 4) Azure support, 5) Node.js version requirement update, 6) TASK_MASTER_PROJECT_ROOT env variable, 7) Bug fixes for max_tokens and add-task MCP command. Create integration branch dev_rohit for selective merging.",
       "details": "",
       "testStrategy": "",
-      "status": 59,
+      "status": 60,
       "dependencies": [],
       "priority": "high",
       "subtasks": [],
       "prdSource": null,
-      "updatedAt": "2025-06-04T10:47:40.108Z"
+      "updatedAt": "2025-06-04T12:31:11.340Z"
     },
     {
       "id": 60,
@@ -21,7 +21,7 @@
       "testStrategy": "Verify that the React development server starts successfully and displays the default Vite welcome page. Check TypeScript compilation for any errors.",
       "priority": "high",
       "dependencies": [],
-      "status": "done",
+      "status": 60,
       "subtasks": [
         {
           "id": 1,
@@ -80,7 +80,8 @@
         "parsedDate": "2025-06-02T21:47:10.025Z",
         "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
         "fileSize": 21070
-      }
+      },
+      "updatedAt": "2025-06-04T12:38:13.351Z"
     },
     {
       "id": 61,
@@ -818,7 +819,7 @@
         67,
         68
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
@@ -826,7 +827,7 @@
           "description": "Update the core logic to handle specific task IDs as input parameters for complexity analysis.",
           "dependencies": [],
           "details": "Ensure the logic can filter and process tasks based on provided IDs, handling edge cases and parameter combinations.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -843,7 +844,7 @@
             1
           ],
           "details": "Design the merging logic to ensure data consistency and accuracy across combined reports.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -861,7 +862,7 @@
             2
           ],
           "details": "Ensure the CLI is user-friendly and provides clear instructions for using the new features.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -880,7 +881,7 @@
             3
           ],
           "details": "Test integration points and resolve any compatibility issues with the MCP tool.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -900,7 +901,7 @@
             4
           ],
           "details": "Include examples and edge case scenarios to aid users in understanding the new functionality.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -917,7 +918,7 @@
         "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
         "fileSize": 21070
       },
-      "updatedAt": "2025-06-04T08:13:41.463Z"
+      "updatedAt": "2025-06-04T11:38:01.162Z"
     },
     {
       "id": 70,
@@ -929,7 +930,7 @@
       "dependencies": [
         63
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
@@ -937,7 +938,7 @@
           "description": "Design and implement the command interface for the 'diagram' command, including parsing and validating input parameters.",
           "dependencies": [],
           "details": "Ensure the command interface can accept parameters such as task IDs, output format, and optional filters. Validate inputs for correctness and completeness.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -954,7 +955,7 @@
             1
           ],
           "details": "Retrieve necessary task details, including dependencies and status, and convert them into a format compatible with Mermaid.js for diagram creation.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -971,7 +972,7 @@
             2
           ],
           "details": "Use Mermaid.js to render diagrams, applying different colors to tasks based on their status (e.g., pending, in-progress, completed).",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -988,7 +989,7 @@
         "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
         "fileSize": 21070
       },
-      "updatedAt": "2025-06-04T08:20:05.616Z"
+      "updatedAt": "2025-06-04T11:56:50.300Z"
     },
     {
       "id": 71,
@@ -1001,7 +1002,7 @@
         69,
         70
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
@@ -1009,7 +1010,7 @@
           "description": "Develop a reusable API client function to handle PATCH requests for updating task statuses.",
           "dependencies": [],
           "details": "Implement a function in the API client module that takes a task ID and a new status as parameters. Use the Fetch API to send a PATCH request to the `/api/v1/tasks/:id/status` endpoint. Ensure the function returns a promise that resolves with the response data or rejects with an error.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Write unit tests to mock the Fetch API and verify that the function correctly constructs the request and handles responses and errors.",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
@@ -1027,7 +1028,7 @@
             1
           ],
           "details": "Modify the `onDragEnd` handler to update the local state of the task list immediately after a drag-and-drop action. This should reflect the new status of the task optimistically, assuming the API call will succeed.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Test that the UI updates immediately upon drag-and-drop and that the state reflects the expected changes before the API response is received.",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
@@ -1045,7 +1046,7 @@
             2
           ],
           "details": "In the `onDragEnd` handler, catch any errors from the API client function. If an error occurs, revert the task status in the local state to its previous value. Display an error message to inform the user of the failure.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Simulate API failures and verify that the UI state is correctly reverted and that an error message is displayed to the user.",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
@@ -1062,8 +1063,8 @@
           "dependencies": [
             3
           ],
-          "details": "Introduce a loading state variable in the component's state. Set this variable to true when the API call is initiated and false when it completes. Use this state to display a loading indicator or disable interactions with the task being updated.",
-          "status": "pending",
+          "details": "Introduce a loading state variable in the component's state. Set this variable to true when the API call is initiated and false when it completes. Use this state to display a loading indicator or disable interactions with the task being updated.\n<info added on 2025-06-04T12:05:02.136Z>\nCompleted: Added loading states during API calls. Enhanced useKanban hook with updatingTasks state tracking, added isTaskUpdating helper function, updated TaskCard component with loading indicator (spinner and opacity), and passed loading state through KanbanBoard -> KanbanColumn -> TaskCard components. Tasks now show visual feedback during status updates with disabled interactions and spinning loader.\n</info added on 2025-06-04T12:05:02.136Z>",
+          "status": "done",
           "testStrategy": "Check that the loading indicator appears during the API call and disappears once the call completes, regardless of success or failure.",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
@@ -1081,7 +1082,7 @@
             4
           ],
           "details": "Enhance the API client function to include a retry mechanism using exponential backoff. Allow a configurable number of retries before ultimately failing. Ensure that retries are logged for debugging purposes.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Test the retry logic by simulating intermittent network failures and verifying that the function retries the request the specified number of times before failing.",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
@@ -1110,7 +1111,7 @@
       "dependencies": [
         69
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
@@ -1118,7 +1119,7 @@
           "description": "Create visual elements that appear during drag operations to enhance user feedback.",
           "dependencies": [],
           "details": "Design and implement overlay and ghost elements that follow the cursor during drag operations. Ensure these elements are visually distinct and provide clear feedback to the user.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -1135,7 +1136,7 @@
             1
           ],
           "details": "Implement visual cues that indicate valid drop zones when a draggable element is hovered over them. Ensure hover states are clear and intuitive.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -1153,7 +1154,7 @@
             2
           ],
           "details": "Implement animations that provide a seamless transition between drag start, movement, and drop. Focus on performance and user experience.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -1169,7 +1170,8 @@
         "parsedDate": "2025-06-02T21:47:10.025Z",
         "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
         "fileSize": 21070
-      }
+      },
+      "updatedAt": "2025-06-04T12:28:01.497Z"
     },
     {
       "id": 73,
@@ -1799,7 +1801,7 @@
       "dependencies": [
         78
       ],
-      "status": 79,
+      "status": "pending",
       "subtasks": [
         {
           "id": 1,
@@ -2232,7 +2234,7 @@
       "id": 85,
       "title": "Convert MCP Direct Functions to REST API Endpoints",
       "description": "Create REST API endpoints for all TaskMaster MCP direct functions to enable web application integration.",
-      "status": 85,
+      "status": "done",
       "dependencies": [
         62,
         63
@@ -2479,6 +2481,6 @@
     }
   ],
   "meta": {
-    "updatedAt": "2025-06-04T09:23:31.452Z"
+    "updatedAt": "2025-06-04T11:43:28.307Z"
   }
 }

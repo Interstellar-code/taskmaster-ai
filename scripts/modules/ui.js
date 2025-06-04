@@ -238,7 +238,7 @@ function getStatusWithColor(status, forTable = false) {
 		cancelled: { color: chalk.gray, icon: '❌', tableIcon: '✗' }
 	};
 
-	const config = statusConfig[status.toLowerCase()] || {
+	const config = statusConfig[typeof status === 'string' ? status.toLowerCase() : 'pending'] || {
 		color: chalk.red,
 		icon: '❌',
 		tableIcon: '✗'
@@ -256,7 +256,7 @@ function getStatusWithColor(status, forTable = false) {
 			blocked: '!', // Using plain x character for better compatibility
 			review: '?' // Using circled dot symbol
 		};
-		const simpleIcon = simpleIcons[status.toLowerCase()] || 'x';
+		const simpleIcon = simpleIcons[typeof status === 'string' ? status.toLowerCase() : 'pending'] || 'x';
 		return config.color(`${simpleIcon} ${status}`);
 	}
 
@@ -312,9 +312,10 @@ function formatDependenciesWithStatus(
 
 			// Format with status
 			const status = subtask.status || 'pending';
+			const statusLower = typeof status === 'string' ? status.toLowerCase() : 'pending';
 			const isDone =
-				status.toLowerCase() === 'done' || status.toLowerCase() === 'completed';
-			const isInProgress = status.toLowerCase() === 'in-progress';
+				statusLower === 'done' || statusLower === 'completed';
+			const isInProgress = statusLower === 'in-progress';
 
 			if (forConsole) {
 				if (isDone) {
@@ -354,9 +355,10 @@ function formatDependenciesWithStatus(
 
 		// Format with status
 		const status = depTask.status || 'pending';
+		const statusLower = typeof status === 'string' ? status.toLowerCase() : 'pending';
 		const isDone =
-			status.toLowerCase() === 'done' || status.toLowerCase() === 'completed';
-		const isInProgress = status.toLowerCase() === 'in-progress';
+			statusLower === 'done' || statusLower === 'completed';
+		const isInProgress = statusLower === 'in-progress';
 
 		if (forConsole) {
 			if (isDone) {

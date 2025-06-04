@@ -1,6 +1,6 @@
 # Task ID: 69
 # Title: Implement Drag-and-Drop Functionality Between Status Columns
-# Status: pending
+# Status: done
 # Dependencies: 67, 68
 # Priority: high
 # PRD Source: prd_kanban_webapp.md
@@ -16,31 +16,31 @@ Within each Kanban column, define a `Droppable` component from `@dnd-kit/core`. 
 Drag a task from 'pending' to 'in-progress', then to 'done'. Verify that the task visually moves to the correct column and that the frontend state updates accordingly. Test dragging tasks within the same column and ensure no unintended changes occur.
 
 # Subtasks:
-## 1. Modify Core Logic to Accept ID Parameters [pending]
+## 1. Modify Core Logic to Accept ID Parameters [done]
 ### Dependencies: None
 ### Description: Update the core logic to handle specific task IDs as input parameters for complexity analysis.
 ### Details:
 Ensure the logic can filter and process tasks based on provided IDs, handling edge cases and parameter combinations.
 
-## 2. Implement Report Merging Functionality [pending]
+## 2. Implement Report Merging Functionality [done]
 ### Dependencies: 69.1
 ### Description: Develop functionality to merge reports generated from different task IDs into a cohesive output.
 ### Details:
 Design the merging logic to ensure data consistency and accuracy across combined reports.
 
-## 3. Update CLI Interface [pending]
+## 3. Update CLI Interface [done]
 ### Dependencies: 69.1, 69.2
 ### Description: Revise the Command Line Interface to support new parameters for task ID input and report merging options.
 ### Details:
 Ensure the CLI is user-friendly and provides clear instructions for using the new features.
 
-## 4. Integrate with MCP Tool [pending]
+## 4. Integrate with MCP Tool [done]
 ### Dependencies: 69.1, 69.2, 69.3
 ### Description: Ensure the modified complexity analysis integrates smoothly with the existing MCP tool.
 ### Details:
 Test integration points and resolve any compatibility issues with the MCP tool.
 
-## 5. Update Documentation [pending]
+## 5. Update Documentation [done]
 ### Dependencies: 69.1, 69.2, 69.3, 69.4
 ### Description: Revise and expand documentation to cover new features and usage instructions for the enhanced complexity analysis.
 ### Details:
