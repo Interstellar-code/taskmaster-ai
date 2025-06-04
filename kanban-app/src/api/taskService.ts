@@ -4,6 +4,7 @@ import {
   ApiResponse,
   ProjectInfo,
   KanbanTask,
+  EnhancedKanbanTask,
   ColumnId,
   STATUS_MAPPING,
   KANBAN_TO_TASKMASTER_STATUS
@@ -349,7 +350,7 @@ class TaskService {
   // Convert TaskMaster task to Kanban task
   taskMasterToKanban(task: TaskMasterTask): KanbanTask {
     const columnId = STATUS_MAPPING[task.status] || 'todo';
-    
+
     return {
       id: String(task.id),
       content: task.title,
@@ -366,6 +367,65 @@ class TaskService {
         description: subtask.description,
       }))
     };
+  }
+
+  // Convert TaskMaster task to Enhanced Kanban task with rich metadata
+  taskMasterToEnhancedKanban(task: TaskMasterTask): EnhancedKanbanTask {
+    const columnId = STATUS_MAPPING[task.status] || 'todo';
+
+    // Calculate subtask progress
+    const subtaskProgress = task.subtasks?.length ? {
+      completed: task.subtasks.filter(st => st.status === 'done').length,
+      total: task.subtasks.length,
+      percentage: (task.subtasks.filter(st => st.status === 'done').length / task.subtasks.length) * 100
+    } : undefined;
+
+    // Determine dependency status
+    const dependencyStatus = task.dependencies.length === 0 ? 'none' : 'waiting'; // Would need to check actual dependency statuses
+
+    // Calculate age in days
+    const ageInDays = task.updatedAt ? Math.floor((Date.now() - new Date(task.updatedAt).getTime()) / (1000 * 60 * 60 * 24)) : undefined;
+
+    return {
+      id: String(task.id),
+      content: task.title,
+      columnId,
+      title: task.title,
+      description: task.description,
+      priority: (task.priority as 'high' | 'medium' | 'low') || 'medium',
+      status: task.status,
+      subtaskProgress,
+      dependencies: task.dependencies.map(dep => String(dep)),
+      dependencyStatus,
+      updatedAt: task.updatedAt ? new Date(task.updatedAt) : undefined,
+      ageInDays,
+      prdSource: task.prdSource ? {
+        fileName: task.prdSource.fileName,
+        parsedDate: new Date(task.prdSource.parsedDate)
+      } : undefined,
+      hasTestStrategy: Boolean(task.testStrategy?.trim()),
+      details: task.details,
+      testStrategy: task.testStrategy
+    };
+  }
+
+  // Utility function to format relative time
+  formatRelativeTime(date: Date): string {
+    const now = new Date();
+    const diffInMs = now.getTime() - date.getTime();
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+
+    if (diffInDays > 0) {
+      return `${diffInDays}d ago`;
+    } else if (diffInHours > 0) {
+      return `${diffInHours}h ago`;
+    } else if (diffInMinutes > 0) {
+      return `${diffInMinutes}m ago`;
+    } else {
+      return 'Just now';
+    }
   }
 
   // Convert Kanban tasks back to TaskMaster format for status updates
@@ -401,6 +461,43 @@ class TaskService {
       return columns;
     } catch (error) {
       console.error('Error in getTasksByColumns:', error);
+      // Return empty columns structure on error
+      return {
+        'todo': [],
+        'in-progress': [],
+        'done': []
+      };
+    }
+  }
+
+  // Get enhanced tasks organized by Kanban columns
+  async getEnhancedTasksByColumns(): Promise<Record<ColumnId, EnhancedKanbanTask[]>> {
+    try {
+      const tasks = await this.getAllTasks();
+      const columns: Record<ColumnId, EnhancedKanbanTask[]> = {
+        'todo': [],
+        'in-progress': [],
+        'done': []
+      };
+
+      // Ensure tasks is an array before calling forEach
+      if (!Array.isArray(tasks)) {
+        console.error('getAllTasks did not return an array:', tasks);
+        return columns; // Return empty columns
+      }
+
+      tasks.forEach(task => {
+        try {
+          const enhancedKanbanTask = this.taskMasterToEnhancedKanban(task);
+          columns[enhancedKanbanTask.columnId].push(enhancedKanbanTask);
+        } catch (error) {
+          console.error('Error converting task to enhanced kanban format:', task, error);
+        }
+      });
+
+      return columns;
+    } catch (error) {
+      console.error('Error in getEnhancedTasksByColumns:', error);
       // Return empty columns structure on error
       return {
         'todo': [],

@@ -1,7 +1,7 @@
 # Task ID: 85
 # Title: Convert MCP Direct Functions to REST API Endpoints
 # Status: done
-# Dependencies: 62, 63
+# Dependencies: None
 # Priority: medium
 # PRD Source: None (manually created)
 # Description: Create REST API endpoints for all TaskMaster MCP direct functions to enable web application integration.

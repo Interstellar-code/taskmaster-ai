@@ -1,0 +1,8 @@
+{
+  "title": "Test Enhanced Task Creation",
+  "description": "This is a test task created using the enhanced API with TaskFormData validation",
+  "priority": "high",
+  "status": "pending",
+  "tags": ["test", "api", "enhancement"],
+  "estimatedHours": 2
+}

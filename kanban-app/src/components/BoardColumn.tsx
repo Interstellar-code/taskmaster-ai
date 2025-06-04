@@ -25,30 +25,19 @@ interface BoardColumnProps {
   column: Column;
   tasks: Task[];
   isOverlay?: boolean;
+  renderTask?: (task: Task) => React.ReactNode;
 }
 
-export function BoardColumn({ column, tasks, isOverlay }: BoardColumnProps) {
+export function BoardColumn({ column, tasks, isOverlay, renderTask }: BoardColumnProps) {
   const tasksIds = useMemo(() => {
     return tasks.map((task) => task.id);
   }, [tasks]);
 
-  const {
-    setNodeRef,
-    attributes,
-    listeners,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
-    id: column.id,
-    data: {
-      type: "Column",
-      column,
-    } satisfies ColumnDragData,
-    attributes: {
-      roleDescription: `Column: ${column.title}`,
-    },
-  });
+  // Disable column dragging - columns are now static
+  const setNodeRef = null;
+  const transform = null;
+  const transition = null;
+  const isDragging = false;
 
   const style = {
     transition,
@@ -56,7 +45,7 @@ export function BoardColumn({ column, tasks, isOverlay }: BoardColumnProps) {
   };
 
   const variants = cva(
-    "h-[500px] max-h-[500px] w-[350px] max-w-full bg-primary-foreground flex flex-col flex-shrink-0 snap-center",
+    "h-[85vh] max-h-[85vh] w-[350px] max-w-full bg-primary-foreground flex flex-col flex-shrink-0 snap-center",
     {
       variants: {
         dragging: {
@@ -70,29 +59,18 @@ export function BoardColumn({ column, tasks, isOverlay }: BoardColumnProps) {
 
   return (
     <Card
-      ref={setNodeRef}
-      style={style}
       className={variants({
         dragging: isOverlay ? "overlay" : isDragging ? "over" : undefined,
       })}
     >
-      <CardHeader className="p-4 font-semibold border-b-2 text-left flex flex-row space-between items-center">
-        <Button
-          variant={"ghost"}
-          {...attributes}
-          {...listeners}
-          className=" p-1 text-primary/50 -ml-2 h-auto cursor-grab relative"
-        >
-          <span className="sr-only">{`Move column: ${column.title}`}</span>
-          <GripVertical />
-        </Button>
-        <span className="ml-auto"> {column.title}</span>
+      <CardHeader className="p-4 font-semibold border-b-2 text-center flex flex-row justify-center items-center">
+        <span className="text-lg">{column.title} ({tasks.length})</span>
       </CardHeader>
       <ScrollArea>
         <CardContent className="flex flex-grow flex-col gap-2 p-2">
           <SortableContext items={tasksIds}>
             {tasks.map((task) => (
-              <TaskCard key={task.id} task={task} />
+              renderTask ? renderTask(task) : <TaskCard key={task.id} task={task} />
             ))}
           </SortableContext>
         </CardContent>

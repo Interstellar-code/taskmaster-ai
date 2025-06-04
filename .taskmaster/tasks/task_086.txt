@@ -1,0 +1,16 @@
+# Task ID: 86
+# Title: Backend API Enhancements for Core CRUD
+# Status: done
+# Dependencies: 85, 84
+# Priority: high
+# PRD Source: None (manually created)
+# Description: Extend existing /api/v1/tasks endpoints to support full Create, Read, Update, and Delete operations for tasks.
+# Details:
+Implement POST /api/v1/tasks for creation, PUT/PATCH /api/v1/tasks/{id} for updates, and DELETE /api/v1/tasks/{id} for deletion. Ensure robust server-side validation middleware for data integrity based on TaskFormData and existing TaskHero business rules. This will involve updating the existing task routing and controller logic to handle the new HTTP methods and their corresponding data payloads. Consider using an ORM or direct database interactions for persistence. Pay close attention to security implications, such as authentication and authorization for these new endpoints. Leverage existing validation utilities or create new ones to enforce data integrity and business rules.
+
+# Test Strategy:
+1. Develop unit tests for each new endpoint (POST, PUT/PATCH, DELETE) to verify correct data handling, validation, and error responses.
+2. Create integration tests to ensure the new CRUD operations interact correctly with the database and other system components.
+3. Manually test each endpoint using tools like Postman or curl, covering success cases, edge cases, and error conditions (e.g., invalid input, unauthorized access, non-existent task IDs).
+4. Verify that server-side validation correctly rejects invalid data and provides informative error messages.
+5. Confirm that task data is consistently and correctly persisted and retrieved after each operation.

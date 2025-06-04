@@ -1,5 +1,59 @@
 // API Types for TaskMaster Integration
 
+// TaskFormData interface as specified in the PRD for CRUD operations
+export interface TaskFormData {
+  title: string;
+  description: string;
+  priority: 'low' | 'medium' | 'high';
+  status: TaskStatus;
+  dependencies: string[];
+  tags: string[];
+  estimatedHours?: number;
+  assignee?: string;
+  dueDate?: Date;
+  attachments?: File[];
+}
+
+// Bulk operation interface for batch operations
+export interface BulkOperation {
+  taskIds: string[];
+  operation: 'delete' | 'updateStatus' | 'updatePriority' | 'addDependency';
+  payload: any;
+}
+
+// Valid task statuses
+export type TaskStatus = 'pending' | 'in-progress' | 'done' | 'review' | 'blocked' | 'deferred' | 'cancelled';
+
+// Task creation request interface
+export interface CreateTaskRequest {
+  title: string;
+  description: string;
+  priority?: 'low' | 'medium' | 'high';
+  status?: TaskStatus;
+  dependencies?: string[];
+  tags?: string[];
+  estimatedHours?: number;
+  assignee?: string;
+  dueDate?: string; // ISO string format
+  details?: string;
+  testStrategy?: string;
+}
+
+// Task update request interface
+export interface UpdateTaskRequest {
+  title?: string;
+  description?: string;
+  priority?: 'low' | 'medium' | 'high';
+  status?: TaskStatus;
+  dependencies?: string[];
+  tags?: string[];
+  estimatedHours?: number;
+  assignee?: string;
+  dueDate?: string; // ISO string format
+  details?: string;
+  testStrategy?: string;
+}
+
 export interface TaskMasterTask {
   id: string | number;
   title: string;
@@ -74,6 +128,48 @@ export interface KanbanTask {
   priority?: string;
   dependencies?: string[];
   subtasks?: KanbanTask[];
+}
+
+// Enhanced Kanban task with rich metadata
+export interface EnhancedKanbanTask {
+  // Existing fields
+  id: string;
+  content: string;
+  columnId: ColumnId;
+
+  // Enhanced metadata
+  title: string;
+  description: string;
+  priority: 'high' | 'medium' | 'low';
+  status: string;
+
+  // Progress indicators
+  subtaskProgress?: {
+    completed: number;
+    total: number;
+    percentage: number;
+  };
+
+  // Relationships
+  dependencies: string[];
+  dependencyStatus: 'none' | 'waiting' | 'ready';
+
+  // Temporal data
+  updatedAt?: Date;
+  ageInDays?: number;
+
+  // Source tracking
+  prdSource?: {
+    fileName: string;
+    parsedDate: Date;
+  };
+
+  // Testing
+  hasTestStrategy: boolean;
+
+  // Additional metadata
+  details?: string;
+  testStrategy?: string;
 }
 
 export interface Column {
