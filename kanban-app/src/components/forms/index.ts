@@ -35,6 +35,8 @@ export { FormDropdownMenu } from './FormDropdownMenu';
 
 // Complete form examples
 export { TaskCreateModal } from './TaskCreateModal';
+export { TaskEditModal } from './TaskEditModal';
+export { TaskDeleteDialog } from './TaskDeleteDialog';
 export { FormDemo } from './FormDemo';
 
 // Validation schemas

@@ -5,11 +5,13 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { FormDialog } from './FormDialog';
-import { FormInput, FormTextarea, FormSelect, FormSection, FormCheckbox, FormMultiSelect, FormMultiCombobox, FormCombobox, FormDatePicker } from './index';
+import { FormInput, FormTextarea, FormSelect, FormSection, FormCheckbox, FormMultiSelect, FormMultiCombobox, FormCombobox, FormDatePicker, useFormToast } from './index';
 import { ChevronDown } from 'lucide-react';
 import { taskService } from '@/api/taskService';
-import { useToast } from '@/hooks/use-toast';
 import { Plus, Loader2 } from 'lucide-react';
+
+// Export the schema and types for reuse in TaskEditModal
+export { TaskCreateSchema, type TaskCreateFormData };
 
 // Enhanced Schema - essential + optional fields for task creation
 const TaskCreateSchema = z.object({
@@ -59,6 +61,12 @@ interface TaskCreateModalProps {
   onTaskCreated?: () => void;
   /** Custom trigger element */
   trigger?: React.ReactNode;
+  /** Controlled open state */
+  open?: boolean;
+  /** Controlled open change handler */
+  onOpenChange?: (open: boolean) => void;
+  /** Initial data for pre-populating form (for copy functionality) */
+  initialData?: any;
 }
 
 /**
@@ -73,29 +81,39 @@ interface TaskCreateModalProps {
  * - Success/error notifications
  * - Responsive design
  */
-export function TaskCreateModal({ onTaskCreated, trigger }: TaskCreateModalProps) {
-  const [open, setOpen] = useState(false);
+export function TaskCreateModal({
+  onTaskCreated,
+  trigger,
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
+  initialData
+}: TaskCreateModalProps) {
+  const [internalOpen, setInternalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [availableTasks, setAvailableTasks] = useState<Array<{id: string, title: string}>>([]);
   const [availablePRDs, setAvailablePRDs] = useState<Array<{id: string, title: string}>>([]);
-  const { toast } = useToast();
+  const { showSuccess, showError, showWarning } = useFormToast();
+
+  // Use controlled or internal open state
+  const open = controlledOpen !== undefined ? controlledOpen : internalOpen;
+  const setOpen = controlledOnOpenChange || setInternalOpen;
 
   const form = useForm<TaskCreateFormData>({
     resolver: zodResolver(TaskCreateSchema),
     defaultValues: {
-      title: '',
-      description: '',
-      priority: 'medium',
-      tags: [],
-      estimatedHours: undefined,
-      assignee: '',
-      dueDate: '',
-      details: '',
-      testStrategy: '',
-      dependencies: [],
-      prdSource: '',
-      subtasks: [],
+      title: initialData?.title || '',
+      description: initialData?.description || '',
+      priority: initialData?.priority || 'medium',
+      tags: initialData?.tags || [],
+      estimatedHours: initialData?.estimatedHours || undefined,
+      assignee: initialData?.assignee || '',
+      dueDate: initialData?.dueDate || '',
+      details: initialData?.details || '',
+      testStrategy: initialData?.testStrategy || '',
+      dependencies: initialData?.dependencies || [],
+      prdSource: initialData?.prdSource || '',
+      subtasks: initialData?.subtasks || [],
     },
   });
 
@@ -105,6 +123,33 @@ export function TaskCreateModal({ onTaskCreated, trigger }: TaskCreateModalProps
       fetchAvailableData();
     }
   }, [open]);
+
+  // Update form when initialData changes (for copy functionality)
+  useEffect(() => {
+    if (initialData) {
+      // Convert subtasks from TaskMaster format to form format if needed
+      const formSubtasks = initialData.subtasks ? initialData.subtasks.map((subtask: any) => ({
+        id: subtask.id || `subtask_${Date.now()}_${Math.random()}`,
+        title: subtask.title || subtask.description || '',
+        completed: subtask.status === 'done' || subtask.completed || false,
+      })) : [];
+
+      form.reset({
+        title: initialData.title || '',
+        description: initialData.description || '',
+        priority: initialData.priority || 'medium',
+        tags: initialData.tags || [],
+        estimatedHours: initialData.estimatedHours || undefined,
+        assignee: initialData.assignee || '',
+        dueDate: initialData.dueDate || '',
+        details: initialData.details || '',
+        testStrategy: initialData.testStrategy || '',
+        dependencies: initialData.dependencies || [],
+        prdSource: initialData.prdSource || '',
+        subtasks: formSubtasks,
+      });
+    }
+  }, [initialData, form]);
 
   const fetchAvailableData = async () => {
     try {
@@ -137,11 +182,7 @@ export function TaskCreateModal({ onTaskCreated, trigger }: TaskCreateModalProps
       setAvailablePRDs([]);
 
       // Show user-friendly error message
-      toast({
-        title: 'Warning',
-        description: 'Could not load available tasks and PRDs. You can still create a task without dependencies.',
-        variant: 'default',
-      });
+      showWarning('Load Warning', 'Could not load available tasks and PRDs. You can still create a task without dependencies.');
     }
   };
 
@@ -177,11 +218,7 @@ export function TaskCreateModal({ onTaskCreated, trigger }: TaskCreateModalProps
       await taskService.createTask(taskData);
 
       // Success notification
-      toast({
-        title: 'Task Created',
-        description: `"${data.title}" has been created successfully.`,
-        variant: 'default',
-      });
+      showSuccess('Task Created', `"${data.title}" has been created successfully.`);
 
       // Reset form and close modal
       form.reset();
@@ -194,11 +231,7 @@ export function TaskCreateModal({ onTaskCreated, trigger }: TaskCreateModalProps
       console.error('Failed to create task:', error);
       
       // Error notification
-      toast({
-        title: 'Error Creating Task',
-        description: error instanceof Error ? error.message : 'Failed to create task. Please try again.',
-        variant: 'destructive',
-      });
+      showError('Error Creating Task', error instanceof Error ? error.message : 'Failed to create task. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

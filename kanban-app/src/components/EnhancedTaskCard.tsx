@@ -19,15 +19,22 @@ import {
   GitBranch,
   TestTube,
   AlertCircle,
-  Pause
+  Pause,
+  Edit,
+  Trash2,
+  Copy
 } from "lucide-react";
 import { EnhancedKanbanTask, ColumnId } from "../api/types";
 import { taskService } from "../api/taskService";
+import { TaskEditModal, TaskDeleteDialog, TaskCreateModal } from "./forms";
 
 export interface EnhancedTaskCardProps {
   task: EnhancedKanbanTask;
   isOverlay?: boolean;
   onTaskClick?: (taskId: string) => void;
+  onTaskUpdated?: (task: any) => void;
+  onTaskDeleted?: (taskId: string) => void;
+  onTaskCreated?: (task: any) => void;
 }
 
 export type TaskType = "Task";
@@ -86,8 +93,10 @@ const priorityIcons = {
   low: "🟢"
 };
 
-export function EnhancedTaskCard({ task, isOverlay, onTaskClick }: EnhancedTaskCardProps) {
+export function EnhancedTaskCard({ task, isOverlay, onTaskClick, onTaskUpdated, onTaskDeleted, onTaskCreated }: EnhancedTaskCardProps) {
   const [showDetails, setShowDetails] = useState(false);
+  const [showCopyModal, setShowCopyModal] = useState(false);
+  const [copyTaskData, setCopyTaskData] = useState<any>(null);
 
   const {
     setNodeRef,
@@ -134,6 +143,27 @@ export function EnhancedTaskCard({ task, isOverlay, onTaskClick }: EnhancedTaskC
     }
   };
 
+  const handleCopyTask = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      // Fetch full task details including subtasks
+      const fullTask = await taskService.getTaskById(task.id);
+
+      // Prepare copy data with "Copy of" prefix, remove ID and clear dependencies
+      const copyData = {
+        ...fullTask,
+        title: `Copy of ${fullTask.title}`,
+        id: undefined, // Remove ID so it creates a new task
+        dependencies: [], // Clear dependencies for copied task
+      };
+
+      setCopyTaskData(copyData);
+      setShowCopyModal(true);
+    } catch (error) {
+      console.error('Failed to fetch task for copying:', error);
+    }
+  };
+
   return (
     <TooltipProvider>
       <Card
@@ -141,7 +171,7 @@ export function EnhancedTaskCard({ task, isOverlay, onTaskClick }: EnhancedTaskC
         style={style}
         className={`${priorityVariants({ priority: task.priority })} ${variants({
           dragging: isOverlay ? "overlay" : isDragging ? "over" : undefined,
-        })} hover:shadow-md cursor-pointer`}
+        })} hover:shadow-md cursor-pointer group`}
         onClick={handleCardClick}
       >
         <CardHeader className="pb-2 px-3 py-3">
@@ -175,8 +205,8 @@ export function EnhancedTaskCard({ task, isOverlay, onTaskClick }: EnhancedTaskC
                   </TooltipContent>
                 </Tooltip>
               )}
-              
-              <Badge 
+
+              <Badge
                 className={statusVariants({ status: task.status as keyof typeof statusVariants.variants.status })}
               >
                 <StatusIcon size={12} className="mr-1" />
@@ -272,7 +302,59 @@ export function EnhancedTaskCard({ task, isOverlay, onTaskClick }: EnhancedTaskC
               </Tooltip>
             )}
           </div>
+
+          {/* Action buttons at bottom */}
+          <div className="flex items-center justify-end gap-1 mt-3 pt-2 border-t border-border/50">
+            <TaskEditModal
+              task={task}
+              onTaskUpdated={onTaskUpdated}
+              trigger={
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 w-7 p-0 text-yellow-600 hover:bg-yellow-100 hover:text-yellow-700"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Edit size={14} />
+                </Button>
+              }
+            />
+
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 w-7 p-0 text-blue-600 hover:bg-blue-100 hover:text-blue-700"
+              onClick={handleCopyTask}
+            >
+              <Copy size={14} />
+            </Button>
+
+            <TaskDeleteDialog
+              task={task}
+              onTaskDeleted={onTaskDeleted}
+              trigger={
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 w-7 p-0 text-red-600 hover:bg-red-100 hover:text-red-700"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Trash2 size={14} />
+                </Button>
+              }
+            />
+          </div>
         </CardContent>
+
+        {/* Copy Modal */}
+        {showCopyModal && copyTaskData && (
+          <TaskCreateModal
+            open={showCopyModal}
+            onOpenChange={setShowCopyModal}
+            onTaskCreated={onTaskCreated}
+            initialData={copyTaskData}
+          />
+        )}
       </Card>
     </TooltipProvider>
   );

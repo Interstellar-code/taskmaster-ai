@@ -382,14 +382,14 @@
       "id": 89,
       "title": "Implement Task Editing Interface (MVP)",
       "description": "Develop the TaskEditModal and enable in-place editing capabilities for task cards, allowing users to modify existing tasks.",
-      "details": "Implement the TaskEditModal using shadcn/ui and reusable FormComponents. Pre-populate form fields with existing task data. Integrate with PUT/PATCH /api/v1/tasks/{id} endpoint for saving changes. Enable a click-to-edit mechanism on task cards to open the modal. Implement real-time validation and save functionality. The modal should dynamically load task data based on the clicked task card's ID. Ensure proper error handling and user feedback during save operations.",
-      "testStrategy": "1. Verify that clicking on a task card opens the TaskEditModal.\n2. Confirm that the modal's form fields are pre-populated with the correct data of the selected task.\n3. Test updating various fields (e.g., title, description, priority) and saving the changes.\n4. Verify that the updated information is reflected on the task card and persists after page refresh.\n5. Test validation rules (e.g., required fields, character limits) and ensure appropriate error messages are displayed.\n6. Attempt to save with invalid data and confirm that the changes are not applied.\n7. Verify that the modal closes correctly after a successful save or cancellation.\n8. Check console for any errors during the editing and saving process.",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         87,
         86
       ],
       "priority": "high",
+      "details": "Implement the TaskEditModal using shadcn/ui and reusable FormComponents. Pre-populate form fields with existing task data. Integrate with PUT/PATCH /api/v1/tasks/{id} endpoint for saving changes. Enable a click-to-edit mechanism on task cards to open the modal. Implement real-time validation and save functionality. The modal should dynamically load task data based on the clicked task card's ID. Ensure proper error handling and user feedback during save operations.",
+      "testStrategy": "1. Verify that clicking on a task card opens the TaskEditModal.\n2. Confirm that the modal's form fields are pre-populated with the correct data of the selected task.\n3. Test updating various fields (e.g., title, description, priority) and saving the changes.\n4. Verify that the updated information is reflected on the task card and persists after page refresh.\n5. Test validation rules (e.g., required fields, character limits) and ensure appropriate error messages are displayed.\n6. Attempt to save with invalid data and confirm that the changes are not applied.\n7. Verify that the modal closes correctly after a successful save or cancellation.\n8. Check console for any errors during the editing and saving process.",
       "subtasks": [],
       "prdSource": null
     },
@@ -397,8 +397,6 @@
       "id": 90,
       "title": "Implement Task Deletion System",
       "description": "Develop a robust task deletion system, including a confirmation dialog, cascade deletion for subtasks, and dependency cleanup, with a basic undo functionality.",
-      "details": "Implement the TaskDeleteDialog using shadcn/ui Dialog. This dialog should include a confirmation step before deletion and a warning for cascade operations. Integrate the frontend with the DELETE /api/v1/tasks/{id} endpoint. On the backend, implement the logic for cascade deletion of subtasks and cleanup of dependencies when a task is removed. Consider a time-limited recovery/undo functionality for accidental deletions, potentially by soft-deleting tasks and having a background process for permanent deletion.",
-      "testStrategy": "1. **Unit Tests:** Write unit tests for the backend cascade deletion logic and dependency cleanup. 2. **Integration Tests:** Test the integration between the frontend dialog and the backend API endpoint. 3. **UI Tests:** Verify the display and functionality of the confirmation dialog and cascade warning. 4. **Scenario Testing:** a. Delete a task with no subtasks or dependencies. b. Delete a task with subtasks, verifying cascade deletion. c. Delete a task with dependencies, verifying dependency cleanup. d. Test the undo functionality within the specified time limit. e. Attempt to delete a task without confirmation to ensure the dialog prevents it. 5. **Performance Testing:** Assess the performance of cascade deletions for tasks with a large number of subtasks/dependencies.",
       "status": "pending",
       "dependencies": [
         87,
@@ -406,43 +404,9 @@
         84
       ],
       "priority": "medium",
+      "details": "Implement the TaskDeleteDialog using shadcn/ui Dialog. This dialog should include a confirmation step before deletion and a warning for cascade operations. Integrate the frontend with the DELETE /api/v1/tasks/{id} endpoint. On the backend, implement the logic for cascade deletion of subtasks and cleanup of dependencies when a task is removed. Consider a time-limited recovery/undo functionality for accidental deletions, potentially by soft-deleting tasks and having a background process for permanent deletion.",
+      "testStrategy": "1. **Unit Tests:** Write unit tests for the backend cascade deletion logic and dependency cleanup. 2. **Integration Tests:** Test the integration between the frontend dialog and the backend API endpoint. 3. **UI Tests:** Verify the display and functionality of the confirmation dialog and cascade warning. 4. **Scenario Testing:** a. Delete a task with no subtasks or dependencies. b. Delete a task with subtasks, verifying cascade deletion. c. Delete a task with dependencies, verifying dependency cleanup. d. Test the undo functionality within the specified time limit. e. Attempt to delete a task without confirmation to ensure the dialog prevents it. 5. **Performance Testing:** Assess the performance of cascade deletions for tasks with a large number of subtasks/dependencies.",
       "subtasks": [],
-      "prdSource": null
-    },
-    {
-      "id": 98,
-      "title": "task 4 create test",
-      "description": "subs task cli 1subs task cli 1subs task cli 1subs task cli 1subs task cli 1subs task cli 1",
-      "details": "subs task cli 1subs task cli 1subs task cli 1subs task cli 1subs task cli 1subs task cli 1",
-      "testStrategy": "subs task cli 1subs task cli 1subs task cli 1",
-      "status": "pending",
-      "dependencies": [
-        59,
-        84
-      ],
-      "priority": "medium",
-      "subtasks": [
-        {
-          "id": 1,
-          "title": "task-master set-status --id=95.1 --status=in-progress to start working on it",
-          "description": "task-master set-status --id=95.1 --status=in-progress to start working on it",
-          "details": "",
-          "status": "pending",
-          "dependencies": [],
-          "parentTaskId": 98,
-          "prdSource": null
-        },
-        {
-          "id": 2,
-          "title": "[INFO] Preparing to regenerate 15 task files",
-          "description": "[INFO] Preparing to regenerate 15 task files",
-          "details": "",
-          "status": "pending",
-          "dependencies": [],
-          "parentTaskId": 98,
-          "prdSource": null
-        }
-      ],
       "prdSource": null
     }
   ],

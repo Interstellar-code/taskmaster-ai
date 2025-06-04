@@ -346,6 +346,21 @@ export function EnhancedKanbanBoard() {
                     console.log('Task clicked:', taskId);
                     // TODO: Implement task detail modal
                   }}
+                  onTaskUpdated={(updatedTask) => {
+                    console.log('Task updated:', updatedTask);
+                    // Refresh the board data
+                    loadTasks();
+                  }}
+                  onTaskDeleted={(taskId) => {
+                    console.log('Task deleted:', taskId);
+                    // Refresh the board data
+                    loadTasks();
+                  }}
+                  onTaskCreated={(newTask) => {
+                    console.log('Task created:', newTask);
+                    // Refresh the board data
+                    loadTasks();
+                  }}
                 />
               )}
             />
