@@ -27,6 +27,10 @@ export { FormBadge } from './FormBadge';
 export { FormAlert } from './FormAlert';
 export { FormToast, useFormToast } from './FormToast';
 
+// Dialog and context menu components
+export { FormDialog, ConfirmDialog } from './FormDialog';
+export { FormContextMenu } from './FormContextMenu';
+
 // Complete form examples
 export { TaskForm } from './TaskForm';
 export { FormDemo } from './FormDemo';

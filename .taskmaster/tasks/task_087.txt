@@ -36,7 +36,7 @@ Develop comprehensive unit tests for each reusable component to verify its rende
 ### Details:
 1. Create a generic `Button` component with props for `variant`, `size`, `loading` state, and `onClick` handlers. 2. Develop a `Badge` component for displaying small, contextual information (e.g., status). 3. Implement an `Alert` component for displaying important messages within the form. 4. Set up a `Toast` notification system for global feedback (e.g., form submission success/failure).
 
-## 5. Develop Dialog and Context Menu Components, and Documentation [pending]
+## 5. Develop Dialog and Context Menu Components, and Documentation [done]
 ### Dependencies: 87.1, 87.2, 87.3, 87.4
 ### Description: Implement reusable `Dialog` and `ContextMenu` components using shadcn/ui. Create comprehensive Storybook documentation for all developed components, demonstrating their usage, props, and variations. Ensure accessibility standards are met.
 ### Details:

@@ -67,6 +67,17 @@ export function FormInput<
               aria-describedby={
                 description ? `${name}-description` : undefined
               }
+              onChange={(e) => {
+                // Handle number inputs properly
+                if (type === 'number') {
+                  const value = e.target.value;
+                  // Convert to number if value exists, otherwise undefined
+                  field.onChange(value === '' ? undefined : Number(value));
+                } else {
+                  field.onChange(e.target.value);
+                }
+              }}
+              value={field.value ?? ''}
             />
           </FormControl>
           {description && (

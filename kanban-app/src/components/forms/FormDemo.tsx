@@ -18,6 +18,9 @@ import {
   FormBadge,
   FormAlert,
   useFormToast,
+  FormDialog,
+  ConfirmDialog,
+  FormContextMenu,
 } from './index';
 import { TaskFormSchema, TaskFormData } from './schemas';
 
@@ -159,6 +162,89 @@ export function FormDemo() {
                         Info Toast
                       </FormButton>
                     </div>
+                  </div>
+
+                  <div>
+                    <h4 className="text-sm font-medium mb-2">Dialogs</h4>
+                    <div className="flex flex-wrap gap-2">
+                      <FormDialog
+                        trigger={<FormButton variant="outline">Open Dialog</FormButton>}
+                        title="Example Dialog"
+                        description="This is a reusable dialog component"
+                        footer={
+                          <div className="flex gap-2">
+                            <FormButton variant="outline">Cancel</FormButton>
+                            <FormButton>Save Changes</FormButton>
+                          </div>
+                        }
+                      >
+                        <div className="space-y-4">
+                          <p className="text-sm text-muted-foreground">
+                            This dialog can contain any content including forms, text, or other components.
+                          </p>
+                          <FormInput
+                            name="dialogInput"
+                            control={form.control}
+                            label="Example Input"
+                            placeholder="Type something..."
+                          />
+                        </div>
+                      </FormDialog>
+
+                      <ConfirmDialog
+                        trigger={<FormButton variant="destructive">Delete Item</FormButton>}
+                        title="Confirm Deletion"
+                        message="Are you sure you want to delete this item?"
+                        confirmText="Delete"
+                        cancelText="Cancel"
+                        onConfirm={() => showSuccess('Deleted!', 'Item has been deleted')}
+                        onCancel={() => showInfo('Cancelled', 'Deletion was cancelled')}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="text-sm font-medium mb-2">Context Menu</h4>
+                    <FormContextMenu
+                      groups={[
+                        {
+                          type: 'actions',
+                          actions: [
+                            {
+                              id: 'copy',
+                              label: 'Copy',
+                              shortcut: 'Ctrl+C',
+                              onSelect: () => showInfo('Copied!', 'Content copied to clipboard'),
+                            },
+                            {
+                              id: 'paste',
+                              label: 'Paste',
+                              shortcut: 'Ctrl+V',
+                              onSelect: () => showInfo('Pasted!', 'Content pasted from clipboard'),
+                            },
+                          ],
+                        },
+                        {
+                          type: 'separator',
+                        },
+                        {
+                          type: 'actions',
+                          actions: [
+                            {
+                              id: 'delete',
+                              label: 'Delete',
+                              destructive: true,
+                              shortcut: 'Del',
+                              onSelect: () => showError('Deleted!', 'Item has been deleted'),
+                            },
+                          ],
+                        },
+                      ]}
+                    >
+                      <div className="p-4 border-2 border-dashed border-muted-foreground/25 rounded-lg text-center text-sm text-muted-foreground cursor-pointer hover:border-muted-foreground/50 transition-colors">
+                        Right-click me to see the context menu
+                      </div>
+                    </FormContextMenu>
                   </div>
                 </div>
               </FormSection>

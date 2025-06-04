@@ -356,7 +356,7 @@
             4
           ],
           "details": "1. Develop a generic `Dialog` component for modal forms or confirmations, ensuring it can be easily triggered and controlled. 2. Implement a `ContextMenu` component for right-click interactions within forms or data displays. 3. Create a Storybook instance and add detailed stories for all previously developed components (`Input`, `Select`, `DatePicker`, `Button`, `Dialog`, etc.). 4. Document each component's API, usage examples, and accessibility considerations. 5. Conduct a final accessibility audit for all components.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "For `Dialog` and `ContextMenu`, verify open/close behavior, keyboard navigation, and focus management. Review Storybook documentation for completeness and accuracy. Perform manual accessibility checks (keyboard navigation, screen reader compatibility) on key components.",
           "prdSource": null
         }
@@ -415,7 +415,7 @@
       "description": "This is a test task created using the enhanced API with TaskFormData validation",
       "details": "",
       "testStrategy": "",
-      "status": "in-progress",
+      "status": "pending",
       "dependencies": [],
       "priority": "high",
       "subtasks": [],
@@ -423,6 +423,6 @@
     }
   ],
   "meta": {
-    "updatedAt": "2025-06-04T13:55:40.251Z"
+    "updatedAt": "2025-06-04T17:05:13.902Z"
   }
 }
