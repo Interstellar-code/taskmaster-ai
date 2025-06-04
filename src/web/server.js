@@ -38,13 +38,13 @@ async function startDevelopmentMode(options) {
   console.log(chalk.gray('Frontend: http://localhost:5173'));
   console.log(chalk.gray('Backend: http://localhost:3001'));
   
-  const webappPath = path.join(__dirname, '../../kanban-webapp');
-  
-  // Check if kanban-webapp exists
+  const webappPath = path.join(__dirname, '../../kanban-app');
+
+  // Check if kanban-app exists
   try {
     await fs.access(webappPath);
   } catch (error) {
-    console.error(chalk.red('❌ Error: kanban-webapp directory not found'));
+    console.error(chalk.red('❌ Error: kanban-app directory not found'));
     console.error(chalk.gray('Expected location:', webappPath));
     process.exit(1);
   }
@@ -103,8 +103,8 @@ async function startProductionMode(options) {
   app.use(express.urlencoded({ extended: true }));
   
   // Serve static files from dist
-  const distPath = path.join(__dirname, '../../kanban-webapp/dist');
-  
+  const distPath = path.join(__dirname, '../../kanban-app/dist');
+
   try {
     await fs.access(distPath);
     app.use(express.static(distPath));
