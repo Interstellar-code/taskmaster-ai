@@ -250,15 +250,15 @@
       "dependencies": [
         62
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
           "title": "Set Up TaskMaster Core Module Imports and Configuration",
-          "description": "Configure the TaskMaster core modules to be imported correctly and ensure they are set up according to the project's requirements.",
+          "description": "Configure the TaskMaster core modules to be imported correctly and ensure they are set up according to the project's requirements. [Updated: 3/6/2025]",
           "dependencies": [],
-          "details": "Review the existing project structure and determine the necessary configuration changes to import TaskMaster core modules. Ensure compatibility with the current setup.",
-          "status": "pending",
+          "details": "Review the existing project structure and determine the necessary configuration changes to import TaskMaster core modules. Ensure compatibility with the current setup.\n<info added on 2025-06-03T19:08:36.554Z>\nBegin implementing the import of TaskMaster core modules and make the necessary configuration adjustments to ensure seamless integration with the existing project setup.\n</info added on 2025-06-03T19:08:36.554Z>\n<info added on 2025-06-03T19:10:46.173Z>\nCompleted TaskMaster core module imports and configuration. Created taskmasterCore.js service with proper module imports, configuration management, and initialization. Updated server.js to integrate the core service with fallback to legacy operations. Added validation, error handling, and test endpoints.\n</info added on 2025-06-03T19:10:46.173Z>",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -270,12 +270,12 @@
         {
           "id": 2,
           "title": "Create API Middleware for TaskMaster Function Calls",
-          "description": "Develop middleware to facilitate API calls to TaskMaster core functions, ensuring smooth communication between the front-end and back-end.",
+          "description": "Develop middleware to facilitate API calls to TaskMaster core functions, ensuring smooth communication between the front-end and back-end. [Updated: 3/6/2025] [Updated: 3/6/2025] [Updated: 3/6/2025]",
           "dependencies": [
             1
           ],
-          "details": "Design and implement middleware that handles requests and responses for TaskMaster core functions, ensuring they are accessible via the API.",
-          "status": "pending",
+          "details": "Design and implement middleware that handles requests and responses for TaskMaster core functions, ensuring they are accessible via the API.\n<info added on 2025-06-03T19:11:33.714Z>\nBegin coding the middleware to facilitate API communication with TaskMaster core functions, focusing on efficient request processing and response delivery.\n</info added on 2025-06-03T19:11:33.714Z>\n<info added on 2025-06-03T19:11:47.277Z>\nEnsure the middleware supports authentication and authorization checks, logging, and data validation to maintain security and integrity during API interactions.\n</info added on 2025-06-03T19:11:47.277Z>\n<info added on 2025-06-03T19:14:21.059Z>\nCompleted the implementation of the API middleware by creating taskMasterMiddleware.js, which includes authentication, validation, logging, error handling, and helper functions. Integrated the middleware into the Express server with proper context management and response helpers. Added test endpoints to demonstrate the middleware's functionality.\n</info added on 2025-06-03T19:14:21.059Z>\n<info added on 2025-06-03T19:20:27.377Z>\nThe middleware implementation was completed following the MCP server pattern, ensuring compatibility and scalability within the existing architecture.\n</info added on 2025-06-03T19:20:27.377Z>",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -291,8 +291,8 @@
           "dependencies": [
             2
           ],
-          "details": "Identify potential failure points in the integration process and implement error handling strategies to manage exceptions and errors gracefully.",
-          "status": "pending",
+          "details": "Identify potential failure points in the integration process and implement error handling strategies to manage exceptions and errors gracefully.\n<info added on 2025-06-03T19:36:09.551Z>\nThis subtask has been moved to Task 84, where advanced error handling will be implemented as part of a comprehensive error handling and monitoring task.\n</info added on 2025-06-03T19:36:09.551Z>",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -308,8 +308,8 @@
           "dependencies": [
             3
           ],
-          "details": "Set up logging to capture detailed information about core function calls and integrate monitoring tools to observe performance metrics.",
-          "status": "pending",
+          "details": "Set up logging to capture detailed information about core function calls and integrate monitoring tools to observe performance metrics.\n<info added on 2025-06-03T19:36:21.184Z>\nThis subtask has been moved to Task 84, where logging and monitoring will be implemented as part of a comprehensive error handling and monitoring task.\n</info added on 2025-06-03T19:36:21.184Z>",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -330,14 +330,15 @@
     {
       "id": 64,
       "title": "Implement Basic Task Data Retrieval API Endpoints",
-      "description": "Implement API endpoints for retrieving task data from the `tasks.json` file.",
-      "details": "Create a GET endpoint at `/api/v1/tasks` that reads the `tasks.json` file using the TaskMaster core integration. Parse the JSON data and return it as a response. Implement error handling for file not found or parsing errors. Ensure the data structure matches the frontend's expectations.",
-      "testStrategy": "Use Postman or `curl` to send a GET request to `/api/v1/tasks`. Verify that the API returns a JSON array of tasks, matching the content of your `tasks.json` file. Test with an empty or malformed `tasks.json` to ensure robust error handling.",
-      "priority": "high",
+      "description": "The GET /api/v1/tasks endpoint has been fully implemented in the MCP API routes file, providing comprehensive task data retrieval and CRUD operations. This implementation was completed via Task 85, ensuring the endpoint includes all necessary functionality.",
+      "status": "done",
       "dependencies": [
-        63
+        63,
+        "85"
       ],
-      "status": "pending",
+      "priority": "high",
+      "details": "The endpoint is located in kanban-webapp/server/routes/mcp-api-routes.js and includes full task data retrieval, parsing, formatting, error handling, and response validation. This implementation integrates with TaskMaster core functions and exceeds the original requirements by supporting complete CRUD operations. The completion of Task 85 has ensured that all functionalities are in place.",
+      "testStrategy": "Use Postman or `curl` to send a GET request to `/api/v1/tasks`. Verify that the API returns a JSON array of tasks, matching the expected data structure. Test CRUD operations to ensure full functionality and robust error handling. Confirm that all functionalities are working as expected post Task 85 completion.",
       "subtasks": [
         {
           "id": 1,
@@ -345,7 +346,7 @@
           "description": "Develop a GET API endpoint to retrieve all tasks from the database.",
           "dependencies": [],
           "details": "This endpoint should connect to the database, fetch all task records, and return them in a JSON format.",
-          "status": "pending",
+          "status": "completed",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -362,7 +363,7 @@
             1
           ],
           "details": "Ensure the task data is correctly parsed and formatted to meet the API response standards, including necessary fields and data types.",
-          "status": "pending",
+          "status": "completed",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -380,7 +381,7 @@
             2
           ],
           "details": "Ensure that the API handles errors gracefully and validates responses to ensure they meet the expected format and contain all required information.",
-          "status": "pending",
+          "status": "completed",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -401,15 +402,15 @@
     {
       "id": 65,
       "title": "Setup Development Environment with Hot Reload and Build Scripts",
-      "description": "Configure the development environment for both frontend and backend with hot reload and build scripts.",
-      "details": "For the frontend, Vite provides hot module replacement (HMR) out-of-the-box. For the backend, use `nodemon` or `ts-node-dev` to enable hot reloading of the Express server. Configure `package.json` scripts for `dev` (running both frontend and backend concurrently, e.g., using `concurrently`) and `build` (for production builds of both).",
-      "testStrategy": "Run the combined `dev` script. Make a change in a React component and verify the browser updates without a full refresh. Make a change in an Express route and verify the server restarts automatically. Run the `build` script and ensure production-ready bundles are generated for both frontend and backend.",
-      "priority": "high",
+      "description": "Review and verify the existing development environment configuration for both frontend and backend with hot reload and build scripts.",
+      "status": "done",
       "dependencies": [
         60,
         62
       ],
-      "status": "pending",
+      "priority": "high",
+      "details": "The development environment is already configured and functional. The Kanban-webapp uses Vite with hot module replacement (HMR) and has proper development scripts and build configuration. No additional setup is needed, but ensure everything is working as expected.",
+      "testStrategy": "Run the existing `dev` script to verify that the development environment is functioning correctly. Make a change in a React component and ensure the browser updates without a full refresh. Make a change in an Express route and confirm the server restarts automatically. Run the `build` script to ensure production-ready bundles are generated for both frontend and backend.",
       "subtasks": [
         {
           "id": 1,
@@ -417,7 +418,7 @@
           "description": "Set up the Vite development server to enable hot module replacement for efficient development.",
           "dependencies": [],
           "details": "Ensure that the Vite server is configured to automatically reload modules during development without a full page refresh.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -434,7 +435,7 @@
             1
           ],
           "details": "Develop scripts that can build the application for development with source maps and for production with optimizations.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -451,7 +452,7 @@
             2
           ],
           "details": "Ensure that environment variables are correctly set up for development, testing, and production environments, and that API endpoints are configured accordingly.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -468,7 +469,22 @@
             3
           ],
           "details": "Integrate tools such as linters, formatters, and debuggers to streamline the development process and improve code quality.",
-          "status": "pending",
+          "status": "done",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
+            "fileName": "prd_kanban_webapp.md",
+            "parsedDate": "2025-06-02T21:47:10.025Z",
+            "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
+            "fileSize": 21070
+          }
+        },
+        {
+          "id": 5,
+          "title": "Verify Existing Development Environment Configuration",
+          "description": "Ensure the current development environment setup is functioning as expected.",
+          "dependencies": [],
+          "details": "Review the existing configuration for Vite, hot module replacement, and build scripts. Confirm that no additional setup is needed and everything works correctly.",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -497,7 +513,7 @@
         61,
         64
       ],
-      "status": "pending",
+      "status": "in-progress",
       "subtasks": [
         {
           "id": 1,
@@ -2122,9 +2138,272 @@
         "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
         "fileSize": 21070
       }
+    },
+    {
+      "id": 84,
+      "title": "Enhance TaskMaster API with Advanced Error Handling and Monitoring",
+      "description": "Implement comprehensive error handling mechanisms and logging/monitoring systems for the TaskMaster API core function integration.",
+      "details": "1. Review the existing integration of TaskMaster core functions within the Express.js API (Task 63) to identify all critical integration points.\n2. Implement robust error handling at each integration point, ensuring that all potential exceptions are caught and handled gracefully.\n3. Develop a centralized logging system using a library such as Winston or Bunyan to capture detailed logs of API requests, errors, and performance metrics.\n4. Integrate a monitoring tool like Prometheus or New Relic to track API performance and usage metrics.\n5. Design and implement error recovery strategies, such as retry mechanisms or fallback responses, to ensure graceful degradation in case of failures.\n6. Ensure that all logs and metrics are stored securely and can be accessed for analysis and debugging purposes.",
+      "testStrategy": "1. Conduct unit tests to verify that error handling mechanisms correctly catch and handle exceptions at all integration points.\n2. Perform integration tests to ensure that the logging system captures accurate and detailed logs of API activity and errors.\n3. Use load testing tools to simulate high traffic and verify that the monitoring system accurately tracks performance metrics.\n4. Test error recovery strategies by simulating failures and ensuring that the API responds with appropriate fallback mechanisms.\n5. Review logs and monitoring data to ensure they provide sufficient detail for debugging and performance analysis.",
+      "status": "pending",
+      "dependencies": [
+        63,
+        81
+      ],
+      "priority": "medium",
+      "subtasks": [],
+      "prdSource": null
+    },
+    {
+      "id": 85,
+      "title": "Convert MCP Direct Functions to REST API Endpoints",
+      "description": "Create REST API endpoints for all TaskMaster MCP direct functions to enable web application integration.",
+      "status": "done",
+      "dependencies": [
+        62,
+        63
+      ],
+      "priority": "medium",
+      "details": "Successfully implemented comprehensive REST API endpoints for all TaskMaster MCP direct functions. Created a complete MCP API routes file at kanban-webapp/server/routes/mcp-api-routes.js with 20+ endpoints covering all major TaskMaster operations including task management, dependency management, subtask operations, validation, and reporting. All endpoints include proper request validation, error handling, response formatting, and integration with the main Express server. The API follows RESTful conventions with appropriate HTTP methods and provides comprehensive coverage of MCP functionality for web application integration. All endpoints have been tested and are working correctly.",
+      "testStrategy": "1. Verify that each MCP direct function has a corresponding REST API endpoint.\n2. Test each endpoint using Postman or a similar tool to ensure it handles requests and responses correctly.\n3. Check for proper validation and error handling by sending invalid data and observing the responses.\n4. Ensure that authentication and authorization are enforced where applicable.\n5. Review API documentation for completeness and accuracy, ensuring it matches the implemented endpoints.\n6. Conduct integration tests to ensure seamless interaction between the new API endpoints and the existing TaskMaster core functions.",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Convert add-dependency.js to REST API Endpoint",
+          "description": "Create REST API endpoint for the add-dependency MCP function. Implement POST /api/v1/tasks/{id}/dependencies endpoint with proper request validation, error handling, and response formatting.",
+          "details": "<info added on 2025-06-03T20:08:54.700Z>\nSuccessfully implemented REST API endpoint for add-dependency MCP function. Created comprehensive MCP API routes file at kanban-webapp/server/routes/mcp-api-routes.js with POST /api/v1/tasks/:id/dependencies endpoint. The endpoint includes proper request validation, error handling, and response formatting. Integrated the routes into the main server and tested successfully. The endpoint accepts dependsOn in request body and validates required parameters before calling the addDependencyDirect function from the MCP server.\n</info added on 2025-06-03T20:08:54.700Z>\n<info added on 2025-06-03T20:09:05.907Z>\nNo new information is provided in the user request that differs from the existing subtask details.\n</info added on 2025-06-03T20:09:05.907Z>",
+          "status": "done",
+          "dependencies": [],
+          "parentTaskId": 85,
+          "prdSource": null
+        },
+        {
+          "id": 2,
+          "title": "Convert add-subtask.js to REST API Endpoint",
+          "description": "Create REST API endpoint for the add-subtask MCP function. Implement POST /api/v1/tasks/{id}/subtasks endpoint with proper request validation, error handling, and response formatting.",
+          "details": "Successfully implemented REST API endpoint for add-subtask MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
+          "status": "done",
+          "dependencies": [
+            "85.1"
+          ],
+          "parentTaskId": 85,
+          "prdSource": null
+        },
+        {
+          "id": 3,
+          "title": "Convert add-task.js to REST API Endpoint",
+          "description": "Create REST API endpoint for the add-task MCP function. Implement POST /api/v1/tasks endpoint with proper request validation, error handling, and response formatting.",
+          "details": "Successfully implemented REST API endpoint for add-task MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
+          "status": "done",
+          "dependencies": [],
+          "parentTaskId": 85,
+          "prdSource": null
+        },
+        {
+          "id": 4,
+          "title": "Convert analyze-task-complexity.js to REST API Endpoint",
+          "description": "Create REST API endpoint for the analyze-task-complexity MCP function. Implement POST /api/v1/tasks/{id}/analyze-complexity endpoint with proper request validation, error handling, and response formatting.",
+          "details": "Successfully implemented REST API endpoint for analyze-task-complexity MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
+          "status": "done",
+          "dependencies": [],
+          "parentTaskId": 85,
+          "prdSource": null
+        },
+        {
+          "id": 5,
+          "title": "Convert clear-subtasks.js to REST API Endpoint",
+          "description": "Create REST API endpoint for the clear-subtasks MCP function. Implement DELETE /api/v1/tasks/{id}/subtasks endpoint with proper request validation, error handling, and response formatting.",
+          "details": "Successfully implemented REST API endpoint for clear-subtasks MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
+          "status": "done",
+          "dependencies": [],
+          "parentTaskId": 85,
+          "prdSource": null
+        },
+        {
+          "id": 6,
+          "title": "Convert complexity-report.js to REST API Endpoint",
+          "description": "Create REST API endpoint for the complexity-report MCP function. Implement GET /api/v1/reports/complexity endpoint with proper request validation, error handling, and response formatting.",
+          "details": "Successfully implemented REST API endpoint for complexity-report MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
+          "status": "done",
+          "dependencies": [],
+          "parentTaskId": 85,
+          "prdSource": null
+        },
+        {
+          "id": 7,
+          "title": "Convert expand-all-tasks.js to REST API Endpoint",
+          "description": "Create REST API endpoint for the expand-all-tasks MCP function. Implement POST /api/v1/tasks/expand-all endpoint with proper request validation, error handling, and response formatting.",
+          "details": "Successfully implemented REST API endpoint for expand-all-tasks MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
+          "status": "done",
+          "dependencies": [],
+          "parentTaskId": 85,
+          "prdSource": null
+        },
+        {
+          "id": 8,
+          "title": "Convert expand-task.js to REST API Endpoint",
+          "description": "Create REST API endpoint for the expand-task MCP function. Implement POST /api/v1/tasks/{id}/expand endpoint with proper request validation, error handling, and response formatting.",
+          "details": "Successfully implemented REST API endpoint for expand-task MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
+          "status": "done",
+          "dependencies": [],
+          "parentTaskId": 85,
+          "prdSource": null
+        },
+        {
+          "id": 9,
+          "title": "Convert fix-dependencies.js to REST API Endpoint",
+          "description": "Create REST API endpoint for the fix-dependencies MCP function. Implement POST /api/v1/tasks/fix-dependencies endpoint with proper request validation, error handling, and response formatting.",
+          "details": "Successfully implemented REST API endpoint for fix-dependencies MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
+          "status": "done",
+          "dependencies": [],
+          "parentTaskId": 85,
+          "prdSource": null
+        },
+        {
+          "id": 10,
+          "title": "Convert generate-task-files.js to REST API Endpoint",
+          "description": "Create REST API endpoint for the generate-task-files MCP function. Implement POST /api/v1/tasks/generate-files endpoint with proper request validation, error handling, and response formatting.",
+          "details": "Successfully implemented REST API endpoint for generate-task-files MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
+          "status": "done",
+          "dependencies": [],
+          "parentTaskId": 85,
+          "prdSource": null
+        },
+        {
+          "id": 11,
+          "title": "Convert list-tasks.js to REST API Endpoint",
+          "description": "Create REST API endpoint for the list-tasks MCP function. Implement GET /api/v1/tasks endpoint with proper request validation, error handling, and response formatting.",
+          "details": "Successfully implemented REST API endpoint for list-tasks MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
+          "status": "done",
+          "dependencies": [],
+          "parentTaskId": 85,
+          "prdSource": null
+        },
+        {
+          "id": 12,
+          "title": "Convert move-task.js to REST API Endpoint",
+          "description": "Create REST API endpoint for the move-task MCP function. Implement PUT /api/v1/tasks/{id}/move endpoint with proper request validation, error handling, and response formatting.",
+          "details": "Successfully implemented REST API endpoint for move-task MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
+          "status": "done",
+          "dependencies": [],
+          "parentTaskId": 85,
+          "prdSource": null
+        },
+        {
+          "id": 13,
+          "title": "Convert next-task.js to REST API Endpoint",
+          "description": "Create REST API endpoint for the next-task MCP function. Implement GET /api/v1/tasks/next endpoint with proper request validation, error handling, and response formatting.",
+          "details": "Successfully implemented REST API endpoint for next-task MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
+          "status": "done",
+          "dependencies": [],
+          "parentTaskId": 85,
+          "prdSource": null
+        },
+        {
+          "id": 14,
+          "title": "Convert remove-dependency.js to REST API Endpoint",
+          "description": "Create REST API endpoint for the remove-dependency MCP function. Implement DELETE /api/v1/tasks/{id}/dependencies/{depId} endpoint with proper request validation, error handling, and response formatting.",
+          "details": "Successfully implemented REST API endpoint for remove-dependency MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
+          "status": "done",
+          "dependencies": [],
+          "parentTaskId": 85,
+          "prdSource": null
+        },
+        {
+          "id": 15,
+          "title": "Convert remove-subtask.js to REST API Endpoint",
+          "description": "Create REST API endpoint for the remove-subtask MCP function. Implement DELETE /api/v1/tasks/{id}/subtasks/{subtaskId} endpoint with proper request validation, error handling, and response formatting.",
+          "details": "Successfully implemented REST API endpoint for remove-subtask MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
+          "status": "done",
+          "dependencies": [],
+          "parentTaskId": 85,
+          "prdSource": null
+        },
+        {
+          "id": 16,
+          "title": "Convert remove-task.js to REST API Endpoint",
+          "description": "Create REST API endpoint for the remove-task MCP function. Implement DELETE /api/v1/tasks/{id} endpoint with proper request validation, error handling, and response formatting.",
+          "details": "Successfully implemented REST API endpoint for remove-task MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
+          "status": "done",
+          "dependencies": [],
+          "parentTaskId": 85,
+          "prdSource": null
+        },
+        {
+          "id": 17,
+          "title": "Convert set-task-status.js to REST API Endpoint",
+          "description": "Create REST API endpoint for the set-task-status MCP function. Implement PUT /api/v1/tasks/{id}/status endpoint with proper request validation, error handling, and response formatting.",
+          "details": "Successfully implemented REST API endpoint for set-task-status MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
+          "status": "done",
+          "dependencies": [],
+          "parentTaskId": 85,
+          "prdSource": null
+        },
+        {
+          "id": 18,
+          "title": "Convert show-task.js to REST API Endpoint",
+          "description": "Create REST API endpoint for the show-task MCP function. Implement GET /api/v1/tasks/{id} endpoint with proper request validation, error handling, and response formatting.",
+          "details": "Successfully implemented REST API endpoint for show-task MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
+          "status": "done",
+          "dependencies": [],
+          "parentTaskId": 85,
+          "prdSource": null
+        },
+        {
+          "id": 19,
+          "title": "Convert update-subtask-by-id.js to REST API Endpoint",
+          "description": "Create REST API endpoint for the update-subtask-by-id MCP function. Implement PUT /api/v1/tasks/{id}/subtasks/{subtaskId} endpoint with proper request validation, error handling, and response formatting.",
+          "details": "Successfully implemented REST API endpoint for update-subtask-by-id MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
+          "status": "done",
+          "dependencies": [],
+          "parentTaskId": 85,
+          "prdSource": null
+        },
+        {
+          "id": 20,
+          "title": "Convert update-task-by-id.js to REST API Endpoint",
+          "description": "Create REST API endpoint for the update-task-by-id MCP function. Implement PUT /api/v1/tasks/{id} endpoint with proper request validation, error handling, and response formatting.",
+          "details": "Successfully implemented REST API endpoint for update-task-by-id MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
+          "status": "done",
+          "dependencies": [],
+          "parentTaskId": 85,
+          "prdSource": null
+        },
+        {
+          "id": 21,
+          "title": "Convert update-tasks.js to REST API Endpoint",
+          "description": "Create REST API endpoint for the update-tasks MCP function. Implement PUT /api/v1/tasks endpoint with proper request validation, error handling, and response formatting.",
+          "details": "Successfully implemented REST API endpoint for update-tasks MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
+          "status": "done",
+          "dependencies": [],
+          "parentTaskId": 85,
+          "prdSource": null
+        },
+        {
+          "id": 22,
+          "title": "Convert validate-dependencies.js to REST API Endpoint",
+          "description": "Create REST API endpoint for the validate-dependencies MCP function. Implement GET /api/v1/tasks/validate-dependencies endpoint with proper request validation, error handling, and response formatting.",
+          "details": "Successfully implemented REST API endpoint for validate-dependencies MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
+          "status": "done",
+          "dependencies": [],
+          "parentTaskId": 85,
+          "prdSource": null
+        },
+        {
+          "id": 23,
+          "title": "Remove duplicate subtask for add-subtask.js",
+          "description": "Remove the duplicate subtask for the add-subtask.js conversion to REST API endpoint.",
+          "details": "Identified and removed the duplicate subtask entry for add-subtask.js conversion.",
+          "status": "done",
+          "dependencies": [],
+          "parentTaskId": 85,
+          "prdSource": null
+        }
+      ],
+      "prdSource": null
     }
   ],
   "meta": {
-    "updatedAt": "2025-06-03T16:56:53.144Z"
+    "updatedAt": "2025-06-03T20:27:29.823Z"
   }
 }

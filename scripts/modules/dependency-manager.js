@@ -501,7 +501,25 @@ function validateTaskDependencies(tasks) {
  * @returns {Object} Validation result with valid flag and error details
  */
 function validateTaskStatusTransition(tasks, taskId, newStatus) {
-	const task = tasks.find(t => String(t.id) === String(taskId));
+	let task = null;
+
+	// Check if it's a subtask ID (e.g., "85.1")
+	if (typeof taskId === 'string' && taskId.includes('.')) {
+		const [parentId, subtaskId] = taskId.split('.').map(id => parseInt(id, 10));
+		const parentTask = tasks.find(t => t.id === parentId);
+
+		if (!parentTask || !parentTask.subtasks) {
+			return {
+				valid: false,
+				error: `Task ${taskId} not found`
+			};
+		}
+
+		task = parentTask.subtasks.find(st => st.id === subtaskId);
+	} else {
+		// Regular task ID
+		task = tasks.find(t => String(t.id) === String(taskId));
+	}
 
 	if (!task) {
 		return {

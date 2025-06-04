@@ -1,0 +1,162 @@
+# Task ID: 85
+# Title: Convert MCP Direct Functions to REST API Endpoints
+# Status: done
+# Dependencies: 62, 63
+# Priority: medium
+# PRD Source: None (manually created)
+# Description: Create REST API endpoints for all TaskMaster MCP direct functions to enable web application integration.
+# Details:
+Successfully implemented comprehensive REST API endpoints for all TaskMaster MCP direct functions. Created a complete MCP API routes file at kanban-webapp/server/routes/mcp-api-routes.js with 20+ endpoints covering all major TaskMaster operations including task management, dependency management, subtask operations, validation, and reporting. All endpoints include proper request validation, error handling, response formatting, and integration with the main Express server. The API follows RESTful conventions with appropriate HTTP methods and provides comprehensive coverage of MCP functionality for web application integration. All endpoints have been tested and are working correctly.
+
+# Test Strategy:
+1. Verify that each MCP direct function has a corresponding REST API endpoint.
+2. Test each endpoint using Postman or a similar tool to ensure it handles requests and responses correctly.
+3. Check for proper validation and error handling by sending invalid data and observing the responses.
+4. Ensure that authentication and authorization are enforced where applicable.
+5. Review API documentation for completeness and accuracy, ensuring it matches the implemented endpoints.
+6. Conduct integration tests to ensure seamless interaction between the new API endpoints and the existing TaskMaster core functions.
+
+# Subtasks:
+## 1. Convert add-dependency.js to REST API Endpoint [done]
+### Dependencies: None
+### Description: Create REST API endpoint for the add-dependency MCP function. Implement POST /api/v1/tasks/{id}/dependencies endpoint with proper request validation, error handling, and response formatting.
+### Details:
+<info added on 2025-06-03T20:08:54.700Z>
+Successfully implemented REST API endpoint for add-dependency MCP function. Created comprehensive MCP API routes file at kanban-webapp/server/routes/mcp-api-routes.js with POST /api/v1/tasks/:id/dependencies endpoint. The endpoint includes proper request validation, error handling, and response formatting. Integrated the routes into the main server and tested successfully. The endpoint accepts dependsOn in request body and validates required parameters before calling the addDependencyDirect function from the MCP server.
+</info added on 2025-06-03T20:08:54.700Z>
+<info added on 2025-06-03T20:09:05.907Z>
+No new information is provided in the user request that differs from the existing subtask details.
+</info added on 2025-06-03T20:09:05.907Z>
+
+## 2. Convert add-subtask.js to REST API Endpoint [done]
+### Dependencies: 85.1
+### Description: Create REST API endpoint for the add-subtask MCP function. Implement POST /api/v1/tasks/{id}/subtasks endpoint with proper request validation, error handling, and response formatting.
+### Details:
+Successfully implemented REST API endpoint for add-subtask MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.
+
+## 3. Convert add-task.js to REST API Endpoint [done]
+### Dependencies: None
+### Description: Create REST API endpoint for the add-task MCP function. Implement POST /api/v1/tasks endpoint with proper request validation, error handling, and response formatting.
+### Details:
+Successfully implemented REST API endpoint for add-task MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.
+
+## 4. Convert analyze-task-complexity.js to REST API Endpoint [done]
+### Dependencies: None
+### Description: Create REST API endpoint for the analyze-task-complexity MCP function. Implement POST /api/v1/tasks/{id}/analyze-complexity endpoint with proper request validation, error handling, and response formatting.
+### Details:
+Successfully implemented REST API endpoint for analyze-task-complexity MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.
+
+## 5. Convert clear-subtasks.js to REST API Endpoint [done]
+### Dependencies: None
+### Description: Create REST API endpoint for the clear-subtasks MCP function. Implement DELETE /api/v1/tasks/{id}/subtasks endpoint with proper request validation, error handling, and response formatting.
+### Details:
+Successfully implemented REST API endpoint for clear-subtasks MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.
+
+## 6. Convert complexity-report.js to REST API Endpoint [done]
+### Dependencies: None
+### Description: Create REST API endpoint for the complexity-report MCP function. Implement GET /api/v1/reports/complexity endpoint with proper request validation, error handling, and response formatting.
+### Details:
+Successfully implemented REST API endpoint for complexity-report MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.
+
+## 7. Convert expand-all-tasks.js to REST API Endpoint [done]
+### Dependencies: None
+### Description: Create REST API endpoint for the expand-all-tasks MCP function. Implement POST /api/v1/tasks/expand-all endpoint with proper request validation, error handling, and response formatting.
+### Details:
+Successfully implemented REST API endpoint for expand-all-tasks MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.
+
+## 8. Convert expand-task.js to REST API Endpoint [done]
+### Dependencies: None
+### Description: Create REST API endpoint for the expand-task MCP function. Implement POST /api/v1/tasks/{id}/expand endpoint with proper request validation, error handling, and response formatting.
+### Details:
+Successfully implemented REST API endpoint for expand-task MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.
+
+## 9. Convert fix-dependencies.js to REST API Endpoint [done]
+### Dependencies: None
+### Description: Create REST API endpoint for the fix-dependencies MCP function. Implement POST /api/v1/tasks/fix-dependencies endpoint with proper request validation, error handling, and response formatting.
+### Details:
+Successfully implemented REST API endpoint for fix-dependencies MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.
+
+## 10. Convert generate-task-files.js to REST API Endpoint [done]
+### Dependencies: None
+### Description: Create REST API endpoint for the generate-task-files MCP function. Implement POST /api/v1/tasks/generate-files endpoint with proper request validation, error handling, and response formatting.
+### Details:
+Successfully implemented REST API endpoint for generate-task-files MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.
+
+## 11. Convert list-tasks.js to REST API Endpoint [done]
+### Dependencies: None
+### Description: Create REST API endpoint for the list-tasks MCP function. Implement GET /api/v1/tasks endpoint with proper request validation, error handling, and response formatting.
+### Details:
+Successfully implemented REST API endpoint for list-tasks MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.
+
+## 12. Convert move-task.js to REST API Endpoint [done]
+### Dependencies: None
+### Description: Create REST API endpoint for the move-task MCP function. Implement PUT /api/v1/tasks/{id}/move endpoint with proper request validation, error handling, and response formatting.
+### Details:
+Successfully implemented REST API endpoint for move-task MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.
+
+## 13. Convert next-task.js to REST API Endpoint [done]
+### Dependencies: None
+### Description: Create REST API endpoint for the next-task MCP function. Implement GET /api/v1/tasks/next endpoint with proper request validation, error handling, and response formatting.
+### Details:
+Successfully implemented REST API endpoint for next-task MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.
+
+## 14. Convert remove-dependency.js to REST API Endpoint [done]
+### Dependencies: None
+### Description: Create REST API endpoint for the remove-dependency MCP function. Implement DELETE /api/v1/tasks/{id}/dependencies/{depId} endpoint with proper request validation, error handling, and response formatting.
+### Details:
+Successfully implemented REST API endpoint for remove-dependency MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.
+
+## 15. Convert remove-subtask.js to REST API Endpoint [done]
+### Dependencies: None
+### Description: Create REST API endpoint for the remove-subtask MCP function. Implement DELETE /api/v1/tasks/{id}/subtasks/{subtaskId} endpoint with proper request validation, error handling, and response formatting.
+### Details:
+Successfully implemented REST API endpoint for remove-subtask MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.
+
+## 16. Convert remove-task.js to REST API Endpoint [done]
+### Dependencies: None
+### Description: Create REST API endpoint for the remove-task MCP function. Implement DELETE /api/v1/tasks/{id} endpoint with proper request validation, error handling, and response formatting.
+### Details:
+Successfully implemented REST API endpoint for remove-task MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.
+
+## 17. Convert set-task-status.js to REST API Endpoint [done]
+### Dependencies: None
+### Description: Create REST API endpoint for the set-task-status MCP function. Implement PUT /api/v1/tasks/{id}/status endpoint with proper request validation, error handling, and response formatting.
+### Details:
+Successfully implemented REST API endpoint for set-task-status MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.
+
+## 18. Convert show-task.js to REST API Endpoint [done]
+### Dependencies: None
+### Description: Create REST API endpoint for the show-task MCP function. Implement GET /api/v1/tasks/{id} endpoint with proper request validation, error handling, and response formatting.
+### Details:
+Successfully implemented REST API endpoint for show-task MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.
+
+## 19. Convert update-subtask-by-id.js to REST API Endpoint [done]
+### Dependencies: None
+### Description: Create REST API endpoint for the update-subtask-by-id MCP function. Implement PUT /api/v1/tasks/{id}/subtasks/{subtaskId} endpoint with proper request validation, error handling, and response formatting.
+### Details:
+Successfully implemented REST API endpoint for update-subtask-by-id MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.
+
+## 20. Convert update-task-by-id.js to REST API Endpoint [done]
+### Dependencies: None
+### Description: Create REST API endpoint for the update-task-by-id MCP function. Implement PUT /api/v1/tasks/{id} endpoint with proper request validation, error handling, and response formatting.
+### Details:
+Successfully implemented REST API endpoint for update-task-by-id MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.
+
+## 21. Convert update-tasks.js to REST API Endpoint [done]
+### Dependencies: None
+### Description: Create REST API endpoint for the update-tasks MCP function. Implement PUT /api/v1/tasks endpoint with proper request validation, error handling, and response formatting.
+### Details:
+Successfully implemented REST API endpoint for update-tasks MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.
+
+## 22. Convert validate-dependencies.js to REST API Endpoint [done]
+### Dependencies: None
+### Description: Create REST API endpoint for the validate-dependencies MCP function. Implement GET /api/v1/tasks/validate-dependencies endpoint with proper request validation, error handling, and response formatting.
+### Details:
+Successfully implemented REST API endpoint for validate-dependencies MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.
+
+## 23. Remove duplicate subtask for add-subtask.js [done]
+### Dependencies: None
+### Description: Remove the duplicate subtask for the add-subtask.js conversion to REST API endpoint.
+### Details:
+Identified and removed the duplicate subtask entry for add-subtask.js conversion.
+

@@ -85,7 +85,8 @@ async function setTaskStatus(tasksPath, taskIdInput, newStatus, options = {}) {
 		// Display success message - only in CLI mode
 		if (!isMcpMode) {
 			for (const id of updatedTasks) {
-				const task = findTaskById(data.tasks, id);
+				const taskResult = findTaskById(data.tasks, id);
+				const task = taskResult.task;
 				const taskName = task ? task.title : id;
 
 				console.log(
@@ -169,7 +170,8 @@ async function updatePrdStatusForChangedTasks(updatedTaskIds, newStatus, tasksPa
 		const affectedPrdIds = new Set();
 
 		for (const taskId of updatedTaskIds) {
-			const task = findTaskById(data.tasks, taskId);
+			const taskResult = findTaskById(data.tasks, taskId);
+			const task = taskResult.task;
 			log('info', `Checking task ${taskId}: ${task ? 'found' : 'not found'}`);
 
 			if (task && task.prdSource && task.prdSource.fileName) {

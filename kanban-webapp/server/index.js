@@ -5,6 +5,16 @@ import rateLimit from 'express-rate-limit';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs/promises';
+import {
+	directFunctions,
+	listTasksDirect,
+	showTaskDirect,
+	nextTaskDirect,
+	setTaskStatusDirect
+} from '../../mcp-server/src/core/task-master-core.js';
+import { findTasksJsonPath } from '../../mcp-server/src/core/utils/path-utils.js';
+import { createLogger } from './src/logger.js';
+import mcpApiRoutes from './routes/mcp-api-routes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -12,7 +22,27 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// TaskHero integration - path to tasks.json
+// Create logger instance
+const logger = createLogger('TaskMaster-API');
+
+// TaskMaster Core Integration
+let isTaskMasterInitialized = false;
+let projectRoot = null;
+let tasksJsonPath = null;
+
+// Helper function to get available functions from the directFunctions Map
+function getAvailableFunctions() {
+	return Array.from(directFunctions.keys());
+}
+
+// Helper function to resolve project root (replacement for the removed local function)
+function resolveProjectRoot() {
+	// The kanban-webapp is located within the TaskMaster project
+	// Go up two levels from kanban-webapp/server to reach the project root
+	return path.resolve(__dirname, '../..');
+}
+
+// Legacy path for backward compatibility
 const TASKS_FILE_PATH = path.join(__dirname, '../../.taskmaster/tasks/tasks.json');
 
 // Security middleware
@@ -40,44 +70,110 @@ app.use(express.urlencoded({ extended: true }));
 
 // Request logging middleware
 app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+  logger.info(`${req.method} ${req.path}`);
   next();
 });
 
-// Helper function to read TaskHero tasks
-async function readTaskHeroTasks() {
+// Helper function to read TaskMaster tasks (using core integration)
+async function readTaskMasterTasks() {
   try {
-    const data = await fs.readFile(TASKS_FILE_PATH, 'utf8');
-    return JSON.parse(data);
+    if (isTaskMasterInitialized) {
+      return await taskMasterCore.readTasksData();
+    } else {
+      // Fallback to direct file reading if core not initialized
+      const data = await fs.readFile(TASKS_FILE_PATH, 'utf8');
+      return JSON.parse(data);
+    }
   } catch (error) {
-    console.error('Error reading TaskHero tasks:', error);
+    console.error('Error reading TaskMaster tasks:', error);
     return { tasks: [] };
   }
 }
 
-// Helper function to write TaskHero tasks
-async function writeTaskHeroTasks(tasksData) {
+// Helper function to write TaskMaster tasks (using core integration)
+async function writeTaskMasterTasks(tasksData) {
   try {
-    await fs.writeFile(TASKS_FILE_PATH, JSON.stringify(tasksData, null, 2));
-    return true;
+    if (isTaskMasterInitialized) {
+      return await taskMasterCore.writeTasksData(tasksData);
+    } else {
+      // Fallback to direct file writing if core not initialized
+      await fs.writeFile(TASKS_FILE_PATH, JSON.stringify(tasksData, null, 2));
+      return true;
+    }
   } catch (error) {
-    console.error('Error writing TaskHero tasks:', error);
+    console.error('Error writing TaskMaster tasks:', error);
     return false;
+  }
+}
+
+// Legacy helper functions for backward compatibility
+const readTaskHeroTasks = readTaskMasterTasks;
+const writeTaskHeroTasks = writeTaskMasterTasks;
+
+// Initialize TaskMaster Core Integration
+async function initializeTaskMasterCore() {
+  try {
+    logger.info('🔧 Initializing TaskMaster Core Integration...');
+
+    // Resolve project root
+    projectRoot = resolveProjectRoot();
+    logger.info(`Project root resolved to: ${projectRoot}`);
+
+    // Find tasks.json path
+    tasksJsonPath = findTasksJsonPath({ projectRoot }, logger);
+    logger.info(`Tasks file found at: ${tasksJsonPath}`);
+
+    // Test core functionality by listing tasks
+    const testResult = await listTasksDirect({ tasksJsonPath }, logger);
+    if (!testResult.success) {
+      throw new Error(`Core function test failed: ${testResult.error.message}`);
+    }
+
+    isTaskMasterInitialized = true;
+
+    // Store state in app.locals
+    app.locals.taskMasterInitialized = true;
+    app.locals.projectRoot = projectRoot;
+    app.locals.tasksJsonPath = tasksJsonPath;
+
+    logger.info('✅ TaskMaster Core Integration initialized successfully');
+    logger.info(`📊 Found ${testResult.data.summary.totalTasks} tasks in the system`);
+
+    return {
+      success: true,
+      projectRoot,
+      tasksJsonPath,
+      tasksCount: testResult.data.summary.totalTasks
+    };
+  } catch (error) {
+    logger.error('❌ TaskMaster Core Integration initialization failed:', error.message);
+    logger.warn('⚠️  Falling back to legacy file operations');
+    isTaskMasterInitialized = false;
+
+    // Store fallback state in app.locals
+    app.locals.taskMasterInitialized = false;
+    app.locals.projectRoot = null;
+    app.locals.tasksJsonPath = null;
+
+    return null;
   }
 }
 
 // Root route
 app.get('/', (req, res) => {
   res.json({
-    message: 'TaskHero Kanban API Server',
+    message: 'TaskMaster Kanban API Server',
     version: '1.0.0',
     status: 'running',
     timestamp: new Date().toISOString(),
-    integration: 'TaskHero Core',
+    integration: isTaskMasterInitialized ? 'TaskMaster Core (Active)' : 'Legacy File Operations',
+    coreInitialized: isTaskMasterInitialized,
+    availableFunctions: isTaskMasterInitialized ? getAvailableFunctions() : [],
     endpoints: {
       health: '/health',
       tasks: '/api/tasks',
-      taskhero: '/api/taskhero'
+      taskhero: '/api/taskhero',
+      core: '/api/core'
     }
   });
 });
@@ -105,6 +201,24 @@ app.get('/api', (req, res) => {
       'GET /api/tasks/:id - Get TaskHero task by ID',
       'PUT /api/tasks/:id/status - Update task status',
       'GET /api/taskhero/info - Get TaskHero project info'
+    ],
+    mcpApiRoutes: [
+      'GET /api/v1/tasks - List all tasks',
+      'POST /api/v1/tasks - Add new task',
+      'GET /api/v1/tasks/next - Get next available task',
+      'GET /api/v1/tasks/:id - Show task details',
+      'PATCH /api/v1/tasks/:id/status - Update task status',
+      'PUT /api/v1/tasks/:id - Update task',
+      'DELETE /api/v1/tasks/:id - Remove task',
+      'POST /api/v1/tasks/:id/dependencies - Add dependency',
+      'DELETE /api/v1/tasks/:id/dependencies/:depId - Remove dependency',
+      'POST /api/v1/tasks/:id/subtasks - Add subtask',
+      'PUT /api/v1/tasks/:parentId/subtasks/:subtaskId - Update subtask',
+      'DELETE /api/v1/tasks/:parentId/subtasks/:subtaskId - Remove subtask',
+      'POST /api/v1/tasks/:id/expand - Expand task into subtasks',
+      'GET /api/v1/tasks/validate-dependencies - Validate dependencies',
+      'POST /api/v1/tasks/fix-dependencies - Fix dependencies',
+      'GET /api/v1/reports/complexity - Generate complexity report'
     ]
   });
 });
@@ -226,23 +340,23 @@ app.put('/api/tasks/:id/status', async (req, res) => {
   }
 });
 
-// Get TaskHero project info
+// Get TaskMaster project info (enhanced with core integration)
 app.get('/api/taskhero/info', async (req, res) => {
   try {
-    const tasksData = await readTaskHeroTasks();
+    const tasksData = await readTaskMasterTasks();
     const tasks = tasksData.tasks || [];
-    
+
     // Calculate statistics
     const statusCounts = tasks.reduce((acc, task) => {
       acc[task.status] = (acc[task.status] || 0) + 1;
       return acc;
     }, {});
-    
+
     const priorityCounts = tasks.reduce((acc, task) => {
       acc[task.priority] = (acc[task.priority] || 0) + 1;
       return acc;
     }, {});
-    
+
     res.json({
       success: true,
       data: {
@@ -250,20 +364,192 @@ app.get('/api/taskhero/info', async (req, res) => {
         statusBreakdown: statusCounts,
         priorityBreakdown: priorityCounts,
         lastUpdated: tasksData.lastUpdated || null,
-        projectName: tasksData.projectName || 'TaskHero Project'
+        projectName: tasksData.projectName || 'TaskMaster Project',
+        coreIntegration: isTaskMasterInitialized
       },
-      source: 'TaskHero Core',
+      source: isTaskMasterInitialized ? 'TaskMaster Core' : 'Legacy File Operations',
       timestamp: new Date().toISOString()
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch TaskHero project info',
+      error: 'Failed to fetch TaskMaster project info',
       message: error.message,
       timestamp: new Date().toISOString()
     });
   }
 });
+
+// TaskMaster Core Status Endpoint
+app.get('/api/core/status', async (req, res) => {
+  try {
+    res.json({
+      success: true,
+      data: {
+        initialized: isTaskMasterInitialized,
+        projectRoot: projectRoot,
+        tasksJsonPath: tasksJsonPath,
+        availableFunctions: getAvailableFunctions(),
+        coreStructure: {
+          directFunctions: getAvailableFunctions().length,
+          pathUtils: true,
+          logger: true
+        }
+      },
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    logger.error('Failed to get core status:', error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to get TaskMaster core status',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+// TaskMaster Core Function Test Endpoint
+app.post('/api/core/test', async (req, res) => {
+  try {
+    if (!isTaskMasterInitialized) {
+      return res.status(503).json({
+        success: false,
+        error: 'TaskMaster core not initialized',
+        message: 'Core integration is not available',
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    // Test multiple core functions
+    const testResults = {};
+
+    // Test list tasks
+    const listResult = await listTasksDirect({ tasksJsonPath }, logger);
+    testResults.listTasks = {
+      success: listResult.success,
+      taskCount: listResult.success ? listResult.data.summary.totalTasks : 0,
+      error: listResult.error || null
+    };
+
+    // Test next task
+    const nextResult = await nextTaskDirect({ tasksJsonPath }, logger);
+    testResults.nextTask = {
+      success: nextResult.success,
+      hasNextTask: nextResult.success && nextResult.data.nextTask !== null,
+      error: nextResult.error || null
+    };
+
+    res.json({
+      success: true,
+      data: {
+        testResults,
+        coreStructure: {
+          initialized: isTaskMasterInitialized,
+          projectRoot: projectRoot,
+          tasksJsonPath: tasksJsonPath,
+          availableFunctions: getAvailableFunctions().length
+        },
+        message: 'TaskMaster core integration test completed successfully'
+      },
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    logger.error('Core test failed:', error.message);
+    res.status(500).json({
+      success: false,
+      error: 'TaskMaster core test failed',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+// List tasks endpoint using direct functions
+app.get('/api/core/tasks/list', async (req, res) => {
+  try {
+    if (!isTaskMasterInitialized) {
+      return res.status(503).json({
+        success: false,
+        error: 'TaskMaster core not initialized',
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    const { status, withSubtasks } = req.query;
+    const result = await listTasksDirect({
+      tasksJsonPath,
+      status,
+      withSubtasks: withSubtasks === 'true'
+    }, logger);
+
+    if (result.success) {
+      res.json({
+        success: true,
+        data: result.data,
+        timestamp: new Date().toISOString()
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        error: result.error.code,
+        message: result.error.message,
+        timestamp: new Date().toISOString()
+      });
+    }
+  } catch (error) {
+    logger.error('List tasks failed:', error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+// Next task endpoint using direct functions
+app.get('/api/core/tasks/next', async (req, res) => {
+  try {
+    if (!isTaskMasterInitialized) {
+      return res.status(503).json({
+        success: false,
+        error: 'TaskMaster core not initialized',
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    const result = await nextTaskDirect({ tasksJsonPath }, logger);
+
+    if (result.success) {
+      res.json({
+        success: true,
+        data: result.data,
+        timestamp: new Date().toISOString()
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        error: result.error.code,
+        message: result.error.message,
+        timestamp: new Date().toISOString()
+      });
+    }
+  } catch (error) {
+    logger.error('Next task failed:', error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+// ============================================================================
+// MCP API ROUTES - All TaskMaster MCP Direct Functions as REST Endpoints
+// ============================================================================
+app.use('/api/v1', mcpApiRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {
@@ -276,7 +562,7 @@ app.use('*', (req, res) => {
 
 // Global error handler
 app.use((err, req, res, next) => {
-  console.error('Error:', err);
+  logger.error('Unhandled error:', err.message);
   res.status(err.status || 500).json({
     error: 'Internal Server Error',
     message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong',
@@ -284,14 +570,26 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 TaskHero Kanban API Server running on port ${PORT}`);
-  console.log(`📍 Server URL: http://localhost:${PORT}`);
-  console.log(`🏥 Health check: http://localhost:${PORT}/health`);
-  console.log(`📚 API docs: http://localhost:${PORT}/api`);
-  console.log(`🔗 TaskHero Integration: ${TASKS_FILE_PATH}`);
-  console.log(`⏰ Started at: ${new Date().toISOString()}`);
+// Start server with TaskMaster core initialization
+app.listen(PORT, async () => {
+  logger.info(`🚀 TaskMaster Kanban API Server running on port ${PORT}`);
+  logger.info(`📍 Server URL: http://localhost:${PORT}`);
+  logger.info(`🏥 Health check: http://localhost:${PORT}/health`);
+  logger.info(`📚 API docs: http://localhost:${PORT}/api`);
+  logger.info(`⏰ Started at: ${new Date().toISOString()}`);
+
+  // Initialize TaskMaster Core Integration
+  const initResult = await initializeTaskMasterCore();
+
+  logger.info(`🎯 TaskMaster Core Status: ${isTaskMasterInitialized ? 'Active' : 'Fallback Mode'}`);
+  if (isTaskMasterInitialized) {
+    logger.info(`📁 Project Root: ${projectRoot}`);
+    logger.info(`📄 Tasks File: ${tasksJsonPath}`);
+    logger.info(`🔧 Available Functions: ${getAvailableFunctions().length}`);
+  }
+  logger.info(`🧪 Test endpoints: http://localhost:${PORT}/api/core/status`);
+  logger.info(`📋 List tasks: http://localhost:${PORT}/api/core/tasks/list`);
+  logger.info(`➡️  Next task: http://localhost:${PORT}/api/core/tasks/next`);
 });
 
 export default app;
