@@ -1,6 +1,6 @@
-task 6# Task ID: 67
+# Task ID: 67
 # Title: Implement TaskCard Component with Metadata Display
-# Status: pending
+# Status: done
 # Dependencies: 61, 66
 # Priority: high
 # PRD Source: prd_kanban_webapp.md
@@ -16,25 +16,25 @@ Create a `TaskCard` React component that accepts a task object as props. Use `sh
 Render several `TaskCard` components with different task data (varying priorities, dependencies, and descriptions). Verify that all specified metadata fields are displayed correctly and that the styling is consistent with `shadcn/ui` and Tailwind CSS. Test drag-and-drop functionality by attempting to drag `TaskCard` instances within a simulated `DndContext` environment, ensuring they are recognized as draggable items and their visual feedback is correct.
 
 # Subtasks:
-## 1. Create TaskCard Component Structure [pending]
+## 1. Create TaskCard Component Structure [done]
 ### Dependencies: None
 ### Description: Develop the basic structure of the TaskCard component using the shadcn/ui Card component.
 ### Details:
 Set up the initial component structure in the codebase, ensuring it is ready to incorporate task metadata.
 
-## 2. Implement Task Metadata Display [pending]
+## 2. Implement Task Metadata Display [done]
 ### Dependencies: 67.1
 ### Description: Display task metadata including title, description, priority, and dependencies within the TaskCard component.
 ### Details:
 Ensure that the TaskCard component correctly retrieves and displays all relevant task metadata fields.
 
-## 3. Add Responsive Styling and Visual Indicators [pending]
+## 3. Add Responsive Styling and Visual Indicators [done]
 ### Dependencies: 67.1, 67.2
 ### Description: Enhance the TaskCard component with responsive styling and visual indicators for task priority and dependencies.
 ### Details:
 Use CSS and design principles to ensure the TaskCard is visually appealing and adapts to different screen sizes.
 
-## 4. Integrate TaskCard with react-dnd-kit-tailwind-shadcn-ui [pending]
+## 4. Integrate TaskCard with react-dnd-kit-tailwind-shadcn-ui [done]
 ### Dependencies: 67.1, 67.2
 ### Description: Modify the TaskCard component to be compatible with the drag-and-drop system provided by `react-dnd-kit-tailwind-shadcn-ui`.
 ### Details:

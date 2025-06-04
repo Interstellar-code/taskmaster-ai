@@ -17,7 +17,7 @@ export class TaskService {
     }
   }
 
-  static async updateTaskStatus(taskId: string, status: TaskStatus): Promise<Task> {
+  static async updateTaskStatus(taskId: number | string, status: TaskStatus): Promise<Task> {
     try {
       const response = await fetch(`${API_BASE_URL}/tasks/${taskId}/status`, {
         method: 'PATCH',
@@ -26,11 +26,11 @@ export class TaskService {
         },
         body: JSON.stringify({ status }),
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data = await response.json();
       return data.data;
     } catch (error) {
@@ -39,7 +39,7 @@ export class TaskService {
     }
   }
 
-  static async getTaskById(taskId: string): Promise<Task> {
+  static async getTaskById(taskId: number | string): Promise<Task> {
     try {
       const response = await fetch(`${API_BASE_URL}/tasks/${taskId}`);
       if (!response.ok) {

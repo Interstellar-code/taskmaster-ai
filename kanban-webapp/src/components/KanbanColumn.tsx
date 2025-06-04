@@ -1,9 +1,49 @@
 import React from 'react';
 import { useDroppable } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { cva } from 'class-variance-authority';
 import { TaskCard } from './TaskCard';
 import { Badge } from './ui/badge';
-import type { KanbanColumn as KanbanColumnType } from '../types/task';
+import { Card, CardContent, CardHeader } from './ui/card';
+import { ScrollArea } from './ui/scroll-area';
+import type { KanbanColumn as KanbanColumnType, Task } from '../types/task';
+
+// SortableTaskCard wrapper component
+const SortableTaskCard: React.FC<{ task: Task }> = ({ task }) => {
+  const {
+    setNodeRef,
+    attributes,
+    listeners,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: task.id,
+    data: {
+      type: "Task",
+      task,
+    },
+  });
+
+  const style = {
+    transition,
+    transform: CSS.Translate.toString(transform),
+  };
+
+  return (
+    <div ref={setNodeRef} style={style}>
+      <TaskCard
+        task={task}
+        isOverlay={false}
+        // Pass drag attributes and listeners to TaskCard
+        dragAttributes={attributes}
+        dragListeners={listeners}
+        isDragging={isDragging}
+      />
+    </div>
+  );
+};
 
 interface KanbanColumnProps {
   column: KanbanColumnType;
@@ -17,49 +57,51 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({ column }) => {
     },
   });
 
+  const variants = cva(
+    "h-[500px] max-h-[500px] w-[350px] max-w-full bg-primary-foreground flex flex-col flex-shrink-0 snap-center",
+    {
+      variants: {
+        dragging: {
+          default: "border-2 border-transparent",
+          over: "ring-2 opacity-30",
+          overlay: "ring-2 ring-primary",
+        },
+      },
+    }
+  );
+
   return (
-    <div className="flex flex-col h-full">
-      {/* Column Header */}
-      <div className={`
-        p-4 rounded-t-lg border-b-2 
-        ${column.color}
-        ${isOver ? 'ring-2 ring-blue-400 ring-opacity-50' : ''}
-      `}>
+    <Card className={variants({ dragging: isOver ? "over" : "default" })}>
+      <CardHeader className="px-4 py-3 border-b">
         <div className="flex items-center justify-between">
-          <h3 className="font-semibold text-gray-800">{column.title}</h3>
+          <h3 className="font-semibold text-sm">{column.title}</h3>
           <Badge variant="secondary" className="ml-2">
             {column.tasks.length}
           </Badge>
         </div>
-      </div>
+      </CardHeader>
 
-      {/* Tasks Container */}
-      <div
-        ref={setNodeRef}
-        className={`
-          flex-1 p-4 space-y-3 min-h-[200px] bg-gray-50/50 rounded-b-lg border-l-2 border-r-2 border-b-2
-          ${column.color.split(' ')[1]} // Extract border color
-          ${isOver ? 'bg-blue-50' : ''}
-          transition-colors duration-200
-        `}
-      >
-        <SortableContext 
-          items={column.tasks.map(task => task.id)} 
-          strategy={verticalListSortingStrategy}
+      <ScrollArea className="h-full w-full">
+        <CardContent
+          ref={setNodeRef}
+          className="flex flex-col gap-2 p-2"
         >
-          {column.tasks.length === 0 ? (
-            <div className="flex items-center justify-center h-32 text-gray-400 text-sm">
-              No tasks in {column.title.toLowerCase()}
-            </div>
-          ) : (
-            column.tasks.map((task) => (
-              <div key={task.id}>
-                <TaskCard task={task} />
+          <SortableContext
+            items={column.tasks.map(task => task.id)}
+            strategy={verticalListSortingStrategy}
+          >
+            {column.tasks.length === 0 ? (
+              <div className="flex items-center justify-center h-32 text-muted-foreground text-sm">
+                No tasks in {column.title.toLowerCase()}
               </div>
-            ))
-          )}
-        </SortableContext>
-      </div>
-    </div>
+            ) : (
+              column.tasks.map((task) => (
+                <SortableTaskCard key={task.id} task={task} />
+              ))
+            )}
+          </SortableContext>
+        </CardContent>
+      </ScrollArea>
+    </Card>
   );
 };

@@ -6,11 +6,12 @@
       "description": "Integrate bug fixes and improvements from upstream v0.16.0 release while preserving unique custom features including: Kanban board functionality, PRD lifecycle tracking, interactive menu systems, custom AI editor integrations (.augment-guidelines, .cursor/rules, .roo/rules, .windsurfrules), custom task templates and workflow, and enhanced project management features. Focus on: 1) New directory structure (.taskmaster/ consolidation), 2) AWS Bedrock support, 3) Google Vertex AI support, 4) Azure support, 5) Node.js version requirement update, 6) TASK_MASTER_PROJECT_ROOT env variable, 7) Bug fixes for max_tokens and add-task MCP command. Create integration branch dev_rohit for selective merging.",
       "details": "",
       "testStrategy": "",
-      "status": "done",
+      "status": 59,
       "dependencies": [],
       "priority": "high",
       "subtasks": [],
-      "prdSource": null
+      "prdSource": null,
+      "updatedAt": "2025-06-04T10:47:40.108Z"
     },
     {
       "id": 60,
@@ -346,7 +347,7 @@
           "description": "Develop a GET API endpoint to retrieve all tasks from the database.",
           "dependencies": [],
           "details": "This endpoint should connect to the database, fetch all task records, and return them in a JSON format.",
-          "status": "completed",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -363,7 +364,7 @@
             1
           ],
           "details": "Ensure the task data is correctly parsed and formatted to meet the API response standards, including necessary fields and data types.",
-          "status": "completed",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -381,7 +382,7 @@
             2
           ],
           "details": "Ensure that the API handles errors gracefully and validates responses to ensure they meet the expected format and contain all required information.",
-          "status": "completed",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -500,7 +501,8 @@
         "parsedDate": "2025-06-02T21:47:10.025Z",
         "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
         "fileSize": 21070
-      }
+      },
+      "updatedAt": "2025-06-04T08:14:53.496Z"
     },
     {
       "id": 66,
@@ -592,13 +594,14 @@
         "parsedDate": "2025-06-02T21:47:10.025Z",
         "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
         "fileSize": 21070
-      }
+      },
+      "updatedAt": "2025-06-04T08:14:50.203Z"
     },
     {
       "id": 67,
       "title": "Implement TaskCard Component with Metadata Display",
       "description": "Implement the `TaskCard` component to display individual task metadata including title, description, priority, and dependencies, and integrate it with drag-and-drop functionality using `react-dnd-kit-tailwind-shadcn-ui`.",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         61,
         66
@@ -613,7 +616,7 @@
           "description": "Develop the basic structure of the TaskCard component using the shadcn/ui Card component.",
           "dependencies": [],
           "details": "Set up the initial component structure in the codebase, ensuring it is ready to incorporate task metadata.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -630,7 +633,7 @@
             1
           ],
           "details": "Ensure that the TaskCard component correctly retrieves and displays all relevant task metadata fields.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -648,7 +651,7 @@
             2
           ],
           "details": "Use CSS and design principles to ensure the TaskCard is visually appealing and adapts to different screen sizes.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -666,7 +669,7 @@
             2
           ],
           "details": "Implement the necessary hooks and properties (e.g., `useDraggable`) from `react-dnd-kit` as per the `react-dnd-kit-tailwind-shadcn-ui` patterns. Ensure the `TaskCard` component correctly exposes its draggable properties and responds to drag events. Add appropriate data attributes and styling for drag feedback.",
-          "status": "pending",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -688,7 +691,7 @@
       "id": 68,
       "title": "Setup @dnd-kit Library with Drag-and-Drop Context",
       "description": "Integrate the `react-dnd-kit-tailwind-shadcn-ui` library to provide drag-and-drop functionality for the Kanban board, leveraging its pre-built components and patterns.",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
         66
       ],
@@ -701,8 +704,8 @@
           "title": "Install @dnd-kit Packages and Dependencies",
           "description": "Install the necessary @dnd-kit packages and any required dependencies to enable drag-and-drop functionality in the TaskMaster Kanban application.",
           "dependencies": [],
-          "details": "Use npm or yarn to install @dnd-kit/core and any other related packages required for setting up the drag-and-drop context.",
-          "status": "pending",
+          "details": "Use npm or yarn to install @dnd-kit/core and any other related packages required for setting up the drag-and-drop context.\n<info added on 2025-06-04T08:27:15.629Z>\nCompleted: Installed @dnd-kit/modifiers package. All required @dnd-kit packages are now available: @dnd-kit/core (6.3.1), @dnd-kit/sortable (10.0.0), @dnd-kit/utilities (3.2.2), and @dnd-kit/modifiers (latest). Dependencies verified and ready for DndContext setup.\n</info added on 2025-06-04T08:27:15.629Z>",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -718,8 +721,8 @@
           "dependencies": [
             1
           ],
-          "details": "Integrate the DndContext provider into the application, ensuring that sensors for drag-and-drop interactions are correctly set up and collision detection is configured to handle item interactions.",
-          "status": "pending",
+          "details": "Integrate the DndContext provider into the application, ensuring that sensors for drag-and-drop interactions are correctly set up and collision detection is configured to handle item interactions.\n<info added on 2025-06-04T08:36:29.151Z>\nCompleted: DndContext provider is properly set up in KanbanBoard component with enhanced configuration including accessibility announcements, multiple sensor support (Mouse, Touch, Keyboard, Pointer), and proper event handlers (onDragStart, onDragEnd). The provider wraps the Kanban columns and provides the drag-and-drop context for all child components.\n</info added on 2025-06-04T08:36:29.151Z>",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -735,8 +738,8 @@
           "dependencies": [
             2
           ],
-          "details": "Set up a drag overlay to provide visual feedback during drag operations and ensure that the drag-and-drop functionality is accessible, including keyboard navigation and screen reader support.",
-          "status": "pending",
+          "details": "Set up a drag overlay to provide visual feedback during drag operations and ensure that the drag-and-drop functionality is accessible, including keyboard navigation and screen reader support.\n<info added on 2025-06-04T08:36:57.699Z>\nCompleted: DragOverlay is properly configured in KanbanBoard component with TaskCard rendering during drag operations. Accessibility features are fully implemented including comprehensive screen reader announcements for drag start, drag over, drag end, and drag cancel events. The overlay provides visual feedback with proper styling and positioning during drag operations.\n</info added on 2025-06-04T08:36:57.699Z>\n<info added on 2025-06-04T08:37:19.808Z>\nCompleted: DragOverlay is properly configured in KanbanBoard component with TaskCard rendering during drag operations. Accessibility features are fully implemented including comprehensive screen reader announcements for drag start, drag over, drag end, and drag cancel events. The overlay provides visual feedback with proper styling and positioning during drag operations.\n</info added on 2025-06-04T08:37:19.808Z>",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -750,8 +753,8 @@
           "title": "Install react-dnd-kit-tailwind-shadcn-ui Library",
           "description": "Install the specialized `react-dnd-kit-tailwind-shadcn-ui` library which provides pre-built components and patterns for drag-and-drop Kanban boards.",
           "dependencies": [],
-          "details": "Use npm or yarn to install `react-dnd-kit-tailwind-shadcn-ui`. This library will replace the need for manual `@dnd-kit` setup and provide integrated solutions for DndContext, sensors, and collision detection.",
-          "status": "pending",
+          "details": "Use npm or yarn to install `react-dnd-kit-tailwind-shadcn-ui`. This library will replace the need for manual `@dnd-kit` setup and provide integrated solutions for DndContext, sensors, and collision detection.\n<info added on 2025-06-04T08:29:22.151Z>\nCompleted: Downloaded and organized react-dnd-kit-tailwind-shadcn-ui reference code from GitHub repository (Georgegriff/react-dnd-kit-tailwind-shadcn-ui). Created reference components in src/components/dnd-reference/ including KanbanBoard.tsx, BoardColumn.tsx, TaskCard.tsx, utils.ts, and multipleContainersKeyboardPreset.ts. These provide proven patterns for accessible drag-and-drop implementation with @dnd-kit, shadcn/ui, and Tailwind CSS.\n</info added on 2025-06-04T08:29:22.151Z>",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -767,8 +770,8 @@
           "dependencies": [
             4
           ],
-          "details": "Review the documentation and examples provided by `react-dnd-kit-tailwind-shadcn-ui` to understand how to properly wrap the Kanban board components with the library's `DndContext` equivalent. Identify how to configure sensors, collision detection, and drag event handlers (`onDragEnd`, `onDragOver`) using the library's abstractions.",
-          "status": "pending",
+          "details": "Review the documentation and examples provided by `react-dnd-kit-tailwind-shadcn-ui` to understand how to properly wrap the Kanban board components with the library's `DndContext` equivalent. Identify how to configure sensors, collision detection, and drag event handlers (`onDragEnd`, `onDragOver`) using the library's abstractions.\n<info added on 2025-06-04T08:35:44.892Z>\nCompleted: Integrated react-dnd-kit-tailwind-shadcn-ui library patterns into KanbanBoard component. Enhanced DndContext with accessibility announcements, keyboard navigation support (coordinateGetter), touch sensor support, and mouse sensor support. Added helper functions for drag data management and comprehensive screen reader announcements for drag operations. Created utility files (utils.ts, multipleContainersKeyboardPreset.ts) following the proven patterns from the reference library.\n</info added on 2025-06-04T08:35:44.892Z>",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -784,8 +787,8 @@
           "dependencies": [
             5
           ],
-          "details": "Instead of directly using `@dnd-kit/core` components, integrate the pre-built `react-dnd-kit-tailwind-shadcn-ui` components for draggable items, droppable containers, and the overall drag-and-drop context. Ensure that the visual and functional aspects of drag-and-drop are maintained or improved.",
-          "status": "pending",
+          "details": "Instead of directly using `@dnd-kit/core` components, integrate the pre-built `react-dnd-kit-tailwind-shadcn-ui` components for draggable items, droppable containers, and the overall drag-and-drop context. Ensure that the visual and functional aspects of drag-and-drop are maintained or improved.\n<info added on 2025-06-04T08:39:06.509Z>\nCompleted: Enhanced KanbanBoard component with react-dnd-kit-tailwind-shadcn-ui patterns including accessibility announcements, keyboard navigation, touch support, and comprehensive drag-and-drop functionality. Created utility files (utils.ts, multipleContainersKeyboardPreset.ts) and reference components. The DndContext is now fully configured with enhanced sensors and accessibility features following the library's proven patterns.\n</info added on 2025-06-04T08:39:06.509Z>",
+          "status": "done",
           "prdSource": {
             "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/pending/prd_kanban_webapp.md",
             "fileName": "prd_kanban_webapp.md",
@@ -801,7 +804,8 @@
         "parsedDate": "2025-06-02T21:47:10.025Z",
         "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
         "fileSize": 21070
-      }
+      },
+      "updatedAt": "2025-06-04T08:13:39.178Z"
     },
     {
       "id": 69,
@@ -912,7 +916,8 @@
         "parsedDate": "2025-06-02T21:47:10.025Z",
         "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
         "fileSize": 21070
-      }
+      },
+      "updatedAt": "2025-06-04T08:13:41.463Z"
     },
     {
       "id": 70,
@@ -982,7 +987,8 @@
         "parsedDate": "2025-06-02T21:47:10.025Z",
         "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
         "fileSize": 21070
-      }
+      },
+      "updatedAt": "2025-06-04T08:20:05.616Z"
     },
     {
       "id": 71,
@@ -1793,7 +1799,7 @@
       "dependencies": [
         78
       ],
-      "status": "pending",
+      "status": 79,
       "subtasks": [
         {
           "id": 1,
@@ -1891,7 +1897,8 @@
         "parsedDate": "2025-06-02T21:47:10.025Z",
         "fileHash": "26a344cab6840ec0768ff67b41b044bc39c81d2533587fe97cf3d1143a61f936",
         "fileSize": 21070
-      }
+      },
+      "updatedAt": "2025-06-04T09:01:45.855Z"
     },
     {
       "id": 80,
@@ -2225,7 +2232,7 @@
       "id": 85,
       "title": "Convert MCP Direct Functions to REST API Endpoints",
       "description": "Create REST API endpoints for all TaskMaster MCP direct functions to enable web application integration.",
-      "status": "done",
+      "status": 85,
       "dependencies": [
         62,
         63
@@ -2467,10 +2474,11 @@
           "prdSource": null
         }
       ],
-      "prdSource": null
+      "prdSource": null,
+      "updatedAt": "2025-06-04T09:41:18.226Z"
     }
   ],
   "meta": {
-    "updatedAt": "2025-06-03T20:27:29.823Z"
+    "updatedAt": "2025-06-04T09:23:31.452Z"
   }
 }

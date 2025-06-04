@@ -40,11 +40,11 @@ export const useKanban = () => {
   }, []);
 
   // Update task status with optimistic updates
-  const updateTaskStatus = useCallback(async (taskId: string, newStatus: TaskStatus) => {
+  const updateTaskStatus = useCallback(async (taskId: number | string, newStatus: TaskStatus) => {
     // Optimistic update
-    setTasks(prevTasks => 
-      prevTasks.map(task => 
-        task.id === taskId 
+    setTasks(prevTasks =>
+      prevTasks.map(task =>
+        task.id === taskId
           ? { ...task, status: newStatus, updatedAt: new Date().toISOString() }
           : task
       )

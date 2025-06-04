@@ -1,14 +1,16 @@
 export interface Task {
-  id: string;
+  id: number | string;
   title: string;
   description: string;
   status: TaskStatus;
   priority: TaskPriority;
-  dependencies: string[];
+  dependencies: (number | string)[];
   subtasks?: Task[];
-  createdAt: string;
-  updatedAt: string;
-  prdSource?: string;
+  details?: string;
+  testStrategy?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  prdSource?: any;
 }
 
 export type TaskStatus = 'pending' | 'in-progress' | 'done' | 'review' | 'blocked' | 'deferred' | 'cancelled';

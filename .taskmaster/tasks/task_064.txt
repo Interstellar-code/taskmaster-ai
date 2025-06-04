@@ -16,19 +16,19 @@ The endpoint is located in kanban-webapp/server/routes/mcp-api-routes.js and inc
 Use Postman or `curl` to send a GET request to `/api/v1/tasks`. Verify that the API returns a JSON array of tasks, matching the expected data structure. Test CRUD operations to ensure full functionality and robust error handling. Confirm that all functionalities are working as expected post Task 85 completion.
 
 # Subtasks:
-## 1. Create GET Endpoint for Retrieving All Tasks [completed]
+## 1. Create GET Endpoint for Retrieving All Tasks [done]
 ### Dependencies: None
 ### Description: Develop a GET API endpoint to retrieve all tasks from the database.
 ### Details:
 This endpoint should connect to the database, fetch all task records, and return them in a JSON format.
 
-## 2. Implement Task Data Parsing and Formatting [completed]
+## 2. Implement Task Data Parsing and Formatting [done]
 ### Dependencies: 64.1
 ### Description: Parse and format task data retrieved from the database for API response.
 ### Details:
 Ensure the task data is correctly parsed and formatted to meet the API response standards, including necessary fields and data types.
 
-## 3. Add Error Handling and Response Validation [completed]
+## 3. Add Error Handling and Response Validation [done]
 ### Dependencies: 64.1, 64.2
 ### Description: Implement error handling and validate API responses for the task retrieval endpoint.
 ### Details:
