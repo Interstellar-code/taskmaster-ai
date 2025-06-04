@@ -304,7 +304,7 @@
           "description": "Initialize the React project, integrate shadcn/ui, and set up the core infrastructure for form handling using React Hook Form and Zod for validation. This includes configuring the Form component from shadcn/ui to work seamlessly with React Hook Form.",
           "dependencies": [],
           "details": "1. Create a new React project (e.g., with Vite or Next.js). 2. Install and configure shadcn/ui following its official documentation. 3. Install `react-hook-form` and `zod`. 4. Create a base `Form` component (e.g., `components/ui/form.tsx`) that wraps `shadcn/ui`'s Form and integrates with `react-hook-form`'s `useForm` context. 5. Implement a basic example form to verify the setup.",
-          "status": "in-progress",
+          "status": "done",
           "testStrategy": "Create a simple test form with one input field and a submit button. Verify that form submission works and basic Zod validation (e.g., required field) is applied and displayed correctly.",
           "prdSource": null
         },
@@ -316,7 +316,7 @@
             1
           ],
           "details": "1. Create `FormField` wrapper components (e.g., `components/form-fields/FormField.tsx`) that handle displaying labels, error messages, and connecting to `react-hook-form`'s `Controller` or `useFormContext`. 2. Develop `Input` (for text, number, email, etc.), `Textarea`, `Select`, and `Checkbox` components. 3. Ensure each component accepts `name`, `label`, `placeholder`, `description`, and `rules` (for Zod schema definition) props. 4. Implement client-side validation feedback using Zod schemas passed via `react-hook-form`.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Create a Storybook entry or a dedicated test page for each component. Test various configurations: with/without label, placeholder, default value, required validation, pattern validation, and error display.",
           "prdSource": null
         },
@@ -341,7 +341,7 @@
             1
           ],
           "details": "1. Create a generic `Button` component with props for `variant`, `size`, `loading` state, and `onClick` handlers. 2. Develop a `Badge` component for displaying small, contextual information (e.g., status). 3. Implement an `Alert` component for displaying important messages within the form. 4. Set up a `Toast` notification system for global feedback (e.g., form submission success/failure).",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Create Storybook entries for each component, showcasing different variants, sizes, and states. For `Toast`, verify that messages appear and disappear correctly upon form actions (e.g., successful submission).",
           "prdSource": null
         },

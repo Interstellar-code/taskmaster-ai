@@ -12,13 +12,13 @@ Implement shadcn/ui components such as Dialog, Form, Input, Textarea, Select, Bu
 Develop comprehensive unit tests for each reusable component to verify its rendering, props handling, and event emissions. Create integration tests to ensure components compose correctly and client-side validation functions as expected. Manually test each component in a sample form to verify UI/UX, responsiveness, and accessibility across different browsers and devices. Verify that validation messages are displayed correctly and prevent form submission when invalid.
 
 # Subtasks:
-## 1. Setup Project and Core Form Infrastructure [in-progress]
+## 1. Setup Project and Core Form Infrastructure [done]
 ### Dependencies: None
 ### Description: Initialize the React project, integrate shadcn/ui, and set up the core infrastructure for form handling using React Hook Form and Zod for validation. This includes configuring the Form component from shadcn/ui to work seamlessly with React Hook Form.
 ### Details:
 1. Create a new React project (e.g., with Vite or Next.js). 2. Install and configure shadcn/ui following its official documentation. 3. Install `react-hook-form` and `zod`. 4. Create a base `Form` component (e.g., `components/ui/form.tsx`) that wraps `shadcn/ui`'s Form and integrates with `react-hook-form`'s `useForm` context. 5. Implement a basic example form to verify the setup.
 
-## 2. Develop Basic Input and Selection Components [pending]
+## 2. Develop Basic Input and Selection Components [done]
 ### Dependencies: 87.1
 ### Description: Implement reusable `Input`, `Textarea`, `Select`, and `Checkbox` components using shadcn/ui, integrated with React Hook Form and Zod validation. Each component should expose a clear API for labels, placeholders, validation rules, and error messages.
 ### Details:
@@ -30,7 +30,7 @@ Develop comprehensive unit tests for each reusable component to verify its rende
 ### Details:
 1. Create a `DatePicker` component that combines `shadcn/ui`'s `Calendar` and `Popover` components, allowing date selection. Integrate it with `react-hook-form`. 2. Develop a reusable `DropdownMenu` component that can be used for various selection or action scenarios within forms. 3. Implement a `Command` component (e.g., for a searchable select/combobox) that integrates with `react-hook-form` for value selection.
 
-## 4. Develop Action and Display Components [pending]
+## 4. Develop Action and Display Components [done]
 ### Dependencies: 87.1
 ### Description: Implement reusable `Button`, `Badge`, `Alert`, and `Toast` components using shadcn/ui. Focus on their reusability and configurability for various states and purposes within a form context (e.g., submit buttons, status indicators, notifications).
 ### Details:

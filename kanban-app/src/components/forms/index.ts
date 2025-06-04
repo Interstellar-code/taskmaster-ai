@@ -21,6 +21,16 @@ export { FormTagInput } from './FormTagInput';
 export { FormSection } from './FormSection';
 export { FormActions } from './FormActions';
 
+// Action and display components
+export { FormButton } from './FormButton';
+export { FormBadge } from './FormBadge';
+export { FormAlert } from './FormAlert';
+export { FormToast, useFormToast } from './FormToast';
+
+// Complete form examples
+export { TaskForm } from './TaskForm';
+export { FormDemo } from './FormDemo';
+
 // Validation schemas
 export * from './schemas';
 
