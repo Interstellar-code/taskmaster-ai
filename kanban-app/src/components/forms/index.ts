@@ -34,6 +34,7 @@ export { FormDropdownMenu } from './FormDropdownMenu';
 
 // Complete form examples
 export { TaskForm } from './TaskForm';
+export { TaskCreateModal } from './TaskCreateModal';
 export { FormDemo } from './FormDemo';
 
 // Validation schemas

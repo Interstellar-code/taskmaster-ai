@@ -23,6 +23,7 @@ import { hasDraggableData } from "./utils";
 import { coordinateGetter } from "./multipleContainersKeyboardPreset";
 import { taskService } from "../api/taskService";
 import type { EnhancedKanbanTask, ColumnId as ApiColumnId } from "../api/types";
+import { TaskCreateModal } from "./forms/TaskCreateModal";
 
 const defaultCols = [
   {
@@ -70,37 +71,37 @@ export function EnhancedKanbanBoard() {
   const [error, setError] = useState<string | null>(null);
 
   // Load tasks from TaskMaster API
-  useEffect(() => {
-    async function loadTasks() {
-      try {
-        setLoading(true);
-        setError(null);
+  const loadTasks = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-        // Check if API is available
-        const isHealthy = await taskService.healthCheck();
-        if (!isHealthy) {
-          throw new Error('TaskMaster API is not available');
-        }
-
-        const tasksByColumns = await taskService.getEnhancedTasksByColumns();
-
-        // Convert to EnhancedTask format for existing components
-        const allTasks: EnhancedTask[] = [];
-        Object.entries(tasksByColumns).forEach(([columnId, enhancedKanbanTasks]) => {
-          enhancedKanbanTasks.forEach(enhancedKanbanTask => {
-            allTasks.push(enhancedKanbanTaskToTask(enhancedKanbanTask));
-          });
-        });
-
-        setTasks(allTasks);
-      } catch (err) {
-        console.error('Failed to load tasks:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load tasks');
-      } finally {
-        setLoading(false);
+      // Check if API is available
+      const isHealthy = await taskService.healthCheck();
+      if (!isHealthy) {
+        throw new Error('TaskMaster API is not available');
       }
-    }
 
+      const tasksByColumns = await taskService.getEnhancedTasksByColumns();
+
+      // Convert to EnhancedTask format for existing components
+      const allTasks: EnhancedTask[] = [];
+      Object.entries(tasksByColumns).forEach(([columnId, enhancedKanbanTasks]) => {
+        enhancedKanbanTasks.forEach(enhancedKanbanTask => {
+          allTasks.push(enhancedKanbanTaskToTask(enhancedKanbanTask));
+        });
+      });
+
+      setTasks(allTasks);
+    } catch (err) {
+      console.error('Failed to load tasks:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load tasks');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     loadTasks();
   }, []);
 
@@ -226,63 +227,76 @@ export function EnhancedKanbanBoard() {
   }
 
   return (
-    <DndContext
-      accessibility={{
-        announcements,
-      }}
-      sensors={sensors}
-      onDragStart={onDragStart}
-      onDragEnd={onDragEnd}
-      onDragOver={onDragOver}
-    >
-      <BoardContainer>
-        {columns.map((col) => (
-          <BoardColumn
-            key={col.id}
-            column={col}
-            tasks={tasks.filter((task) => task.columnId === col.id)}
-            renderTask={(task) => (
-              <EnhancedTaskCard
-                key={task.id}
-                task={task.enhancedData}
-                onTaskClick={(taskId) => {
-                  console.log('Task clicked:', taskId);
-                  // TODO: Implement task detail modal
-                }}
-              />
-            )}
-          />
-        ))}
-      </BoardContainer>
+    <div className="space-y-4">
+      {/* Kanban Board Header */}
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-4">
+          <h2 className="text-2xl font-semibold">Tasks</h2>
+          <div className="text-sm text-muted-foreground">
+            {tasks.length} total tasks
+          </div>
+        </div>
+        <TaskCreateModal onTaskCreated={loadTasks} />
+      </div>
 
-      {"document" in window &&
-        createPortal(
-          <DragOverlay>
-            {activeColumn && (
-              <BoardColumn
-                isOverlay
-                column={activeColumn}
-                tasks={tasks.filter(
-                  (task) => task.columnId === activeColumn.id
-                )}
-                renderTask={(task) => (
-                  <EnhancedTaskCard 
-                    task={task.enhancedData}
-                    isOverlay
-                  />
-                )}
-              />
-            )}
-            {activeTask && (
-              <EnhancedTaskCard 
-                task={activeTask.enhancedData} 
-                isOverlay 
-              />
-            )}
-          </DragOverlay>,
-          document.body
-        )}
-    </DndContext>
+      <DndContext
+        accessibility={{
+          announcements,
+        }}
+        sensors={sensors}
+        onDragStart={onDragStart}
+        onDragEnd={onDragEnd}
+        onDragOver={onDragOver}
+      >
+        <BoardContainer>
+          {columns.map((col) => (
+            <BoardColumn
+              key={col.id}
+              column={col}
+              tasks={tasks.filter((task) => task.columnId === col.id)}
+              renderTask={(task) => (
+                <EnhancedTaskCard
+                  key={task.id}
+                  task={task.enhancedData}
+                  onTaskClick={(taskId) => {
+                    console.log('Task clicked:', taskId);
+                    // TODO: Implement task detail modal
+                  }}
+                />
+              )}
+            />
+          ))}
+        </BoardContainer>
+
+        {"document" in window &&
+          createPortal(
+            <DragOverlay>
+              {activeColumn && (
+                <BoardColumn
+                  isOverlay
+                  column={activeColumn}
+                  tasks={tasks.filter(
+                    (task) => task.columnId === activeColumn.id
+                  )}
+                  renderTask={(task) => (
+                    <EnhancedTaskCard
+                      task={task.enhancedData}
+                      isOverlay
+                    />
+                  )}
+                />
+              )}
+              {activeTask && (
+                <EnhancedTaskCard
+                  task={activeTask.enhancedData}
+                  isOverlay
+                />
+              )}
+            </DragOverlay>,
+            document.body
+          )}
+      </DndContext>
+    </div>
   );
 
   function onDragStart(event: DragStartEvent) {
