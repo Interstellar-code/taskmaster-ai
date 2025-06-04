@@ -14,6 +14,7 @@ export { FormDatePicker } from './FormDatePicker';
 
 // Advanced components
 export { FormCombobox } from './FormCombobox';
+export { FormMultiCombobox } from './FormMultiCombobox';
 export { FormMultiSelect } from './FormMultiSelect';
 export { FormTagInput } from './FormTagInput';
 
@@ -33,7 +34,6 @@ export { FormContextMenu } from './FormContextMenu';
 export { FormDropdownMenu } from './FormDropdownMenu';
 
 // Complete form examples
-export { TaskForm } from './TaskForm';
 export { TaskCreateModal } from './TaskCreateModal';
 export { FormDemo } from './FormDemo';
 

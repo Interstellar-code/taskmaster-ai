@@ -12,6 +12,10 @@ export interface TaskFormData {
   assignee?: string;
   dueDate?: Date;
   attachments?: File[];
+  details?: string;
+  testStrategy?: string;
+  prdSource?: string;
+  subtasks?: SimpleSubtask[];
 }
 
 // Bulk operation interface for batch operations
@@ -23,6 +27,13 @@ export interface BulkOperation {
 
 // Valid task statuses
 export type TaskStatus = 'pending' | 'in-progress' | 'done' | 'review' | 'blocked' | 'deferred' | 'cancelled';
+
+// Simple subtask interface for form creation
+export interface SimpleSubtask {
+  id: string;
+  title: string;
+  completed: boolean;
+}
 
 // Task creation request interface
 export interface CreateTaskRequest {
@@ -37,6 +48,7 @@ export interface CreateTaskRequest {
   dueDate?: string; // ISO string format
   details?: string;
   testStrategy?: string;
+  subtasks?: SimpleSubtask[]; // Support for subtasks in creation
 }
 
 // Task update request interface

@@ -53,7 +53,7 @@ export function BoardColumn({ column, tasks, isOverlay, renderTask }: BoardColum
   };
 
   const variants = cva(
-    "h-[85vh] max-h-[85vh] w-[350px] max-w-full bg-primary-foreground flex flex-col flex-shrink-0 snap-center transition-colors",
+    "h-[85vh] max-h-[85vh] w-full max-w-full bg-primary-foreground flex flex-col flex-shrink-0 snap-center transition-colors",
     {
       variants: {
         dragging: {
@@ -81,17 +81,32 @@ export function BoardColumn({ column, tasks, isOverlay, renderTask }: BoardColum
         <span className="text-lg">{column.title} ({tasks.length})</span>
       </CardHeader>
       <ScrollArea className="flex-1">
-        <CardContent className="flex flex-grow flex-col gap-2 p-2 min-h-[calc(85vh-80px)]">
+        <CardContent className="flex flex-grow flex-col gap-2 p-4 min-h-[calc(85vh-80px)] relative">
           <SortableContext items={tasksIds}>
             {tasks.map((task) => (
               renderTask ? renderTask(task) : <TaskCard key={task.id} task={task} />
             ))}
-            {/* Empty drop zone when no tasks */}
-            {tasks.length === 0 && (
-              <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm border-2 border-dashed border-muted rounded-lg p-8 min-h-[200px]">
-                Drop tasks here
-              </div>
-            )}
+            {/* Enhanced drop zone - always present for better UX */}
+            <div className={`
+              flex-1 flex items-center justify-center text-muted-foreground text-sm
+              border-2 border-dashed rounded-lg transition-all duration-200
+              ${tasks.length === 0
+                ? 'border-muted p-8 min-h-[300px]'
+                : 'border-transparent p-4 min-h-[100px] hover:border-muted/50'
+              }
+              ${isOver ? 'border-blue-400 bg-blue-50/50 dark:bg-blue-950/50' : ''}
+            `}>
+              {tasks.length === 0 ? (
+                <div className="text-center">
+                  <div className="text-lg mb-2">📋</div>
+                  <div>Drop tasks here</div>
+                </div>
+              ) : (
+                <div className="opacity-0 hover:opacity-50 transition-opacity">
+                  Drop tasks here
+                </div>
+              )}
+            </div>
           </SortableContext>
         </CardContent>
       </ScrollArea>
@@ -117,7 +132,7 @@ export function BoardContainer({ children }: { children: React.ReactNode }) {
         dragging: dndContext.active ? "active" : "default",
       })}
     >
-      <div className="flex gap-4 items-center flex-row justify-center">
+      <div className="grid grid-cols-3 gap-4 w-full max-w-7xl mx-auto px-4">
         {children}
       </div>
       <ScrollBar orientation="horizontal" />

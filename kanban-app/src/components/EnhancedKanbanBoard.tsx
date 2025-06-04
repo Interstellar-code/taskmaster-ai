@@ -22,8 +22,11 @@ import type { Column } from "./BoardColumn";
 import { hasDraggableData } from "./utils";
 import { coordinateGetter } from "./multipleContainersKeyboardPreset";
 import { taskService } from "../api/taskService";
-import type { EnhancedKanbanTask, ColumnId as ApiColumnId } from "../api/types";
+import type { EnhancedKanbanTask, ColumnId as ApiColumnId, TaskMasterTask } from "../api/types";
 import { TaskCreateModal } from "./forms/TaskCreateModal";
+import { Button } from "./ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { X, Filter } from "lucide-react";
 
 const defaultCols = [
   {
@@ -67,8 +70,13 @@ export function EnhancedKanbanBoard() {
   const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
 
   const [tasks, setTasks] = useState<EnhancedTask[]>([]);
+  const [allTasks, setAllTasks] = useState<TaskMasterTask[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Filtering state
+  const [selectedPRD, setSelectedPRD] = useState<string>('all');
+  const [availablePRDs, setAvailablePRDs] = useState<Array<{id: string, title: string}>>([]);
 
   // Load tasks from TaskMaster API
   const loadTasks = async () => {
@@ -82,17 +90,42 @@ export function EnhancedKanbanBoard() {
         throw new Error('TaskMaster API is not available');
       }
 
+      // Get all tasks with full data for PRD filtering
+      const allTasksData = await taskService.getAllTasks();
+
+      // Sort tasks by ID descending (latest on top)
+      const sortedTasks = allTasksData.sort((a, b) => {
+        const idA = typeof a.id === 'string' ? parseInt(a.id) : a.id;
+        const idB = typeof b.id === 'string' ? parseInt(b.id) : b.id;
+        return idB - idA;
+      });
+
+      setAllTasks(sortedTasks);
+
+      // Extract unique PRDs for filtering
+      const prds = new Set<string>();
+      sortedTasks.forEach(task => {
+        if (task.prdSource?.fileName) {
+          prds.add(task.prdSource.fileName);
+        }
+      });
+
+      setAvailablePRDs(Array.from(prds).map(prd => ({
+        id: prd,
+        title: prd.replace(/\.(md|txt)$/i, '') // Remove file extension for display
+      })));
+
       const tasksByColumns = await taskService.getEnhancedTasksByColumns();
 
       // Convert to EnhancedTask format for existing components
-      const allTasks: EnhancedTask[] = [];
+      const allTasksList: EnhancedTask[] = [];
       Object.entries(tasksByColumns).forEach(([columnId, enhancedKanbanTasks]) => {
         enhancedKanbanTasks.forEach(enhancedKanbanTask => {
-          allTasks.push(enhancedKanbanTaskToTask(enhancedKanbanTask));
+          allTasksList.push(enhancedKanbanTaskToTask(enhancedKanbanTask));
         });
       });
 
-      setTasks(allTasks);
+      setTasks(allTasksList);
     } catch (err) {
       console.error('Failed to load tasks:', err);
       setError(err instanceof Error ? err.message : 'Failed to load tasks');
@@ -108,6 +141,20 @@ export function EnhancedKanbanBoard() {
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
   const [activeTask, setActiveTask] = useState<EnhancedTask | null>(null);
 
+  // Filter tasks based on selected PRD
+  const filteredTasks = useMemo(() => {
+    if (selectedPRD === 'all') {
+      return tasks;
+    }
+
+    // Filter tasks by PRD source
+    const filteredTaskIds = allTasks
+      .filter(task => task.prdSource?.fileName === selectedPRD)
+      .map(task => String(task.id));
+
+    return tasks.filter(task => filteredTaskIds.includes(String(task.id)));
+  }, [tasks, allTasks, selectedPRD]);
+
   const sensors = useSensors(
     useSensor(MouseSensor),
     useSensor(TouchSensor),
@@ -117,7 +164,7 @@ export function EnhancedKanbanBoard() {
   );
 
   function getDraggingTaskData(taskId: UniqueIdentifier, columnId: ColumnId) {
-    const tasksInColumn = tasks.filter((task) => task.columnId === columnId);
+    const tasksInColumn = filteredTasks.filter((task) => task.columnId === columnId);
     const taskPosition = tasksInColumn.findIndex((task) => task.id === taskId);
     const column = columns.find((col) => col.id === columnId);
     return {
@@ -228,12 +275,49 @@ export function EnhancedKanbanBoard() {
 
   return (
     <div className="space-y-4">
+      {/* Filter Controls */}
+      <div className="flex items-center gap-4 p-4 bg-background border rounded-lg">
+        <div className="flex items-center gap-2">
+          <Filter className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm font-medium">Filter by PRD:</span>
+        </div>
+
+        <Select value={selectedPRD} onValueChange={setSelectedPRD}>
+          <SelectTrigger className="w-64">
+            <SelectValue placeholder="Select PRD..." />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Tasks</SelectItem>
+            {availablePRDs.map((prd) => (
+              <SelectItem key={prd.id} value={prd.id}>
+                {prd.title}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        {selectedPRD !== 'all' && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setSelectedPRD('all')}
+            className="h-8 px-2"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        )}
+
+        <div className="ml-auto text-sm text-muted-foreground">
+          {filteredTasks.length} of {tasks.length} tasks
+        </div>
+      </div>
+
       {/* Kanban Board Header */}
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-4">
           <h2 className="text-2xl font-semibold">Tasks</h2>
           <div className="text-sm text-muted-foreground">
-            {tasks.length} total tasks
+            {filteredTasks.length} total tasks
           </div>
         </div>
         <TaskCreateModal onTaskCreated={loadTasks} />
@@ -253,7 +337,7 @@ export function EnhancedKanbanBoard() {
             <BoardColumn
               key={col.id}
               column={col}
-              tasks={tasks.filter((task) => task.columnId === col.id)}
+              tasks={filteredTasks.filter((task) => task.columnId === col.id)}
               renderTask={(task) => (
                 <EnhancedTaskCard
                   key={task.id}
@@ -275,7 +359,7 @@ export function EnhancedKanbanBoard() {
                 <BoardColumn
                   isOverlay
                   column={activeColumn}
-                  tasks={tasks.filter(
+                  tasks={filteredTasks.filter(
                     (task) => task.columnId === activeColumn.id
                   )}
                   renderTask={(task) => (
@@ -340,11 +424,11 @@ export function EnhancedKanbanBoard() {
 
     // Im dropping a Task over another Task
     if (isActiveATask && isOverATask) {
-      setTasks((tasks) => {
-        const activeIndex = tasks.findIndex((t) => t.id === activeId);
-        const overIndex = tasks.findIndex((t) => t.id === overId);
-        const activeTask = tasks[activeIndex];
-        const overTask = tasks[overIndex];
+      setTasks((currentTasks) => {
+        const activeIndex = currentTasks.findIndex((t) => t.id === activeId);
+        const overIndex = currentTasks.findIndex((t) => t.id === overId);
+        const activeTask = currentTasks[activeIndex];
+        const overTask = currentTasks[overIndex];
         if (
           activeTask &&
           overTask &&
@@ -363,10 +447,10 @@ export function EnhancedKanbanBoard() {
 
           activeTask.columnId = overTask.columnId;
           activeTask.enhancedData.columnId = overTask.columnId;
-          return arrayMove(tasks, activeIndex, overIndex - 1);
+          return arrayMove(currentTasks, activeIndex, overIndex - 1);
         }
 
-        return arrayMove(tasks, activeIndex, overIndex);
+        return arrayMove(currentTasks, activeIndex, overIndex);
       });
     }
 
@@ -374,9 +458,9 @@ export function EnhancedKanbanBoard() {
 
     // Im dropping a Task over a column
     if (isActiveATask && isOverAColumn) {
-      setTasks((tasks) => {
-        const activeIndex = tasks.findIndex((t) => t.id === activeId);
-        const activeTask = tasks[activeIndex];
+      setTasks((currentTasks) => {
+        const activeIndex = currentTasks.findIndex((t) => t.id === activeId);
+        const activeTask = currentTasks[activeIndex];
         if (activeTask) {
           const newColumnId = overId as ApiColumnId;
 
@@ -394,9 +478,9 @@ export function EnhancedKanbanBoard() {
 
           activeTask.columnId = overId as ColumnId;
           activeTask.enhancedData.columnId = overId as ColumnId;
-          return arrayMove(tasks, activeIndex, activeIndex);
+          return arrayMove(currentTasks, activeIndex, activeIndex);
         }
-        return tasks;
+        return currentTasks;
       });
     }
   }

@@ -100,6 +100,20 @@ export interface FormComboboxProps<
 }
 
 /**
+ * Props for multi-combobox components
+ */
+export interface FormMultiComboboxProps<
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+> extends BaseFormFieldProps<TFieldValues, TName> {
+  options: SelectOption[];
+  maxSelections?: number;
+  searchPlaceholder?: string;
+  emptyMessage?: string;
+  showSelectedCount?: boolean;
+}
+
+/**
  * Props for multi-select components
  */
 export interface FormMultiSelectProps<

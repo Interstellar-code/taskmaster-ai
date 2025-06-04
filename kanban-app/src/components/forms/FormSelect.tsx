@@ -57,7 +57,7 @@ export function FormSelect<
           )}
           <Select
             onValueChange={field.onChange}
-            defaultValue={field.value}
+            value={field.value}
             disabled={disabled}
           >
             <FormControl>
@@ -76,7 +76,7 @@ export function FormSelect<
             </FormControl>
             <SelectContent>
               {options.length === 0 ? (
-                <SelectItem value="" disabled>
+                <SelectItem value="__empty__" disabled>
                   {emptyText}
                 </SelectItem>
               ) : (

@@ -13,7 +13,7 @@ interface FormButtonProps extends ButtonProps {
 
 /**
  * Enhanced form button component with loading states and icons
- * 
+ *
  * Features:
  * - Loading state with spinner
  * - Icon support with positioning
@@ -21,7 +21,10 @@ interface FormButtonProps extends ButtonProps {
  * - All standard button variants and sizes
  * - Form-specific styling and behavior
  */
-export function FormButton({
+export const FormButton = React.forwardRef<
+  React.ElementRef<typeof Button>,
+  FormButtonProps
+>(({
   children,
   loading = false,
   loadingText,
@@ -31,7 +34,7 @@ export function FormButton({
   disabled,
   className,
   ...props
-}: FormButtonProps) {
+}, ref) => {
   const isDisabled = disabled || loading;
   
   const renderIcon = () => {
@@ -61,6 +64,7 @@ export function FormButton({
   return (
     <Button
       {...props}
+      ref={ref}
       disabled={isDisabled}
       className={cn(
         fullWidth && 'w-full',
@@ -71,6 +75,6 @@ export function FormButton({
       {renderContent()}
     </Button>
   );
-}
+});
 
 FormButton.displayName = 'FormButton';

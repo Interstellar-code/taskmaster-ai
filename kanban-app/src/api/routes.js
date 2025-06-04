@@ -174,7 +174,7 @@ router.delete('/tasks/:id/dependencies/:dependencyId', requireTaskMasterCore, as
 
 /**
  * POST /api/v1/tasks
- * Add a new task with enhanced validation
+ * Add a new task with enhanced validation and subtask support
  */
 router.post('/tasks', requireTaskMasterCore, async (req, res) => {
   const {
@@ -192,7 +192,8 @@ router.post('/tasks', requireTaskMasterCore, async (req, res) => {
     assignee,
     dueDate,
     details,
-    testStrategy
+    testStrategy,
+    subtasks = [] // Extract subtasks from request
   } = req.body;
 
   const tasksJsonPath = req.app.locals.tasksJsonPath;
@@ -208,75 +209,136 @@ router.post('/tasks', requireTaskMasterCore, async (req, res) => {
     });
   }
 
-  // If structured data is provided, validate it
-  if (title || description) {
-    const taskData = {
-      title,
-      description,
-      priority,
-      status,
-      dependencies,
-      tags,
-      estimatedHours,
-      assignee,
-      dueDate,
-      details,
-      testStrategy
-    };
+  try {
+    let taskResult;
 
-    const validationErrors = validateCreateTaskData(taskData);
-    if (validationErrors.length > 0) {
+    // If structured data is provided, validate it
+    if (title || description) {
+      const taskData = {
+        title,
+        description,
+        priority,
+        status,
+        dependencies,
+        tags,
+        estimatedHours,
+        assignee,
+        dueDate,
+        details,
+        testStrategy
+      };
+
+      const validationErrors = validateCreateTaskData(taskData);
+      if (validationErrors.length > 0) {
+        return res.status(400).json({
+          success: false,
+          error: 'Validation error',
+          message: 'Invalid task data provided',
+          details: validationErrors,
+          timestamp: new Date().toISOString()
+        });
+      }
+
+      // Create the main task first
+      taskResult = await addTaskDirect(
+        {
+          tasksJsonPath,
+          title,
+          description,
+          priority,
+          dependencies,
+          projectRoot,
+          details: details || description,
+          testStrategy: testStrategy || ''
+        },
+        logger
+      );
+    } else {
+      // Legacy prompt-based creation
+      taskResult = await addTaskDirect(
+        {
+          tasksJsonPath,
+          prompt,
+          dependencies,
+          priority,
+          research,
+          manualTaskData,
+          projectRoot
+        },
+        logger
+      );
+    }
+
+    // Check if main task creation was successful
+    if (!taskResult.success) {
       return res.status(400).json({
         success: false,
-        error: 'Validation error',
-        message: 'Invalid task data provided',
-        details: validationErrors,
+        error: taskResult.error.code || 'TASK_CREATION_FAILED',
+        message: taskResult.error.message,
         timestamp: new Date().toISOString()
       });
     }
 
-    // Convert structured data to the format expected by addTaskDirect
-    await handleDirectFunction(
-      addTaskDirect,
-      {
-        tasksJsonPath,
-        title,
-        description,
-        priority,
-        dependencies,
-        projectRoot,
-        // Pass additional fields as manualTaskData for metadata
-        manualTaskData: {
-          status,
-          details: details || description,
-          testStrategy: testStrategy || '',
-          metadata: {
-            tags,
-            estimatedHours,
-            assignee,
-            dueDate: dueDate ? new Date(dueDate).toISOString() : undefined
+    const newTaskId = taskResult.data.taskId;
+    const createdSubtasks = [];
+
+    // Create subtasks if provided
+    if (subtasks && subtasks.length > 0) {
+      logger.info(`Creating ${subtasks.length} subtasks for task ${newTaskId}`);
+
+      for (const subtask of subtasks) {
+        try {
+          // Convert simple subtask format to TaskMaster format
+          const subtaskResult = await addSubtaskDirect(
+            {
+              tasksJsonPath,
+              id: newTaskId.toString(),
+              title: subtask.title,
+              description: subtask.title, // Use title as description if no description provided
+              details: '',
+              status: subtask.completed ? 'done' : 'pending',
+              dependencies: '', // No dependencies for now
+              skipGenerate: true // Skip file generation for individual subtasks
+            },
+            logger
+          );
+
+          if (subtaskResult.success) {
+            createdSubtasks.push(subtaskResult.data.subtask);
+            logger.info(`Created subtask ${subtaskResult.data.message}`);
+          } else {
+            logger.warn(`Failed to create subtask "${subtask.title}": ${subtaskResult.error.message}`);
           }
+        } catch (error) {
+          logger.error(`Error creating subtask "${subtask.title}": ${error.message}`);
         }
+      }
+    }
+
+    // Return success response with task and subtask information
+    res.json({
+      success: true,
+      data: {
+        taskId: newTaskId,
+        message: `Successfully created task #${newTaskId}${createdSubtasks.length > 0 ? ` with ${createdSubtasks.length} subtasks` : ''}`,
+        subtasksCreated: createdSubtasks.length,
+        telemetryData: taskResult.data.telemetryData
       },
-      res,
-      'addTaskDirect'
-    );
-  } else {
-    // Legacy prompt-based creation
-    await handleDirectFunction(
-      addTaskDirect,
-      {
-        tasksJsonPath,
-        prompt,
-        dependencies,
-        priority,
-        research,
-        manualTaskData,
-        projectRoot
+      metadata: {
+        function: 'addTaskDirect',
+        timestamp: new Date().toISOString()
       },
-      res,
-      'addTaskDirect'
-    );
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    logger.error(`Error in task creation: ${error.message}`);
+    res.status(500).json({
+      success: false,
+      error: 'INTERNAL_SERVER_ERROR',
+      message: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
+      timestamp: new Date().toISOString()
+    });
   }
 });
 

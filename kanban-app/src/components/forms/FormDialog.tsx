@@ -82,7 +82,6 @@ export function FormDialog({
       )}
       onPointerDownOutside={closable ? undefined : (e) => e.preventDefault()}
       onEscapeKeyDown={closable ? undefined : (e) => e.preventDefault()}
-      showCloseButton={showCloseButton && closable}
     >
       {(title || description) && (
         <DialogHeader>
