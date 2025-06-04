@@ -1,65 +1,9 @@
 {
-  "prds": [
-    {
-      "id": "prd_001",
-      "title": "prd_kanban_webapp",
-      "fileName": "prd_kanban_webapp.md",
-      "status": "in-progress",
-      "complexity": "medium",
-      "createdDate": "2025-06-02T21:47:53.764Z",
-      "lastModified": "2025-06-03T11:20:40.315Z",
-      "filePath": "C:\\laragon\\www\\taskmaster-ai\\.taskmaster\\prd\\pending\\prd_kanban_webapp.md",
-      "fileHash": "5f55f8f58e41c06488c455cfbfcb82240d338b67bf166ec8840cce22ffd0241f",
-      "fileSize": 21407,
-      "description": "PRD parsed and registered automatically during task generation",
-      "tags": [
-        "auto-generated",
-        "parsed"
-      ],
-      "linkedTaskIds": [
-        60,
-        61,
-        62,
-        63,
-        64,
-        65,
-        66,
-        67,
-        68,
-        69,
-        70,
-        71,
-        72,
-        73,
-        74,
-        75,
-        76,
-        77,
-        78,
-        79,
-        80,
-        81,
-        82,
-        83
-      ],
-      "taskStats": {
-        "totalTasks": 24,
-        "completedTasks": 0,
-        "pendingTasks": 19,
-        "inProgressTasks": 5,
-        "blockedTasks": 0,
-        "deferredTasks": 0,
-        "cancelledTasks": 0,
-        "completionPercentage": 0
-      },
-      "estimatedEffort": "2-4 hours",
-      "priority": "medium"
-    }
-  ],
+  "prds": [],
   "metadata": {
     "version": "1.0.0",
-    "lastUpdated": "2025-06-03T16:51:37.856Z",
-    "totalPrds": 1,
+    "lastUpdated": "2025-06-04T13:59:34.021Z",
+    "totalPrds": 0,
     "schema": {
       "version": "1.0.0",
       "description": "TaskMaster AI PRD Lifecycle Tracking Schema"
