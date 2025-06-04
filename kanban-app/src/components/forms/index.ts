@@ -30,6 +30,7 @@ export { FormToast, useFormToast } from './FormToast';
 // Dialog and context menu components
 export { FormDialog, ConfirmDialog } from './FormDialog';
 export { FormContextMenu } from './FormContextMenu';
+export { FormDropdownMenu } from './FormDropdownMenu';
 
 // Complete form examples
 export { TaskForm } from './TaskForm';

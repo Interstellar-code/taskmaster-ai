@@ -21,6 +21,7 @@ import {
   FormDialog,
   ConfirmDialog,
   FormContextMenu,
+  FormDropdownMenu,
 } from './index';
 import { TaskFormSchema, TaskFormData } from './schemas';
 
@@ -245,6 +246,55 @@ export function FormDemo() {
                         Right-click me to see the context menu
                       </div>
                     </FormContextMenu>
+                  </div>
+
+                  <div>
+                    <h4 className="text-sm font-medium mb-2">Dropdown Menu</h4>
+                    <div className="flex gap-2">
+                      <FormDropdownMenu
+                        groups={[
+                          {
+                            type: 'actions',
+                            actions: [
+                              {
+                                id: 'edit',
+                                label: 'Edit',
+                                shortcut: 'Ctrl+E',
+                                onSelect: () => showInfo('Edit!', 'Edit action triggered'),
+                              },
+                              {
+                                id: 'duplicate',
+                                label: 'Duplicate',
+                                shortcut: 'Ctrl+D',
+                                onSelect: () => showInfo('Duplicated!', 'Item duplicated'),
+                              },
+                            ],
+                          },
+                          {
+                            type: 'separator',
+                          },
+                          {
+                            type: 'actions',
+                            actions: [
+                              {
+                                id: 'archive',
+                                label: 'Archive',
+                                onSelect: () => showWarning('Archived!', 'Item archived'),
+                              },
+                              {
+                                id: 'delete',
+                                label: 'Delete',
+                                destructive: true,
+                                shortcut: 'Del',
+                                onSelect: () => showError('Deleted!', 'Item deleted'),
+                              },
+                            ],
+                          },
+                        ]}
+                      >
+                        <FormButton variant="outline">Actions ▼</FormButton>
+                      </FormDropdownMenu>
+                    </div>
                   </div>
                 </div>
               </FormSection>

@@ -96,6 +96,7 @@ export interface FormComboboxProps<
   searchable?: boolean;
   emptyText?: string;
   searchPlaceholder?: string;
+  onValueChange?: (value: string) => void;
 }
 
 /**

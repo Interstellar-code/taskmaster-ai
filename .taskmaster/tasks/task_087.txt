@@ -1,6 +1,6 @@
 # Task ID: 87
 # Title: Develop Reusable Frontend Form Components
-# Status: in-progress
+# Status: done
 # Dependencies: 86
 # Priority: high
 # PRD Source: None (manually created)
@@ -24,7 +24,7 @@ Develop comprehensive unit tests for each reusable component to verify its rende
 ### Details:
 1. Create `FormField` wrapper components (e.g., `components/form-fields/FormField.tsx`) that handle displaying labels, error messages, and connecting to `react-hook-form`'s `Controller` or `useFormContext`. 2. Develop `Input` (for text, number, email, etc.), `Textarea`, `Select`, and `Checkbox` components. 3. Ensure each component accepts `name`, `label`, `placeholder`, `description`, and `rules` (for Zod schema definition) props. 4. Implement client-side validation feedback using Zod schemas passed via `react-hook-form`.
 
-## 3. Implement Date Picker and Advanced Selection Components [pending]
+## 3. Implement Date Picker and Advanced Selection Components [done]
 ### Dependencies: 87.1, 87.2
 ### Description: Develop reusable `DatePicker` (using `Calendar` and `Popover`), `DropdownMenu`, and `Command` (for search/select) components, integrated with React Hook Form and Zod validation.
 ### Details:

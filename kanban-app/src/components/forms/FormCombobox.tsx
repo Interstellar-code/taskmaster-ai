@@ -11,6 +11,14 @@ import {
 } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -20,6 +28,14 @@ import { FormComboboxProps } from './types';
 
 /**
  * Reusable form combobox component with search functionality
+ *
+ * Features:
+ * - Integration with React Hook Form
+ * - Searchable dropdown with Command component
+ * - Keyboard navigation support
+ * - Accessible labels and descriptions
+ * - Error state styling
+ * - Custom option filtering
  */
 export function FormCombobox<
   TFieldValues extends FieldValues = FieldValues,
@@ -39,13 +55,6 @@ export function FormCombobox<
   searchPlaceholder = 'Search...',
 }: FormComboboxProps<TFieldValues, TName>) {
   const [open, setOpen] = useState(false);
-  const [searchValue, setSearchValue] = useState('');
-
-  const filteredOptions = searchable
-    ? options.filter((option) =>
-        option.label.toLowerCase().includes(searchValue.toLowerCase())
-      )
-    : options;
 
   return (
     <FormField
@@ -80,34 +89,28 @@ export function FormCombobox<
                 </Button>
               </FormControl>
             </PopoverTrigger>
-            <PopoverContent className="w-full p-0">
-              <div className="max-h-60 overflow-auto">
+            <PopoverContent className="w-full p-0" align="start">
+              <Command>
                 {searchable && (
-                  <div className="p-2">
-                    <input
-                      placeholder={searchPlaceholder}
-                      value={searchValue}
-                      onChange={(e) => setSearchValue(e.target.value)}
-                      className="w-full px-3 py-2 text-sm border rounded-md"
-                    />
-                  </div>
+                  <CommandInput
+                    placeholder={searchPlaceholder}
+                    className="h-9"
+                  />
                 )}
-                <div className="p-1">
-                  {filteredOptions.length === 0 ? (
-                    <div className="py-6 text-center text-sm">{emptyText}</div>
-                  ) : (
-                    filteredOptions.map((option) => (
-                      <div
+                <CommandList>
+                  <CommandEmpty>{emptyText}</CommandEmpty>
+                  <CommandGroup>
+                    {options.map((option) => (
+                      <CommandItem
                         key={option.value}
-                        className={cn(
-                          'relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground',
-                          field.value === option.value && 'bg-accent text-accent-foreground'
-                        )}
-                        onClick={() => {
-                          field.onChange(option.value === field.value ? '' : option.value);
+                        value={option.value}
+                        disabled={option.disabled}
+                        onSelect={(currentValue) => {
+                          const newValue = currentValue === field.value ? '' : currentValue;
+                          field.onChange(newValue);
                           setOpen(false);
-                          setSearchValue('');
                         }}
+                        className="cursor-pointer"
                       >
                         <Check
                           className={cn(
@@ -116,11 +119,11 @@ export function FormCombobox<
                           )}
                         />
                         {option.label}
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
             </PopoverContent>
           </Popover>
           {description && (

@@ -292,7 +292,7 @@
       "description": "Create a library of reusable React form components using shadcn/ui for various task properties, focusing on generic, re-usable components that can be composed to build complex forms with client-side validation logic.",
       "details": "Implement shadcn/ui components such as Dialog, Form, Input, Textarea, Select, Button, Checkbox, Popover, Command, Badge, Alert, Toast, Calendar, DatePicker, DropdownMenu, and ContextMenu. Each component should be designed for reusability and configurability, allowing for easy integration into different forms. Incorporate client-side validation using a suitable library (e.g., Zod with React Hook Form) to provide immediate user feedback. Develop a clear component API for each, including props for labels, placeholders, validation rules, and event handlers. Create a storybook or similar documentation for each component demonstrating its usage and variations. Ensure accessibility standards are met for all components.",
       "testStrategy": "Develop comprehensive unit tests for each reusable component to verify its rendering, props handling, and event emissions. Create integration tests to ensure components compose correctly and client-side validation functions as expected. Manually test each component in a sample form to verify UI/UX, responsiveness, and accessibility across different browsers and devices. Verify that validation messages are displayed correctly and prevent form submission when invalid.",
-      "status": "in-progress",
+      "status": "done",
       "dependencies": [
         86
       ],
@@ -329,7 +329,7 @@
             2
           ],
           "details": "1. Create a `DatePicker` component that combines `shadcn/ui`'s `Calendar` and `Popover` components, allowing date selection. Integrate it with `react-hook-form`. 2. Develop a reusable `DropdownMenu` component that can be used for various selection or action scenarios within forms. 3. Implement a `Command` component (e.g., for a searchable select/combobox) that integrates with `react-hook-form` for value selection.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "For `DatePicker`, verify date selection, clear functionality, and validation. For `DropdownMenu` and `Command`, test item selection, disabled states, and integration with form submission and validation.",
           "prdSource": null
         },
