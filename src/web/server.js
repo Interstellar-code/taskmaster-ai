@@ -115,7 +115,7 @@ async function startProductionMode(options) {
     process.exit(1);
   }
   
-  // API routes - integrate with kanban-webapp API
+  // API routes - integrate with kanban-app API
   try {
     // Mount API routes
     app.use('/api', await createApiMiddleware());
@@ -123,7 +123,7 @@ async function startProductionMode(options) {
     console.log(chalk.green('✅ API routes mounted at /api'));
   } catch (error) {
     console.error(chalk.red('❌ Error loading API routes:'), error.message);
-    console.error(chalk.yellow('💡 Make sure kanban-webapp/server/index.js exists'));
+    console.error(chalk.yellow('💡 Make sure kanban-app/server/index.js exists'));
 
     // Fallback API
     app.use('/api', createFallbackApi());
@@ -193,7 +193,7 @@ async function startProductionMode(options) {
  * Build the webapp if needed
  */
 async function buildWebApp() {
-  const webappPath = path.join(__dirname, '../../kanban-webapp');
+  const webappPath = path.join(__dirname, '../../kanban-app');
   const distPath = path.join(webappPath, 'dist');
   
   try {
@@ -268,20 +268,20 @@ async function ensureWebappDependencies(webappPath) {
 }
 
 /**
- * Create API middleware that integrates with kanban-webapp API
+ * Create API middleware that integrates with kanban-app API
  */
 async function createApiMiddleware() {
   const router = express.Router();
 
   try {
-    // Import the existing API server from kanban-webapp
-    const serverPath = path.join(__dirname, '../../kanban-webapp/server/index.js');
+    // Import the existing API server from kanban-app
+    const serverPath = path.join(__dirname, '../../kanban-app/server/index.js');
 
     // Check if the server file exists
     await fs.access(serverPath);
 
     // Import the API functions
-    const apiModule = await import('../../kanban-webapp/server/index.js');
+    const apiModule = await import('../../kanban-app/server/index.js');
 
     // If the module exports an Express app, use its routes
     if (apiModule.default && typeof apiModule.default.use === 'function') {
@@ -486,7 +486,7 @@ function createTaskHeroApiRoutes() {
 }
 
 /**
- * Create fallback API for when kanban-webapp server is not available
+ * Create fallback API for when kanban-app server is not available
  */
 function createFallbackApi() {
   const router = express.Router();
