@@ -180,3 +180,351 @@ kanban-app/
 - API supports both simple and advanced TaskMaster features
 - Frontend maintains accessibility and drag-and-drop functionality
 - Migration preserves all existing TaskMaster workflows
+
+---
+
+# Kanban App API Integration Guide
+
+## Overview
+This section documents the comprehensive API integration for the kanban app, including all transferred routes from the Express server to the TypeScript taskService.
+
+## TaskService API Methods
+
+### Core Task Management
+The following methods provide essential task management functionality:
+
+#### Basic Operations
+```typescript
+// Get all tasks (with optional filtering)
+await taskService.getAllTasks(status?, withSubtasks?)
+
+// Get specific task by ID
+await taskService.getTaskById(id, status?)
+
+// Create new task
+await taskService.createTask({
+  prompt: "Task description",
+  dependencies: ["1", "2"],
+  priority: "high",
+  research: false
+})
+
+// Update existing task
+await taskService.updateTask(id, { prompt: "Updated description" })
+
+// Update task status (most common for Kanban)
+await taskService.updateTaskStatus(id, "in-progress")
+
+// Delete task
+await taskService.deleteTask(id)
+
+// Get next available task
+await taskService.getNextTask()
+```
+
+#### Task Movement and Organization
+```typescript
+// Move task to new position
+await taskService.moveTask(id, { after: "5" })
+
+// Move task between Kanban columns
+await taskService.moveTaskToColumn(taskId, "in-progress")
+
+// Get tasks organized by Kanban columns
+await taskService.getTasksByColumns()
+```
+
+### Subtask Management
+```typescript
+// Create subtask
+await taskService.createSubtask(parentId, {
+  prompt: "Subtask description",
+  priority: "medium"
+})
+
+// Update subtask
+await taskService.updateSubtask(parentId, subtaskId, {
+  prompt: "Updated subtask"
+})
+
+// Delete subtask
+await taskService.deleteSubtask(parentId, subtaskId)
+
+// Clear all subtasks
+await taskService.clearSubtasks(parentId)
+
+// Expand task into subtasks
+await taskService.expandTask(id, {
+  prompt: "Expansion guidance",
+  num: 5
+})
+```
+
+### Dependency Management
+```typescript
+// Add dependency
+await taskService.addDependency(id, { dependsOn: "3" })
+
+// Remove dependency
+await taskService.removeDependency(id, dependencyId)
+
+// Validate all dependencies
+await taskService.validateDependencies()
+
+// Fix broken dependencies
+await taskService.fixDependencies()
+```
+
+### Analysis and Reporting
+```typescript
+// Get complexity report
+await taskService.getComplexityReport()
+
+// Analyze specific task complexity
+await taskService.analyzeTaskComplexity(id)
+
+// Generate task files
+await taskService.generateTaskFiles()
+```
+
+### Bulk Operations
+```typescript
+// Expand all tasks
+await taskService.expandAllTasks("Expansion context")
+
+// Update all tasks with AI
+await taskService.updateAllTasks("Update context")
+```
+
+## Most Common API Functions for Kanban Integration
+
+### Priority 1: Essential Kanban Operations
+1. **`getAllTasks()`** - Load initial board data
+2. **`updateTaskStatus(id, status)`** - Handle drag-and-drop
+3. **`getTasksByColumns()`** - Organize tasks by status
+4. **`moveTaskToColumn(taskId, columnId)`** - Column movement
+5. **`getTaskById(id)`** - Task detail views
+
+### Priority 2: Task Management
+6. **`createTask(data)`** - Add new tasks
+7. **`updateTask(id, data)`** - Edit task details
+8. **`deleteTask(id)`** - Remove tasks
+9. **`getNextTask()`** - Find next available work
+
+### Priority 3: Advanced Features
+10. **`createSubtask(parentId, data)`** - Break down tasks
+11. **`addDependency(id, data)`** - Link related tasks
+12. **`expandTask(id, data)`** - AI-powered task breakdown
+13. **`validateDependencies()`** - Ensure task integrity
+
+## Implementation Examples
+
+### Basic Kanban Board Setup
+```typescript
+// Load initial data
+const columns = await taskService.getTasksByColumns();
+
+// Handle drag-and-drop
+const handleTaskMove = async (taskId: string, newColumnId: ColumnId) => {
+  try {
+    await taskService.moveTaskToColumn(taskId, newColumnId);
+    // Refresh board data
+    const updatedColumns = await taskService.getTasksByColumns();
+    setColumns(updatedColumns);
+  } catch (error) {
+    console.error('Failed to move task:', error);
+  }
+};
+```
+
+### Task Detail Modal
+```typescript
+const TaskDetailModal = ({ taskId }: { taskId: string }) => {
+  const [task, setTask] = useState<TaskMasterTask | null>(null);
+
+  useEffect(() => {
+    const loadTask = async () => {
+      try {
+        const taskData = await taskService.getTaskById(taskId);
+        setTask(taskData);
+      } catch (error) {
+        console.error('Failed to load task:', error);
+      }
+    };
+
+    loadTask();
+  }, [taskId]);
+
+  // Render task details...
+};
+```
+
+### Task Creation Form
+```typescript
+const handleCreateTask = async (formData: TaskCreateRequest) => {
+  try {
+    const newTask = await taskService.createTask(formData);
+    // Refresh board or add to local state
+    const updatedColumns = await taskService.getTasksByColumns();
+    setColumns(updatedColumns);
+  } catch (error) {
+    console.error('Failed to create task:', error);
+  }
+};
+```
+
+## Error Handling Best Practices
+
+### API Error Handling
+```typescript
+const handleApiCall = async (apiFunction: () => Promise<any>) => {
+  try {
+    const result = await apiFunction();
+    return { success: true, data: result };
+  } catch (error) {
+    console.error('API call failed:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    };
+  }
+};
+```
+
+### Loading States
+```typescript
+const [loading, setLoading] = useState(false);
+
+const performTaskOperation = async (operation: () => Promise<void>) => {
+  setLoading(true);
+  try {
+    await operation();
+  } catch (error) {
+    // Handle error
+  } finally {
+    setLoading(false);
+  }
+};
+```
+
+## Integration Architecture
+
+### Data Flow
+1. **Frontend** → TaskService → **Express API** → **TaskMaster Core**
+2. **TaskMaster Core** → **Express API** → TaskService → **Frontend**
+
+### Key Components
+- **TaskService**: TypeScript client with all API methods
+- **Express Server**: Backend API server (keep in `/server` folder)
+- **TaskMaster Core**: Direct function integration
+- **Kanban Components**: React components using TaskService
+
+### Configuration
+- **API Base URL**: `http://localhost:3003`
+- **Primary Endpoints**: `/api/v1/tasks/*`
+- **Health Check**: `/health`
+- **Project Info**: `/api/taskhero/info`
+
+---
+
+# ✅ MIGRATION COMPLETED SUCCESSFULLY
+
+## Final Status: All Routes Transferred and TypeScript Errors Fixed
+
+### ✅ Completed Tasks
+
+#### 1. **TypeScript and ESLint Error Fixes**
+- ❌ Removed unused `TasksResponse` import
+- ✅ Replaced all `any` types with proper TypeScript interfaces:
+  - `ManualTaskData` and `ManualSubtaskData` for task creation
+  - `ValidationResult` for dependency validation
+  - `TaskGenerationResult` for file generation
+  - `TaskComplexityAnalysis` for complexity analysis
+  - `BulkOperationResult` for expand/update all operations
+- ✅ All methods now have proper return types with full type safety
+
+#### 2. **Express Backend Migration**
+- ✅ **Moved Express server** from `/server` folder to `/src/api` folder
+- ✅ **Created new file structure**:
+  ```
+  kanban-app/src/api/
+  ├── server.js          # Main Express server (moved from server/index.js)
+  ├── routes.js          # All MCP API routes (moved from server/routes/mcp-api-routes.js)
+  ├── logger.js          # Logger utility (moved from server/src/logger.js)
+  ├── taskService.ts     # Enhanced TypeScript client with all API methods
+  └── types.ts           # Type definitions
+  ```
+- ✅ **Updated package.json scripts**:
+  - `dev:server`: `node src/api/server.js`
+  - `start:server`: `node src/api/server.js`
+  - `dev:full`: Runs both frontend and backend concurrently
+- ✅ **Removed old server folder** completely
+
+#### 3. **Complete API Route Transfer**
+- ✅ **All 30+ MCP API routes** transferred from Express server to TypeScript taskService
+- ✅ **Comprehensive API coverage**:
+  - Core task management (CRUD operations)
+  - Subtask management (create, update, delete, expand)
+  - Dependency management (add, remove, validate, fix)
+  - Analysis and reporting (complexity analysis, reports)
+  - Bulk operations (expand all, update all)
+  - Validation and file generation
+
+#### 4. **Enhanced TaskService Features**
+- ✅ **Type-safe API client** with proper interfaces
+- ✅ **Error handling** with consistent response types
+- ✅ **Kanban integration helpers** (column mapping, status conversion)
+- ✅ **Health check and project info** methods
+- ✅ **All Express routes** now available as TypeScript methods
+
+### 🎯 Architecture After Migration
+
+```
+Frontend (React/TypeScript)
+    ↓
+TaskService (TypeScript Client) ← All API methods now here
+    ↓ HTTP Requests
+Express Server (src/api/server.js) ← Moved from /server
+    ↓
+TaskMaster Core Functions
+    ↓
+.taskmaster/tasks/tasks.json
+```
+
+### 📋 Updated Scripts
+
+```bash
+# Start frontend only
+npm run dev
+
+# Start backend only
+npm run dev:server
+
+# Start both frontend and backend
+npm run dev:full
+
+# Production server
+npm run start:server
+```
+
+### 🔧 Key Benefits Achieved
+
+1. **Type Safety**: All API calls now have proper TypeScript interfaces
+2. **Code Organization**: Backend moved to logical `/src/api` location
+3. **Simplified Structure**: No separate `/server` folder confusion
+4. **Complete API Coverage**: All TaskMaster functions available in taskService
+5. **Consistent Error Handling**: Unified error responses across all methods
+6. **Better Developer Experience**: IntelliSense and type checking for all API calls
+
+### 🚀 Ready for Development
+
+The kanban app now has:
+- ✅ Complete API integration with TaskMaster core
+- ✅ Type-safe client with all 30+ API methods
+- ✅ Proper error handling and validation
+- ✅ Clean, organized file structure
+- ✅ No TypeScript or ESLint errors
+- ✅ Express backend in `/src/api` folder
+- ✅ All routes transferred and functional
+
+**Next steps**: Use the enhanced `taskService` methods in React components for full kanban functionality!

@@ -11,10 +11,10 @@ import {
 	showTaskDirect,
 	nextTaskDirect,
 	setTaskStatusDirect
-} from '../../mcp-server/src/core/task-master-core.js';
-import { findTasksJsonPath } from '../../mcp-server/src/core/utils/path-utils.js';
-import { createLogger } from './src/logger.js';
-import mcpApiRoutes from './routes/mcp-api-routes.js';
+} from '../../../mcp-server/src/core/task-master-core.js';
+import { findTasksJsonPath } from '../../../mcp-server/src/core/utils/path-utils.js';
+import { createLogger } from './logger.js';
+import mcpApiRoutes from './routes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -38,12 +38,12 @@ function getAvailableFunctions() {
 // Helper function to resolve project root (adapted for kanban-app location)
 function resolveProjectRoot() {
 	// The kanban-app is located within the TaskMaster project
-	// Go up one level from kanban-app to reach the project root
-	return path.resolve(__dirname, '../..');
+	// Go up three levels from kanban-app/src/api to reach the project root
+	return path.resolve(__dirname, '../../..');
 }
 
 // Legacy path for backward compatibility
-const TASKS_FILE_PATH = path.join(__dirname, '../../.taskmaster/tasks/tasks.json');
+const TASKS_FILE_PATH = path.join(__dirname, '../../../.taskmaster/tasks/tasks.json');
 
 // Security middleware
 app.use(helmet());
@@ -142,13 +142,14 @@ async function initializeTaskMasterCore() {
     app.locals.tasksJsonPath = tasksJsonPath;
 
     logger.info('✅ TaskMaster Core Integration initialized successfully');
-    logger.info(`📊 Found ${testResult.data.summary.totalTasks} tasks in the system`);
+    const taskCount = testResult.data?.summary?.totalTasks || testResult.data?.tasks?.length || 0;
+    logger.info(`📊 Found ${taskCount} tasks in the system`);
 
     return {
       success: true,
       projectRoot,
       tasksJsonPath,
-      tasksCount: testResult.data.summary.totalTasks
+      tasksCount: taskCount
     };
   } catch (error) {
     logger.error('❌ TaskMaster Core Integration initialization failed:', error.message);

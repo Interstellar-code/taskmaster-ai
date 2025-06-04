@@ -1,5 +1,5 @@
 /**
- * mcp-api-routes.js
+ * routes.js
  * REST API endpoints for all TaskMaster MCP direct functions
  */
 
@@ -29,7 +29,7 @@ import {
   updateTasksDirect,
   validateDependenciesDirect
 } from '../../../mcp-server/src/core/task-master-core.js';
-import { createLogger } from '../src/logger.js';
+import { createLogger } from './logger.js';
 
 const router = express.Router();
 const logger = createLogger('MCP-API');

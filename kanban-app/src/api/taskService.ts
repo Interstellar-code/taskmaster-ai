@@ -1,8 +1,7 @@
 // TaskMaster API Service
-import { 
-  TaskMasterTask, 
-  ApiResponse, 
-  TasksResponse, 
+import {
+  TaskMasterTask,
+  ApiResponse,
   ProjectInfo,
   KanbanTask,
   ColumnId,
@@ -11,6 +10,98 @@ import {
 } from './types';
 
 const API_BASE_URL = 'http://localhost:3003';
+
+// Extended interfaces for comprehensive API support
+interface ManualTaskData {
+  title: string;
+  description: string;
+  status?: string;
+  priority?: 'low' | 'medium' | 'high';
+  dependencies?: string[];
+}
+
+interface ManualSubtaskData {
+  title: string;
+  description: string;
+  status?: string;
+  priority?: 'low' | 'medium' | 'high';
+}
+
+interface TaskCreateRequest {
+  prompt?: string;
+  dependencies?: string[];
+  priority?: 'low' | 'medium' | 'high';
+  research?: boolean;
+  manualTaskData?: ManualTaskData;
+}
+
+interface TaskUpdateRequest {
+  prompt: string;
+}
+
+interface SubtaskCreateRequest {
+  prompt?: string;
+  dependencies?: string[];
+  priority?: 'low' | 'medium' | 'high';
+  manualSubtaskData?: ManualSubtaskData;
+}
+
+interface DependencyRequest {
+  dependsOn: string;
+}
+
+interface TaskMoveRequest {
+  after?: string;
+}
+
+interface ExpandTaskRequest {
+  prompt?: string;
+  num?: number;
+}
+
+interface ComplexityReport {
+  totalTasks: number;
+  complexityDistribution: Record<string, number>;
+  averageComplexity: number;
+  recommendations: string[];
+}
+
+interface ValidationResult {
+  isValid: boolean;
+  errors: string[];
+  warnings: string[];
+  fixedDependencies?: string[];
+}
+
+interface TaskGenerationResult {
+  success: boolean;
+  generatedFiles: string[];
+  errors: string[];
+}
+
+interface TaskComplexityAnalysis {
+  taskId: string;
+  complexity: 'low' | 'medium' | 'high';
+  score: number;
+  factors: string[];
+  recommendations: string[];
+  estimatedHours?: number;
+}
+
+interface BulkOperationResult {
+  success: boolean;
+  processedTasks: string[];
+  errors: string[];
+  summary: string;
+}
+
+interface TasksApiResponse {
+  tasks: TaskMasterTask[];
+  summary: {
+    totalTasks: number;
+    statusCounts: Record<string, number>;
+  };
+}
 
 class TaskService {
   private async fetchApi<T>(endpoint: string, options?: RequestInit): Promise<ApiResponse<T>> {
@@ -34,30 +125,224 @@ class TaskService {
     }
   }
 
+  // ============================================================================
+  // CORE TASK MANAGEMENT METHODS
+  // ============================================================================
+
   // Get all tasks from TaskMaster
-  async getAllTasks(): Promise<TaskMasterTask[]> {
-    const response = await this.fetchApi<TaskMasterTask[]>('/api/tasks');
-    return response.data;
+  async getAllTasks(status?: string, withSubtasks?: boolean): Promise<TaskMasterTask[]> {
+    const params = new URLSearchParams();
+    if (status) params.append('status', status);
+    if (withSubtasks) params.append('withSubtasks', 'true');
+
+    const endpoint = `/api/v1/tasks${params.toString() ? `?${params.toString()}` : ''}`;
+    const response = await this.fetchApi<TasksApiResponse>(endpoint);
+
+    // The API returns { data: { tasks: [...], summary: {...} } }
+    // We need to extract the tasks array from the nested structure
+    if (response.data && Array.isArray(response.data.tasks)) {
+      return response.data.tasks;
+    }
+
+    // Fallback: if response.data is already an array (for backward compatibility)
+    if (Array.isArray(response.data)) {
+      return response.data;
+    }
+
+    // If neither, return empty array to prevent errors
+    console.warn('Unexpected API response structure:', response);
+    return [];
   }
 
   // Get task by ID
-  async getTaskById(id: string): Promise<TaskMasterTask> {
-    const response = await this.fetchApi<TaskMasterTask>(`/api/tasks/${id}`);
+  async getTaskById(id: string, status?: string): Promise<TaskMasterTask> {
+    const params = new URLSearchParams();
+    if (status) params.append('status', status);
+
+    const endpoint = `/api/v1/tasks/${id}${params.toString() ? `?${params.toString()}` : ''}`;
+    const response = await this.fetchApi<TaskMasterTask>(endpoint);
+    return response.data;
+  }
+
+  // Create a new task
+  async createTask(taskData: TaskCreateRequest): Promise<TaskMasterTask> {
+    const response = await this.fetchApi<TaskMasterTask>('/api/v1/tasks', {
+      method: 'POST',
+      body: JSON.stringify(taskData),
+    });
+    return response.data;
+  }
+
+  // Update task by ID
+  async updateTask(id: string, updateData: TaskUpdateRequest): Promise<TaskMasterTask> {
+    const response = await this.fetchApi<TaskMasterTask>(`/api/v1/tasks/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(updateData),
+    });
     return response.data;
   }
 
   // Update task status
   async updateTaskStatus(id: string, status: string): Promise<TaskMasterTask> {
-    const response = await this.fetchApi<TaskMasterTask>(`/api/tasks/${id}/status`, {
-      method: 'PUT',
+    const response = await this.fetchApi<TaskMasterTask>(`/api/v1/tasks/${id}/status`, {
+      method: 'PATCH',
       body: JSON.stringify({ status }),
     });
+    return response.data;
+  }
+
+  // Delete a task
+  async deleteTask(id: string): Promise<void> {
+    await this.fetchApi<void>(`/api/v1/tasks/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Move task to new position
+  async moveTask(id: string, moveData: TaskMoveRequest): Promise<TaskMasterTask> {
+    const response = await this.fetchApi<TaskMasterTask>(`/api/v1/tasks/${id}/move`, {
+      method: 'POST',
+      body: JSON.stringify(moveData),
+    });
+    return response.data;
+  }
+
+  // Get next available task
+  async getNextTask(): Promise<TaskMasterTask> {
+    const response = await this.fetchApi<TaskMasterTask>('/api/v1/tasks/next');
     return response.data;
   }
 
   // Get project information
   async getProjectInfo(): Promise<ProjectInfo> {
     const response = await this.fetchApi<ProjectInfo>('/api/taskhero/info');
+    return response.data;
+  }
+
+  // ============================================================================
+  // SUBTASK MANAGEMENT METHODS
+  // ============================================================================
+
+  // Create a subtask
+  async createSubtask(parentId: string, subtaskData: SubtaskCreateRequest): Promise<TaskMasterTask> {
+    const response = await this.fetchApi<TaskMasterTask>(`/api/v1/tasks/${parentId}/subtasks`, {
+      method: 'POST',
+      body: JSON.stringify(subtaskData),
+    });
+    return response.data;
+  }
+
+  // Update subtask by ID
+  async updateSubtask(parentId: string, subtaskId: string, updateData: TaskUpdateRequest): Promise<TaskMasterTask> {
+    const response = await this.fetchApi<TaskMasterTask>(`/api/v1/tasks/${parentId}/subtasks/${subtaskId}`, {
+      method: 'PUT',
+      body: JSON.stringify(updateData),
+    });
+    return response.data;
+  }
+
+  // Delete a subtask
+  async deleteSubtask(parentId: string, subtaskId: string): Promise<void> {
+    await this.fetchApi<void>(`/api/v1/tasks/${parentId}/subtasks/${subtaskId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Clear all subtasks from a task
+  async clearSubtasks(parentId: string): Promise<void> {
+    await this.fetchApi<void>(`/api/v1/tasks/${parentId}/subtasks`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Expand task into subtasks
+  async expandTask(id: string, expandData: ExpandTaskRequest): Promise<TaskMasterTask> {
+    const response = await this.fetchApi<TaskMasterTask>(`/api/v1/tasks/${id}/expand`, {
+      method: 'POST',
+      body: JSON.stringify(expandData),
+    });
+    return response.data;
+  }
+
+  // ============================================================================
+  // DEPENDENCY MANAGEMENT METHODS
+  // ============================================================================
+
+  // Add dependency to a task
+  async addDependency(id: string, dependencyData: DependencyRequest): Promise<TaskMasterTask> {
+    const response = await this.fetchApi<TaskMasterTask>(`/api/v1/tasks/${id}/dependencies`, {
+      method: 'POST',
+      body: JSON.stringify(dependencyData),
+    });
+    return response.data;
+  }
+
+  // Remove dependency from a task
+  async removeDependency(id: string, dependencyId: string): Promise<void> {
+    await this.fetchApi<void>(`/api/v1/tasks/${id}/dependencies/${dependencyId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // ============================================================================
+  // VALIDATION AND ANALYSIS METHODS
+  // ============================================================================
+
+  // Validate task dependencies
+  async validateDependencies(): Promise<ValidationResult> {
+    const response = await this.fetchApi<ValidationResult>('/api/v1/tasks/validate-dependencies');
+    return response.data;
+  }
+
+  // Fix broken dependencies
+  async fixDependencies(): Promise<ValidationResult> {
+    const response = await this.fetchApi<ValidationResult>('/api/v1/tasks/fix-dependencies', {
+      method: 'POST',
+    });
+    return response.data;
+  }
+
+  // Generate task files from tasks.json
+  async generateTaskFiles(): Promise<TaskGenerationResult> {
+    const response = await this.fetchApi<TaskGenerationResult>('/api/v1/tasks/generate-files', {
+      method: 'POST',
+    });
+    return response.data;
+  }
+
+  // Get complexity analysis report
+  async getComplexityReport(): Promise<ComplexityReport> {
+    const response = await this.fetchApi<ComplexityReport>('/api/v1/reports/complexity');
+    return response.data;
+  }
+
+  // Analyze complexity of a specific task
+  async analyzeTaskComplexity(id: string): Promise<TaskComplexityAnalysis> {
+    const response = await this.fetchApi<TaskComplexityAnalysis>(`/api/v1/tasks/${id}/analyze-complexity`, {
+      method: 'POST',
+    });
+    return response.data;
+  }
+
+  // ============================================================================
+  // BULK OPERATIONS METHODS
+  // ============================================================================
+
+  // Expand all tasks that need expansion
+  async expandAllTasks(prompt?: string): Promise<BulkOperationResult> {
+    const response = await this.fetchApi<BulkOperationResult>('/api/v1/tasks/expand-all', {
+      method: 'POST',
+      body: JSON.stringify({ prompt }),
+    });
+    return response.data;
+  }
+
+  // Update all tasks with AI assistance
+  async updateAllTasks(prompt: string): Promise<BulkOperationResult> {
+    const response = await this.fetchApi<BulkOperationResult>('/api/v1/tasks/update-all', {
+      method: 'PUT',
+      body: JSON.stringify({ prompt }),
+    });
     return response.data;
   }
 
@@ -90,19 +375,39 @@ class TaskService {
 
   // Get tasks organized by Kanban columns
   async getTasksByColumns(): Promise<Record<ColumnId, KanbanTask[]>> {
-    const tasks = await this.getAllTasks();
-    const columns: Record<ColumnId, KanbanTask[]> = {
-      'todo': [],
-      'in-progress': [],
-      'done': []
-    };
+    try {
+      const tasks = await this.getAllTasks();
+      const columns: Record<ColumnId, KanbanTask[]> = {
+        'todo': [],
+        'in-progress': [],
+        'done': []
+      };
 
-    tasks.forEach(task => {
-      const kanbanTask = this.taskMasterToKanban(task);
-      columns[kanbanTask.columnId].push(kanbanTask);
-    });
+      // Ensure tasks is an array before calling forEach
+      if (!Array.isArray(tasks)) {
+        console.error('getAllTasks did not return an array:', tasks);
+        return columns; // Return empty columns
+      }
 
-    return columns;
+      tasks.forEach(task => {
+        try {
+          const kanbanTask = this.taskMasterToKanban(task);
+          columns[kanbanTask.columnId].push(kanbanTask);
+        } catch (error) {
+          console.error('Error converting task to kanban format:', task, error);
+        }
+      });
+
+      return columns;
+    } catch (error) {
+      console.error('Error in getTasksByColumns:', error);
+      // Return empty columns structure on error
+      return {
+        'todo': [],
+        'in-progress': [],
+        'done': []
+      };
+    }
   }
 
   // Update task status when moved between columns
