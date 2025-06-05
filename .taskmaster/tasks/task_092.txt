@@ -1,0 +1,44 @@
+# Task ID: 92
+# Title: Simplify PRD Kanban Folder Structure
+# Status: in-progress
+# Dependencies: None
+# Priority: medium
+# PRD Source: None (manually created)
+# Description: Refactor the PRD Kanban folder structure to improve organization and maintainability. presently we have pending, in-progress and done folders for PRDs .. i would like to simplify this similar to tasks. the status of the PRD files can be managed in the prd.json file. for archiving we will have a the folder and instead of taking files from /prd/done folder it will take from /prd folder.
+# Details:
+The current PRD Kanban folder structure needs simplification. This task involves reorganizing the folders and files related to PRDs within the Kanban system to enhance clarity, reduce redundancy, and streamline navigation. Consider grouping files by feature or module rather than by type, and ensure naming conventions are consistent. This might involve updating import paths in existing components that interact with PRD files. The goal is a more intuitive and scalable structure.
+
+# Test Strategy:
+1. Verify that all existing PRD functionalities (creation, editing, viewing, deletion) still work correctly after the refactor. 2. Check for any broken file paths or import errors in the application. 3. Ensure that the new folder structure is logical and easy to navigate for new and existing developers. 4. Conduct a thorough code review to confirm adherence to new naming conventions and organizational principles.
+
+# Subtasks:
+## 1. Analyze Current PRD Folder Structure and Define New Schema [pending]
+### Dependencies: None
+### Description: Thoroughly analyze the existing 'pending', 'in-progress', and 'done' PRD folders. Document the current file organization, naming conventions, and any dependencies. Based on the requirement to manage status in `prd.json` and simplify to a single `/prd` folder with an `/archive` folder, define the new logical folder structure and the schema for `prd.json` to include PRD status and potentially other metadata.
+### Details:
+1. Map out all files and their current locations within `/prd/pending`, `/prd/in-progress`, and `/prd/done`. 2. Identify how PRD status is currently inferred (e.g., by folder location). 3. Propose the new `/prd` and `/prd/archive` folder structure. 4. Design the `prd.json` schema to store PRD metadata, including a 'status' field (e.g., 'pending', 'in-progress', 'done') and a 'filePath' field relative to the new `/prd` root. 5. Consider any other relevant metadata for `prd.json` (e.g., title, description, last_updated).
+
+## 2. Migrate PRD Files and Update prd.json [pending]
+### Dependencies: 92.1
+### Description: Execute the physical migration of PRD files from the old 'pending', 'in-progress', and 'done' folders into the new unified `/prd` folder. Simultaneously, create or update the `prd.json` file to reflect the new file paths and assign initial statuses based on their previous folder location.
+### Details:
+1. Create the new `/prd` and `/prd/archive` directories. 2. Move all files from `/prd/pending`, `/prd/in-progress`, and `/prd/done` into the new `/prd` directory. 3. For each moved file, create an entry in `prd.json` with its new relative path (e.g., `'/prd/my-prd.md'`) and assign its initial status (e.g., 'pending' if it came from `/prd/pending`). 4. Ensure `prd.json` is a valid JSON array of objects, each conforming to the schema defined in subtask 1. 5. Remove the old 'pending', 'in-progress', and 'done' folders after successful migration.
+
+## 3. Update Code References to PRD Files and Status Logic [pending]
+### Dependencies: 92.2
+### Description: Modify all application code that previously interacted with the old PRD folder structure (e.g., reading files from `/prd/done`) or inferred PRD status from folder location. Update these parts of the codebase to read PRD information and status directly from the `prd.json` file and access PRD files from the new unified `/prd` folder.
+### Details:
+1. Identify all components, scripts, or modules that interact with PRD files or their status. 2. Update file paths to point to the new `/prd` directory. 3. Refactor logic that determined PRD status based on folder to instead read the 'status' field from the corresponding entry in `prd.json`. 4. Implement or update functions to read, parse, and query `prd.json` for PRD data. 5. Ensure any 'archive' functionality now moves files from `/prd` to `/prd/archive` and updates `prd.json` accordingly.
+
+## 4. Implement PRD Status Management UI/API [pending]
+### Dependencies: 92.3
+### Description: Develop or update the user interface (UI) and/or API endpoints that allow users to change the status of a PRD. This involves updating the 'status' field in the `prd.json` file based on user actions.
+### Details:
+1. Identify the UI components or API endpoints responsible for changing PRD status. 2. Modify these components/endpoints to interact with `prd.json`. 3. Implement logic to find the specific PRD entry in `prd.json` by its file path or ID, update its 'status' field, and then save the modified `prd.json` back to disk. 4. Ensure proper error handling and validation for status updates. 5. If applicable, update the UI to reflect the new status immediately after an update.
+
+## 5. Comprehensive End-to-End Testing and Documentation Update [pending]
+### Dependencies: 92.4
+### Description: Conduct comprehensive end-to-end testing of the entire PRD Kanban system to ensure all functionalities work as expected with the new folder structure and `prd.json` based status management. Update all relevant documentation, including developer guides and user manuals, to reflect the changes.
+### Details:
+1. Test PRD creation, viewing, editing, and status changes. 2. Verify that archiving PRDs correctly moves files to `/prd/archive` and updates `prd.json`. 3. Check any search, filtering, or display functionalities related to PRDs. 4. Ensure performance is not negatively impacted. 5. Update READMEs, architectural diagrams, and any user-facing documentation to describe the new PRD folder structure and `prd.json` usage. 6. Conduct a final review of the entire codebase for any missed references to the old structure.
+

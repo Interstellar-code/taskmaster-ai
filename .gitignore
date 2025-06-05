@@ -115,3 +115,10 @@ test-init/
 !test-init/tasks/
 !test-init/prd/**
 !test-init/tasks/**
+
+# TaskMaster AI - Ignore everything in kanban-app/ except prd/ and tasks/
+kanban-app/
+!kanban-app/prd/
+!kanban-app/tasks/
+!kanban-app/prd/**
+!kanban-app/tasks/**

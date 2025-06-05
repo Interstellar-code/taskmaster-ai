@@ -4,7 +4,7 @@
       "id": 59,
       "title": "Integrate v0.16.0 upstream changes selectively",
       "description": "fix 1 Integrate bug fixes and improvements from upstream v0.16.0 release while preserving unique custom features including: Kanban board functionality, PRD lifecycle tracking, interactive menu systems, custom AI editor integrations (.augment-guidelines, .cursor/rules, .roo/rules, .windsurfrules), custom task templates and workflow, and enhanced project management features. Focus on: 1) New directory structure (.taskmaster/ consolidation), 2) AWS Bedrock support, 3) Google Vertex AI support, 4) Azure support, 5) Node.js version requirement update, 6) TASK_MASTER_PROJECT_ROOT env variable, 7) Bug fixes for max_tokens and add-task MCP command. Create integration branch dev_rohit for selective merging.",
-      "status": "in-progress",
+      "status": "done",
       "dependencies": [
         "84"
       ],
@@ -13,68 +13,16 @@
       "testStrategy": "test stractery",
       "subtasks": [
         {
-          "id": 1,
-          "title": "Establish Integration Branch and Initial Upstream Merge",
-          "description": "Create a new integration branch 'dev_rohit' from the current main/master branch. Perform an initial, cautious merge of the upstream v0.16.0 changes, resolving trivial conflicts and identifying areas of significant divergence that require selective integration.",
-          "dependencies": [],
-          "details": "1. Create branch `dev_rohit` from the current stable branch. 2. Add the upstream repository as a remote if not already present. 3. Fetch upstream changes. 4. Attempt `git merge upstream/v0.16.0 --no-commit --no-ff`. 5. Carefully review the changes and identify files/directories that are part of the new directory structure (.taskmaster/ consolidation) and core AI integration components. 6. Revert the merge if conflicts are too extensive or complex to handle in this initial step, and instead, cherry-pick or rebase selectively in subsequent steps.",
-          "status": "pending",
-          "testStrategy": "Verify branch creation and initial merge attempt. No functional tests at this stage, only structural integrity check.",
-          "prdSource": null
-        },
-        {
-          "id": 2,
-          "title": "Implement New Directory Structure and Node.js Update",
-          "description": "Refactor the project to adopt the new `.taskmaster/` directory consolidation. Update the Node.js version requirement and ensure all dependencies are compatible and installed correctly. Address any immediate build or runtime errors resulting from these changes.",
-          "dependencies": [
-            1
-          ],
-          "details": "1. Migrate relevant configuration, data, and core files into the new `.taskmaster/` directory. 2. Update `package.json` with the new Node.js version requirement. 3. Run `npm install` or `yarn install` to update dependencies. 4. Adjust import paths and file references across the codebase to reflect the new directory structure. 5. Resolve any compilation or runtime errors related to Node.js version or dependency changes.",
-          "status": "pending",
-          "testStrategy": "Run `npm install` and `npm start` (or equivalent build/run commands). Verify the application starts without errors. Check that the new directory structure is correctly reflected in the file system.",
-          "prdSource": null
-        },
-        {
-          "id": 3,
-          "title": "Integrate AWS Bedrock and Google Vertex AI Support",
-          "description": "Selectively merge or re-implement the code changes from upstream v0.16.0 that introduce support for AWS Bedrock and Google Vertex AI. Ensure these new AI provider integrations coexist with existing custom AI editor integrations without conflict.",
-          "dependencies": [
-            2
-          ],
-          "details": "1. Identify the relevant files/modules in the upstream v0.16.0 branch that implement Bedrock and Vertex AI support. 2. Carefully merge these changes into `dev_rohit`, resolving conflicts manually. 3. Adapt the integration points to fit the existing custom AI editor integrations (.augment-guidelines, .cursor/rules, .roo/rules, .windsurfrules). 4. Implement configuration options for these new providers.",
-          "status": "pending",
-          "testStrategy": "Configure the application to use AWS Bedrock and Google Vertex AI (if credentials are available). Run basic AI-powered features (e.g., text generation, summarization) using these new providers. Verify existing custom AI editor integrations still function correctly.",
-          "prdSource": null
-        },
-        {
-          "id": 4,
-          "title": "Integrate Azure Support and Core Bug Fixes",
-          "description": "Selectively merge or re-implement the code changes from upstream v0.16.0 that introduce Azure support. Additionally, integrate the bug fixes for `max_tokens` and the `add-task` MCP command, ensuring they are applied correctly without regressing custom features.",
-          "dependencies": [
-            3
-          ],
-          "details": "1. Identify and merge Azure integration code from upstream. 2. Locate and apply the specific bug fixes for `max_tokens` handling and the `add-task` MCP command. 3. Verify that these fixes do not interfere with the custom task templates, workflow, or enhanced project management features. 4. Ensure `TASK_MASTER_PROJECT_ROOT` environment variable is correctly utilized where applicable.",
-          "status": "pending",
-          "testStrategy": "Configure the application to use Azure (if credentials are available) and test basic AI features. Test the `add-task` MCP command with various inputs. Verify `max_tokens` behavior is corrected. Ensure custom task templates and workflows are unaffected.",
-          "prdSource": null
-        },
-        {
-          "id": 5,
-          "title": "Validate Custom Features and Final Integration Review",
-          "description": "Thoroughly test all unique custom features (Kanban board, PRD lifecycle, interactive menus, custom AI editor integrations, custom task templates, enhanced project management) to ensure they remain fully functional after the upstream integration. Perform a final code review and resolve any remaining conflicts or regressions.",
-          "dependencies": [
-            4
-          ],
-          "details": "1. Systematically test each custom feature: Kanban board, PRD lifecycle tracking, interactive menu systems, custom AI editor integrations (.augment-guidelines, .cursor/rules, .roo/rules, .windsurfrules), custom task templates and workflow, and enhanced project management features. 2. Address any regressions or unexpected behavior. 3. Conduct a final code review of the `dev_rohit` branch to ensure code quality, consistency, and complete integration. 4. Prepare the branch for potential merge back to main/master.",
-          "status": "pending",
-          "testStrategy": "Comprehensive end-to-end testing of all custom features. Manual and automated tests for critical paths. Verify all listed custom features work as expected. Ensure no new bugs were introduced during the integration process.",
+          "id": "59.6",
+          "title": "rohit",
+          "completed": false,
           "prdSource": null
         }
       ],
       "prdSource": null,
       "assignee": "rohit",
       "dueDate": "2025-06-06",
-      "updatedAt": "2025-06-05T05:58:59.586Z",
+      "updatedAt": "2025-06-05T16:27:54.465Z",
       "estimatedHours": 3,
       "complexityScore": 9,
       "complexityLevel": "high"
@@ -102,240 +50,146 @@
       "testStrategy": "1. Verify that each MCP direct function has a corresponding REST API endpoint.\n2. Test each endpoint using Postman or a similar tool to ensure it handles requests and responses correctly.\n3. Check for proper validation and error handling by sending invalid data and observing the responses.\n4. Ensure that authentication and authorization are enforced where applicable.\n5. Review API documentation for completeness and accuracy, ensuring it matches the implemented endpoints.\n6. Conduct integration tests to ensure seamless interaction between the new API endpoints and the existing TaskMaster core functions.",
       "subtasks": [
         {
-          "id": 1,
+          "id": "1",
           "title": "Convert add-dependency.js to REST API Endpoint",
-          "description": "Create REST API endpoint for the add-dependency MCP function. Implement POST /api/v1/tasks/{id}/dependencies endpoint with proper request validation, error handling, and response formatting.",
-          "details": "<info added on 2025-06-03T20:08:54.700Z>\nSuccessfully implemented REST API endpoint for add-dependency MCP function. Created comprehensive MCP API routes file at kanban-webapp/server/routes/mcp-api-routes.js with POST /api/v1/tasks/:id/dependencies endpoint. The endpoint includes proper request validation, error handling, and response formatting. Integrated the routes into the main server and tested successfully. The endpoint accepts dependsOn in request body and validates required parameters before calling the addDependencyDirect function from the MCP server.\n</info added on 2025-06-03T20:08:54.700Z>\n<info added on 2025-06-03T20:09:05.907Z>\nNo new information is provided in the user request that differs from the existing subtask details.\n</info added on 2025-06-03T20:09:05.907Z>",
-          "status": "done",
-          "dependencies": [],
-          "parentTaskId": 85,
+          "completed": false,
           "prdSource": null
         },
         {
-          "id": 2,
+          "id": "2",
           "title": "Convert add-subtask.js to REST API Endpoint",
-          "description": "Create REST API endpoint for the add-subtask MCP function. Implement POST /api/v1/tasks/{id}/subtasks endpoint with proper request validation, error handling, and response formatting.",
-          "details": "Successfully implemented REST API endpoint for add-subtask MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
-          "status": "done",
-          "dependencies": [
-            "85.1"
-          ],
-          "parentTaskId": 85,
+          "completed": true,
           "prdSource": null
         },
         {
-          "id": 3,
+          "id": "3",
           "title": "Convert add-task.js to REST API Endpoint",
-          "description": "Create REST API endpoint for the add-task MCP function. Implement POST /api/v1/tasks endpoint with proper request validation, error handling, and response formatting.",
-          "details": "Successfully implemented REST API endpoint for add-task MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
-          "status": "done",
-          "dependencies": [],
-          "parentTaskId": 85,
+          "completed": true,
           "prdSource": null
         },
         {
-          "id": 4,
+          "id": "4",
           "title": "Convert analyze-task-complexity.js to REST API Endpoint",
-          "description": "Create REST API endpoint for the analyze-task-complexity MCP function. Implement POST /api/v1/tasks/{id}/analyze-complexity endpoint with proper request validation, error handling, and response formatting.",
-          "details": "Successfully implemented REST API endpoint for analyze-task-complexity MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
-          "status": "done",
-          "dependencies": [],
-          "parentTaskId": 85,
+          "completed": true,
           "prdSource": null
         },
         {
-          "id": 5,
+          "id": "5",
           "title": "Convert clear-subtasks.js to REST API Endpoint",
-          "description": "Create REST API endpoint for the clear-subtasks MCP function. Implement DELETE /api/v1/tasks/{id}/subtasks endpoint with proper request validation, error handling, and response formatting.",
-          "details": "Successfully implemented REST API endpoint for clear-subtasks MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
-          "status": "done",
-          "dependencies": [],
-          "parentTaskId": 85,
+          "completed": true,
           "prdSource": null
         },
         {
-          "id": 6,
+          "id": "6",
           "title": "Convert complexity-report.js to REST API Endpoint",
-          "description": "Create REST API endpoint for the complexity-report MCP function. Implement GET /api/v1/reports/complexity endpoint with proper request validation, error handling, and response formatting.",
-          "details": "Successfully implemented REST API endpoint for complexity-report MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
-          "status": "done",
-          "dependencies": [],
-          "parentTaskId": 85,
+          "completed": true,
           "prdSource": null
         },
         {
-          "id": 7,
+          "id": "7",
           "title": "Convert expand-all-tasks.js to REST API Endpoint",
-          "description": "Create REST API endpoint for the expand-all-tasks MCP function. Implement POST /api/v1/tasks/expand-all endpoint with proper request validation, error handling, and response formatting.",
-          "details": "Successfully implemented REST API endpoint for expand-all-tasks MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
-          "status": "done",
-          "dependencies": [],
-          "parentTaskId": 85,
+          "completed": true,
           "prdSource": null
         },
         {
-          "id": 8,
+          "id": "8",
           "title": "Convert expand-task.js to REST API Endpoint",
-          "description": "Create REST API endpoint for the expand-task MCP function. Implement POST /api/v1/tasks/{id}/expand endpoint with proper request validation, error handling, and response formatting.",
-          "details": "Successfully implemented REST API endpoint for expand-task MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
-          "status": "done",
-          "dependencies": [],
-          "parentTaskId": 85,
+          "completed": true,
           "prdSource": null
         },
         {
-          "id": 9,
+          "id": "9",
           "title": "Convert fix-dependencies.js to REST API Endpoint",
-          "description": "Create REST API endpoint for the fix-dependencies MCP function. Implement POST /api/v1/tasks/fix-dependencies endpoint with proper request validation, error handling, and response formatting.",
-          "details": "Successfully implemented REST API endpoint for fix-dependencies MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
-          "status": "done",
-          "dependencies": [],
-          "parentTaskId": 85,
+          "completed": true,
           "prdSource": null
         },
         {
-          "id": 10,
+          "id": "10",
           "title": "Convert generate-task-files.js to REST API Endpoint",
-          "description": "Create REST API endpoint for the generate-task-files MCP function. Implement POST /api/v1/tasks/generate-files endpoint with proper request validation, error handling, and response formatting.",
-          "details": "Successfully implemented REST API endpoint for generate-task-files MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
-          "status": "done",
-          "dependencies": [],
-          "parentTaskId": 85,
+          "completed": true,
           "prdSource": null
         },
         {
-          "id": 11,
+          "id": "11",
           "title": "Convert list-tasks.js to REST API Endpoint",
-          "description": "Create REST API endpoint for the list-tasks MCP function. Implement GET /api/v1/tasks endpoint with proper request validation, error handling, and response formatting.",
-          "details": "Successfully implemented REST API endpoint for list-tasks MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
-          "status": "done",
-          "dependencies": [],
-          "parentTaskId": 85,
+          "completed": true,
           "prdSource": null
         },
         {
-          "id": 12,
+          "id": "12",
           "title": "Convert move-task.js to REST API Endpoint",
-          "description": "Create REST API endpoint for the move-task MCP function. Implement PUT /api/v1/tasks/{id}/move endpoint with proper request validation, error handling, and response formatting.",
-          "details": "Successfully implemented REST API endpoint for move-task MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
-          "status": "done",
-          "dependencies": [],
-          "parentTaskId": 85,
+          "completed": true,
           "prdSource": null
         },
         {
-          "id": 13,
+          "id": "13",
           "title": "Convert next-task.js to REST API Endpoint",
-          "description": "Create REST API endpoint for the next-task MCP function. Implement GET /api/v1/tasks/next endpoint with proper request validation, error handling, and response formatting.",
-          "details": "Successfully implemented REST API endpoint for next-task MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
-          "status": "done",
-          "dependencies": [],
-          "parentTaskId": 85,
+          "completed": true,
           "prdSource": null
         },
         {
-          "id": 14,
+          "id": "14",
           "title": "Convert remove-dependency.js to REST API Endpoint",
-          "description": "Create REST API endpoint for the remove-dependency MCP function. Implement DELETE /api/v1/tasks/{id}/dependencies/{depId} endpoint with proper request validation, error handling, and response formatting.",
-          "details": "Successfully implemented REST API endpoint for remove-dependency MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
-          "status": "done",
-          "dependencies": [],
-          "parentTaskId": 85,
+          "completed": true,
           "prdSource": null
         },
         {
-          "id": 15,
+          "id": "15",
           "title": "Convert remove-subtask.js to REST API Endpoint",
-          "description": "Create REST API endpoint for the remove-subtask MCP function. Implement DELETE /api/v1/tasks/{id}/subtasks/{subtaskId} endpoint with proper request validation, error handling, and response formatting.",
-          "details": "Successfully implemented REST API endpoint for remove-subtask MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
-          "status": "done",
-          "dependencies": [],
-          "parentTaskId": 85,
+          "completed": true,
           "prdSource": null
         },
         {
-          "id": 16,
+          "id": "16",
           "title": "Convert remove-task.js to REST API Endpoint",
-          "description": "Create REST API endpoint for the remove-task MCP function. Implement DELETE /api/v1/tasks/{id} endpoint with proper request validation, error handling, and response formatting.",
-          "details": "Successfully implemented REST API endpoint for remove-task MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
-          "status": "done",
-          "dependencies": [],
-          "parentTaskId": 85,
+          "completed": true,
           "prdSource": null
         },
         {
-          "id": 17,
+          "id": "17",
           "title": "Convert set-task-status.js to REST API Endpoint",
-          "description": "Create REST API endpoint for the set-task-status MCP function. Implement PUT /api/v1/tasks/{id}/status endpoint with proper request validation, error handling, and response formatting.",
-          "details": "Successfully implemented REST API endpoint for set-task-status MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
-          "status": "done",
-          "dependencies": [],
-          "parentTaskId": 85,
+          "completed": true,
           "prdSource": null
         },
         {
-          "id": 18,
+          "id": "18",
           "title": "Convert show-task.js to REST API Endpoint",
-          "description": "Create REST API endpoint for the show-task MCP function. Implement GET /api/v1/tasks/{id} endpoint with proper request validation, error handling, and response formatting.",
-          "details": "Successfully implemented REST API endpoint for show-task MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
-          "status": "done",
-          "dependencies": [],
-          "parentTaskId": 85,
+          "completed": true,
           "prdSource": null
         },
         {
-          "id": 19,
+          "id": "19",
           "title": "Convert update-subtask-by-id.js to REST API Endpoint",
-          "description": "Create REST API endpoint for the update-subtask-by-id MCP function. Implement PUT /api/v1/tasks/{id}/subtasks/{subtaskId} endpoint with proper request validation, error handling, and response formatting.",
-          "details": "Successfully implemented REST API endpoint for update-subtask-by-id MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
-          "status": "done",
-          "dependencies": [],
-          "parentTaskId": 85,
+          "completed": true,
           "prdSource": null
         },
         {
-          "id": 20,
+          "id": "20",
           "title": "Convert update-task-by-id.js to REST API Endpoint",
-          "description": "Create REST API endpoint for the update-task-by-id MCP function. Implement PUT /api/v1/tasks/{id} endpoint with proper request validation, error handling, and response formatting.",
-          "details": "Successfully implemented REST API endpoint for update-task-by-id MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
-          "status": "done",
-          "dependencies": [],
-          "parentTaskId": 85,
+          "completed": true,
           "prdSource": null
         },
         {
-          "id": 21,
+          "id": "21",
           "title": "Convert update-tasks.js to REST API Endpoint",
-          "description": "Create REST API endpoint for the update-tasks MCP function. Implement PUT /api/v1/tasks endpoint with proper request validation, error handling, and response formatting.",
-          "details": "Successfully implemented REST API endpoint for update-tasks MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
-          "status": "done",
-          "dependencies": [],
-          "parentTaskId": 85,
+          "completed": true,
           "prdSource": null
         },
         {
-          "id": 22,
+          "id": "22",
           "title": "Convert validate-dependencies.js to REST API Endpoint",
-          "description": "Create REST API endpoint for the validate-dependencies MCP function. Implement GET /api/v1/tasks/validate-dependencies endpoint with proper request validation, error handling, and response formatting.",
-          "details": "Successfully implemented REST API endpoint for validate-dependencies MCP function. The endpoint includes proper request validation, error handling, and response formatting. Integrated into the main server and tested successfully.",
-          "status": "done",
-          "dependencies": [],
-          "parentTaskId": 85,
+          "completed": true,
           "prdSource": null
         },
         {
-          "id": 23,
+          "id": "23",
           "title": "Remove duplicate subtask for add-subtask.js",
-          "description": "Remove the duplicate subtask for the add-subtask.js conversion to REST API endpoint.",
-          "details": "Identified and removed the duplicate subtask entry for add-subtask.js conversion.",
-          "status": "done",
-          "dependencies": [],
-          "parentTaskId": 85,
+          "completed": true,
           "prdSource": null
         }
       ],
       "prdSource": null,
-      "updatedAt": "2025-06-04T09:41:18.226Z"
+      "updatedAt": "2025-06-05T16:27:40.685Z"
     },
     {
       "id": 86,
@@ -463,116 +317,40 @@
       "id": 90,
       "title": "Implement Task Deletion System",
       "description": "Develop a robust task deletion system, including a confirmation dialog, cascade deletion for subtasks, and dependency cleanup, with a basic undo functionality.",
-      "status": "pending",
+      "status": "done",
       "dependencies": [
-        87,
-        86,
-        84
+        "87",
+        "86",
+        "84"
       ],
       "priority": "medium",
       "details": "Implement the TaskDeleteDialog using shadcn/ui Dialog. This dialog should include a confirmation step before deletion and a warning for cascade operations. Integrate the frontend with the DELETE /api/v1/tasks/{id} endpoint. On the backend, implement the logic for cascade deletion of subtasks and cleanup of dependencies when a task is removed. Consider a time-limited recovery/undo functionality for accidental deletions, potentially by soft-deleting tasks and having a background process for permanent deletion.",
       "testStrategy": "1. **Unit Tests:** Write unit tests for the backend cascade deletion logic and dependency cleanup. 2. **Integration Tests:** Test the integration between the frontend dialog and the backend API endpoint. 3. **UI Tests:** Verify the display and functionality of the confirmation dialog and cascade warning. 4. **Scenario Testing:** a. Delete a task with no subtasks or dependencies. b. Delete a task with subtasks, verifying cascade deletion. c. Delete a task with dependencies, verifying dependency cleanup. d. Test the undo functionality within the specified time limit. e. Attempt to delete a task without confirmation to ensure the dialog prevents it. 5. **Performance Testing:** Assess the performance of cascade deletions for tasks with a large number of subtasks/dependencies.",
-      "subtasks": [
-        {
-          "id": 1,
-          "title": "Design Confirmation Dialog UI/UX",
-          "description": "Design the visual layout, interaction flow, and messaging for the task deletion confirmation dialog on the frontend.",
-          "dependencies": [],
-          "details": "This includes wireframes, mockups, and defining the user experience for confirming task deletion, including warnings about cascade deletion.",
-          "status": "pending",
-          "prdSource": null
-        },
-        {
-          "id": 2,
-          "title": "Implement Frontend Confirmation Dialog",
-          "description": "Develop the frontend code for the task deletion confirmation dialog based on the approved UI/UX design.",
-          "dependencies": [
-            1
-          ],
-          "details": "Implement the dialog using the chosen frontend framework (e.g., React, Vue, Angular), including state management for showing/hiding and handling user input (confirm/cancel).",
-          "status": "pending",
-          "prdSource": null
-        },
-        {
-          "id": 3,
-          "title": "Design Backend API for Task Deletion",
-          "description": "Define the API endpoint, request/response structure, and authentication/authorization requirements for the task deletion operation.",
-          "dependencies": [],
-          "details": "Specify the HTTP method, URL path, expected parameters (e.g., task ID), and potential error responses. Consider idempotency.",
-          "status": "pending",
-          "prdSource": null
-        },
-        {
-          "id": 4,
-          "title": "Implement Backend Cascade Deletion Logic",
-          "description": "Develop the backend logic to perform cascade deletion of related entities (e.g., subtasks, comments) when a parent task is deleted.",
-          "dependencies": [
-            3
-          ],
-          "details": "Implement database queries or ORM operations to identify and delete all dependent records. Ensure transactional integrity to prevent partial deletions.",
-          "status": "pending",
-          "prdSource": null
-        },
-        {
-          "id": 5,
-          "title": "Implement Backend Dependency Cleanup",
-          "description": "Develop the backend logic to clean up any remaining dependencies or references that are not directly deleted but become invalid (e.g., orphaned foreign keys, cached data).",
-          "dependencies": [
-            4
-          ],
-          "details": "Identify and nullify or remove references in other tables that pointed to the deleted task. Consider cache invalidation strategies.",
-          "status": "pending",
-          "prdSource": null
-        },
-        {
-          "id": 6,
-          "title": "Design and Implement Time-Limited Undo Functionality (Backend)",
-          "description": "Design the backend mechanism for soft-deleting tasks and allowing them to be restored within a specific time window.",
-          "dependencies": [
-            4,
-            5
-          ],
-          "details": "This involves adding a 'deleted_at' timestamp or a 'status' field to the task, implementing a background process for permanent deletion after the undo window, and an API endpoint for undoing deletion.",
-          "status": "pending",
-          "prdSource": null
-        },
-        {
-          "id": 7,
-          "title": "Implement Time-Limited Undo Functionality (Frontend)",
-          "description": "Develop the frontend UI and logic to display the undo option after a task deletion and trigger the undo API call.",
-          "dependencies": [
-            2,
-            6
-          ],
-          "details": "This includes a temporary notification or banner with an 'Undo' button, a countdown timer for the undo window, and handling the UI state after an undo operation.",
-          "status": "pending",
-          "prdSource": null
-        }
-      ],
-      "prdSource": null,
-      "complexityScore": 9,
-      "complexityLevel": "high"
-    },
-    {
-      "id": 91,
-      "title": "Copy of Integrate v0.16.0",
-      "description": "fix 1 Integrate bug fixes and improvements from upstream v0.16.0 release while preserving unique custom features including: Kanban board functionality, PRD lifecycle tracking, interactive menu systems, custom AI editor integrations (.augment-guidelines, .cursor/rules, .roo/rules, .windsurfrules), custom task templates and workflow, and enhanced project management features. Focus on: 1) New directory structure (.taskmaster/ consolidation), 2) AWS Bedrock support, 3) Google Vertex AI support, 4) Azure support, 5) Node.js version requirement update, 6) TASK_MASTER_PROJECT_ROOT env variable, 7) Bug fixes for max_tokens and add-task MCP command. Create integration branch dev_rohit for selective merging.",
-      "details": "testI editor integrations (.augment-guidelines, .cursor/rules, .roo/rules, .windsurfrules), custom task templates and workflow, and enhanced project management features. Focus on: 1) New directory structure (.taskmaster/ consolidation), 2) AWS Bedrock support, 3) Google Vertex AI support, 4) Azure support, 5) Node.js version requirement update, 6) TASK_MASTER_PROJECT_ROOT env variable, 7) Bug fixes for max_tokens and add-task MCP command. Create integration branch dev_rohit for selective merging.",
-      "testStrategy": "test stractery",
-      "status": "pending",
-      "dependencies": [
-        "59",
-        "84"
-      ],
-      "priority": "high",
       "subtasks": [],
       "prdSource": null,
       "complexityScore": 9,
       "complexityLevel": "high",
-      "updatedAt": "2025-06-05T06:12:49.228Z"
+      "updatedAt": "2025-06-05T21:51:28.411Z",
+      "tags": []
+    },
+    {
+      "id": 92,
+      "title": "Simplify PRD Kanban Folder Structure",
+      "description": "Refactor the PRD Kanban folder structure to improve organization and maintainability. presently we have pending, in-progress and done folders for PRDs .. i would like to simplify this similar to tasks. the status of the PRD files can be managed in the prd.json file. for archiving we will have a the folder and instead of taking files from /prd/done folder it will take from /prd folder.",
+      "details": "The current PRD Kanban folder structure needs simplification. This task involves reorganizing the folders and files related to PRDs within the Kanban system to enhance clarity, reduce redundancy, and streamline navigation. Consider grouping files by feature or module rather than by type, and ensure naming conventions are consistent. This might involve updating import paths in existing components that interact with PRD files. The goal is a more intuitive and scalable structure.",
+      "testStrategy": "1. Verify that all existing PRD functionalities (creation, editing, viewing, deletion) still work correctly after the refactor. 2. Check for any broken file paths or import errors in the application. 3. Ensure that the new folder structure is logical and easy to navigate for new and existing developers. 4. Conduct a thorough code review to confirm adherence to new naming conventions and organizational principles.",
+      "status": "in-progress",
+      "dependencies": [],
+      "priority": "medium",
+      "subtasks": [],
+      "prdSource": null,
+      "updatedAt": "2025-06-05T21:53:11.871Z",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "tags": []
     }
   ],
   "meta": {
-    "updatedAt": "2025-06-05T05:20:56.370Z"
+    "updatedAt": "2025-06-05T15:36:12.141Z"
   }
 }

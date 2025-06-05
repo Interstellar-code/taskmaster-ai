@@ -5,7 +5,7 @@
 
 import express from 'express';
 import path from 'path';
-import fs from 'fs';
+import fs from 'fs/promises';
 import {
   addDependencyDirect,
   addSubtaskDirect,
@@ -289,16 +289,16 @@ router.post('/tasks', requireTaskMasterCore, async (req, res) => {
 
       for (const subtask of subtasks) {
         try {
-          // Convert simple subtask format to TaskMaster format
+          // Convert TaskMaster subtask format to addSubtaskDirect format
           const subtaskResult = await addSubtaskDirect(
             {
               tasksJsonPath,
               id: newTaskId.toString(),
               title: subtask.title,
-              description: subtask.title, // Use title as description if no description provided
-              details: '',
-              status: subtask.completed ? 'done' : 'pending',
-              dependencies: '', // No dependencies for now
+              description: subtask.description || subtask.title, // Use description or fallback to title
+              details: subtask.details || '',
+              status: subtask.status || 'pending',
+              dependencies: Array.isArray(subtask.dependencies) ? subtask.dependencies.join(',') : '', // Convert array to comma-separated string
               skipGenerate: true // Skip file generation for individual subtasks
             },
             logger
@@ -555,7 +555,7 @@ router.put('/tasks/:id', requireTaskMasterCore, async (req, res) => {
   if (title || description || priority || status || dependencies || tags || estimatedHours || assignee || dueDate || details || testStrategy || subtasks) {
     try {
       // Read current tasks
-      const tasksData = JSON.parse(await fs.promises.readFile(tasksJsonPath, 'utf8'));
+      const tasksData = JSON.parse(await fs.readFile(tasksJsonPath, 'utf8'));
       const taskIndex = tasksData.tasks.findIndex(t => t.id.toString() === id.toString());
 
       if (taskIndex === -1) {
@@ -586,7 +586,7 @@ router.put('/tasks/:id', requireTaskMasterCore, async (req, res) => {
       task.updatedAt = new Date().toISOString();
 
       // Write back to file
-      await fs.promises.writeFile(tasksJsonPath, JSON.stringify(tasksData, null, 2));
+      await fs.writeFile(tasksJsonPath, JSON.stringify(tasksData, null, 2));
 
       logger.info(`Direct task update completed for task ${id}`);
 
@@ -936,6 +936,98 @@ router.put('/tasks/:parentId/subtasks/:subtaskId', requireTaskMasterCore, async 
 });
 
 /**
+ * PATCH /api/v1/tasks/:parentId/subtasks/:subtaskId/status
+ * Update subtask status directly
+ */
+router.patch('/tasks/:parentId/subtasks/:subtaskId/status', requireTaskMasterCore, async (req, res) => {
+  const { parentId, subtaskId } = req.params;
+  const { status } = req.body;
+  const tasksJsonPath = req.app.locals.tasksJsonPath;
+
+  if (!status) {
+    return res.status(400).json({
+      success: false,
+      error: 'Validation error',
+      message: 'status is required',
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  try {
+    // Read current tasks data
+    const tasksData = JSON.parse(await fs.readFile(tasksJsonPath, 'utf8'));
+    const taskIndex = tasksData.tasks.findIndex(t => t.id.toString() === parentId.toString());
+
+    if (taskIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        error: 'Task not found',
+        message: `Task with ID ${parentId} does not exist`,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    const task = tasksData.tasks[taskIndex];
+    if (!task.subtasks || !Array.isArray(task.subtasks)) {
+      return res.status(404).json({
+        success: false,
+        error: 'No subtasks found',
+        message: `Task ${parentId} has no subtasks`,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    // Find the subtask
+    const subtaskIndex = task.subtasks.findIndex(st => st.id.toString() === subtaskId.toString());
+    if (subtaskIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        error: 'Subtask not found',
+        message: `Subtask ${subtaskId} not found in task ${parentId}`,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    const subtask = task.subtasks[subtaskIndex];
+
+    // Update subtask status - handle both formats
+    if ('status' in subtask) {
+      // TaskMaster format - update status directly
+      subtask.status = status;
+    } else if ('completed' in subtask) {
+      // Simplified format - convert status to completed boolean
+      subtask.completed = (status === 'done' || status === 'completed');
+    } else {
+      // Add status field if neither exists
+      subtask.status = status;
+    }
+
+    // Update task timestamp
+    task.updatedAt = new Date().toISOString();
+
+    // Write back to file
+    await fs.writeFile(tasksJsonPath, JSON.stringify(tasksData, null, 2));
+
+    logger.info(`Updated subtask ${parentId}.${subtaskId} status to: ${status}`);
+
+    res.json({
+      success: true,
+      data: task,
+      message: `Subtask ${subtaskId} status updated to ${status}`,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    logger.error('Failed to update subtask status:', error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to update subtask status',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+/**
  * DELETE /api/v1/tasks/:parentId/subtasks/:subtaskId
  * Remove a subtask
  */
@@ -1017,7 +1109,7 @@ router.post('/tasks/:id/analyze-complexity', requireTaskMasterCore, async (req, 
   // Ensure reports directory exists
   const reportsDir = path.join(projectRoot, '.taskmaster', 'reports');
   try {
-    await fs.promises.mkdir(reportsDir, { recursive: true });
+    await fs.mkdir(reportsDir, { recursive: true });
   } catch (error) {
     // Directory might already exist, ignore error
   }
@@ -1044,7 +1136,7 @@ router.get('/tasks/:id/complexity-report', requireTaskMasterCore, async (req, re
 
   try {
     // Find the latest complexity report for this task
-    const files = await fs.promises.readdir(reportsDir);
+    const files = await fs.readdir(reportsDir);
     const taskReports = files
       .filter(file => file.startsWith(`task-${id}-complexity-`) && file.endsWith('.json'))
       .sort((a, b) => {
@@ -1066,7 +1158,7 @@ router.get('/tasks/:id/complexity-report', requireTaskMasterCore, async (req, re
     // Read the latest report
     const latestReport = taskReports[0];
     const reportPath = path.join(reportsDir, latestReport);
-    const reportContent = await fs.promises.readFile(reportPath, 'utf8');
+    const reportContent = await fs.readFile(reportPath, 'utf8');
     const reportData = JSON.parse(reportContent);
 
     // Extract the analysis for this specific task

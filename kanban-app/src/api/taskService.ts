@@ -51,9 +51,15 @@ interface TaskUpdateRequest {
   details?: string;
   testStrategy?: string;
   subtasks?: Array<{
-    id: string;
+    id: string | number;
     title: string;
-    completed: boolean;
+    description?: string;
+    details?: string;
+    status: string;
+    dependencies?: (string | number)[];
+    parentTaskId?: string | number;
+    testStrategy?: string;
+    prdSource?: any;
   }>;
 }
 
@@ -273,6 +279,19 @@ class TaskService {
       method: 'PUT',
       body: JSON.stringify(updateData),
     });
+    return response.data;
+  }
+
+  // Update subtask status directly
+  async updateSubtaskStatus(parentId: string, subtaskId: string, status: string): Promise<TaskMasterTask> {
+    console.log(`updateSubtaskStatus: Making API call to update subtask ${parentId}.${subtaskId} status to: ${status}`);
+
+    const response = await this.fetchApi<TaskMasterTask>(`/api/v1/tasks/${parentId}/subtasks/${subtaskId}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status }),
+    });
+
+    console.log('updateSubtaskStatus response:', response);
     return response.data;
   }
 

@@ -12,6 +12,11 @@ import { Edit, Loader2, X } from 'lucide-react';
 import { z } from 'zod';
 import { EnhancedKanbanTask, TaskMasterTask, TaskStatus } from '@/api/types';
 
+// Type guard function to safely check for dueDate property that may exist at runtime
+function hasDateProperty(obj: unknown): obj is { dueDate?: string } {
+  return typeof obj === 'object' && obj !== null && 'dueDate' in obj;
+}
+
 // Create a proper edit schema that makes required fields explicit
 const TaskEditSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters long').max(200, 'Title must be less than 200 characters'),
@@ -19,16 +24,22 @@ const TaskEditSchema = z.object({
   tags: z.array(z.string()),
   dependencies: z.array(z.string()),
   subtasks: z.array(z.object({
-    id: z.string(),
+    id: z.union([z.string(), z.number()]),
     title: z.string(),
-    completed: z.boolean()
+    description: z.string().optional(),
+    details: z.string().optional(),
+    status: z.enum(['pending', 'in-progress', 'done', 'review', 'blocked', 'deferred', 'cancelled']).default('pending'),
+    dependencies: z.array(z.union([z.string(), z.number()])).default([]),
+    parentTaskId: z.union([z.string(), z.number()]).optional(),
+    testStrategy: z.string().optional(),
+    prdSource: z.any().optional(),
   })),
   details: z.string().optional(),
   priority: z.enum(['low', 'medium', 'high']).optional(),
   status: z.enum(['pending', 'in-progress', 'done', 'review', 'blocked', 'deferred', 'cancelled']).optional(),
   estimatedHours: z.number().optional(),
   assignee: z.string().optional(),
-  dueDate: z.string().optional(),
+  dueDate: z.date().optional(),
   testStrategy: z.string().optional(),
   prdSource: z.string().optional(),
 });
@@ -92,7 +103,7 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
       tags: [],
       estimatedHours: undefined,
       assignee: '',
-      dueDate: '',
+      dueDate: undefined,
       details: '',
       testStrategy: '',
       dependencies: [],
@@ -113,11 +124,17 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
       // Fetch full task details to get subtasks and other data
       const fullTask = await taskService.getTaskById(task.id);
 
-      // Convert subtasks from TaskMaster format to form format
+      // Convert subtasks to proper TaskMaster format
       const formSubtasks = fullTask.subtasks ? fullTask.subtasks.map((subtask, index: number) => ({
-        id: subtask.id ? String(subtask.id) : `${task.id}.${index + 1}`,
+        id: subtask.id ? subtask.id : `${task.id}.${index + 1}`,
         title: subtask.title || subtask.description || '',
-        completed: subtask.status === 'done' || false,
+        description: subtask.description || '',
+        details: subtask.details || '',
+        status: (subtask.status as 'pending' | 'in-progress' | 'done' | 'review' | 'blocked' | 'deferred' | 'cancelled') || 'pending',
+        dependencies: subtask.dependencies || [],
+        parentTaskId: subtask.parentTaskId || task.id,
+        testStrategy: '',
+        prdSource: subtask.prdSource || null,
       })) : [];
 
       form.reset({
@@ -128,7 +145,7 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
         tags: [],
         estimatedHours: undefined, // TaskMasterTask doesn't have estimatedHours
         assignee: '', // TaskMasterTask doesn't have assignee
-        dueDate: '', // TaskMasterTask doesn't have dueDate
+        dueDate: hasDateProperty(fullTask) && fullTask.dueDate ? new Date(fullTask.dueDate) : undefined, // Convert string to Date if exists
         details: fullTask.details || '',
         testStrategy: fullTask.testStrategy || '',
         dependencies: Array.isArray(fullTask.dependencies) ? fullTask.dependencies.map(dep => String(dep)) : [],
@@ -150,7 +167,7 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
         tags: [],
         estimatedHours: undefined,
         assignee: '',
-        dueDate: '',
+        dueDate: hasDateProperty(task) && task.dueDate ? new Date(task.dueDate) : undefined,
         details: task.details || '',
         testStrategy: task.testStrategy || '',
         dependencies: Array.isArray(task.dependencies) ? task.dependencies.map(dep => String(dep)) : [],
@@ -191,17 +208,20 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
     setIsSubmitting(true);
     try {
       // Send structured data instead of just a prompt
-      const updateData: Partial<TaskEditFormData> = {
+      // Convert Date objects to strings for API compatibility
+      const updateData = {
         title: data.title,
         description: data.description,
         priority: data.priority,
         status: data.status,
+        tags: data.tags,
         dependencies: Array.isArray(data.dependencies) ? data.dependencies : [],
         assignee: data.assignee?.trim() || undefined,
         estimatedHours: data.estimatedHours || undefined,
-        dueDate: data.dueDate ? String(data.dueDate) : undefined,
+        dueDate: data.dueDate ? data.dueDate.toISOString() : undefined,
         details: data.details?.trim() || undefined,
         testStrategy: data.testStrategy?.trim() || undefined,
+        prdSource: data.prdSource?.trim() || undefined,
         subtasks: data.subtasks || []
       };
 
@@ -419,7 +439,7 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
                     <FormSection
                       title="Subtasks"
                     >
-                      <SubtaskManager form={form} task={task} />
+                      <SubtaskManager form={form} task={task} onTaskUpdated={onTaskUpdated} />
                     </FormSection>
                   </div>
                 </div>
@@ -439,11 +459,13 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
 interface SubtaskManagerProps {
   form: ReturnType<typeof useForm<TaskEditFormData>>;
   task: EnhancedKanbanTask;
+  onTaskUpdated?: (task: TaskMasterTask) => void;
 }
 
-function SubtaskManager({ form, task }: SubtaskManagerProps) {
+function SubtaskManager({ form, task, onTaskUpdated }: SubtaskManagerProps) {
   const [newSubtaskTitle, setNewSubtaskTitle] = useState('');
   const subtasks = form.watch('subtasks') || [];
+  const { showSuccess, showError } = useFormToast();
 
   const addSubtask = () => {
     if (newSubtaskTitle.trim()) {
@@ -453,7 +475,13 @@ function SubtaskManager({ form, task }: SubtaskManagerProps) {
       const newSubtask = {
         id: `${task?.id || 'new'}.${nextIndex}`,
         title: newSubtaskTitle.trim(),
-        completed: false,
+        description: '',
+        details: '',
+        status: 'pending' as const,
+        dependencies: [],
+        parentTaskId: task?.id,
+        testStrategy: '',
+        prdSource: null,
       };
 
       form.setValue('subtasks', [...currentSubtasks, newSubtask]);
@@ -467,12 +495,47 @@ function SubtaskManager({ form, task }: SubtaskManagerProps) {
     form.setValue('subtasks', updatedSubtasks);
   };
 
-  const toggleSubtask = (subtaskId: string) => {
+  const toggleSubtask = async (subtaskId: string) => {
     const currentSubtasks = form.getValues('subtasks') || [];
+    const targetSubtask = currentSubtasks.find(st => st.id === subtaskId);
+
+    if (!targetSubtask) {
+      showError("Update Failed", "Subtask not found.");
+      return;
+    }
+
+    const newStatus = targetSubtask.status === 'done' ? 'pending' : 'done';
+
+    // Update form state immediately for responsive UI
     const updatedSubtasks = currentSubtasks.map((st) =>
-      st.id === subtaskId ? { ...st, completed: !st.completed } : st
+      st.id === subtaskId ? { ...st, status: newStatus as 'pending' | 'in-progress' | 'done' | 'review' | 'blocked' | 'deferred' | 'cancelled' } : st
     );
     form.setValue('subtasks', updatedSubtasks);
+
+    // Make direct API call to update subtask status using TaskMaster's set-status functionality
+    try {
+      // Use the subtask status update API endpoint
+      const response = await taskService.updateSubtaskStatus(task.id, subtaskId, newStatus);
+
+      // Show success feedback
+      showSuccess(
+        "Subtask Updated",
+        `Subtask ${subtaskId} marked as ${newStatus === 'done' ? 'completed' : 'pending'}`
+      );
+
+      // Notify parent component to refresh the kanban board
+      if (onTaskUpdated && response) {
+        onTaskUpdated(response);
+      }
+    } catch (error) {
+      console.error('Failed to update subtask:', error);
+
+      // Revert the form state on error
+      form.setValue('subtasks', currentSubtasks);
+
+      // Show error feedback
+      showError("Update Failed", "Failed to update subtask. Please try again.");
+    }
   };
 
   return (
@@ -500,19 +563,26 @@ function SubtaskManager({ form, task }: SubtaskManagerProps) {
         <div className="space-y-2">
           <label className="text-sm font-medium">Subtasks ({subtasks.length})</label>
           <div className="space-y-2 max-h-40 overflow-y-auto border rounded-md p-3">
-            {subtasks.map((subtask: { id: string; title: string; completed: boolean }) => (
+            {subtasks.map((subtask: { id: string | number; title: string; status: string }) => (
               <div key={subtask.id} className="flex items-center gap-3 p-2 hover:bg-muted rounded">
                 <input
                   type="checkbox"
-                  checked={subtask.completed}
-                  onChange={() => toggleSubtask(subtask.id)}
+                  checked={subtask.status === 'done'}
+                  onChange={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleSubtask(subtask.id.toString());
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
                   className="h-4 w-4 rounded border-gray-300"
                 />
                 <div className="flex-1 flex items-center gap-2">
                   <span className="text-xs text-muted-foreground font-mono bg-muted px-1.5 py-0.5 rounded">
                     {subtask.id}
                   </span>
-                  <span className={`text-sm ${subtask.completed ? 'line-through text-muted-foreground' : ''}`}>
+                  <span className={`text-sm ${subtask.status === 'done' ? 'line-through text-muted-foreground' : ''}`}>
                     {subtask.title}
                   </span>
                 </div>
@@ -521,7 +591,7 @@ function SubtaskManager({ form, task }: SubtaskManagerProps) {
                   variant="ghost"
                   size="sm"
                   className="h-8 w-8 p-0 text-red-600 hover:bg-red-100 hover:text-red-700"
-                  onClick={() => removeSubtask(subtask.id)}
+                  onClick={() => removeSubtask(subtask.id.toString())}
                 >
                   <X className="h-4 w-4" />
                 </Button>

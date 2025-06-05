@@ -32,9 +32,15 @@ const TaskCreateSchema = z.object({
   tags: z.array(z.string()).default([]),
   dependencies: z.array(z.string()).default([]),
   subtasks: z.array(z.object({
-    id: z.string(),
+    id: z.union([z.string(), z.number()]),
     title: z.string().min(3, 'Subtask title must be at least 3 characters'),
-    completed: z.boolean().default(false),
+    description: z.string().optional(),
+    details: z.string().optional(),
+    status: z.enum(['pending', 'in-progress', 'done', 'review', 'blocked', 'deferred', 'cancelled']).default('pending'),
+    dependencies: z.array(z.union([z.string(), z.number()])).default([]),
+    parentTaskId: z.union([z.string(), z.number()]).optional(),
+    testStrategy: z.string().optional(),
+    prdSource: z.any().optional(),
   })).default([]),
 
   // Optional enhanced fields
@@ -45,7 +51,7 @@ const TaskCreateSchema = z.object({
   assignee: z.string()
     .max(50, 'Assignee name must be less than 50 characters')
     .optional(),
-  dueDate: z.string().optional(), // ISO date string
+  dueDate: z.date().optional(), // Date object from date picker
   details: z.string()
     .max(2000, 'Details must be less than 2000 characters')
     .optional(),
@@ -109,7 +115,7 @@ export function TaskCreateModal({
       tags: initialData?.tags || [],
       estimatedHours: initialData?.estimatedHours || undefined,
       assignee: initialData?.assignee || '',
-      dueDate: initialData?.dueDate || '',
+      dueDate: initialData?.dueDate ? new Date(initialData.dueDate) : undefined,
       details: initialData?.details || '',
       testStrategy: initialData?.testStrategy || '',
       dependencies: initialData?.dependencies || [],
@@ -128,11 +134,17 @@ export function TaskCreateModal({
   // Update form when initialData changes (for copy functionality)
   useEffect(() => {
     if (initialData) {
-      // Convert subtasks from TaskMaster format to form format if needed
+      // Convert subtasks to proper TaskMaster format
       const formSubtasks = initialData.subtasks ? initialData.subtasks.map((subtask) => ({
         id: subtask.id || `subtask_${Date.now()}_${Math.random()}`,
         title: subtask.title || '',
-        completed: subtask.completed || false,
+        description: subtask.description || '',
+        details: subtask.details || '',
+        status: subtask.status || 'pending',
+        dependencies: subtask.dependencies || [],
+        parentTaskId: subtask.parentTaskId,
+        testStrategy: subtask.testStrategy || '',
+        prdSource: subtask.prdSource || null,
       })) : [];
 
       form.reset({
@@ -142,7 +154,7 @@ export function TaskCreateModal({
         tags: initialData.tags || [],
         estimatedHours: initialData.estimatedHours || undefined,
         assignee: initialData.assignee || '',
-        dueDate: initialData.dueDate || '',
+        dueDate: initialData?.dueDate ? (typeof initialData.dueDate === 'string' ? new Date(initialData.dueDate) : initialData.dueDate) : undefined,
         details: initialData.details || '',
         testStrategy: initialData.testStrategy || '',
         dependencies: initialData.dependencies || [],
@@ -207,7 +219,7 @@ export function TaskCreateModal({
         ...(data.tags && data.tags.length > 0 && { tags: data.tags }),
         ...(data.estimatedHours && { estimatedHours: data.estimatedHours }),
         ...(data.assignee && data.assignee.trim() && { assignee: data.assignee.trim() }),
-        ...(data.dueDate && { dueDate: data.dueDate }),
+        ...(data.dueDate && { dueDate: data.dueDate.toISOString() }),
         ...(data.details && data.details.trim() && { details: data.details.trim() }),
         ...(data.testStrategy && data.testStrategy.trim() && { testStrategy: data.testStrategy.trim() }),
         // New comprehensive fields
@@ -462,7 +474,12 @@ function SubtaskManager({ form }: SubtaskManagerProps) {
       const newSubtask = {
         id: `subtask_${Date.now()}`,
         title: newSubtaskTitle.trim(),
-        completed: false,
+        description: '',
+        details: '',
+        status: 'pending' as const,
+        dependencies: [],
+        testStrategy: '',
+        prdSource: null,
       };
 
       const currentSubtasks = form.getValues('subtasks') || [];
@@ -473,14 +490,14 @@ function SubtaskManager({ form }: SubtaskManagerProps) {
 
   const removeSubtask = (subtaskId: string) => {
     const currentSubtasks = form.getValues('subtasks') || [];
-    const updatedSubtasks = currentSubtasks.filter((st: { id: string }) => st.id !== subtaskId);
+    const updatedSubtasks = currentSubtasks.filter((st: { id: string | number }) => st.id !== subtaskId);
     form.setValue('subtasks', updatedSubtasks);
   };
 
   const toggleSubtask = (subtaskId: string) => {
     const currentSubtasks = form.getValues('subtasks') || [];
-    const updatedSubtasks = currentSubtasks.map((st: { id: string; completed: boolean }) =>
-      st.id === subtaskId ? { ...st, completed: !st.completed } : st
+    const updatedSubtasks = currentSubtasks.map((st: { id: string | number; status: string }) =>
+      st.id === subtaskId ? { ...st, status: st.status === 'done' ? 'pending' : 'done' } : st
     );
     form.setValue('subtasks', updatedSubtasks);
   };
@@ -510,19 +527,19 @@ function SubtaskManager({ form }: SubtaskManagerProps) {
         <div className="space-y-2">
           <label className="text-sm font-medium">Subtasks ({subtasks.length})</label>
           <div className="space-y-2 max-h-40 overflow-y-auto border rounded-md p-3">
-            {subtasks.map((subtask: { id: string; title: string; completed: boolean }) => (
+            {subtasks.map((subtask: { id: string | number; title: string; status: string }) => (
               <div key={subtask.id} className="flex items-center gap-3 p-2 hover:bg-muted rounded">
                 <input
                   type="checkbox"
-                  checked={subtask.completed}
-                  onChange={() => toggleSubtask(subtask.id)}
+                  checked={subtask.status === 'done'}
+                  onChange={() => toggleSubtask(subtask.id.toString())}
                   className="h-4 w-4 rounded border-gray-300"
                 />
                 <div className="flex-1 flex items-center gap-2">
                   <span className="text-xs text-muted-foreground font-mono bg-muted px-1.5 py-0.5 rounded">
                     {subtask.id}
                   </span>
-                  <span className={`text-sm ${subtask.completed ? 'line-through text-muted-foreground' : ''}`}>
+                  <span className={`text-sm ${subtask.status === 'done' ? 'line-through text-muted-foreground' : ''}`}>
                     {subtask.title}
                   </span>
                 </div>
@@ -531,7 +548,7 @@ function SubtaskManager({ form }: SubtaskManagerProps) {
                   variant="ghost"
                   size="sm"
                   className="h-8 w-8 p-0 text-red-600 hover:bg-red-100 hover:text-red-700"
-                  onClick={() => removeSubtask(subtask.id)}
+                  onClick={() => removeSubtask(subtask.id.toString())}
                 >
                   <X className="h-4 w-4" />
                 </Button>

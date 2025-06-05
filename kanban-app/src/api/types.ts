@@ -28,11 +28,23 @@ export interface BulkOperation {
 // Valid task statuses
 export type TaskStatus = 'pending' | 'in-progress' | 'done' | 'review' | 'blocked' | 'deferred' | 'cancelled';
 
-// Simple subtask interface for form creation
-export interface SimpleSubtask {
-  id: string;
+// TaskMaster subtask interface (standardized format)
+export interface TaskMasterSubtaskForm {
+  id: string | number;
   title: string;
-  completed: boolean;
+  description?: string;
+  details?: string;
+  status: TaskStatus;
+  dependencies?: (string | number)[];
+  parentTaskId?: string | number;
+  testStrategy?: string;
+  prdSource?: {
+    filePath: string;
+    fileName: string;
+    parsedDate: string;
+    fileHash: string;
+    fileSize: number;
+  } | null;
 }
 
 // Task creation request interface
@@ -48,7 +60,7 @@ export interface CreateTaskRequest {
   dueDate?: string; // ISO string format
   details?: string;
   testStrategy?: string;
-  subtasks?: SimpleSubtask[]; // Support for subtasks in creation
+  subtasks?: TaskMasterSubtaskForm[]; // Support for subtasks in creation
 }
 
 // Task update request interface
