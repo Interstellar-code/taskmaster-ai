@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { cva } from "class-variance-authority";
 import { GripVertical } from "lucide-react";
 import { Badge } from "./ui/badge";
-import { ColumnId } from "./KanbanBoard";
+import { ColumnId, EnhancedTask } from "./EnhancedKanbanBoard";
 
 export interface Task {
   id: UniqueIdentifier;
@@ -15,7 +15,7 @@ export interface Task {
 }
 
 interface TaskCardProps {
-  task: Task;
+  task: EnhancedTask;
   isOverlay?: boolean;
 }
 
@@ -23,7 +23,7 @@ export type TaskType = "Task";
 
 export interface TaskDragData {
   type: TaskType;
-  task: Task;
+  task: EnhancedTask;
 }
 
 export function TaskCard({ task, isOverlay }: TaskCardProps) {

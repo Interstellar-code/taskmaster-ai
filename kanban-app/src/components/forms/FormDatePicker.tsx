@@ -1,5 +1,4 @@
-import React from 'react';
-import { FieldValues } from 'react-hook-form';
+import { FieldValues, FieldPath } from 'react-hook-form';
 import { format } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import {
@@ -33,7 +32,7 @@ import { FormDatePickerProps } from './types';
  */
 export function FormDatePicker<
   TFieldValues extends FieldValues = FieldValues,
-  TName extends keyof TFieldValues = keyof TFieldValues
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 >({
   name,
   control,
@@ -72,7 +71,7 @@ export function FormDatePicker<
                   disabled={disabled}
                   aria-invalid={!!fieldState.error}
                   aria-describedby={
-                    description ? `${name}-description` : undefined
+                    description ? `${String(name)}-description` : undefined
                   }
                 >
                   {field.value ? (
@@ -100,7 +99,7 @@ export function FormDatePicker<
             </PopoverContent>
           </Popover>
           {description && (
-            <FormDescription id={`${name}-description`}>
+            <FormDescription id={`${String(name)}-description`}>
               {description}
             </FormDescription>
           )}

@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { FormDialog } from './FormDialog';
-import { FormInput, FormTextarea, FormSelect, FormSection, FormCheckbox, FormMultiSelect, FormMultiCombobox, FormCombobox, FormDatePicker, useFormToast } from './index';
+import { FormInput, FormTextarea, FormSelect, FormSection, FormMultiCombobox, FormCombobox, FormDatePicker, useFormToast } from './index';
 import { ChevronDown } from 'lucide-react';
 import { taskService } from '@/api/taskService';
 import { Plus, Loader2, X } from 'lucide-react';
@@ -28,8 +28,16 @@ const TaskCreateSchema = z.object({
 
   priority: z.enum(['low', 'medium', 'high']).default('medium'),
 
+  // Required fields with default empty arrays (following TaskEditSchema pattern)
+  tags: z.array(z.string()).default([]),
+  dependencies: z.array(z.string()).default([]),
+  subtasks: z.array(z.object({
+    id: z.string(),
+    title: z.string().min(3, 'Subtask title must be at least 3 characters'),
+    completed: z.boolean().default(false),
+  })).default([]),
+
   // Optional enhanced fields
-  tags: z.array(z.string()).optional().default([]),
   estimatedHours: z.number()
     .min(0.5, 'Minimum 0.5 hours')
     .max(200, 'Maximum 200 hours')
@@ -44,14 +52,7 @@ const TaskCreateSchema = z.object({
   testStrategy: z.string()
     .max(1000, 'Test strategy must be less than 1000 characters')
     .optional(),
-  // New comprehensive fields
-  dependencies: z.array(z.string()).optional().default([]),
   prdSource: z.string().optional(),
-  subtasks: z.array(z.object({
-    id: z.string(),
-    title: z.string().min(3, 'Subtask title must be at least 3 characters'),
-    completed: z.boolean().default(false),
-  })).optional().default([]),
 });
 
 type TaskCreateFormData = z.infer<typeof TaskCreateSchema>;
@@ -66,7 +67,7 @@ interface TaskCreateModalProps {
   /** Controlled open change handler */
   onOpenChange?: (open: boolean) => void;
   /** Initial data for pre-populating form (for copy functionality) */
-  initialData?: any;
+  initialData?: Partial<TaskCreateFormData>;
 }
 
 /**
@@ -99,7 +100,7 @@ export function TaskCreateModal({
   const open = controlledOpen !== undefined ? controlledOpen : internalOpen;
   const setOpen = controlledOnOpenChange || setInternalOpen;
 
-  const form = useForm<TaskCreateFormData>({
+  const form = useForm({
     resolver: zodResolver(TaskCreateSchema),
     defaultValues: {
       title: initialData?.title || '',
@@ -128,10 +129,10 @@ export function TaskCreateModal({
   useEffect(() => {
     if (initialData) {
       // Convert subtasks from TaskMaster format to form format if needed
-      const formSubtasks = initialData.subtasks ? initialData.subtasks.map((subtask: any) => ({
+      const formSubtasks = initialData.subtasks ? initialData.subtasks.map((subtask) => ({
         id: subtask.id || `subtask_${Date.now()}_${Math.random()}`,
-        title: subtask.title || subtask.description || '',
-        completed: subtask.status === 'done' || subtask.completed || false,
+        title: subtask.title || '',
+        completed: subtask.completed || false,
       })) : [];
 
       form.reset({
@@ -161,7 +162,7 @@ export function TaskCreateModal({
         task && task.id && task.title && task.title.trim()
       ) : [];
 
-      const tasks = validTasks.map((task: any) => ({
+      const tasks = validTasks.map((task) => ({
         id: task.id.toString(),
         title: task.title.trim()
       }));
@@ -448,7 +449,8 @@ TaskCreateModal.displayName = 'TaskCreateModal';
  * Manages dynamic subtask creation with checkboxes
  */
 interface SubtaskManagerProps {
-  form: any; // UseFormReturn type
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  form: any;
 }
 
 function SubtaskManager({ form }: SubtaskManagerProps) {
@@ -471,13 +473,13 @@ function SubtaskManager({ form }: SubtaskManagerProps) {
 
   const removeSubtask = (subtaskId: string) => {
     const currentSubtasks = form.getValues('subtasks') || [];
-    const updatedSubtasks = currentSubtasks.filter((st: any) => st.id !== subtaskId);
+    const updatedSubtasks = currentSubtasks.filter((st: { id: string }) => st.id !== subtaskId);
     form.setValue('subtasks', updatedSubtasks);
   };
 
   const toggleSubtask = (subtaskId: string) => {
     const currentSubtasks = form.getValues('subtasks') || [];
-    const updatedSubtasks = currentSubtasks.map((st: any) =>
+    const updatedSubtasks = currentSubtasks.map((st: { id: string; completed: boolean }) =>
       st.id === subtaskId ? { ...st, completed: !st.completed } : st
     );
     form.setValue('subtasks', updatedSubtasks);
@@ -508,7 +510,7 @@ function SubtaskManager({ form }: SubtaskManagerProps) {
         <div className="space-y-2">
           <label className="text-sm font-medium">Subtasks ({subtasks.length})</label>
           <div className="space-y-2 max-h-40 overflow-y-auto border rounded-md p-3">
-            {subtasks.map((subtask: any, index: number) => (
+            {subtasks.map((subtask: { id: string; title: string; completed: boolean }) => (
               <div key={subtask.id} className="flex items-center gap-3 p-2 hover:bg-muted rounded">
                 <input
                   type="checkbox"

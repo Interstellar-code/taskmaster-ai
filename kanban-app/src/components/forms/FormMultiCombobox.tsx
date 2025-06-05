@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { FieldValues } from 'react-hook-form';
+import { useState } from 'react';
+import { FieldValues, FieldPath } from 'react-hook-form';
 import { Check, ChevronsUpDown, X } from 'lucide-react';
 import {
   FormField,
@@ -42,7 +42,7 @@ import { FormMultiComboboxProps } from './types';
  */
 export function FormMultiCombobox<
   TFieldValues extends FieldValues = FieldValues,
-  TName extends keyof TFieldValues = keyof TFieldValues
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 >({
   name,
   control,
@@ -65,15 +65,15 @@ export function FormMultiCombobox<
       control={control}
       name={name}
       render={({ field, fieldState }) => {
-        const selectedValues = Array.isArray(field.value) ? field.value : [];
-        const selectedOptions = options.filter(option => 
+        const selectedValues: string[] = Array.isArray(field.value) ? field.value : [];
+        const selectedOptions = options.filter(option =>
           selectedValues.includes(option.value)
         );
 
         const handleSelect = (optionValue: string) => {
-          const currentValues = Array.isArray(field.value) ? field.value : [];
-          let newValues;
-          
+          const currentValues: string[] = Array.isArray(field.value) ? field.value : [];
+          let newValues: string[];
+
           if (currentValues.includes(optionValue)) {
             // Remove if already selected
             newValues = currentValues.filter(value => value !== optionValue);
@@ -84,12 +84,12 @@ export function FormMultiCombobox<
             }
             newValues = [...currentValues, optionValue];
           }
-          
+
           field.onChange(newValues);
         };
 
         const removeSelection = (optionValue: string) => {
-          const currentValues = Array.isArray(field.value) ? field.value : [];
+          const currentValues: string[] = Array.isArray(field.value) ? field.value : [];
           const newValues = currentValues.filter(value => value !== optionValue);
           field.onChange(newValues);
         };
@@ -144,8 +144,8 @@ export function FormMultiCombobox<
                     <CommandGroup>
                       {options.map((option) => {
                         const isSelected = selectedValues.includes(option.value);
-                        const isDisabled = option.disabled || 
-                          (maxSelections && !isSelected && selectedValues.length >= maxSelections);
+                        const isDisabled = Boolean(option.disabled) ||
+                          Boolean(maxSelections && !isSelected && selectedValues.length >= maxSelections);
                         
                         return (
                           <CommandItem

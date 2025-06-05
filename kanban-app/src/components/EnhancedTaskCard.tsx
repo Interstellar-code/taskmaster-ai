@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { UniqueIdentifier } from "@dnd-kit/core";
+
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -27,7 +27,25 @@ import {
   Split,
   Loader2
 } from "lucide-react";
-import { EnhancedKanbanTask, ColumnId } from "../api/types";
+import { EnhancedKanbanTask, ColumnId, TaskMasterTask } from "../api/types";
+
+// Interface for copy task data (matching TaskCreateFormData format)
+interface CopyTaskData {
+  title: string;
+  description: string;
+  priority: 'high' | 'medium' | 'low';
+  status?: string;
+  dependencies: string[];
+  tags?: string[];
+  details?: string;
+  testStrategy?: string;
+  subtasks?: Array<{
+    id: string;
+    title: string;
+    completed: boolean;
+  }>;
+  prdSource?: string; // TaskCreateModal expects string, not object
+}
 import { taskService } from "../api/taskService";
 import { TaskEditModal, TaskDeleteDialog, TaskCreateModal } from "./forms";
 import { useFormToast } from "./forms/FormToast";
@@ -36,9 +54,9 @@ export interface EnhancedTaskCardProps {
   task: EnhancedKanbanTask;
   isOverlay?: boolean;
   onTaskClick?: (taskId: string) => void;
-  onTaskUpdated?: (task: any) => void;
+  onTaskUpdated?: (task: TaskMasterTask) => void;
   onTaskDeleted?: (taskId: string) => void;
-  onTaskCreated?: (task: any) => void;
+  onTaskCreated?: (task: TaskMasterTask) => void;
 }
 
 export type TaskType = "Task";
@@ -98,9 +116,9 @@ const priorityIcons = {
 };
 
 export function EnhancedTaskCard({ task, isOverlay, onTaskClick, onTaskUpdated, onTaskDeleted, onTaskCreated }: EnhancedTaskCardProps) {
-  const [showDetails, setShowDetails] = useState(false);
+
   const [showCopyModal, setShowCopyModal] = useState(false);
-  const [copyTaskData, setCopyTaskData] = useState<any>(null);
+  const [copyTaskData, setCopyTaskData] = useState<CopyTaskData | null>(null);
   const [isExpanding, setIsExpanding] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const { showSuccess, showError } = useFormToast();
@@ -157,11 +175,20 @@ export function EnhancedTaskCard({ task, isOverlay, onTaskClick, onTaskUpdated, 
       const fullTask = await taskService.getTaskById(task.id);
 
       // Prepare copy data with "Copy of" prefix, remove ID and clear dependencies
-      const copyData = {
-        ...fullTask,
+      const copyData: CopyTaskData = {
         title: `Copy of ${fullTask.title}`,
-        id: undefined, // Remove ID so it creates a new task
+        description: fullTask.description,
+        priority: (fullTask.priority as 'high' | 'medium' | 'low') || 'medium',
+        status: fullTask.status,
         dependencies: [], // Clear dependencies for copied task
+        details: fullTask.details,
+        testStrategy: fullTask.testStrategy,
+        subtasks: fullTask.subtasks?.map(subtask => ({
+          id: `subtask_${Date.now()}_${Math.random()}`,
+          title: subtask.title,
+          completed: false, // Reset completion status for copied subtasks
+        })),
+        prdSource: fullTask.prdSource?.fileName,
       };
 
       setCopyTaskData(copyData);
@@ -192,7 +219,7 @@ export function EnhancedTaskCard({ task, isOverlay, onTaskClick, onTaskUpdated, 
       );
     } catch (error) {
       console.error('Failed to analyze task complexity:', error);
-      const errorMessage = error.message.includes('timed out')
+      const errorMessage = error instanceof Error && error.message.includes('timed out')
         ? 'Complexity analysis timed out. This is a complex task that may require manual analysis.'
         : 'Failed to analyze task complexity. Please try again.';
 
@@ -209,7 +236,7 @@ export function EnhancedTaskCard({ task, isOverlay, onTaskClick, onTaskUpdated, 
       console.log(`Expanding task ${task.id} into subtasks...`);
 
       // Check if we have complexity analysis data to improve expansion
-      let expandData: any = {};
+      const expandData: { prompt?: string; num?: number } = {};
 
       // Try to find and use complexity analysis report for better expansion
       try {
@@ -251,7 +278,7 @@ export function EnhancedTaskCard({ task, isOverlay, onTaskClick, onTaskUpdated, 
       );
     } catch (error) {
       console.error('Failed to expand task:', error);
-      const errorMessage = error.message.includes('timed out')
+      const errorMessage = error instanceof Error && error.message.includes('timed out')
         ? 'Task expansion timed out. This is a complex task that may take longer to process. Please try again or consider breaking it down manually.'
         : 'Failed to expand task. Please try again.';
 
@@ -320,7 +347,9 @@ export function EnhancedTaskCard({ task, isOverlay, onTaskClick, onTaskUpdated, 
               )}
 
               <Badge
-                className={statusVariants({ status: task.status as keyof typeof statusVariants.variants.status })}
+                className={statusVariants({
+                  status: task.status as 'pending' | 'in-progress' | 'review' | 'blocked' | 'done' | 'cancelled' | 'deferred'
+                })}
               >
                 <StatusIcon size={12} className="mr-1" />
                 {task.status}
@@ -498,7 +527,12 @@ export function EnhancedTaskCard({ task, isOverlay, onTaskClick, onTaskUpdated, 
           <TaskCreateModal
             open={showCopyModal}
             onOpenChange={setShowCopyModal}
-            onTaskCreated={onTaskCreated}
+            onTaskCreated={() => {
+              // TaskCreateModal expects () => void, but we need to call onTaskCreated with task
+              // Since we don't have the created task data here, we'll call it without parameters
+              // and let the parent component refresh the task list
+              onTaskCreated?.(copyTaskData as TaskMasterTask);
+            }}
             initialData={copyTaskData}
           />
         )}

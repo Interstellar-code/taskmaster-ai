@@ -42,5 +42,19 @@ export { FormDemo } from './FormDemo';
 // Validation schemas
 export * from './schemas';
 
-// Types
-export * from './types';
+// Types (excluding TaskFormData to avoid duplicate export)
+export type {
+  BaseFormFieldProps,
+  SelectOption,
+  FormSelectProps,
+  FormInputProps,
+  FormTextareaProps,
+  FormCheckboxProps,
+  FormDatePickerProps,
+  FormComboboxProps,
+  FormMultiComboboxProps,
+  FormMultiSelectProps,
+  FormTagInputProps,
+  FormSectionProps,
+  FormActionsProps
+} from './types';

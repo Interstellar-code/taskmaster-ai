@@ -1,5 +1,4 @@
-import React from 'react';
-import { FieldValues } from 'react-hook-form';
+import { FieldValues, FieldPath } from 'react-hook-form';
 import {
   FormField,
   FormItem,
@@ -24,7 +23,7 @@ import { FormCheckboxProps } from './types';
  */
 export function FormCheckbox<
   TFieldValues extends FieldValues = FieldValues,
-  TName extends keyof TFieldValues = keyof TFieldValues
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 >({
   name,
   control,
@@ -58,7 +57,7 @@ export function FormCheckbox<
                 )}
                 aria-invalid={!!fieldState.error}
                 aria-describedby={
-                  description ? `${name}-description` : undefined
+                  description ? `${String(name)}-description` : undefined
                 }
               />
             </FormControl>
@@ -76,7 +75,7 @@ export function FormCheckbox<
             )}
           </div>
           {description && (
-            <FormDescription id={`${name}-description`}>
+            <FormDescription id={`${String(name)}-description`}>
               {description}
             </FormDescription>
           )}

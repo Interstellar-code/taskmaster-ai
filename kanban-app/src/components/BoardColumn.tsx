@@ -1,12 +1,12 @@
-import { SortableContext, useSortable } from "@dnd-kit/sortable";
+import { SortableContext } from "@dnd-kit/sortable";
 import { useDndContext, type UniqueIdentifier, useDroppable } from "@dnd-kit/core";
-import { CSS } from "@dnd-kit/utilities";
+
 import { useMemo } from "react";
-import { Task, TaskCard } from "./TaskCard";
+import { TaskCard } from "./TaskCard";
+import { EnhancedTask } from "./EnhancedKanbanBoard";
 import { cva } from "class-variance-authority";
 import { Card, CardContent, CardHeader } from "./ui/card";
-import { Button } from "./ui/button";
-import { GripVertical } from "lucide-react";
+
 import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 
 export interface Column {
@@ -27,9 +27,9 @@ export interface ColumnDragData {
 
 interface BoardColumnProps {
   column: Column;
-  tasks: Task[];
+  tasks: EnhancedTask[];
   isOverlay?: boolean;
-  renderTask?: (task: Task) => React.ReactNode;
+  renderTask?: (task: EnhancedTask) => React.ReactNode;
 }
 
 export function BoardColumn({ column, tasks, isOverlay, renderTask }: BoardColumnProps) {
@@ -47,14 +47,7 @@ export function BoardColumn({ column, tasks, isOverlay, renderTask }: BoardColum
   });
 
   // Disable column dragging - columns are now static
-  const transform = null;
-  const transition = null;
   const isDragging = false;
-
-  const style = {
-    transition,
-    transform: CSS.Translate.toString(transform),
-  };
 
   const variants = cva(
     "h-[85vh] max-h-[85vh] w-full max-w-full bg-primary-foreground flex flex-col flex-shrink-0 snap-center transition-colors",

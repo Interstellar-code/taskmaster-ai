@@ -148,7 +148,7 @@ class TaskService {
 
       return await response.json();
     } catch (error) {
-      if (error.name === 'AbortError') {
+      if (error instanceof Error && error.name === 'AbortError') {
         throw new Error('Request timed out. This operation may take longer than expected.');
       }
       console.error('API request failed:', error);

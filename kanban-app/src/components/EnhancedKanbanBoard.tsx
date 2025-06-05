@@ -16,7 +16,7 @@ import {
   TouchSensor,
   MouseSensor,
 } from "@dnd-kit/core";
-import { SortableContext, arrayMove } from "@dnd-kit/sortable";
+import { arrayMove } from "@dnd-kit/sortable";
 import { EnhancedTaskCard } from "./EnhancedTaskCard";
 import type { Column } from "./BoardColumn";
 import { hasDraggableData } from "./utils";
@@ -58,10 +58,22 @@ const defaultCols = [
 
 export type ColumnId = (typeof defaultCols)[number]["id"];
 
+// Mapping from API ColumnId to UI ColumnId
+const API_TO_UI_COLUMN_MAPPING: Record<ApiColumnId, ColumnId> = {
+  'todo': 'pending',
+  'in-progress': 'in-progress',
+  'done': 'done'
+};
+
+// Helper function to convert API ColumnId to UI ColumnId
+function apiColumnToUIColumn(apiColumnId: ApiColumnId): ColumnId {
+  return API_TO_UI_COLUMN_MAPPING[apiColumnId];
+}
+
 // Enhanced Task interface for drag and drop compatibility
 export interface EnhancedTask {
   id: UniqueIdentifier;
-  columnId: ColumnId;
+  columnId: ApiColumnId;
   content: string;
   // Include all enhanced properties
   enhancedData: EnhancedKanbanTask;
@@ -71,16 +83,15 @@ export interface EnhancedTask {
 function enhancedKanbanTaskToTask(enhancedKanbanTask: EnhancedKanbanTask): EnhancedTask {
   return {
     id: enhancedKanbanTask.id,
-    columnId: enhancedKanbanTask.columnId,
+    columnId: enhancedKanbanTask.columnId as ApiColumnId,
     content: enhancedKanbanTask.content,
     enhancedData: enhancedKanbanTask,
   };
 }
 
 export function EnhancedKanbanBoard() {
-  const [columns, setColumns] = useState<Column[]>(defaultCols);
-  const pickedUpTaskColumn = useRef<ColumnId | null>(null);
-  const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
+  const [columns] = useState<Column[]>(defaultCols);
+  const pickedUpTaskColumn = useRef<ApiColumnId | null>(null);
   const { showSuccess, showError, showWarning } = useFormToast();
 
   const [tasks, setTasks] = useState<EnhancedTask[]>([]);
@@ -133,7 +144,7 @@ export function EnhancedKanbanBoard() {
 
       // Convert to EnhancedTask format for existing components
       const allTasksList: EnhancedTask[] = [];
-      Object.entries(tasksByColumns).forEach(([columnId, enhancedKanbanTasks]) => {
+      Object.entries(tasksByColumns).forEach(([, enhancedKanbanTasks]) => {
         enhancedKanbanTasks.forEach(enhancedKanbanTask => {
           allTasksList.push(enhancedKanbanTaskToTask(enhancedKanbanTask));
         });
@@ -192,13 +203,13 @@ export function EnhancedKanbanBoard() {
     onDragStart({ active }) {
       if (!hasDraggableData(active)) return;
       if (active.data.current?.type === "Task") {
-        pickedUpTaskColumn.current = active.data.current.task.columnId;
+        pickedUpTaskColumn.current = active.data.current.task.columnId as ApiColumnId;
         const { tasksInColumn, taskPosition, column } = getDraggingTaskData(
           active.id,
-          pickedUpTaskColumn.current
+          apiColumnToUIColumn(pickedUpTaskColumn.current!)
         );
         return `Picked up Task ${
-          active.data.current.task.enhancedData.title
+          active.data.current.task.content
         } at position: ${taskPosition + 1} of ${
           tasksInColumn.length
         } in column ${column?.title}`;
@@ -213,11 +224,11 @@ export function EnhancedKanbanBoard() {
       ) {
         const { tasksInColumn, taskPosition, column } = getDraggingTaskData(
           over.id,
-          over.data.current.task.columnId
+          apiColumnToUIColumn(over.data.current.task.columnId)
         );
         if (over.data.current.task.columnId !== pickedUpTaskColumn.current) {
           return `Task ${
-            active.data.current.task.enhancedData.title
+            active.data.current.task.content
           } was moved over column ${column?.title} in position ${
             taskPosition + 1
           } of ${tasksInColumn.length}`;
@@ -238,7 +249,7 @@ export function EnhancedKanbanBoard() {
       ) {
         const { tasksInColumn, taskPosition, column } = getDraggingTaskData(
           over.id,
-          over.data.current.task.columnId
+          apiColumnToUIColumn(over.data.current.task.columnId)
         );
         if (over.data.current.task.columnId !== pickedUpTaskColumn.current) {
           return `Task was dropped into column ${column?.title} in position ${
@@ -481,7 +492,7 @@ export function EnhancedKanbanBoard() {
     if (isOverATask) {
       const overTask = tasks.find(t => t.id === overId);
       if (overTask) {
-        newColumnId = overTask.columnId as ApiColumnId;
+        newColumnId = overTask.columnId;
       }
     } else if (isOverAColumn) {
       newColumnId = overId as ApiColumnId;
@@ -495,7 +506,7 @@ export function EnhancedKanbanBoard() {
     // Check if moving from "done" to another column - ask for confirmation
     if (activeTask.columnId === 'done' && newColumnId !== 'done') {
       const confirmed = window.confirm(
-        `Are you sure you want to move task "${activeTask.enhancedData.title}" from "Done" back to "${newColumnId}"? This will change its status.`
+        `Are you sure you want to move task "${activeTask.content}" from "Done" back to "${newColumnId}"? This will change its status.`
       );
 
       if (!confirmed) {
@@ -527,7 +538,7 @@ export function EnhancedKanbanBoard() {
         // Show success toast
         showSuccess(
           'Task Moved Successfully',
-          `Task "${activeTask.enhancedData.title}" moved to ${newColumnId.replace('-', ' ')}`
+          `Task "${activeTask.content}" moved to ${newColumnId.replace('-', ' ')}`
         );
 
         // Refresh the board to get the updated data
@@ -578,9 +589,10 @@ export function EnhancedKanbanBoard() {
           activeTask.columnId !== overTask.columnId
         ) {
           // Just update the UI - actual API call will happen in onDragEnd
-          activeTask.columnId = overTask.columnId;
-          activeTask.enhancedData.columnId = overTask.columnId;
-          return arrayMove(currentTasks, activeIndex, overIndex - 1);
+          const updatedActiveTask = { ...activeTask, columnId: overTask.columnId };
+          const updatedTasks = [...currentTasks];
+          updatedTasks[activeIndex] = updatedActiveTask;
+          return arrayMove(updatedTasks, activeIndex, overIndex - 1);
         }
 
         return arrayMove(currentTasks, activeIndex, overIndex);
@@ -596,9 +608,10 @@ export function EnhancedKanbanBoard() {
         const activeTask = currentTasks[activeIndex];
         if (activeTask) {
           // Just update the UI - actual API call will happen in onDragEnd
-          activeTask.columnId = overId as ColumnId;
-          activeTask.enhancedData.columnId = overId as ColumnId;
-          return arrayMove(currentTasks, activeIndex, activeIndex);
+          const updatedActiveTask = { ...activeTask, columnId: overId as ApiColumnId };
+          const updatedTasks = [...currentTasks];
+          updatedTasks[activeIndex] = updatedActiveTask;
+          return updatedTasks;
         }
         return currentTasks;
       });

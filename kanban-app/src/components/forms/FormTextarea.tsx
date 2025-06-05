@@ -1,5 +1,4 @@
-import React from 'react';
-import { FieldValues } from 'react-hook-form';
+import { FieldValues, FieldPath } from 'react-hook-form';
 import {
   FormField,
   FormItem,
@@ -24,7 +23,7 @@ import { FormTextareaProps } from './types';
  */
 export function FormTextarea<
   TFieldValues extends FieldValues = FieldValues,
-  TName extends keyof TFieldValues = keyof TFieldValues
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 >({
   name,
   control,
@@ -61,12 +60,12 @@ export function FormTextarea<
               )}
               aria-invalid={!!fieldState.error}
               aria-describedby={
-                description ? `${name}-description` : undefined
+                description ? `${String(name)}-description` : undefined
               }
             />
           </FormControl>
           {description && (
-            <FormDescription id={`${name}-description`}>
+            <FormDescription id={`${String(name)}-description`}>
               {description}
             </FormDescription>
           )}

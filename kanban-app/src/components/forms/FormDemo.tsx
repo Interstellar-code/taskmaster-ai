@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
@@ -8,7 +8,6 @@ import {
   FormInput,
   FormTextarea,
   FormSelect,
-  FormCheckbox,
   FormDatePicker,
   FormMultiSelect,
   FormTagInput,
@@ -31,13 +30,13 @@ import { TaskFormSchema, TaskFormData } from './schemas';
 export function FormDemo() {
   const { showSuccess, showError, showWarning, showInfo } = useFormToast();
 
-  const form = useForm<TaskFormData>({
+  const form = useForm({
     resolver: zodResolver(TaskFormSchema),
     defaultValues: {
       title: '',
       description: '',
-      priority: 'medium',
-      status: 'pending',
+      priority: 'medium' as const,
+      status: 'pending' as const,
       dependencies: [],
       tags: [],
       estimatedHours: undefined,
@@ -184,7 +183,7 @@ export function FormDemo() {
                             This dialog can contain any content including forms, text, or other components.
                           </p>
                           <FormInput
-                            name="dialogInput"
+                            name="details"
                             control={form.control}
                             label="Example Input"
                             placeholder="Type something..."

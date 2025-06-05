@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { FieldValues } from 'react-hook-form';
+import { useState } from 'react';
+import { FieldValues, FieldPath } from 'react-hook-form';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import {
   FormField,
@@ -39,7 +39,7 @@ import { FormComboboxProps } from './types';
  */
 export function FormCombobox<
   TFieldValues extends FieldValues = FieldValues,
-  TName extends keyof TFieldValues = keyof TFieldValues
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 >({
   name,
   control,
@@ -127,7 +127,7 @@ export function FormCombobox<
             </PopoverContent>
           </Popover>
           {description && (
-            <FormDescription id={`${name}-description`}>
+            <FormDescription id={`${String(name)}-description`}>
               {description}
             </FormDescription>
           )}

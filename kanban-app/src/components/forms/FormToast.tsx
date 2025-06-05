@@ -2,13 +2,14 @@ import React from 'react';
 import { CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import type { ToastActionElement } from '@/components/ui/toast';
 
 export interface FormToastOptions {
   title?: string;
   description?: string;
   variant?: 'default' | 'destructive' | 'success' | 'warning' | 'info';
   duration?: number;
-  action?: React.ReactNode;
+  action?: ToastActionElement;
 }
 
 /**
@@ -41,15 +42,15 @@ export function useFormToast() {
 
     toast({
       variant: toastVariant,
-      title: (
+      title: title, // Use string title directly since ToasterToast expects React.ReactNode
+      description: description ? (
         <div className="flex items-center gap-2">
           {getIcon()}
-          <span>{title}</span>
+          <span>{description}</span>
         </div>
-      ),
-      description,
+      ) : undefined,
       duration,
-      action,
+      action, // Now properly typed as ToastActionElement | undefined
       className: cn(
         variant === 'success' && 'border-green-200 bg-green-50 text-green-800 dark:border-green-800 dark:bg-green-950 dark:text-green-400',
         variant === 'warning' && 'border-yellow-200 bg-yellow-50 text-yellow-800 dark:border-yellow-800 dark:bg-yellow-950 dark:text-yellow-400',

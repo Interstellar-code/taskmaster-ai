@@ -1,5 +1,5 @@
-import React, { useState, KeyboardEvent } from 'react';
-import { FieldValues } from 'react-hook-form';
+import { useState, KeyboardEvent } from 'react';
+import { FieldValues, FieldPath } from 'react-hook-form';
 import { X } from 'lucide-react';
 import {
   FormField,
@@ -19,7 +19,7 @@ import { FormTagInputProps } from './types';
  */
 export function FormTagInput<
   TFieldValues extends FieldValues = FieldValues,
-  TName extends keyof TFieldValues = keyof TFieldValues
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 >({
   name,
   control,
@@ -46,7 +46,7 @@ export function FormTagInput<
       control={control}
       name={name}
       render={({ field, fieldState }) => {
-        const tags = field.value || [];
+        const tags: string[] = Array.isArray(field.value) ? field.value : [];
 
         const addTag = (tag: string) => {
           const trimmedTag = tag.trim();
@@ -133,14 +133,14 @@ export function FormTagInput<
                         ? `Maximum ${maxTags} tags reached`
                         : placeholder
                     }
-                    disabled={disabled || (maxTags && tags.length >= maxTags)}
+                    disabled={disabled || Boolean(maxTags && tags.length >= maxTags)}
                     className={cn(
                       fieldState.error && 'border-red-500 focus-visible:ring-red-500',
                       'transition-colors'
                     )}
                     aria-invalid={!!fieldState.error}
                     aria-describedby={
-                      description ? `${name}-description` : undefined
+                      description ? `${String(name)}-description` : undefined
                     }
                   />
                 </FormControl>
@@ -162,7 +162,7 @@ export function FormTagInput<
               </div>
             </div>
             {description && (
-              <FormDescription id={`${name}-description`}>
+              <FormDescription id={`${String(name)}-description`}>
                 {description}
                 {maxTags && (
                   <span className="block text-xs text-muted-foreground mt-1">

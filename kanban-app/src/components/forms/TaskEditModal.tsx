@@ -1,33 +1,42 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { FormDialog } from './FormDialog';
-import { FormInput, FormTextarea, FormSelect, FormSection, FormCheckbox, FormMultiSelect, FormMultiCombobox, FormCombobox, FormDatePicker, useFormToast } from './index';
+import { FormInput, FormTextarea, FormSelect, FormSection, FormMultiCombobox, FormCombobox, FormDatePicker, useFormToast } from './index';
 import { ChevronDown } from 'lucide-react';
 import { taskService } from '@/api/taskService';
 import { Edit, Loader2, X } from 'lucide-react';
-import { TaskCreateSchema, type TaskCreateFormData } from './TaskCreateModal';
-import { z } from 'zod';
-import { EnhancedKanbanTask } from '@/api/types';
 
-// Create a proper edit schema that makes most fields optional
-const TaskEditSchema = TaskCreateSchema.partial().extend({
+import { z } from 'zod';
+import { EnhancedKanbanTask, TaskMasterTask } from '@/api/types';
+
+// Create a proper edit schema that makes required fields explicit
+const TaskEditSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters long').max(200, 'Title must be less than 200 characters'),
   description: z.string().min(10, 'Description must be at least 10 characters long').max(5000, 'Description must be less than 5000 characters'),
-  dependencies: z.array(z.string()).optional().default([]),
-  dueDate: z.union([z.string(), z.date()]).optional().transform((val) => {
-    if (val instanceof Date) return val.toISOString().split('T')[0];
-    return val || '';
-  }),
+  tags: z.array(z.string()),
+  dependencies: z.array(z.string()),
+  subtasks: z.array(z.object({
+    id: z.string(),
+    title: z.string(),
+    completed: z.boolean()
+  })),
+  details: z.string().optional(),
+  priority: z.enum(['low', 'medium', 'high']).optional(),
+  estimatedHours: z.number().optional(),
+  assignee: z.string().optional(),
+  dueDate: z.string().optional(),
+  testStrategy: z.string().optional(),
+  prdSource: z.string().optional(),
 });
 
 type TaskEditFormData = z.infer<typeof TaskEditSchema>;
 
 interface TaskEditModalProps {
   task: EnhancedKanbanTask;
-  onTaskUpdated?: (task: any) => void;
+  onTaskUpdated?: (task: TaskMasterTask) => void;
   trigger?: React.ReactNode;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -62,12 +71,12 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
   const isOpen = isControlled ? controlledOpen : open;
   const setIsOpen = isControlled ? (controlledOnOpenChange || (() => {})) : setOpen;
 
-  const form = useForm<TaskEditFormData>({
+  const form = useForm({
     resolver: zodResolver(TaskEditSchema),
     defaultValues: {
       title: '',
       description: '',
-      priority: 'medium',
+      priority: 'medium' as const,
       tags: [],
       estimatedHours: undefined,
       assignee: '',
@@ -93,20 +102,20 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
       const fullTask = await taskService.getTaskById(task.id);
 
       // Convert subtasks from TaskMaster format to form format
-      const formSubtasks = fullTask.subtasks ? fullTask.subtasks.map((subtask: any, index: number) => ({
-        id: subtask.id || `${task.id}.${index + 1}`,
+      const formSubtasks = fullTask.subtasks ? fullTask.subtasks.map((subtask, index: number) => ({
+        id: subtask.id ? String(subtask.id) : `${task.id}.${index + 1}`,
         title: subtask.title || subtask.description || '',
-        completed: subtask.status === 'done' || subtask.completed || false,
+        completed: subtask.status === 'done' || false,
       })) : [];
 
       form.reset({
         title: fullTask.title || '',
         description: fullTask.description || '',
-        priority: fullTask.priority || 'medium',
-        tags: [], // Would need to be added to task data structure
-        estimatedHours: fullTask.estimatedHours || undefined,
-        assignee: fullTask.assignee || '',
-        dueDate: fullTask.dueDate ? String(fullTask.dueDate) : '',
+        priority: (fullTask.priority as 'low' | 'medium' | 'high') || 'medium',
+        tags: [],
+        estimatedHours: undefined, // TaskMasterTask doesn't have estimatedHours
+        assignee: '', // TaskMasterTask doesn't have assignee
+        dueDate: '', // TaskMasterTask doesn't have dueDate
         details: fullTask.details || '',
         testStrategy: fullTask.testStrategy || '',
         dependencies: Array.isArray(fullTask.dependencies) ? fullTask.dependencies.map(dep => String(dep)) : [],
@@ -127,7 +136,7 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
         tags: [],
         estimatedHours: undefined,
         assignee: '',
-        dueDate: task.dueDate ? String(task.dueDate) : '',
+        dueDate: '',
         details: task.details || '',
         testStrategy: task.testStrategy || '',
         dependencies: Array.isArray(task.dependencies) ? task.dependencies.map(dep => String(dep)) : [],
@@ -159,7 +168,8 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
       setAvailablePRDs([]);
     } catch (error) {
       console.error('Failed to fetch available data:', error);
-      showError("Load Error", "Failed to load form data. Please try again.");
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      showError("Load Error", `Failed to load form data: ${errorMessage}`);
     }
   };
 
@@ -176,7 +186,7 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
     setIsSubmitting(true);
     try {
       // Send structured data instead of just a prompt
-      const updateData = {
+      const updateData: Partial<TaskEditFormData> = {
         title: data.title,
         description: data.description,
         priority: data.priority,
@@ -191,8 +201,9 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
 
       // Remove undefined values to avoid sending them, but keep empty arrays and subtasks
       Object.keys(updateData).forEach(key => {
-        if (updateData[key] === undefined || (updateData[key] === '' && !['dependencies', 'subtasks'].includes(key))) {
-          delete updateData[key];
+        const typedKey = key as keyof TaskEditFormData;
+        if (updateData[typedKey] === undefined || (updateData[typedKey] === '' && !['dependencies', 'subtasks'].includes(key))) {
+          delete updateData[typedKey];
         }
       });
 
@@ -207,7 +218,8 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
 
     } catch (error) {
       console.error('Failed to update task:', error);
-      showError("Update Failed", "Failed to update task. Please try again.");
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      showError("Update Failed", `Failed to update task: ${errorMessage}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -308,7 +320,6 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
                 label="PRD Source"
                 placeholder="Select PRD source..."
                 searchPlaceholder="Search PRDs..."
-                emptyMessage="No PRDs found"
                 options={availablePRDs.map(prd => ({
                   value: prd.id,
                   label: prd.title
@@ -377,9 +388,9 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
                       label="Est. Hours"
                       placeholder="0.5"
                       type="number"
-                      step="0.5"
-                      min="0.5"
-                      max="200"
+                      step={0.5}
+                      min={0.5}
+                      max={200}
                     />
 
                     <FormDatePicker
@@ -433,7 +444,7 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
  * Manages dynamic subtask creation with checkboxes
  */
 interface SubtaskManagerProps {
-  form: any; // UseFormReturn type
+  form: ReturnType<typeof useForm<TaskEditFormData>>;
   task: EnhancedKanbanTask;
 }
 
@@ -459,13 +470,13 @@ function SubtaskManager({ form, task }: SubtaskManagerProps) {
 
   const removeSubtask = (subtaskId: string) => {
     const currentSubtasks = form.getValues('subtasks') || [];
-    const updatedSubtasks = currentSubtasks.filter((st: any) => st.id !== subtaskId);
+    const updatedSubtasks = currentSubtasks.filter((st) => st.id !== subtaskId);
     form.setValue('subtasks', updatedSubtasks);
   };
 
   const toggleSubtask = (subtaskId: string) => {
     const currentSubtasks = form.getValues('subtasks') || [];
-    const updatedSubtasks = currentSubtasks.map((st: any) =>
+    const updatedSubtasks = currentSubtasks.map((st) =>
       st.id === subtaskId ? { ...st, completed: !st.completed } : st
     );
     form.setValue('subtasks', updatedSubtasks);
@@ -496,7 +507,7 @@ function SubtaskManager({ form, task }: SubtaskManagerProps) {
         <div className="space-y-2">
           <label className="text-sm font-medium">Subtasks ({subtasks.length})</label>
           <div className="space-y-2 max-h-40 overflow-y-auto border rounded-md p-3">
-            {subtasks.map((subtask: any, index: number) => (
+            {subtasks.map((subtask: { id: string; title: string; completed: boolean }) => (
               <div key={subtask.id} className="flex items-center gap-3 p-2 hover:bg-muted rounded">
                 <input
                   type="checkbox"

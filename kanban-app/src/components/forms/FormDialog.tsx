@@ -58,7 +58,6 @@ export function FormDialog({
   maxWidth = 'md',
   closable = true,
   className,
-  showCloseButton = true,
 }: FormDialogProps) {
   const maxWidthClasses = {
     sm: 'max-w-sm',

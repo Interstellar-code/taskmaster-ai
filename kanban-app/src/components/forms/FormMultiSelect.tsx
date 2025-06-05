@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { FieldValues } from 'react-hook-form';
+import { useState } from 'react';
+import { FieldValues, FieldPath } from 'react-hook-form';
 import { Check, X, ChevronDown } from 'lucide-react';
 import {
   FormField,
@@ -24,7 +24,7 @@ import { FormMultiSelectProps } from './types';
  */
 export function FormMultiSelect<
   TFieldValues extends FieldValues = FieldValues,
-  TName extends keyof TFieldValues = keyof TFieldValues
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 >({
   name,
   control,
@@ -45,24 +45,25 @@ export function FormMultiSelect<
       control={control}
       name={name}
       render={({ field, fieldState }) => {
-        const selectedValues = field.value || [];
-        const selectedOptions = options.filter(option => 
+        const selectedValues: string[] = Array.isArray(field.value) ? field.value : [];
+        const selectedOptions = options.filter(option =>
           selectedValues.includes(option.value)
         );
 
         const toggleOption = (optionValue: string) => {
-          const currentValues = field.value || [];
+          const currentValues: string[] = Array.isArray(field.value) ? field.value : [];
           const newValues = currentValues.includes(optionValue)
             ? currentValues.filter((value: string) => value !== optionValue)
             : maxSelections && currentValues.length >= maxSelections
             ? currentValues
             : [...currentValues, optionValue];
-          
+
           field.onChange(newValues);
         };
 
         const removeOption = (optionValue: string) => {
-          const newValues = (field.value || []).filter((value: string) => value !== optionValue);
+          const currentValues: string[] = Array.isArray(field.value) ? field.value : [];
+          const newValues = currentValues.filter((value: string) => value !== optionValue);
           field.onChange(newValues);
         };
 
@@ -166,7 +167,7 @@ export function FormMultiSelect<
               )}
             </div>
             {description && (
-              <FormDescription id={`${name}-description`}>
+              <FormDescription id={`${String(name)}-description`}>
                 {description}
                 {maxSelections && (
                   <span className="block text-xs text-muted-foreground mt-1">
