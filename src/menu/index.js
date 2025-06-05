@@ -2061,7 +2061,7 @@ async function handlePrdArchive(sessionState) {
         const result = await interactivePrdArchive({
             prdsPath: getPRDsJsonPath(),
             tasksPath: getTasksJsonPath(),
-            archiveDir: getPRDStatusDirectory('archived')
+            archiveDir: getPRDStatusDirectory('archived') // Now returns prd/archive
         });
 
         if (result.cancelled) {

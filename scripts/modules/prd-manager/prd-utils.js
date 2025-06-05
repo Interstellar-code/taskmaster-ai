@@ -25,18 +25,19 @@ function getPRDsJsonPath(projectRoot = process.cwd()) {
  * Get the correct PRD directory path based on status and directory structure
  * @param {string} status - PRD status (pending, in-progress, done, archived)
  * @param {string} projectRoot - Project root directory (optional, defaults to current working directory)
- * @returns {string} - Path to PRD status directory
+ * @returns {string} - Path to PRD directory (simplified structure)
  */
 function getPRDStatusDirectory(status, projectRoot = process.cwd()) {
-    // Try new structure first
-    const newBasePath = path.join(projectRoot, '.taskmaster', 'prd');
-    if (fs.existsSync(newBasePath)) {
-        return path.join(newBasePath, status);
+    const basePath = path.join(projectRoot, '.taskmaster', 'prd');
+
+    // For the new simplified structure, all active PRDs are in the main /prd directory
+    // Only archived PRDs go to the archived subdirectory (existing folder)
+    if (status === 'archived') {
+        return path.join(basePath, 'archived');
     }
 
-    // Fall back to old structure
-    const oldBasePath = path.join(projectRoot, 'prd');
-    return path.join(oldBasePath, status);
+    // All other statuses (pending, in-progress, done) use the main prd directory
+    return basePath;
 }
 
 /**
@@ -107,9 +108,9 @@ const prdsMetadataSchema = z.object({
             fields: z.record(z.string()).optional()
         }).optional(),
         statusDirectories: z.object({
-            pending: z.string().default('prd/pending'),
-            'in-progress': z.string().default('prd/in-progress'),
-            done: z.string().default('prd/done'),
+            pending: z.string().default('prd'),
+            'in-progress': z.string().default('prd'),
+            done: z.string().default('prd'),
             archived: z.string().default('prd/archived'),
             templates: z.string().default('prd/templates')
         }).optional(),
@@ -344,9 +345,9 @@ function initializePrdsMetadata(prdsPath = null) {
                 }
             },
             statusDirectories: {
-                pending: 'prd/pending',
-                'in-progress': 'prd/in-progress',
-                done: 'prd/done',
+                pending: 'prd',
+                'in-progress': 'prd',
+                done: 'prd',
                 archived: 'prd/archived',
                 templates: 'prd/templates'
             },

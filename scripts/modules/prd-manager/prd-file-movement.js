@@ -39,7 +39,7 @@ function ensureStatusDirectory(status) {
 }
 
 /**
- * Move PRD file to appropriate status directory
+ * Move PRD file to appropriate status directory (simplified structure)
  * @param {string} prdId - PRD ID
  * @param {string} newStatus - New status to move to
  * @param {string} prdsPath - Path to prds.json
@@ -63,30 +63,59 @@ function movePrdFileToStatusDirectory(prdId, newStatus, prdsPath = null, options
             };
         }
 
+        // In the simplified structure, only archive status requires file movement
+        // All other status changes are metadata-only updates
+        if (newStatus !== 'archived' && prd.status !== 'archived') {
+            // Status change within active PRDs - metadata update only
+            if (updateMetadata && !dryRun) {
+                const updateResult = updatePrd(prdId, {
+                    status: newStatus,
+                    lastModified: new Date().toISOString()
+                }, prdsPath);
+
+                if (!updateResult.success) {
+                    return {
+                        success: false,
+                        error: `Failed to update metadata: ${updateResult.error}`
+                    };
+                }
+            }
+
+            return {
+                success: true,
+                data: {
+                    prdId: prdId,
+                    moved: false,
+                    metadataOnly: true,
+                    previousStatus: prd.status,
+                    newStatus: newStatus,
+                    message: 'Status updated in metadata only (simplified structure)'
+                }
+            };
+        }
+
+        // Handle archiving or unarchiving - requires actual file movement
         let currentPath = prd.filePath;
         const targetDir = ensureStatusDirectory(newStatus);
         const targetPath = path.join(targetDir, prd.fileName);
 
         // Try to resolve the actual current file path if the recorded path doesn't exist
         if (!fs.existsSync(currentPath)) {
-            // First, try to find the file in the directory that matches the PRD's current status
-            const currentStatusPath = path.join(getPRDStatusDirectory(prd.status), prd.fileName);
-            if (fs.existsSync(currentStatusPath)) {
-                currentPath = currentStatusPath;
-            } else {
-                // If not found in current status directory, try the old path structure
-                const pathParts = currentPath.split(/[\/\\]/);
-                const fileName = pathParts[pathParts.length - 1];
-                const status = pathParts[pathParts.length - 2];
+            // In simplified structure, try to find the file in the main prd directory
+            const mainPrdDir = getPRDStatusDirectory('pending'); // Returns main prd directory
+            const mainPrdPath = path.join(mainPrdDir, prd.fileName);
 
-                // Try the new directory structure with the old status
-                const newPath = path.join(getPRDStatusDirectory(status), fileName);
-                if (fs.existsSync(newPath)) {
-                    currentPath = newPath;
+            if (fs.existsSync(mainPrdPath)) {
+                currentPath = mainPrdPath;
+            } else {
+                // Try archive directory if status is archived
+                const archivePath = path.join(getPRDStatusDirectory('archived'), prd.fileName);
+                if (fs.existsSync(archivePath)) {
+                    currentPath = archivePath;
                 } else {
                     return {
                         success: false,
-                        error: `Source PRD file not found: ${prd.filePath}`
+                        error: `Source PRD file not found: ${prd.filePath}. Checked main prd directory and archive.`
                     };
                 }
             }
@@ -155,8 +184,10 @@ function movePrdFileToStatusDirectory(prdId, newStatus, prdsPath = null, options
 
             // Update metadata if requested
             if (updateMetadata) {
+                // Use relative path for filePath (relative to prd directory)
+                const relativePath = path.basename(targetPath);
                 const updateResult = updatePrd(prdId, {
-                    filePath: targetPath,
+                    filePath: relativePath,
                     status: newStatus,
                     lastModified: new Date().toISOString(),
                     fileHash: calculateFileHash(targetPath),

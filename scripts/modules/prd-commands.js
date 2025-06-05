@@ -690,18 +690,31 @@ async function syncPrdFileMetadataCommand(prdId, options = {}) {
 
             // Determine file path
             let filePath = prd.filePath;
+
+            // Handle relative paths in simplified structure
+            if (filePath && !path.isAbsolute(filePath)) {
+                const basePrdDir = getPRDStatusDirectory('pending'); // Returns main prd directory
+                filePath = path.join(basePrdDir, filePath);
+            }
+
             if (!filePath || !fs.existsSync(filePath)) {
-                // Try to find the file in status directories
-                const statusDirs = ['pending', 'in-progress', 'done', 'archived'];
+                // Try to find the file in the simplified structure
+                const basePrdDir = getPRDStatusDirectory('pending'); // Main prd directory
+                const archiveDir = getPRDStatusDirectory('archived'); // Archive directory
+
                 let found = false;
 
-                for (const statusDir of statusDirs) {
-                    const possiblePath = getPRDStatusDirectory(statusDir);
-                    const fullPath = path.join(possiblePath, prd.fileName);
-                    if (fs.existsSync(fullPath)) {
-                        filePath = fullPath;
+                // First try main prd directory
+                const mainPath = path.join(basePrdDir, prd.fileName);
+                if (fs.existsSync(mainPath)) {
+                    filePath = mainPath;
+                    found = true;
+                } else {
+                    // Try archive directory
+                    const archivePath = path.join(archiveDir, prd.fileName);
+                    if (fs.existsSync(archivePath)) {
+                        filePath = archivePath;
                         found = true;
-                        break;
                     }
                 }
 

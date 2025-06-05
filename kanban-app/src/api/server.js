@@ -290,7 +290,11 @@ app.get('/api', (req, res) => {
       'POST /api/v1/tasks/:id/expand - Expand task into subtasks',
       'GET /api/v1/tasks/validate-dependencies - Validate dependencies',
       'POST /api/v1/tasks/fix-dependencies - Fix dependencies',
-      'GET /api/v1/reports/complexity - Generate complexity report'
+      'GET /api/v1/reports/complexity - Generate complexity report',
+      'GET /api/v1/prds - List all PRDs',
+      'GET /api/v1/prds/:id - Get PRD details',
+      'PATCH /api/v1/prds/:id/status - Update PRD status',
+      'PUT /api/v1/prds/:id - Update PRD metadata'
     ]
   });
 });

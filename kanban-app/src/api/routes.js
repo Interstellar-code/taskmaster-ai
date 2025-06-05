@@ -30,6 +30,14 @@ import {
   updateTasksDirect,
   validateDependenciesDirect
 } from '../../../mcp-server/src/core/task-master-core.js';
+import {
+  readPrdsMetadata,
+  findPrdById,
+  getAllPrds,
+  getPRDsJsonPath,
+  updatePrdStatus
+} from '../../../scripts/modules/prd-manager/prd-utils.js';
+import { updatePrd } from '../../../scripts/modules/prd-manager/prd-write-operations.js';
 import { createLogger } from './logger.js';
 import {
   validateCreateTask,
@@ -1192,6 +1200,189 @@ router.get('/tasks/:id/complexity-report', requireTaskMasterCore, async (req, re
     res.status(500).json({
       success: false,
       error: 'Failed to read complexity report',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+// ============================================================================
+// PRD MANAGEMENT ENDPOINTS
+// ============================================================================
+
+/**
+ * GET /api/v1/prds
+ * List all PRDs with optional filtering
+ */
+router.get('/prds', async (req, res) => {
+  try {
+    const { status, priority, complexity } = req.query;
+    const prdsPath = getPRDsJsonPath();
+
+    const filters = {};
+    if (status) filters.status = status;
+    if (priority) filters.priority = priority;
+    if (complexity) filters.complexity = complexity;
+
+    const prds = getAllPrds(filters, prdsPath);
+
+    res.json({
+      success: true,
+      data: prds,
+      count: prds.length,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    logger.error('Failed to list PRDs:', error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to list PRDs',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+/**
+ * GET /api/v1/prds/:id
+ * Get PRD details by ID
+ */
+router.get('/prds/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const prdsPath = getPRDsJsonPath();
+
+    const prd = findPrdById(id, prdsPath);
+
+    if (!prd) {
+      return res.status(404).json({
+        success: false,
+        error: 'PRD not found',
+        message: `PRD with ID ${id} not found`,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    res.json({
+      success: true,
+      data: prd,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    logger.error(`Failed to get PRD ${req.params.id}:`, error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to get PRD',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+/**
+ * PATCH /api/v1/prds/:id/status
+ * Update PRD status
+ */
+router.patch('/prds/:id/status', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!status) {
+      return res.status(400).json({
+        success: false,
+        error: 'Validation error',
+        message: 'status is required',
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    const validStatuses = ['pending', 'in-progress', 'done', 'archived'];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Validation error',
+        message: `Invalid status. Valid statuses: ${validStatuses.join(', ')}`,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    const prdsPath = getPRDsJsonPath();
+    const result = updatePrdStatus(id, status, prdsPath);
+
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        error: 'Failed to update PRD status',
+        message: result.error,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        prdId: id,
+        newStatus: status,
+        message: `PRD ${id} status updated to ${status}`
+      },
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    logger.error(`Failed to update PRD ${req.params.id} status:`, error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to update PRD status',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+/**
+ * PUT /api/v1/prds/:id
+ * Update PRD metadata
+ */
+router.put('/prds/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+
+    if (!updateData || Object.keys(updateData).length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'Validation error',
+        message: 'Update data is required',
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    const prdsPath = getPRDsJsonPath();
+    const result = updatePrd(id, updateData, prdsPath);
+
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        error: 'Failed to update PRD',
+        message: result.error,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        prdId: id,
+        updatedFields: Object.keys(updateData),
+        message: `PRD ${id} updated successfully`
+      },
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    logger.error(`Failed to update PRD ${req.params.id}:`, error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to update PRD',
       message: error.message,
       timestamp: new Date().toISOString()
     });
