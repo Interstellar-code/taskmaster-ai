@@ -37,7 +37,24 @@ interface TaskCreateRequest {
 }
 
 interface TaskUpdateRequest {
-  prompt: string;
+  prompt?: string;
+  // Structured update fields
+  title?: string;
+  description?: string;
+  priority?: 'low' | 'medium' | 'high';
+  status?: string;
+  dependencies?: string[];
+  tags?: string[];
+  estimatedHours?: number;
+  assignee?: string;
+  dueDate?: string;
+  details?: string;
+  testStrategy?: string;
+  subtasks?: Array<{
+    id: string;
+    title: string;
+    completed: boolean;
+  }>;
 }
 
 interface SubtaskCreateRequest {
@@ -185,10 +202,14 @@ class TaskService {
 
   // Update task status
   async updateTaskStatus(id: string, status: string): Promise<TaskMasterTask> {
+    console.log(`updateTaskStatus: Making API call to /api/v1/tasks/${id}/status with status: ${status}`);
+
     const response = await this.fetchApi<TaskMasterTask>(`/api/v1/tasks/${id}/status`, {
       method: 'PATCH',
       body: JSON.stringify({ status }),
     });
+
+    console.log('updateTaskStatus response:', response);
     return response.data;
   }
 
@@ -404,6 +425,8 @@ class TaskService {
         parsedDate: new Date(task.prdSource.parsedDate)
       } : undefined,
       hasTestStrategy: Boolean(task.testStrategy?.trim()),
+      complexityScore: task.complexityScore,
+      complexityLevel: task.complexityLevel,
       details: task.details,
       testStrategy: task.testStrategy
     };
@@ -510,7 +533,12 @@ class TaskService {
   // Update task status when moved between columns
   async moveTaskToColumn(taskId: string, newColumnId: ColumnId): Promise<TaskMasterTask> {
     const newStatus = this.kanbanToTaskMasterStatus(newColumnId);
-    return await this.updateTaskStatus(taskId, newStatus);
+    console.log(`moveTaskToColumn: taskId=${taskId}, newColumnId=${newColumnId}, newStatus=${newStatus}`);
+
+    const result = await this.updateTaskStatus(taskId, newStatus);
+    console.log('moveTaskToColumn result:', result);
+
+    return result;
   }
 
   // Health check

@@ -84,6 +84,9 @@ export interface TaskMasterTask {
     fileSize: number;
   } | null;
   updatedAt?: string;
+  // Complexity analysis
+  complexityScore?: number;
+  complexityLevel?: 'low' | 'medium' | 'high';
 }
 
 export interface TaskMasterSubtask {
@@ -178,6 +181,10 @@ export interface EnhancedKanbanTask {
 
   // Testing
   hasTestStrategy: boolean;
+
+  // Complexity analysis
+  complexityScore?: number;
+  complexityLevel?: 'low' | 'medium' | 'high';
 
   // Additional metadata
   details?: string;

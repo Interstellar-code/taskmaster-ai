@@ -8,7 +8,7 @@ import { FormDialog } from './FormDialog';
 import { FormInput, FormTextarea, FormSelect, FormSection, FormCheckbox, FormMultiSelect, FormMultiCombobox, FormCombobox, FormDatePicker, useFormToast } from './index';
 import { ChevronDown } from 'lucide-react';
 import { taskService } from '@/api/taskService';
-import { Plus, Loader2 } from 'lucide-react';
+import { Plus, Loader2, X } from 'lucide-react';
 
 // Export the schema and types for reuse in TaskEditModal
 export { TaskCreateSchema, type TaskCreateFormData };
@@ -516,17 +516,22 @@ function SubtaskManager({ form }: SubtaskManagerProps) {
                   onChange={() => toggleSubtask(subtask.id)}
                   className="h-4 w-4 rounded border-gray-300"
                 />
-                <span className={`flex-1 text-sm ${subtask.completed ? 'line-through text-muted-foreground' : ''}`}>
-                  {subtask.title}
-                </span>
+                <div className="flex-1 flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground font-mono bg-muted px-1.5 py-0.5 rounded">
+                    {subtask.id}
+                  </span>
+                  <span className={`text-sm ${subtask.completed ? 'line-through text-muted-foreground' : ''}`}>
+                    {subtask.title}
+                  </span>
+                </div>
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
+                  className="h-8 w-8 p-0 text-red-600 hover:bg-red-100 hover:text-red-700"
                   onClick={() => removeSubtask(subtask.id)}
-                  className="h-6 w-6 p-0 text-destructive hover:text-destructive"
                 >
-                  ×
+                  <X className="h-4 w-4" />
                 </Button>
               </div>
             ))}

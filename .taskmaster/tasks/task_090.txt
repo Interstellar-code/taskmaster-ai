@@ -10,3 +10,47 @@ Implement the TaskDeleteDialog using shadcn/ui Dialog. This dialog should includ
 
 # Test Strategy:
 1. **Unit Tests:** Write unit tests for the backend cascade deletion logic and dependency cleanup. 2. **Integration Tests:** Test the integration between the frontend dialog and the backend API endpoint. 3. **UI Tests:** Verify the display and functionality of the confirmation dialog and cascade warning. 4. **Scenario Testing:** a. Delete a task with no subtasks or dependencies. b. Delete a task with subtasks, verifying cascade deletion. c. Delete a task with dependencies, verifying dependency cleanup. d. Test the undo functionality within the specified time limit. e. Attempt to delete a task without confirmation to ensure the dialog prevents it. 5. **Performance Testing:** Assess the performance of cascade deletions for tasks with a large number of subtasks/dependencies.
+
+# Subtasks:
+## 1. Design Confirmation Dialog UI/UX [pending]
+### Dependencies: None
+### Description: Design the visual layout, interaction flow, and messaging for the task deletion confirmation dialog on the frontend.
+### Details:
+This includes wireframes, mockups, and defining the user experience for confirming task deletion, including warnings about cascade deletion.
+
+## 2. Implement Frontend Confirmation Dialog [pending]
+### Dependencies: 90.1
+### Description: Develop the frontend code for the task deletion confirmation dialog based on the approved UI/UX design.
+### Details:
+Implement the dialog using the chosen frontend framework (e.g., React, Vue, Angular), including state management for showing/hiding and handling user input (confirm/cancel).
+
+## 3. Design Backend API for Task Deletion [pending]
+### Dependencies: None
+### Description: Define the API endpoint, request/response structure, and authentication/authorization requirements for the task deletion operation.
+### Details:
+Specify the HTTP method, URL path, expected parameters (e.g., task ID), and potential error responses. Consider idempotency.
+
+## 4. Implement Backend Cascade Deletion Logic [pending]
+### Dependencies: 90.3
+### Description: Develop the backend logic to perform cascade deletion of related entities (e.g., subtasks, comments) when a parent task is deleted.
+### Details:
+Implement database queries or ORM operations to identify and delete all dependent records. Ensure transactional integrity to prevent partial deletions.
+
+## 5. Implement Backend Dependency Cleanup [pending]
+### Dependencies: 90.4
+### Description: Develop the backend logic to clean up any remaining dependencies or references that are not directly deleted but become invalid (e.g., orphaned foreign keys, cached data).
+### Details:
+Identify and nullify or remove references in other tables that pointed to the deleted task. Consider cache invalidation strategies.
+
+## 6. Design and Implement Time-Limited Undo Functionality (Backend) [pending]
+### Dependencies: 90.4, 90.5
+### Description: Design the backend mechanism for soft-deleting tasks and allowing them to be restored within a specific time window.
+### Details:
+This involves adding a 'deleted_at' timestamp or a 'status' field to the task, implementing a background process for permanent deletion after the undo window, and an API endpoint for undoing deletion.
+
+## 7. Implement Time-Limited Undo Functionality (Frontend) [pending]
+### Dependencies: 90.2, 90.6
+### Description: Develop the frontend UI and logic to display the undo option after a task deletion and trigger the undo API call.
+### Details:
+This includes a temporary notification or banner with an 'Undo' button, a countdown timer for the undo window, and handling the UI state after an undo operation.
+

@@ -1,0 +1,21 @@
+{
+  "meta": {
+    "generatedAt": "2025-06-04T22:19:42.925Z",
+    "tasksAnalyzed": 1,
+    "totalTasks": 8,
+    "analysisCount": 1,
+    "thresholdScore": 5,
+    "projectName": "Task Master",
+    "usedResearch": false
+  },
+  "complexityAnalysis": [
+    {
+      "taskId": 90,
+      "taskTitle": "Implement Task Deletion System",
+      "complexityScore": 8,
+      "recommendedSubtasks": 7,
+      "expansionPrompt": "Break down the 'Implement Task Deletion System' into detailed subtasks covering frontend UI, backend API, database logic for cascade deletion and dependency cleanup, undo functionality, and comprehensive testing.",
+      "reasoning": "This task is complex due to multiple interconnected components: frontend UI (confirmation, warnings), backend API integration, intricate database logic (cascade deletion, dependency cleanup), and a non-trivial undo functionality (soft-delete, background process). Comprehensive testing across unit, integration, UI, and scenario levels further adds to the complexity. The performance testing aspect also indicates potential challenges."
+    }
+  ]
+}

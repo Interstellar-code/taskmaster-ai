@@ -27,6 +27,7 @@ import { TaskCreateModal } from "./forms/TaskCreateModal";
 import { Button } from "./ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { X, Filter } from "lucide-react";
+import { useFormToast } from "./forms/FormToast";
 
 const defaultCols = [
   {
@@ -68,6 +69,7 @@ export function EnhancedKanbanBoard() {
   const [columns, setColumns] = useState<Column[]>(defaultCols);
   const pickedUpTaskColumn = useRef<ColumnId | null>(null);
   const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
+  const { showSuccess, showError, showWarning } = useFormToast();
 
   const [tasks, setTasks] = useState<EnhancedTask[]>([]);
   const [allTasks, setAllTasks] = useState<TaskMasterTask[]>([]);
@@ -313,13 +315,7 @@ export function EnhancedKanbanBoard() {
       </div>
 
       {/* Kanban Board Header */}
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-4">
-          <h2 className="text-2xl font-semibold">Tasks</h2>
-          <div className="text-sm text-muted-foreground">
-            {filteredTasks.length} total tasks
-          </div>
-        </div>
+      <div className="flex justify-end items-center">
         <TaskCreateModal onTaskCreated={loadTasks} />
       </div>
 
@@ -399,23 +395,143 @@ export function EnhancedKanbanBoard() {
   );
 
   function onDragStart(event: DragStartEvent) {
-    if (!hasDraggableData(event.active)) return;
+    console.log('🚀 onDragStart triggered:', event);
+
+    if (!hasDraggableData(event.active)) {
+      console.log('❌ No draggable data in onDragStart');
+      return;
+    }
+
     const data = event.active.data.current;
+    console.log('📊 Drag start data:', data);
+
     if (data?.type === "Column") {
+      console.log('🏛️ Setting active column:', data.column);
       setActiveColumn(data.column);
       return;
     }
 
     if (data?.type === "Task") {
+      console.log('📋 Setting active task:', data.task);
       setActiveTask(data.task);
       return;
     }
+
+    console.log('⚠️ Unknown drag type in onDragStart');
   }
 
-  function onDragEnd(event: DragEndEvent) {
+  async function onDragEnd(event: DragEndEvent) {
+    console.log('🎯 onDragEnd triggered:', event);
+
     setActiveColumn(null);
     setActiveTask(null);
-    // Column dragging is disabled - only handle task dragging
+
+    const { active, over } = event;
+    if (!over) {
+      console.log('❌ No over target, returning');
+      return;
+    }
+
+    const activeId = active.id;
+    const overId = over.id;
+
+    console.log('🔄 Drag end IDs:', { activeId, overId });
+
+    if (activeId === overId) {
+      console.log('⚠️ Same ID, returning');
+      return;
+    }
+
+    if (!hasDraggableData(active) || !hasDraggableData(over)) {
+      console.log('❌ No draggable data, returning');
+      return;
+    }
+
+    const activeData = active.data.current;
+    const overData = over.data.current;
+
+    console.log('📊 Drag data:', { activeData, overData });
+
+    const isActiveATask = activeData?.type === "Task";
+    const isOverATask = overData?.type === "Task";
+    const isOverAColumn = overData?.type === "Column";
+
+    console.log('🏷️ Drag types:', { isActiveATask, isOverATask, isOverAColumn });
+
+    if (!isActiveATask) {
+      console.log('❌ Active is not a task, returning');
+      return;
+    }
+
+    let newColumnId: ApiColumnId | null = null;
+
+    // Determine the target column
+    if (isOverATask) {
+      const overTask = tasks.find(t => t.id === overId);
+      if (overTask) {
+        newColumnId = overTask.columnId as ApiColumnId;
+      }
+    } else if (isOverAColumn) {
+      newColumnId = overId as ApiColumnId;
+    }
+
+    if (!newColumnId) return;
+
+    const activeTask = tasks.find(t => t.id === activeId);
+    if (!activeTask) return;
+
+    // Check if moving from "done" to another column - ask for confirmation
+    if (activeTask.columnId === 'done' && newColumnId !== 'done') {
+      const confirmed = window.confirm(
+        `Are you sure you want to move task "${activeTask.enhancedData.title}" from "Done" back to "${newColumnId}"? This will change its status.`
+      );
+
+      if (!confirmed) {
+        // Revert the UI change by reloading tasks
+        loadTasks();
+        showWarning(
+          'Move Cancelled',
+          'Task move was cancelled by user.'
+        );
+        return;
+      }
+    }
+
+    // Debug logging
+    console.log('Drag end debug:', {
+      activeTaskId: activeTask.id,
+      activeTaskColumnId: activeTask.columnId,
+      newColumnId,
+      willUpdate: activeTask.columnId !== newColumnId
+    });
+
+    // Only update if the column actually changed
+    if (activeTask.columnId !== newColumnId) {
+      try {
+        console.log(`Calling moveTaskToColumn with taskId: ${activeTask.id}, newColumnId: ${newColumnId}`);
+        await taskService.moveTaskToColumn(String(activeTask.id), newColumnId);
+        console.log(`Task ${activeTask.id} moved to ${newColumnId}`);
+
+        // Show success toast
+        showSuccess(
+          'Task Moved Successfully',
+          `Task "${activeTask.enhancedData.title}" moved to ${newColumnId.replace('-', ' ')}`
+        );
+
+        // Refresh the board to get the updated data
+        loadTasks();
+      } catch (error) {
+        console.error('Failed to update task status:', error);
+        // Revert the UI change by reloading tasks
+        loadTasks();
+        showError(
+          'Move Failed',
+          'Failed to move task. Please try again.'
+        );
+      }
+    } else {
+      console.log('No column change detected, skipping API call');
+    }
   }
 
   async function onDragOver(event: DragOverEvent) {
@@ -449,17 +565,7 @@ export function EnhancedKanbanBoard() {
           overTask &&
           activeTask.columnId !== overTask.columnId
         ) {
-          // Update TaskMaster status when moving to different column
-          const newColumnId = overTask.columnId as ApiColumnId;
-          taskService.moveTaskToColumn(String(activeTask.id), newColumnId)
-            .then(() => {
-              console.log(`Task ${activeTask.id} moved to ${newColumnId}`);
-            })
-            .catch((error) => {
-              console.error('Failed to update task status:', error);
-              // Optionally revert the UI change or show error message
-            });
-
+          // Just update the UI - actual API call will happen in onDragEnd
           activeTask.columnId = overTask.columnId;
           activeTask.enhancedData.columnId = overTask.columnId;
           return arrayMove(currentTasks, activeIndex, overIndex - 1);
@@ -477,20 +583,7 @@ export function EnhancedKanbanBoard() {
         const activeIndex = currentTasks.findIndex((t) => t.id === activeId);
         const activeTask = currentTasks[activeIndex];
         if (activeTask) {
-          const newColumnId = overId as ApiColumnId;
-
-          // Update TaskMaster status when moving to different column
-          if (activeTask.columnId !== newColumnId) {
-            taskService.moveTaskToColumn(String(activeTask.id), newColumnId)
-              .then(() => {
-                console.log(`Task ${activeTask.id} moved to ${newColumnId}`);
-              })
-              .catch((error) => {
-                console.error('Failed to update task status:', error);
-                // Optionally revert the UI change or show error message
-              });
-          }
-
+          // Just update the UI - actual API call will happen in onDragEnd
           activeTask.columnId = overId as ColumnId;
           activeTask.enhancedData.columnId = overId as ColumnId;
           return arrayMove(currentTasks, activeIndex, activeIndex);

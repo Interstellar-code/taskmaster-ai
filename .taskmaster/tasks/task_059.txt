@@ -1,12 +1,44 @@
 # Task ID: 59
 # Title: Integrate v0.16.0 upstream changes selectively
-# Status: done
-# Dependencies: None
+# Status: in-progress
+# Dependencies: 84
 # Priority: high
 # PRD Source: None (manually created)
-# Description: Integrate bug fixes and improvements from upstream v0.16.0 release while preserving unique custom features including: Kanban board functionality, PRD lifecycle tracking, interactive menu systems, custom AI editor integrations (.augment-guidelines, .cursor/rules, .roo/rules, .windsurfrules), custom task templates and workflow, and enhanced project management features. Focus on: 1) New directory structure (.taskmaster/ consolidation), 2) AWS Bedrock support, 3) Google Vertex AI support, 4) Azure support, 5) Node.js version requirement update, 6) TASK_MASTER_PROJECT_ROOT env variable, 7) Bug fixes for max_tokens and add-task MCP command. Create integration branch dev_rohit for selective merging.
+# Description: fix 1 Integrate bug fixes and improvements from upstream v0.16.0 release while preserving unique custom features including: Kanban board functionality, PRD lifecycle tracking, interactive menu systems, custom AI editor integrations (.augment-guidelines, .cursor/rules, .roo/rules, .windsurfrules), custom task templates and workflow, and enhanced project management features. Focus on: 1) New directory structure (.taskmaster/ consolidation), 2) AWS Bedrock support, 3) Google Vertex AI support, 4) Azure support, 5) Node.js version requirement update, 6) TASK_MASTER_PROJECT_ROOT env variable, 7) Bug fixes for max_tokens and add-task MCP command. Create integration branch dev_rohit for selective merging.
 # Details:
-
+testI editor integrations (.augment-guidelines, .cursor/rules, .roo/rules, .windsurfrules), custom task templates and workflow, and enhanced project management features. Focus on: 1) New directory structure (.taskmaster/ consolidation), 2) AWS Bedrock support, 3) Google Vertex AI support, 4) Azure support, 5) Node.js version requirement update, 6) TASK_MASTER_PROJECT_ROOT env variable, 7) Bug fixes for max_tokens and add-task MCP command. Create integration branch dev_rohit for selective merging.
 
 # Test Strategy:
+test stractery
+
+# Subtasks:
+## 1. Establish Integration Branch and Initial Upstream Merge [pending]
+### Dependencies: None
+### Description: Create a new integration branch 'dev_rohit' from the current main/master branch. Perform an initial, cautious merge of the upstream v0.16.0 changes, resolving trivial conflicts and identifying areas of significant divergence that require selective integration.
+### Details:
+1. Create branch `dev_rohit` from the current stable branch. 2. Add the upstream repository as a remote if not already present. 3. Fetch upstream changes. 4. Attempt `git merge upstream/v0.16.0 --no-commit --no-ff`. 5. Carefully review the changes and identify files/directories that are part of the new directory structure (.taskmaster/ consolidation) and core AI integration components. 6. Revert the merge if conflicts are too extensive or complex to handle in this initial step, and instead, cherry-pick or rebase selectively in subsequent steps.
+
+## 2. Implement New Directory Structure and Node.js Update [pending]
+### Dependencies: 59.1
+### Description: Refactor the project to adopt the new `.taskmaster/` directory consolidation. Update the Node.js version requirement and ensure all dependencies are compatible and installed correctly. Address any immediate build or runtime errors resulting from these changes.
+### Details:
+1. Migrate relevant configuration, data, and core files into the new `.taskmaster/` directory. 2. Update `package.json` with the new Node.js version requirement. 3. Run `npm install` or `yarn install` to update dependencies. 4. Adjust import paths and file references across the codebase to reflect the new directory structure. 5. Resolve any compilation or runtime errors related to Node.js version or dependency changes.
+
+## 3. Integrate AWS Bedrock and Google Vertex AI Support [pending]
+### Dependencies: 59.2
+### Description: Selectively merge or re-implement the code changes from upstream v0.16.0 that introduce support for AWS Bedrock and Google Vertex AI. Ensure these new AI provider integrations coexist with existing custom AI editor integrations without conflict.
+### Details:
+1. Identify the relevant files/modules in the upstream v0.16.0 branch that implement Bedrock and Vertex AI support. 2. Carefully merge these changes into `dev_rohit`, resolving conflicts manually. 3. Adapt the integration points to fit the existing custom AI editor integrations (.augment-guidelines, .cursor/rules, .roo/rules, .windsurfrules). 4. Implement configuration options for these new providers.
+
+## 4. Integrate Azure Support and Core Bug Fixes [pending]
+### Dependencies: 59.3
+### Description: Selectively merge or re-implement the code changes from upstream v0.16.0 that introduce Azure support. Additionally, integrate the bug fixes for `max_tokens` and the `add-task` MCP command, ensuring they are applied correctly without regressing custom features.
+### Details:
+1. Identify and merge Azure integration code from upstream. 2. Locate and apply the specific bug fixes for `max_tokens` handling and the `add-task` MCP command. 3. Verify that these fixes do not interfere with the custom task templates, workflow, or enhanced project management features. 4. Ensure `TASK_MASTER_PROJECT_ROOT` environment variable is correctly utilized where applicable.
+
+## 5. Validate Custom Features and Final Integration Review [pending]
+### Dependencies: 59.4
+### Description: Thoroughly test all unique custom features (Kanban board, PRD lifecycle, interactive menus, custom AI editor integrations, custom task templates, enhanced project management) to ensure they remain fully functional after the upstream integration. Perform a final code review and resolve any remaining conflicts or regressions.
+### Details:
+1. Systematically test each custom feature: Kanban board, PRD lifecycle tracking, interactive menu systems, custom AI editor integrations (.augment-guidelines, .cursor/rules, .roo/rules, .windsurfrules), custom task templates and workflow, and enhanced project management features. 2. Address any regressions or unexpected behavior. 3. Conduct a final code review of the `dev_rohit` branch to ensure code quality, consistency, and complete integration. 4. Prepare the branch for potential merge back to main/master.
 

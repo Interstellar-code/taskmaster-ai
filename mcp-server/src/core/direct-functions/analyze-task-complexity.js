@@ -6,7 +6,9 @@ import analyzeTaskComplexity from '../../../../scripts/modules/task-manager/anal
 import {
 	enableSilentMode,
 	disableSilentMode,
-	isSilentMode
+	isSilentMode,
+	readJSON,
+	writeJSON
 } from '../../../../scripts/modules/utils.js';
 import fs from 'fs';
 import { createLogWrapper } from '../../tools/utils.js'; // Import the new utility
@@ -172,6 +174,36 @@ export async function analyzeTaskComplexityDirect(args, log, context = {}) {
 			const analysisArray = Array.isArray(coreResult.report.complexityAnalysis)
 				? coreResult.report.complexityAnalysis
 				: [];
+
+			// Update tasks with complexity scores
+			if (analysisArray.length > 0) {
+				try {
+					const tasksData = readJSON(tasksJsonPath);
+					if (tasksData && tasksData.tasks) {
+						let updated = false;
+
+						analysisArray.forEach(analysis => {
+							const taskIndex = tasksData.tasks.findIndex(task => task.id === analysis.taskId);
+							if (taskIndex !== -1) {
+								tasksData.tasks[taskIndex].complexityScore = analysis.complexityScore;
+								tasksData.tasks[taskIndex].complexityLevel =
+									analysis.complexityScore >= 8 ? 'high' :
+									analysis.complexityScore >= 5 ? 'medium' : 'low';
+								updated = true;
+								log.info(`Updated task ${analysis.taskId} with complexity score ${analysis.complexityScore}`);
+							}
+						});
+
+						if (updated) {
+							writeJSON(tasksJsonPath, tasksData);
+							log.info('Successfully updated tasks with complexity scores');
+						}
+					}
+				} catch (updateError) {
+					log.warn(`Failed to update tasks with complexity scores: ${updateError.message}`);
+					// Don't fail the whole operation if updating tasks fails
+				}
+			}
 
 			// Count tasks by complexity (remains the same)
 			const highComplexityTasks = analysisArray.filter(

@@ -415,97 +415,9 @@ app.get('/api/core/status', async (req, res) => {
   }
 });
 
-// Simple fallback tasks endpoint
-app.get('/api/v1/tasks', async (req, res) => {
-  try {
-    const tasksData = await readTaskMasterTasks();
-    const tasks = tasksData.tasks || [];
+// Note: Tasks listing endpoint is now handled by MCP routes at /api/v1/tasks
 
-    res.json({
-      success: true,
-      data: {
-        tasks: tasks,
-        summary: {
-          totalTasks: tasks.length,
-          statusCounts: tasks.reduce((acc, task) => {
-            acc[task.status] = (acc[task.status] || 0) + 1;
-            return acc;
-          }, {})
-        }
-      },
-      source: isTaskMasterInitialized ? 'TaskMaster Core' : 'Fallback Mode',
-      timestamp: new Date().toISOString()
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: 'Failed to fetch tasks',
-      message: error.message,
-      timestamp: new Date().toISOString()
-    });
-  }
-});
-
-// Simple fallback task status update endpoint
-app.patch('/api/v1/tasks/:id/status', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { status } = req.body;
-
-    if (!status) {
-      return res.status(400).json({
-        success: false,
-        error: 'Validation error',
-        message: 'status is required',
-        timestamp: new Date().toISOString()
-      });
-    }
-
-    const tasksData = await readTaskMasterTasks();
-    const tasks = tasksData.tasks || [];
-    const taskIndex = tasks.findIndex(t => t.id === id);
-
-    if (taskIndex === -1) {
-      return res.status(404).json({
-        success: false,
-        error: 'Task not found',
-        message: `Task with ID ${id} does not exist`,
-        timestamp: new Date().toISOString()
-      });
-    }
-
-    // Update task status
-    tasks[taskIndex].status = status;
-    tasks[taskIndex].updatedAt = new Date().toISOString();
-
-    // Write back to file
-    const writeSuccess = await writeTaskMasterTasks({ ...tasksData, tasks });
-
-    if (!writeSuccess) {
-      return res.status(500).json({
-        success: false,
-        error: 'Failed to update task',
-        message: 'Could not write to tasks file',
-        timestamp: new Date().toISOString()
-      });
-    }
-
-    res.json({
-      success: true,
-      data: tasks[taskIndex],
-      message: 'Task status updated successfully',
-      source: isTaskMasterInitialized ? 'TaskMaster Core' : 'Fallback Mode',
-      timestamp: new Date().toISOString()
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: 'Failed to update task status',
-      message: error.message,
-      timestamp: new Date().toISOString()
-    });
-  }
-});
+// Note: Task status update endpoint is now handled by MCP routes at /api/v1/tasks/:id/status
 
 // ============================================================================
 // MCP API ROUTES - All TaskMaster MCP Direct Functions as REST Endpoints

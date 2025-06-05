@@ -7,9 +7,23 @@ import { FormDialog } from './FormDialog';
 import { FormInput, FormTextarea, FormSelect, FormSection, FormCheckbox, FormMultiSelect, FormMultiCombobox, FormCombobox, FormDatePicker, useFormToast } from './index';
 import { ChevronDown } from 'lucide-react';
 import { taskService } from '@/api/taskService';
-import { Edit, Loader2 } from 'lucide-react';
+import { Edit, Loader2, X } from 'lucide-react';
 import { TaskCreateSchema, type TaskCreateFormData } from './TaskCreateModal';
+import { z } from 'zod';
 import { EnhancedKanbanTask } from '@/api/types';
+
+// Create a proper edit schema that makes most fields optional
+const TaskEditSchema = TaskCreateSchema.partial().extend({
+  title: z.string().min(3, 'Title must be at least 3 characters long').max(200, 'Title must be less than 200 characters'),
+  description: z.string().min(10, 'Description must be at least 10 characters long').max(5000, 'Description must be less than 5000 characters'),
+  dependencies: z.array(z.string()).optional().default([]),
+  dueDate: z.union([z.string(), z.date()]).optional().transform((val) => {
+    if (val instanceof Date) return val.toISOString().split('T')[0];
+    return val || '';
+  }),
+});
+
+type TaskEditFormData = z.infer<typeof TaskEditSchema>;
 
 interface TaskEditModalProps {
   task: EnhancedKanbanTask;
@@ -48,8 +62,8 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
   const isOpen = isControlled ? controlledOpen : open;
   const setIsOpen = isControlled ? (controlledOnOpenChange || (() => {})) : setOpen;
 
-  const form = useForm<TaskCreateFormData>({
-    resolver: zodResolver(TaskCreateSchema),
+  const form = useForm<TaskEditFormData>({
+    resolver: zodResolver(TaskEditSchema),
     defaultValues: {
       title: '',
       description: '',
@@ -79,8 +93,8 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
       const fullTask = await taskService.getTaskById(task.id);
 
       // Convert subtasks from TaskMaster format to form format
-      const formSubtasks = fullTask.subtasks ? fullTask.subtasks.map((subtask: any) => ({
-        id: subtask.id || `subtask_${Date.now()}_${Math.random()}`,
+      const formSubtasks = fullTask.subtasks ? fullTask.subtasks.map((subtask: any, index: number) => ({
+        id: subtask.id || `${task.id}.${index + 1}`,
         title: subtask.title || subtask.description || '',
         completed: subtask.status === 'done' || subtask.completed || false,
       })) : [];
@@ -92,10 +106,10 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
         tags: [], // Would need to be added to task data structure
         estimatedHours: fullTask.estimatedHours || undefined,
         assignee: fullTask.assignee || '',
-        dueDate: fullTask.dueDate || '',
+        dueDate: fullTask.dueDate ? String(fullTask.dueDate) : '',
         details: fullTask.details || '',
         testStrategy: fullTask.testStrategy || '',
-        dependencies: fullTask.dependencies || [],
+        dependencies: Array.isArray(fullTask.dependencies) ? fullTask.dependencies.map(dep => String(dep)) : [],
         prdSource: fullTask.prdSource?.fileName || '',
         subtasks: formSubtasks,
       });
@@ -103,7 +117,7 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
       fetchAvailableData();
     } catch (error) {
       console.error('Failed to load task data:', error);
-      showError("Load Error", "Failed to load task details. Using basic data.");
+      // Don't show error toast, just use fallback data gracefully
 
       // Fallback to basic task data
       form.reset({
@@ -113,10 +127,10 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
         tags: [],
         estimatedHours: undefined,
         assignee: '',
-        dueDate: '',
+        dueDate: task.dueDate ? String(task.dueDate) : '',
         details: task.details || '',
         testStrategy: task.testStrategy || '',
-        dependencies: task.dependencies || [],
+        dependencies: Array.isArray(task.dependencies) ? task.dependencies.map(dep => String(dep)) : [],
         prdSource: task.prdSource?.fileName || '',
         subtasks: [],
       });
@@ -149,49 +163,41 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
     }
   };
 
-  const handleSubmit = async (data: TaskCreateFormData) => {
+  const handleSubmit = async (data: TaskEditFormData) => {
+    // Check if task is completed
+    if (task.status === 'done' || task.status === 'completed') {
+      showError(
+        'Cannot Edit Completed Task',
+        'Completed tasks cannot be edited. Please change the task status first if you need to make updates.'
+      );
+      return;
+    }
+
     setIsSubmitting(true);
     try {
-      // Build comprehensive prompt with all form data
-      let prompt = `Update task: ${data.title}\n\nDescription: ${data.description}`;
+      // Send structured data instead of just a prompt
+      const updateData = {
+        title: data.title,
+        description: data.description,
+        priority: data.priority,
+        dependencies: Array.isArray(data.dependencies) ? data.dependencies : [],
+        assignee: data.assignee?.trim() || undefined,
+        estimatedHours: data.estimatedHours || undefined,
+        dueDate: data.dueDate ? String(data.dueDate) : undefined,
+        details: data.details?.trim() || undefined,
+        testStrategy: data.testStrategy?.trim() || undefined,
+        subtasks: data.subtasks || []
+      };
 
-      if (data.priority) {
-        prompt += `\nPriority: ${data.priority}`;
-      }
+      // Remove undefined values to avoid sending them, but keep empty arrays and subtasks
+      Object.keys(updateData).forEach(key => {
+        if (updateData[key] === undefined || (updateData[key] === '' && !['dependencies', 'subtasks'].includes(key))) {
+          delete updateData[key];
+        }
+      });
 
-      if (data.assignee && data.assignee.trim()) {
-        prompt += `\nAssignee: ${data.assignee.trim()}`;
-      }
+      console.log('Sending update data to API:', updateData);
 
-      if (data.estimatedHours) {
-        prompt += `\nEstimated Hours: ${data.estimatedHours}`;
-      }
-
-      if (data.dueDate) {
-        prompt += `\nDue Date: ${data.dueDate}`;
-      }
-
-      if (data.dependencies && data.dependencies.length > 0) {
-        prompt += `\nDependencies: ${data.dependencies.join(', ')}`;
-      }
-
-      if (data.details && data.details.trim()) {
-        prompt += `\n\nAdditional Details: ${data.details.trim()}`;
-      }
-
-      if (data.testStrategy && data.testStrategy.trim()) {
-        prompt += `\n\nTest Strategy: ${data.testStrategy.trim()}`;
-      }
-
-      if (data.subtasks && data.subtasks.length > 0) {
-        prompt += `\n\nSubtasks:`;
-        data.subtasks.forEach((subtask: any, index: number) => {
-          const status = subtask.completed ? '[DONE]' : '[PENDING]';
-          prompt += `\n${index + 1}. ${status} ${subtask.title}`;
-        });
-      }
-
-      const updateData = { prompt };
       const updatedTask = await taskService.updateTask(task.id, updateData);
 
       showSuccess("Task Updated", "Task updated successfully!");
@@ -256,6 +262,27 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
           onSubmit={form.handleSubmit(handleSubmit)}
           className="space-y-8"
         >
+          {/* Warning for completed tasks */}
+          {(task.status === 'done' || task.status === 'completed') && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-sm font-medium text-yellow-800">
+                    Task is Completed
+                  </h3>
+                  <div className="mt-1 text-sm text-yellow-700">
+                    This task is marked as completed and cannot be edited. Change the status first to make updates.
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="space-y-6">
             {/* Title and Priority/PRD Source in first row */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
@@ -388,7 +415,7 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
                     <FormSection
                       title="Subtasks"
                     >
-                      <SubtaskManager form={form} />
+                      <SubtaskManager form={form} task={task} />
                     </FormSection>
                   </div>
                 </div>
@@ -407,21 +434,24 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
  */
 interface SubtaskManagerProps {
   form: any; // UseFormReturn type
+  task: EnhancedKanbanTask;
 }
 
-function SubtaskManager({ form }: SubtaskManagerProps) {
+function SubtaskManager({ form, task }: SubtaskManagerProps) {
   const [newSubtaskTitle, setNewSubtaskTitle] = useState('');
   const subtasks = form.watch('subtasks') || [];
 
   const addSubtask = () => {
     if (newSubtaskTitle.trim()) {
+      const currentSubtasks = form.getValues('subtasks') || [];
+      const nextIndex = currentSubtasks.length + 1;
+
       const newSubtask = {
-        id: `subtask_${Date.now()}`,
+        id: `${task?.id || 'new'}.${nextIndex}`,
         title: newSubtaskTitle.trim(),
         completed: false,
       };
 
-      const currentSubtasks = form.getValues('subtasks') || [];
       form.setValue('subtasks', [...currentSubtasks, newSubtask]);
       setNewSubtaskTitle('');
     }
@@ -474,17 +504,22 @@ function SubtaskManager({ form }: SubtaskManagerProps) {
                   onChange={() => toggleSubtask(subtask.id)}
                   className="h-4 w-4 rounded border-gray-300"
                 />
-                <span className={`flex-1 text-sm ${subtask.completed ? 'line-through text-muted-foreground' : ''}`}>
-                  {subtask.title}
-                </span>
+                <div className="flex-1 flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground font-mono bg-muted px-1.5 py-0.5 rounded">
+                    {subtask.id}
+                  </span>
+                  <span className={`text-sm ${subtask.completed ? 'line-through text-muted-foreground' : ''}`}>
+                    {subtask.title}
+                  </span>
+                </div>
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
+                  className="h-8 w-8 p-0 text-red-600 hover:bg-red-100 hover:text-red-700"
                   onClick={() => removeSubtask(subtask.id)}
-                  className="h-6 w-6 p-0 text-destructive hover:text-destructive"
                 >
-                  ×
+                  <X className="h-4 w-4" />
                 </Button>
               </div>
             ))}

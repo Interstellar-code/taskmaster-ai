@@ -22,11 +22,14 @@ import {
   Pause,
   Edit,
   Trash2,
-  Copy
+  Copy,
+  BarChart3,
+  Split
 } from "lucide-react";
 import { EnhancedKanbanTask, ColumnId } from "../api/types";
 import { taskService } from "../api/taskService";
 import { TaskEditModal, TaskDeleteDialog, TaskCreateModal } from "./forms";
+import { useFormToast } from "./forms/FormToast";
 
 export interface EnhancedTaskCardProps {
   task: EnhancedKanbanTask;
@@ -97,6 +100,7 @@ export function EnhancedTaskCard({ task, isOverlay, onTaskClick, onTaskUpdated, 
   const [showDetails, setShowDetails] = useState(false);
   const [showCopyModal, setShowCopyModal] = useState(false);
   const [copyTaskData, setCopyTaskData] = useState<any>(null);
+  const { showSuccess, showError } = useFormToast();
 
   const {
     setNodeRef,
@@ -164,6 +168,56 @@ export function EnhancedTaskCard({ task, isOverlay, onTaskClick, onTaskUpdated, 
     }
   };
 
+  const handleAnalyzeComplexity = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      console.log(`Analyzing complexity for task ${task.id}...`);
+      const result = await taskService.analyzeTaskComplexity(task.id);
+      console.log('Complexity analysis result:', result);
+
+      // Refresh the task data to show updated complexity
+      if (onTaskUpdated) {
+        // Fetch updated task data
+        const updatedTask = await taskService.getTaskById(task.id);
+        onTaskUpdated(updatedTask);
+      }
+
+      showSuccess(
+        'Complexity Analysis Complete',
+        `Task ${task.id} complexity analysis completed successfully. Complexity score updated.`
+      );
+    } catch (error) {
+      console.error('Failed to analyze task complexity:', error);
+      showError(
+        'Analysis Failed',
+        'Failed to analyze task complexity. Please try again.'
+      );
+    }
+  };
+
+  const handleExpandTask = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      console.log(`Expanding task ${task.id} into subtasks...`);
+      const result = await taskService.expandTask(task.id, {});
+      console.log('Task expansion result:', result);
+      // Refresh the task data
+      if (onTaskUpdated) {
+        onTaskUpdated(result);
+      }
+      showSuccess(
+        'Task Expanded Successfully',
+        `Task ${task.id} has been expanded into subtasks successfully!`
+      );
+    } catch (error) {
+      console.error('Failed to expand task:', error);
+      showError(
+        'Expansion Failed',
+        'Failed to expand task. Please try again.'
+      );
+    }
+  };
+
   return (
     <TooltipProvider>
       <Card
@@ -191,6 +245,22 @@ export function EnhancedTaskCard({ task, isOverlay, onTaskClick, onTaskUpdated, 
               <span className="text-sm" title={`Priority: ${task.priority}`}>
                 {priorityIcons[task.priority]}
               </span>
+
+              {/* Complexity Score */}
+              {task.complexityScore && (
+                <Tooltip>
+                  <TooltipTrigger>
+                    <div className="flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">
+                      <BarChart3 size={10} />
+                      <span>{task.complexityScore}</span>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Complexity Score: {task.complexityScore}/10</p>
+                    <p>Level: {task.complexityLevel || (task.complexityScore >= 8 ? 'high' : task.complexityScore >= 5 ? 'medium' : 'low')}</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
             </div>
 
             <div className="flex items-center gap-2">
@@ -319,6 +389,38 @@ export function EnhancedTaskCard({ task, isOverlay, onTaskClick, onTaskUpdated, 
                 </Button>
               }
             />
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 w-7 p-0 text-purple-600 hover:bg-purple-100 hover:text-purple-700"
+                  onClick={handleAnalyzeComplexity}
+                >
+                  <BarChart3 size={14} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Analyze task complexity</p>
+              </TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 w-7 p-0 text-green-600 hover:bg-green-100 hover:text-green-700"
+                  onClick={handleExpandTask}
+                >
+                  <Split size={14} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Expand into subtasks</p>
+              </TooltipContent>
+            </Tooltip>
 
             <Button
               variant="ghost"

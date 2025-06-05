@@ -5,6 +5,7 @@
 
 import express from 'express';
 import path from 'path';
+import fs from 'fs';
 import {
   addDependencyDirect,
   addSubtaskDirect,
@@ -533,14 +534,15 @@ router.put('/tasks/:id', requireTaskMasterCore, async (req, res) => {
     assignee,
     dueDate,
     details,
-    testStrategy
+    testStrategy,
+    subtasks
   } = req.body;
 
   const tasksJsonPath = req.app.locals.tasksJsonPath;
   const projectRoot = req.app.locals.projectRoot;
 
   // Support both legacy prompt-based updates and new structured data updates
-  if (!prompt && !title && !description && !priority && !status && !dependencies && !tags && !estimatedHours && !assignee && !dueDate && !details && !testStrategy) {
+  if (!prompt && !title && !description && !priority && !status && !dependencies && !tags && !estimatedHours && !assignee && !dueDate && !details && !testStrategy && !subtasks) {
     return res.status(400).json({
       success: false,
       error: 'Validation error',
@@ -549,44 +551,59 @@ router.put('/tasks/:id', requireTaskMasterCore, async (req, res) => {
     });
   }
 
-  // If structured data is provided, validate it
-  if (title || description || priority || status || dependencies || tags || estimatedHours || assignee || dueDate || details || testStrategy) {
-    const updateData = {};
+  // If structured data is provided, use direct update
+  if (title || description || priority || status || dependencies || tags || estimatedHours || assignee || dueDate || details || testStrategy || subtasks) {
+    try {
+      // Read current tasks
+      const tasksData = JSON.parse(await fs.promises.readFile(tasksJsonPath, 'utf8'));
+      const taskIndex = tasksData.tasks.findIndex(t => t.id.toString() === id.toString());
 
-    // Only include fields that are actually provided
-    if (title !== undefined) updateData.title = title;
-    if (description !== undefined) updateData.description = description;
-    if (priority !== undefined) updateData.priority = priority;
-    if (status !== undefined) updateData.status = status;
-    if (dependencies !== undefined) updateData.dependencies = dependencies;
-    if (tags !== undefined) updateData.tags = tags;
-    if (estimatedHours !== undefined) updateData.estimatedHours = estimatedHours;
-    if (assignee !== undefined) updateData.assignee = assignee;
-    if (dueDate !== undefined) updateData.dueDate = dueDate;
-    if (details !== undefined) updateData.details = details;
-    if (testStrategy !== undefined) updateData.testStrategy = testStrategy;
+      if (taskIndex === -1) {
+        return res.status(404).json({
+          success: false,
+          error: 'Task not found',
+          message: `Task with ID ${id} does not exist`,
+          timestamp: new Date().toISOString()
+        });
+      }
 
-    const validationErrors = validateUpdateTaskData(updateData);
-    if (validationErrors.length > 0) {
-      return res.status(400).json({
+      // Update task fields directly
+      const task = tasksData.tasks[taskIndex];
+      if (title !== undefined) task.title = title;
+      if (description !== undefined) task.description = description;
+      if (priority !== undefined) task.priority = priority;
+      if (status !== undefined) task.status = status;
+      if (dependencies !== undefined) task.dependencies = dependencies;
+      if (tags !== undefined) task.tags = tags;
+      if (estimatedHours !== undefined) task.estimatedHours = estimatedHours;
+      if (assignee !== undefined) task.assignee = assignee;
+      if (dueDate !== undefined) task.dueDate = dueDate;
+      if (details !== undefined) task.details = details;
+      if (testStrategy !== undefined) task.testStrategy = testStrategy;
+      if (subtasks !== undefined) task.subtasks = subtasks;
+
+      // Update timestamp
+      task.updatedAt = new Date().toISOString();
+
+      // Write back to file
+      await fs.promises.writeFile(tasksJsonPath, JSON.stringify(tasksData, null, 2));
+
+      logger.info(`Direct task update completed for task ${id}`);
+
+      res.json({
+        success: true,
+        data: task,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      logger.error('Direct task update failed:', error.message);
+      res.status(500).json({
         success: false,
-        error: 'Validation error',
-        message: 'Invalid task update data provided',
-        details: validationErrors,
+        error: 'Direct update failed',
+        message: error.message,
         timestamp: new Date().toISOString()
       });
     }
-
-    // For structured updates, we need to implement a direct task update function
-    // For now, we'll use the existing prompt-based approach with a generated prompt
-    const updatePrompt = `Update task with the following changes: ${JSON.stringify(updateData)}`;
-
-    await handleDirectFunction(
-      updateTaskByIdDirect,
-      { tasksJsonPath, id, prompt: updatePrompt, projectRoot },
-      res,
-      'updateTaskByIdDirect'
-    );
   } else {
     // Legacy prompt-based update
     await handleDirectFunction(
@@ -997,9 +1014,20 @@ router.post('/tasks/:id/analyze-complexity', requireTaskMasterCore, async (req, 
   const tasksJsonPath = req.app.locals.tasksJsonPath;
   const projectRoot = req.app.locals.projectRoot;
 
+  // Ensure reports directory exists
+  const reportsDir = path.join(projectRoot, '.taskmaster', 'reports');
+  try {
+    await fs.promises.mkdir(reportsDir, { recursive: true });
+  } catch (error) {
+    // Directory might already exist, ignore error
+  }
+
+  // Generate output path for the complexity report
+  const outputPath = path.join(reportsDir, `task-${id}-complexity-${Date.now()}.json`);
+
   await handleDirectFunction(
     analyzeTaskComplexityDirect,
-    { tasksJsonPath, id, projectRoot },
+    { tasksJsonPath, id, projectRoot, outputPath, ids: id },
     res,
     'analyzeTaskComplexityDirect'
   );
