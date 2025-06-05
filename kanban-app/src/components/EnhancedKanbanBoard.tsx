@@ -31,16 +31,28 @@ import { useFormToast } from "./forms/FormToast";
 
 const defaultCols = [
   {
-    id: "todo" as const,
+    id: "pending" as const,
     title: "Todo",
+    headerColor: "bg-red-500",
+    textColor: "text-white",
+    badgeColor: "bg-red-500",
+    count: 0,
   },
   {
     id: "in-progress" as const,
     title: "In progress",
+    headerColor: "bg-blue-500",
+    textColor: "text-white",
+    badgeColor: "bg-blue-500",
+    count: 0,
   },
   {
     id: "done" as const,
     title: "Done",
+    headerColor: "bg-green-500",
+    textColor: "text-white",
+    badgeColor: "bg-green-500",
+    count: 0,
   },
 ] satisfies Column[];
 

@@ -122,15 +122,25 @@ interface TasksApiResponse {
 }
 
 class TaskService {
-  private async fetchApi<T>(endpoint: string, options?: RequestInit): Promise<ApiResponse<T>> {
+  private async fetchApi<T>(endpoint: string, options?: RequestInit & { timeout?: number }): Promise<ApiResponse<T>> {
     try {
+      // Default timeout is 60 seconds, but allow override for long operations
+      const timeout = options?.timeout || 60000;
+
+      // Create abort controller for timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeout);
+
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         headers: {
           'Content-Type': 'application/json',
           ...options?.headers,
         },
+        signal: controller.signal,
         ...options,
       });
+
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -138,6 +148,9 @@ class TaskService {
 
       return await response.json();
     } catch (error) {
+      if (error.name === 'AbortError') {
+        throw new Error('Request timed out. This operation may take longer than expected.');
+      }
       console.error('API request failed:', error);
       throw error;
     }
@@ -282,6 +295,7 @@ class TaskService {
     const response = await this.fetchApi<TaskMasterTask>(`/api/v1/tasks/${id}/expand`, {
       method: 'POST',
       body: JSON.stringify(expandData),
+      timeout: 300000, // 5 minutes timeout for AI operations
     });
     return response.data;
   }
@@ -342,6 +356,7 @@ class TaskService {
   async analyzeTaskComplexity(id: string): Promise<TaskComplexityAnalysis> {
     const response = await this.fetchApi<TaskComplexityAnalysis>(`/api/v1/tasks/${id}/analyze-complexity`, {
       method: 'POST',
+      timeout: 180000, // 3 minutes timeout for complexity analysis
     });
     return response.data;
   }
@@ -355,6 +370,7 @@ class TaskService {
     const response = await this.fetchApi<BulkOperationResult>('/api/v1/tasks/expand-all', {
       method: 'POST',
       body: JSON.stringify({ prompt }),
+      timeout: 600000, // 10 minutes timeout for bulk operations
     });
     return response.data;
   }

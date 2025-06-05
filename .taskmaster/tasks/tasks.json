@@ -561,43 +561,140 @@
       "testStrategy": "test stractery",
       "status": "pending",
       "dependencies": [
-        59,
-        84
+        "59",
+        "84"
       ],
       "priority": "high",
       "subtasks": [
         {
           "id": 1,
-          "title": "Test subtask",
-          "description": "Test subtask",
-          "details": "",
-          "status": "pending",
+          "title": "Initial Analysis of v0.16.0 Changes",
+          "description": "Thoroughly review the release notes, changelog, and any available documentation for v0.16.0 to understand all new features, breaking changes, deprecations, and bug fixes. Identify key areas requiring attention for integration.",
           "dependencies": [],
-          "parentTaskId": 91,
+          "details": "Review release notes, changelog, and documentation for v0.16.0. Identify all new features, breaking changes, deprecations, and bug fixes. Document key areas for integration.",
+          "status": "pending",
           "prdSource": null
         },
         {
           "id": 2,
-          "title": "test2",
-          "description": "test2",
-          "details": "",
-          "status": "pending",
+          "title": "Create and Manage 'dev_rohit' Integration Branch",
+          "description": "Establish a new integration branch named 'dev_rohit' from the main development branch. Implement a strategy for selective merging of changes into this branch.",
           "dependencies": [],
-          "parentTaskId": 91,
+          "details": "Create 'dev_rohit' branch from main. Define and document selective merging strategy (e.g., cherry-picking, rebase).",
+          "status": "pending",
           "prdSource": null
         },
         {
           "id": 3,
-          "title": "new copy",
-          "description": "new copy",
-          "details": "",
+          "title": "Preservation of Custom Features",
+          "description": "Identify and analyze all existing custom features in the current codebase. Develop a plan to ensure these features are preserved and remain functional after the v0.16.0 integration.",
+          "dependencies": [
+            1
+          ],
+          "details": "Inventory all custom features. Assess compatibility with v0.16.0. Plan for migration or re-implementation if necessary.",
           "status": "pending",
-          "dependencies": [],
-          "parentTaskId": 91,
+          "prdSource": null
+        },
+        {
+          "id": 4,
+          "title": "Implement New Directory Structure",
+          "description": "Apply any changes to the directory structure introduced in v0.16.0. This includes moving files, updating import paths, and ensuring all references are correct.",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "Refactor codebase to match new directory structure. Update all import paths and file references. Verify build process.",
+          "status": "pending",
+          "prdSource": null
+        },
+        {
+          "id": 5,
+          "title": "Node.js Version Update",
+          "description": "Update the Node.js runtime to the version specified or recommended by v0.16.0. Address any compatibility issues arising from the update.",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "Upgrade Node.js to target version. Test application compatibility. Resolve any breaking changes or deprecations.",
+          "status": "pending",
+          "prdSource": null
+        },
+        {
+          "id": 6,
+          "title": "Environment Variable Setup and Configuration",
+          "description": "Configure and update environment variables as required by v0.16.0, especially for new features or updated dependencies. Ensure secure handling of sensitive information.",
+          "dependencies": [
+            1,
+            2,
+            5
+          ],
+          "details": "Identify new/changed environment variables. Update .env files and deployment configurations. Implement secure variable management practices.",
+          "status": "pending",
+          "prdSource": null
+        },
+        {
+          "id": 7,
+          "title": "Integrate AWS Bedrock AI Provider",
+          "description": "Implement the necessary code and configurations to integrate AWS Bedrock as a new AI provider, including API client setup, authentication, and request/response handling.",
+          "dependencies": [
+            1,
+            2,
+            6
+          ],
+          "details": "Add AWS Bedrock SDK/client. Configure authentication. Implement API calls for relevant AI functionalities. Test integration.",
+          "status": "pending",
+          "prdSource": null
+        },
+        {
+          "id": 8,
+          "title": "Integrate Google Vertex AI Provider",
+          "description": "Implement the necessary code and configurations to integrate Google Vertex AI as a new AI provider, including API client setup, authentication, and request/response handling.",
+          "dependencies": [
+            1,
+            2,
+            6
+          ],
+          "details": "Add Google Vertex AI SDK/client. Configure authentication. Implement API calls for relevant AI functionalities. Test integration.",
+          "status": "pending",
+          "prdSource": null
+        },
+        {
+          "id": 9,
+          "title": "Integrate Azure AI Provider",
+          "description": "Implement the necessary code and configurations to integrate Azure AI as a new AI provider, including API client setup, authentication, and request/response handling.",
+          "dependencies": [
+            1,
+            2,
+            6
+          ],
+          "details": "Add Azure AI SDK/client. Configure authentication. Implement API calls for relevant AI functionalities. Test integration.",
+          "status": "pending",
+          "prdSource": null
+        },
+        {
+          "id": 10,
+          "title": "Implement Specific Bug Fixes",
+          "description": "Address and implement any specific bug fixes identified during the initial analysis or as part of the v0.16.0 release. Ensure thorough testing for each fix.",
+          "dependencies": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "details": "Identify and prioritize specific bugs. Develop and apply fixes. Conduct unit and integration testing for each fix.",
+          "status": "pending",
           "prdSource": null
         }
       ],
-      "prdSource": null
+      "prdSource": null,
+      "complexityScore": 9,
+      "complexityLevel": "high",
+      "updatedAt": "2025-06-05T06:12:49.228Z"
     }
   ],
   "meta": {

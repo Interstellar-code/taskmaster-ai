@@ -12,6 +12,10 @@ import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 export interface Column {
   id: UniqueIdentifier;
   title: string;
+  headerColor?: string;
+  textColor?: string;
+  badgeColor?: string;
+  count?: number;
 }
 
 export type ColumnType = "Column";
@@ -77,7 +81,7 @@ export function BoardColumn({ column, tasks, isOverlay, renderTask }: BoardColum
         dropping: isOver ? "over" : "default",
       })}
     >
-      <CardHeader className="p-4 font-semibold border-b-2 text-center flex flex-row justify-center items-center">
+      <CardHeader className={`p-4 font-semibold border-b-2 text-center flex flex-row justify-center items-center ${column.headerColor || 'bg-gray-100'} ${column.textColor || 'text-gray-700'}`}>
         <span className="text-lg">{column.title} ({tasks.length})</span>
       </CardHeader>
       <ScrollArea className="flex-1">

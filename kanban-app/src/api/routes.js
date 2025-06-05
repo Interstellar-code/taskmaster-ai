@@ -1033,4 +1033,77 @@ router.post('/tasks/:id/analyze-complexity', requireTaskMasterCore, async (req, 
   );
 });
 
+/**
+ * GET /api/v1/tasks/:id/complexity-report
+ * Get the latest complexity analysis report for a task
+ */
+router.get('/tasks/:id/complexity-report', requireTaskMasterCore, async (req, res) => {
+  const { id } = req.params;
+  const projectRoot = req.app.locals.projectRoot;
+  const reportsDir = path.join(projectRoot, '.taskmaster', 'reports');
+
+  try {
+    // Find the latest complexity report for this task
+    const files = await fs.promises.readdir(reportsDir);
+    const taskReports = files
+      .filter(file => file.startsWith(`task-${id}-complexity-`) && file.endsWith('.json'))
+      .sort((a, b) => {
+        // Extract timestamp from filename and sort by newest first
+        const timestampA = parseInt(a.match(/complexity-(\d+)\.json$/)?.[1] || '0');
+        const timestampB = parseInt(b.match(/complexity-(\d+)\.json$/)?.[1] || '0');
+        return timestampB - timestampA;
+      });
+
+    if (taskReports.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'No complexity report found',
+        message: `No complexity analysis report found for task ${id}`,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    // Read the latest report
+    const latestReport = taskReports[0];
+    const reportPath = path.join(reportsDir, latestReport);
+    const reportContent = await fs.promises.readFile(reportPath, 'utf8');
+    const reportData = JSON.parse(reportContent);
+
+    // Extract the analysis for this specific task
+    const taskAnalysis = reportData.complexityAnalysis?.find(analysis => analysis.taskId.toString() === id.toString());
+
+    if (!taskAnalysis) {
+      return res.status(404).json({
+        success: false,
+        error: 'Task analysis not found',
+        message: `Task ${id} not found in complexity report`,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        taskId: taskAnalysis.taskId,
+        taskTitle: taskAnalysis.taskTitle,
+        complexityScore: taskAnalysis.complexityScore,
+        recommendedSubtasks: taskAnalysis.recommendedSubtasks,
+        expansionPrompt: taskAnalysis.expansionPrompt,
+        reasoning: taskAnalysis.reasoning,
+        reportFile: latestReport,
+        generatedAt: reportData.meta?.generatedAt
+      },
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    logger.error('Failed to read complexity report:', error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to read complexity report',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
 export default router;

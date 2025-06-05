@@ -24,7 +24,8 @@ import {
   Trash2,
   Copy,
   BarChart3,
-  Split
+  Split,
+  Loader2
 } from "lucide-react";
 import { EnhancedKanbanTask, ColumnId } from "../api/types";
 import { taskService } from "../api/taskService";
@@ -63,17 +64,17 @@ const priorityVariants = cva("border-l-4 transition-all duration-200", {
   }
 });
 
-// Status badge variants
+// Status badge variants - matching column header colors
 const statusVariants = cva("text-xs font-medium", {
   variants: {
     status: {
-      pending: "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200",
-      'in-progress': "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
-      review: "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200",
-      blocked: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
-      done: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
-      cancelled: "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200",
-      deferred: "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200"
+      pending: "bg-red-500 text-white",
+      'in-progress': "bg-blue-500 text-white",
+      review: "bg-orange-500 text-white",
+      blocked: "bg-red-600 text-white",
+      done: "bg-green-500 text-white",
+      cancelled: "bg-gray-500 text-white",
+      deferred: "bg-purple-500 text-white"
     }
   }
 });
@@ -100,6 +101,8 @@ export function EnhancedTaskCard({ task, isOverlay, onTaskClick, onTaskUpdated, 
   const [showDetails, setShowDetails] = useState(false);
   const [showCopyModal, setShowCopyModal] = useState(false);
   const [copyTaskData, setCopyTaskData] = useState<any>(null);
+  const [isExpanding, setIsExpanding] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const { showSuccess, showError } = useFormToast();
 
   const {
@@ -170,6 +173,7 @@ export function EnhancedTaskCard({ task, isOverlay, onTaskClick, onTaskUpdated, 
 
   const handleAnalyzeComplexity = async (e: React.MouseEvent) => {
     e.stopPropagation();
+    setIsAnalyzing(true);
     try {
       console.log(`Analyzing complexity for task ${task.id}...`);
       const result = await taskService.analyzeTaskComplexity(task.id);
@@ -188,33 +192,72 @@ export function EnhancedTaskCard({ task, isOverlay, onTaskClick, onTaskUpdated, 
       );
     } catch (error) {
       console.error('Failed to analyze task complexity:', error);
-      showError(
-        'Analysis Failed',
-        'Failed to analyze task complexity. Please try again.'
-      );
+      const errorMessage = error.message.includes('timed out')
+        ? 'Complexity analysis timed out. This is a complex task that may require manual analysis.'
+        : 'Failed to analyze task complexity. Please try again.';
+
+      showError('Analysis Failed', errorMessage);
+    } finally {
+      setIsAnalyzing(false);
     }
   };
 
   const handleExpandTask = async (e: React.MouseEvent) => {
     e.stopPropagation();
+    setIsExpanding(true);
     try {
       console.log(`Expanding task ${task.id} into subtasks...`);
-      const result = await taskService.expandTask(task.id, {});
+
+      // Check if we have complexity analysis data to improve expansion
+      let expandData: any = {};
+
+      // Try to find and use complexity analysis report for better expansion
+      try {
+        // Check if there's a recent complexity analysis report
+        const complexityReport = await fetch(`http://localhost:3003/api/v1/tasks/${task.id}/complexity-report`);
+        if (complexityReport.ok) {
+          const reportData = await complexityReport.json();
+          if (reportData.data && reportData.data.expansionPrompt) {
+            expandData.prompt = reportData.data.expansionPrompt;
+            expandData.num = reportData.data.recommendedSubtasks || 8;
+            console.log('Using complexity analysis data for expansion:', reportData.data);
+          }
+        }
+      } catch (reportError) {
+        console.log('No complexity report found, using basic expansion');
+      }
+
+      // Fallback: If task has complexity score, use it to determine number of subtasks
+      if (!expandData.prompt && task.complexityScore && task.complexityScore > 5) {
+        const recommendedSubtasks = Math.min(Math.max(Math.floor(task.complexityScore * 1.5), 6), 15);
+        expandData.num = recommendedSubtasks;
+
+        // Add context about complexity
+        expandData.prompt = `This is a complex task (complexity score: ${task.complexityScore}/10). Break it down into ${recommendedSubtasks} detailed, actionable subtasks that address the full scope of work required.`;
+      }
+
+      const result = await taskService.expandTask(task.id, expandData);
       console.log('Task expansion result:', result);
+
       // Refresh the task data
       if (onTaskUpdated) {
         onTaskUpdated(result);
       }
+
+      const subtaskCount = result.subtasks?.length || 0;
       showSuccess(
         'Task Expanded Successfully',
-        `Task ${task.id} has been expanded into subtasks successfully!`
+        `Task ${task.id} has been expanded into ${subtaskCount} subtasks successfully!`
       );
     } catch (error) {
       console.error('Failed to expand task:', error);
-      showError(
-        'Expansion Failed',
-        'Failed to expand task. Please try again.'
-      );
+      const errorMessage = error.message.includes('timed out')
+        ? 'Task expansion timed out. This is a complex task that may take longer to process. Please try again or consider breaking it down manually.'
+        : 'Failed to expand task. Please try again.';
+
+      showError('Expansion Failed', errorMessage);
+    } finally {
+      setIsExpanding(false);
     }
   };
 
@@ -397,12 +440,13 @@ export function EnhancedTaskCard({ task, isOverlay, onTaskClick, onTaskUpdated, 
                   size="sm"
                   className="h-7 w-7 p-0 text-purple-600 hover:bg-purple-100 hover:text-purple-700"
                   onClick={handleAnalyzeComplexity}
+                  disabled={isAnalyzing}
                 >
-                  <BarChart3 size={14} />
+                  {isAnalyzing ? <Loader2 size={14} className="animate-spin" /> : <BarChart3 size={14} />}
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Analyze task complexity</p>
+                <p>{isAnalyzing ? 'Analyzing complexity...' : 'Analyze task complexity'}</p>
               </TooltipContent>
             </Tooltip>
 
@@ -413,12 +457,13 @@ export function EnhancedTaskCard({ task, isOverlay, onTaskClick, onTaskUpdated, 
                   size="sm"
                   className="h-7 w-7 p-0 text-green-600 hover:bg-green-100 hover:text-green-700"
                   onClick={handleExpandTask}
+                  disabled={isExpanding}
                 >
-                  <Split size={14} />
+                  {isExpanding ? <Loader2 size={14} className="animate-spin" /> : <Split size={14} />}
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Expand into subtasks</p>
+                <p>{isExpanding ? 'Expanding task...' : 'Expand into subtasks'}</p>
               </TooltipContent>
             </Tooltip>
 
