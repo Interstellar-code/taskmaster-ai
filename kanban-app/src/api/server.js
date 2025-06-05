@@ -5,6 +5,7 @@ import rateLimit from 'express-rate-limit';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs/promises';
+import fsSync from 'fs';
 import {
 	directFunctions,
 	listTasksDirect,
@@ -35,15 +36,53 @@ function getAvailableFunctions() {
 	return Array.from(directFunctions.keys());
 }
 
-// Helper function to resolve project root (adapted for kanban-app location)
+// Helper function to resolve project root (use current working directory)
 function resolveProjectRoot() {
-	// The kanban-app is located within the TaskMaster project
-	// Go up three levels from kanban-app/src/api to reach the project root
-	return path.resolve(__dirname, '../../..');
+	// When running as a global npm package, we need to use the current working directory
+	// where the user executed the command, not the package installation directory
+	const cwd = process.cwd();
+	logger.info(`Resolving project root from current working directory: ${cwd}`);
+
+	// Check if current directory has TaskMaster project markers
+	const projectMarkers = ['.taskmaster', 'tasks', '.taskmaster/tasks', '.taskmaster/config.json'];
+	const hasMarkers = projectMarkers.some(marker => {
+		const markerPath = path.join(cwd, marker);
+		const exists = fsSync.existsSync(markerPath);
+		if (exists) {
+			logger.info(`Found project marker: ${markerPath}`);
+		}
+		return exists;
+	});
+
+	if (hasMarkers) {
+		logger.info(`Using current working directory as project root: ${cwd}`);
+		return cwd;
+	}
+
+	// If no markers found in cwd, search parent directories
+	let currentDir = cwd;
+	const rootDir = path.parse(currentDir).root;
+
+	while (currentDir !== rootDir) {
+		const hasMarkersInParent = projectMarkers.some(marker => {
+			return fsSync.existsSync(path.join(currentDir, marker));
+		});
+
+		if (hasMarkersInParent) {
+			logger.info(`Found TaskMaster project in parent directory: ${currentDir}`);
+			return currentDir;
+		}
+
+		currentDir = path.dirname(currentDir);
+	}
+
+	// Fallback to current working directory if no project markers found
+	logger.warn(`No TaskMaster project markers found, using current directory: ${cwd}`);
+	return cwd;
 }
 
-// Legacy path for backward compatibility
-const TASKS_FILE_PATH = path.join(__dirname, '../../../.taskmaster/tasks/tasks.json');
+// Legacy path for backward compatibility - will be dynamically resolved
+let TASKS_FILE_PATH = null;
 
 // Security middleware
 app.use(helmet());
@@ -89,11 +128,18 @@ async function readTaskMasterTasks() {
       }
     }
 
+    // Ensure legacy path is set if not already
+    if (!TASKS_FILE_PATH) {
+      const fallbackProjectRoot = resolveProjectRoot();
+      TASKS_FILE_PATH = path.join(fallbackProjectRoot, '.taskmaster/tasks/tasks.json');
+      logger.info(`Setting fallback tasks file path: ${TASKS_FILE_PATH}`);
+    }
+
     // Fallback to direct file reading if core not initialized
     const data = await fs.readFile(TASKS_FILE_PATH, 'utf8');
     return JSON.parse(data);
   } catch (error) {
-    console.error('Error reading TaskMaster tasks:', error);
+    logger.error('Error reading TaskMaster tasks:', error);
     return { tasks: [] };
   }
 }
@@ -101,12 +147,19 @@ async function readTaskMasterTasks() {
 // Helper function to write TaskMaster tasks (using core integration)
 async function writeTaskMasterTasks(tasksData) {
   try {
+    // Ensure legacy path is set if not already
+    if (!TASKS_FILE_PATH) {
+      const fallbackProjectRoot = resolveProjectRoot();
+      TASKS_FILE_PATH = path.join(fallbackProjectRoot, '.taskmaster/tasks/tasks.json');
+      logger.info(`Setting fallback tasks file path for writing: ${TASKS_FILE_PATH}`);
+    }
+
     // For now, always use direct file writing since we don't have a write function in the core
     // This could be enhanced later to use MCP functions for writing
     await fs.writeFile(TASKS_FILE_PATH, JSON.stringify(tasksData, null, 2));
     return true;
   } catch (error) {
-    console.error('Error writing TaskMaster tasks:', error);
+    logger.error('Error writing TaskMaster tasks:', error);
     return false;
   }
 }
@@ -123,6 +176,10 @@ async function initializeTaskMasterCore() {
     // Resolve project root
     projectRoot = resolveProjectRoot();
     logger.info(`Project root resolved to: ${projectRoot}`);
+
+    // Set legacy path for backward compatibility
+    TASKS_FILE_PATH = path.join(projectRoot, '.taskmaster/tasks/tasks.json');
+    logger.info(`Legacy tasks file path set to: ${TASKS_FILE_PATH}`);
 
     // Find tasks.json path
     tasksJsonPath = findTasksJsonPath({ projectRoot }, logger);
@@ -156,10 +213,19 @@ async function initializeTaskMasterCore() {
     logger.warn('⚠️  Falling back to legacy file operations');
     isTaskMasterInitialized = false;
 
+    // Still try to resolve project root for legacy operations
+    try {
+      projectRoot = resolveProjectRoot();
+      TASKS_FILE_PATH = path.join(projectRoot, '.taskmaster/tasks/tasks.json');
+      logger.info(`Fallback: Using legacy path: ${TASKS_FILE_PATH}`);
+    } catch (fallbackError) {
+      logger.error('❌ Even fallback project root resolution failed:', fallbackError.message);
+    }
+
     // Store fallback state in app.locals
     app.locals.taskMasterInitialized = false;
-    app.locals.projectRoot = null;
-    app.locals.tasksJsonPath = null;
+    app.locals.projectRoot = projectRoot;
+    app.locals.tasksJsonPath = TASKS_FILE_PATH;
 
     return null;
   }
