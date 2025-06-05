@@ -275,21 +275,23 @@ async function createApiMiddleware() {
 
   try {
     // Import the existing API server from kanban-app
-    const serverPath = path.join(__dirname, '../../kanban-app/server/index.js');
+    const serverPath = path.join(__dirname, '../../kanban-app/src/api/server.js');
 
     // Check if the server file exists
     await fs.access(serverPath);
 
     // Import the API functions
-    const apiModule = await import('../../kanban-app/server/index.js');
+    const apiModule = await import('../../kanban-app/src/api/server.js');
 
     // If the module exports an Express app, use its routes
     if (apiModule.default && typeof apiModule.default.use === 'function') {
       // It's an Express app, extract its routes
+      console.log(chalk.green('✅ Using kanban-app API server'));
       return apiModule.default;
     }
 
     // Otherwise, create routes manually using the existing server logic
+    console.log(chalk.yellow('⚠️  Kanban-app server found but not compatible, using fallback'));
     return createTaskHeroApiRoutes();
 
   } catch (error) {
@@ -351,6 +353,37 @@ function createTaskHeroApiRoutes() {
     }
   });
 
+  // Add v1 API routes for kanban-app compatibility
+  router.get('/v1/tasks', async (req, res) => {
+    try {
+      const tasksData = await readTaskHeroTasks();
+      const tasks = tasksData.tasks || [];
+
+      res.json({
+        success: true,
+        data: {
+          tasks: tasks,
+          summary: {
+            totalTasks: tasks.length,
+            statusBreakdown: tasks.reduce((acc, task) => {
+              acc[task.status] = (acc[task.status] || 0) + 1;
+              return acc;
+            }, {})
+          }
+        },
+        source: 'TaskHero Core',
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: 'Failed to fetch TaskHero tasks',
+        message: error.message,
+        timestamp: new Date().toISOString()
+      });
+    }
+  });
+
   router.get('/tasks/:id', async (req, res) => {
     try {
       const { id } = req.params;
@@ -384,6 +417,67 @@ function createTaskHeroApiRoutes() {
   });
 
   router.put('/tasks/:id/status', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { status } = req.body;
+
+      if (!status) {
+        return res.status(400).json({
+          success: false,
+          error: 'Validation error',
+          message: 'Status is required',
+          timestamp: new Date().toISOString()
+        });
+      }
+
+      const tasksData = await readTaskHeroTasks();
+      const tasks = tasksData.tasks || [];
+      const taskIndex = tasks.findIndex(t => t.id === id);
+
+      if (taskIndex === -1) {
+        return res.status(404).json({
+          success: false,
+          error: 'Task not found',
+          message: `TaskHero task with ID ${id} does not exist`,
+          timestamp: new Date().toISOString()
+        });
+      }
+
+      // Update task status
+      tasks[taskIndex].status = status;
+      tasks[taskIndex].updatedAt = new Date().toISOString();
+
+      // Write back to TaskHero
+      const writeSuccess = await writeTaskHeroTasks({ ...tasksData, tasks });
+
+      if (!writeSuccess) {
+        return res.status(500).json({
+          success: false,
+          error: 'Failed to update TaskHero task',
+          message: 'Could not write to TaskHero tasks file',
+          timestamp: new Date().toISOString()
+        });
+      }
+
+      res.json({
+        success: true,
+        data: tasks[taskIndex],
+        message: 'TaskHero task status updated successfully',
+        source: 'TaskHero Core',
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: 'Failed to update TaskHero task status',
+        message: error.message,
+        timestamp: new Date().toISOString()
+      });
+    }
+  });
+
+  // Add v1 API status update endpoint for kanban-app compatibility
+  router.patch('/v1/tasks/:id/status', async (req, res) => {
     try {
       const { id } = req.params;
       const { status } = req.body;

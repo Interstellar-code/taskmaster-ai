@@ -10,7 +10,7 @@ import {
   KANBAN_TO_TASKMASTER_STATUS
 } from './types';
 
-const API_BASE_URL = 'http://localhost:3003';
+const API_BASE_URL = 'http://localhost:3001/api';
 
 // Extended interfaces for comprehensive API support
 interface ManualTaskData {
