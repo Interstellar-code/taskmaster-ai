@@ -10,7 +10,7 @@ import {
   KANBAN_TO_TASKMASTER_STATUS
 } from './types';
 
-const API_BASE_URL = 'http://localhost:3001/api';
+const API_BASE_URL = 'http://localhost:3003';
 
 // Extended interfaces for comprehensive API support
 interface ManualTaskData {
@@ -477,7 +477,7 @@ class TaskService {
     try {
       const tasks = await this.getAllTasks();
       const columns: Record<ColumnId, KanbanTask[]> = {
-        'todo': [],
+        'pending': [],
         'in-progress': [],
         'done': []
       };
@@ -502,7 +502,7 @@ class TaskService {
       console.error('Error in getTasksByColumns:', error);
       // Return empty columns structure on error
       return {
-        'todo': [],
+        'pending': [],
         'in-progress': [],
         'done': []
       };
@@ -514,7 +514,7 @@ class TaskService {
     try {
       const tasks = await this.getAllTasks();
       const columns: Record<ColumnId, EnhancedKanbanTask[]> = {
-        'todo': [],
+        'pending': [],
         'in-progress': [],
         'done': []
       };
@@ -539,7 +539,7 @@ class TaskService {
       console.error('Error in getEnhancedTasksByColumns:', error);
       // Return empty columns structure on error
       return {
-        'todo': [],
+        'pending': [],
         'in-progress': [],
         'done': []
       };

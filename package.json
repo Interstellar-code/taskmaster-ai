@@ -1,6 +1,6 @@
 {
   "name": "task-hero-ai",
-  "version": "0.16.4",
+  "version": "0.16.5",
   "description": "TaskHero AI - A task management system for ambitious AI-driven development",
   "main": "index.js",
   "type": "module",
@@ -110,7 +110,7 @@
     "bin/**",
     "mcp-server/**",
     "src/**",
-    "kanban-webapp/**"
+    "kanban-app/**"
   ],
   "overrides": {
     "node-fetch": "^2.6.12",

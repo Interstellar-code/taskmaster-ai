@@ -196,22 +196,22 @@ export interface Column {
   title: string;
 }
 
-export type ColumnId = "todo" | "in-progress" | "done";
+export type ColumnId = "pending" | "in-progress" | "done";
 
 // Status mapping between TaskMaster and Kanban
 export const STATUS_MAPPING: Record<string, ColumnId> = {
-  'pending': 'todo',
+  'pending': 'pending',
   'in-progress': 'in-progress',
   'done': 'done',
   'review': 'in-progress', // Review tasks go to in-progress with indicator
-  'blocked': 'todo', // Blocked tasks go to todo with indicator
+  'blocked': 'pending', // Blocked tasks go to pending with indicator
   'cancelled': 'done', // Cancelled tasks go to done
-  'deferred': 'todo' // Deferred tasks go to todo
+  'deferred': 'pending' // Deferred tasks go to pending
 };
 
-// Reverse mapping for status updates
+// Reverse mapping for status updates (now direct mapping)
 export const KANBAN_TO_TASKMASTER_STATUS: Record<ColumnId, string> = {
-  'todo': 'pending',
+  'pending': 'pending',
   'in-progress': 'in-progress',
   'done': 'done'
 };

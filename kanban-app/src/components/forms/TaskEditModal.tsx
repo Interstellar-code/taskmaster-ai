@@ -10,7 +10,7 @@ import { taskService } from '@/api/taskService';
 import { Edit, Loader2, X } from 'lucide-react';
 
 import { z } from 'zod';
-import { EnhancedKanbanTask, TaskMasterTask } from '@/api/types';
+import { EnhancedKanbanTask, TaskMasterTask, TaskStatus } from '@/api/types';
 
 // Create a proper edit schema that makes required fields explicit
 const TaskEditSchema = z.object({
@@ -25,6 +25,7 @@ const TaskEditSchema = z.object({
   })),
   details: z.string().optional(),
   priority: z.enum(['low', 'medium', 'high']).optional(),
+  status: z.enum(['pending', 'in-progress', 'done', 'review', 'blocked', 'deferred', 'cancelled']).optional(),
   estimatedHours: z.number().optional(),
   assignee: z.string().optional(),
   dueDate: z.string().optional(),
@@ -48,6 +49,16 @@ const priorityOptions = [
   { value: 'high', label: 'High Priority' },
 ];
 
+const statusOptions = [
+  { value: 'pending', label: 'Pending' },
+  { value: 'in-progress', label: 'In Progress' },
+  { value: 'review', label: 'Review' },
+  { value: 'blocked', label: 'Blocked' },
+  { value: 'done', label: 'Done' },
+  { value: 'deferred', label: 'Deferred' },
+  { value: 'cancelled', label: 'Cancelled' },
+];
+
 /**
  * Task Edit Modal
  *
@@ -61,7 +72,7 @@ const priorityOptions = [
 export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOpen, onOpenChange: controlledOnOpenChange }: TaskEditModalProps) {
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(true);
   const [availableTasks, setAvailableTasks] = useState<Array<{id: string, title: string}>>([]);
   const [availablePRDs, setAvailablePRDs] = useState<Array<{id: string, title: string}>>([]);
   const { showSuccess, showError } = useFormToast();
@@ -77,6 +88,7 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
       title: '',
       description: '',
       priority: 'medium' as const,
+      status: 'pending' as const,
       tags: [],
       estimatedHours: undefined,
       assignee: '',
@@ -112,6 +124,7 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
         title: fullTask.title || '',
         description: fullTask.description || '',
         priority: (fullTask.priority as 'low' | 'medium' | 'high') || 'medium',
+        status: (fullTask.status as TaskStatus) || 'pending',
         tags: [],
         estimatedHours: undefined, // TaskMasterTask doesn't have estimatedHours
         assignee: '', // TaskMasterTask doesn't have assignee
@@ -133,6 +146,7 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
         title: task.title || '',
         description: task.description || '',
         priority: task.priority || 'medium',
+        status: (task.status as TaskStatus) || 'pending',
         tags: [],
         estimatedHours: undefined,
         assignee: '',
@@ -174,15 +188,6 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
   };
 
   const handleSubmit = async (data: TaskEditFormData) => {
-    // Check if task is completed
-    if (task.status === 'done' || task.status === 'completed') {
-      showError(
-        'Cannot Edit Completed Task',
-        'Completed tasks cannot be edited. Please change the task status first if you need to make updates.'
-      );
-      return;
-    }
-
     setIsSubmitting(true);
     try {
       // Send structured data instead of just a prompt
@@ -190,6 +195,7 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
         title: data.title,
         description: data.description,
         priority: data.priority,
+        status: data.status,
         dependencies: Array.isArray(data.dependencies) ? data.dependencies : [],
         assignee: data.assignee?.trim() || undefined,
         estimatedHours: data.estimatedHours || undefined,
@@ -274,30 +280,9 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
           onSubmit={form.handleSubmit(handleSubmit)}
           className="space-y-8"
         >
-          {/* Warning for completed tasks */}
-          {(task.status === 'done' || task.status === 'completed') && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
-              <div className="flex">
-                <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <div className="ml-3">
-                  <h3 className="text-sm font-medium text-yellow-800">
-                    Task is Completed
-                  </h3>
-                  <div className="mt-1 text-sm text-yellow-700">
-                    This task is marked as completed and cannot be edited. Change the status first to make updates.
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
           <div className="space-y-6">
-            {/* Title and Priority/PRD Source in first row */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+            {/* Title, Priority, Status, and PRD Source in first row */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
               <FormInput
                 name="title"
                 control={form.control}
@@ -312,6 +297,14 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
                 label="Priority"
                 placeholder="Select task priority"
                 options={priorityOptions}
+              />
+
+              <FormSelect
+                name="status"
+                control={form.control}
+                label="Status"
+                placeholder="Select task status"
+                options={statusOptions}
               />
 
               <FormCombobox

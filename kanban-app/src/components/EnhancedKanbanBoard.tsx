@@ -58,17 +58,7 @@ const defaultCols = [
 
 export type ColumnId = (typeof defaultCols)[number]["id"];
 
-// Mapping from API ColumnId to UI ColumnId
-const API_TO_UI_COLUMN_MAPPING: Record<ApiColumnId, ColumnId> = {
-  'todo': 'pending',
-  'in-progress': 'in-progress',
-  'done': 'done'
-};
-
-// Helper function to convert API ColumnId to UI ColumnId
-function apiColumnToUIColumn(apiColumnId: ApiColumnId): ColumnId {
-  return API_TO_UI_COLUMN_MAPPING[apiColumnId];
-}
+// Column IDs are now aligned with API status values - no mapping needed
 
 // Enhanced Task interface for drag and drop compatibility
 export interface EnhancedTask {
@@ -166,6 +156,8 @@ export function EnhancedKanbanBoard() {
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
   const [activeTask, setActiveTask] = useState<EnhancedTask | null>(null);
 
+
+
   // Filter tasks based on selected PRD
   const filteredTasks = useMemo(() => {
     if (selectedPRD === 'all') {
@@ -206,7 +198,7 @@ export function EnhancedKanbanBoard() {
         pickedUpTaskColumn.current = active.data.current.task.columnId as ApiColumnId;
         const { tasksInColumn, taskPosition, column } = getDraggingTaskData(
           active.id,
-          apiColumnToUIColumn(pickedUpTaskColumn.current!)
+          pickedUpTaskColumn.current!
         );
         return `Picked up Task ${
           active.data.current.task.content
@@ -224,7 +216,7 @@ export function EnhancedKanbanBoard() {
       ) {
         const { tasksInColumn, taskPosition, column } = getDraggingTaskData(
           over.id,
-          apiColumnToUIColumn(over.data.current.task.columnId)
+          over.data.current.task.columnId
         );
         if (over.data.current.task.columnId !== pickedUpTaskColumn.current) {
           return `Task ${
@@ -249,7 +241,7 @@ export function EnhancedKanbanBoard() {
       ) {
         const { tasksInColumn, taskPosition, column } = getDraggingTaskData(
           over.id,
-          apiColumnToUIColumn(over.data.current.task.columnId)
+          over.data.current.task.columnId
         );
         if (over.data.current.task.columnId !== pickedUpTaskColumn.current) {
           return `Task was dropped into column ${column?.title} in position ${
@@ -332,14 +324,9 @@ export function EnhancedKanbanBoard() {
           </Button>
         )}
 
-        <div className="ml-auto text-sm text-muted-foreground">
-          {filteredTasks.length} of {tasks.length} tasks
+        <div className="ml-auto">
+          <TaskCreateModal onTaskCreated={loadTasks} />
         </div>
-      </div>
-
-      {/* Kanban Board Header */}
-      <div className="flex justify-end items-center">
-        <TaskCreateModal onTaskCreated={loadTasks} />
       </div>
 
       <DndContext
@@ -495,6 +482,7 @@ export function EnhancedKanbanBoard() {
         newColumnId = overTask.columnId;
       }
     } else if (isOverAColumn) {
+      // Column IDs are now aligned with API status values
       newColumnId = overId as ApiColumnId;
     }
 
@@ -607,8 +595,11 @@ export function EnhancedKanbanBoard() {
         const activeIndex = currentTasks.findIndex((t) => t.id === activeId);
         const activeTask = currentTasks[activeIndex];
         if (activeTask) {
+          // Column IDs are now aligned with API status values
+          const newApiColumnId = overId as ApiColumnId;
+
           // Just update the UI - actual API call will happen in onDragEnd
-          const updatedActiveTask = { ...activeTask, columnId: overId as ApiColumnId };
+          const updatedActiveTask = { ...activeTask, columnId: newApiColumnId };
           const updatedTasks = [...currentTasks];
           updatedTasks[activeIndex] = updatedActiveTask;
           return updatedTasks;

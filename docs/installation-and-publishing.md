@@ -21,7 +21,7 @@ This method is perfect for development and testing your customizations:
 ```bash
 # 1. Clone the repository
 git clone https://github.com/Interstellar-code/taskmaster-ai.git
-cd taskmaster-ai
+cd taskhero-ai
 
 # 2. Install dependencies
 npm install
@@ -30,8 +30,8 @@ npm install
 npm link
 
 # 4. Verify installation
-task-master --version
-task-master menu
+task-hero --version
+task-hero menu
 ```
 
 **Benefits:**
@@ -50,10 +50,10 @@ Install directly from a local directory without linking:
 
 ```bash
 # From any directory, install from local path
-npm install -g /path/to/your/taskmaster-ai
+npm install -g /path/to/your/taskhero-ai
 
 # Or using relative path
-npm install -g ./taskmaster-ai
+npm install -g ./taskhero-ai
 ```
 
 ### Method 3: Install from GitHub Repository
@@ -87,7 +87,7 @@ First, update your `package.json` to use the new package name:
 # Update package.json
 npm pkg set name="task-hero-ai"
 npm pkg set version="1.0.0"
-npm pkg set description="TaskMaster AI - A task management system for ambitious AI-driven development"
+npm pkg set description="TaskHero AI - A task management system for ambitious AI-driven development"
 npm pkg set repository.url="git+https://github.com/Interstellar-code/taskmaster-ai.git"
 npm pkg set homepage="https://github.com/Interstellar-code/taskmaster-ai#readme"
 npm pkg set bugs.url="https://github.com/Interstellar-code/taskmaster-ai/issues"
@@ -388,6 +388,15 @@ task-hero init
 # Launch interactive menu
 task-hero menu
 
+# Start web interface (Kanban board)
+task-hero web
+
+# Start web interface on custom port
+task-hero web --port 3001
+
+# Start web interface in development mode
+task-hero web --dev
+
 # Parse PRD files
 task-hero parse-prd scripts/prd.txt
 
@@ -397,6 +406,38 @@ task-hero list
 # Get next task
 task-hero next
 ```
+
+### Web Interface (Kanban Board)
+
+TaskHero includes a built-in web interface with a Kanban board for visual task management:
+
+```bash
+# Start web interface on default port (3000)
+task-hero web
+
+# Start on custom port
+task-hero web --port 3001
+
+# Development mode with hot reload (for contributors)
+task-hero web --dev
+
+# Start without opening browser automatically
+task-hero web --no-open
+```
+
+**Features:**
+- ✅ **Visual Kanban Board** - Drag and drop tasks between status columns
+- ✅ **Task Management** - Create, edit, and delete tasks with rich metadata
+- ✅ **PRD Integration** - Filter tasks by PRD source and track progress
+- ✅ **Dependency Management** - Visual dependency tracking and validation
+- ✅ **Complexity Analysis** - Built-in complexity scoring and analysis
+- ✅ **Real-time Updates** - Changes sync with CLI and other interfaces
+- ✅ **Responsive Design** - Works on desktop, tablet, and mobile devices
+
+**Access Points:**
+- **Main Interface**: `http://localhost:3000` (or your custom port)
+- **API Endpoints**: `http://localhost:3000/api`
+- **Health Check**: `http://localhost:3000/health`
 
 ## User Update Procedures
 

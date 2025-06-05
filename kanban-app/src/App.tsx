@@ -35,12 +35,9 @@ function App() {
             {currentView === 'kanban' ? (
               <>
                 <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-                  TaskHero - Enhanced Kanban Board
+                  TaskHero - AI Kanban Board
                 </h1>
                 <EnhancedKanbanBoard />
-                <p className="leading-7 [&:not(:first-child)]:mt-6">
-                  Rich task metadata display with priority indicators, progress tracking, and dependency management.
-                </p>
               </>
             ) : (
               <FormDemo />

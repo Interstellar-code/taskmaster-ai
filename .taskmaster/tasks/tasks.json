@@ -4,7 +4,7 @@
       "id": 59,
       "title": "Integrate v0.16.0 upstream changes selectively",
       "description": "fix 1 Integrate bug fixes and improvements from upstream v0.16.0 release while preserving unique custom features including: Kanban board functionality, PRD lifecycle tracking, interactive menu systems, custom AI editor integrations (.augment-guidelines, .cursor/rules, .roo/rules, .windsurfrules), custom task templates and workflow, and enhanced project management features. Focus on: 1) New directory structure (.taskmaster/ consolidation), 2) AWS Bedrock support, 3) Google Vertex AI support, 4) Azure support, 5) Node.js version requirement update, 6) TASK_MASTER_PROJECT_ROOT env variable, 7) Bug fixes for max_tokens and add-task MCP command. Create integration branch dev_rohit for selective merging.",
-      "status": "in-progress",
+      "status": "pending",
       "dependencies": [
         "84"
       ],
@@ -46,7 +46,7 @@
       "prdSource": null,
       "assignee": "rohit",
       "dueDate": "2025-06-06",
-      "updatedAt": "2025-06-05T06:58:32.392Z",
+      "updatedAt": "2025-06-05T15:38:55.311Z",
       "estimatedHours": 3,
       "complexityScore": 9,
       "complexityLevel": "high"
@@ -435,7 +435,7 @@
       "id": 90,
       "title": "Implement Task Deletion System",
       "description": "Develop a robust task deletion system, including a confirmation dialog, cascade deletion for subtasks, and dependency cleanup, with a basic undo functionality.",
-      "status": "pending",
+      "status": "in-progress",
       "dependencies": [
         87,
         86,
@@ -531,7 +531,7 @@
       "description": "fix 1 Integrate bug fixes and improvements from upstream v0.16.0 release while preserving unique custom features including: Kanban board functionality, PRD lifecycle tracking, interactive menu systems, custom AI editor integrations (.augment-guidelines, .cursor/rules, .roo/rules, .windsurfrules), custom task templates and workflow, and enhanced project management features. Focus on: 1) New directory structure (.taskmaster/ consolidation), 2) AWS Bedrock support, 3) Google Vertex AI support, 4) Azure support, 5) Node.js version requirement update, 6) TASK_MASTER_PROJECT_ROOT env variable, 7) Bug fixes for max_tokens and add-task MCP command. Create integration branch dev_rohit for selective merging.",
       "details": "testI editor integrations (.augment-guidelines, .cursor/rules, .roo/rules, .windsurfrules), custom task templates and workflow, and enhanced project management features. Focus on: 1) New directory structure (.taskmaster/ consolidation), 2) AWS Bedrock support, 3) Google Vertex AI support, 4) Azure support, 5) Node.js version requirement update, 6) TASK_MASTER_PROJECT_ROOT env variable, 7) Bug fixes for max_tokens and add-task MCP command. Create integration branch dev_rohit for selective merging.",
       "testStrategy": "test stractery",
-      "status": "pending",
+      "status": "in-progress",
       "dependencies": [
         "59",
         "84"
@@ -670,6 +670,6 @@
     }
   ],
   "meta": {
-    "updatedAt": "2025-06-05T05:20:56.370Z"
+    "updatedAt": "2025-06-05T15:36:12.141Z"
   }
 }

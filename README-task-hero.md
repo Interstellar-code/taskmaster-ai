@@ -86,7 +86,60 @@ task-hero next
 
 # Generate task files
 task-hero generate
+
+# Start web interface (Kanban board)
+task-hero web
+
+# Start web interface on custom port
+task-hero web --port 3001
 ```
+
+## Web Interface (Kanban Board)
+
+TaskHero includes a built-in web interface with a visual Kanban board for managing tasks:
+
+### Starting the Web Interface
+
+```bash
+# Start on default port (3000)
+task-hero web
+
+# Start on custom port
+task-hero web --port 3001
+
+# Development mode with hot reload (for contributors)
+task-hero web --dev
+
+# Start without opening browser automatically
+task-hero web --no-open
+```
+
+### Features
+
+- **Visual Kanban Board**: Drag and drop tasks between status columns (pending, in-progress, done, etc.)
+- **Task Management**: Create, edit, and delete tasks with rich metadata
+- **PRD Integration**: Filter tasks by PRD source and track progress
+- **Dependency Management**: Visual dependency tracking and validation
+- **Complexity Analysis**: Built-in complexity scoring and analysis
+- **Real-time Updates**: Changes sync with CLI and other interfaces
+- **Responsive Design**: Works on desktop, tablet, and mobile devices
+
+### Access Points
+
+Once started, you can access:
+- **Main Interface**: `http://localhost:3000` (or your custom port)
+- **API Endpoints**: `http://localhost:3000/api`
+- **Health Check**: `http://localhost:3000/health`
+
+### First-Time Setup
+
+When you first run `task-hero web`, the system will:
+1. Automatically install web interface dependencies
+2. Build the application if needed
+3. Start the server
+4. Open your browser to the Kanban board
+
+The web interface integrates seamlessly with your existing TaskHero project and tasks.
 
 ## Troubleshooting
 
