@@ -100,8 +100,11 @@ CREATE TABLE tasks (
     complexity_score REAL CHECK (complexity_score >= 1 AND complexity_score <= 10),
     complexity_level TEXT CHECK (complexity_level IN ('low', 'medium', 'high')),
     estimated_hours INTEGER,
+    actual_hours REAL,
     assignee TEXT,
     due_date DATETIME,
+    started_at DATETIME,
+    completed_at DATETIME,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     metadata JSON,
@@ -229,21 +232,40 @@ class TaskHeroDatabase {
 
 #### Database Location & Management
 ```javascript
-// Database file location
-const dbPath = path.join(projectRoot, '.taskmaster', 'taskmaster.db');
+// Database file location - configurable via .env
+const dbPath = process.env.TASKHERO_DB_PATH || 
+    path.join(projectRoot, '.taskmaster', 'taskmaster.db');
+
+// Database configuration from .env
+const dbConfig = {
+    path: process.env.TASKHERO_DB_PATH || path.join(projectRoot, '.taskmaster', 'taskmaster.db'),
+    timeout: parseInt(process.env.TASKHERO_DB_TIMEOUT) || 5000,
+    verbose: process.env.TASKHERO_DB_VERBOSE === 'true',
+    pragma: {
+        journal_mode: process.env.TASKHERO_DB_JOURNAL_MODE || 'WAL',
+        synchronous: process.env.TASKHERO_DB_SYNCHRONOUS || 'NORMAL',
+        cache_size: parseInt(process.env.TASKHERO_DB_CACHE_SIZE) || 2000
+    }
+};
 
 // Connection management
 class DatabaseManager {
     static getInstance(projectRoot) {
         if (!this.instances.has(projectRoot)) {
-            this.instances.set(projectRoot, new TaskHeroDatabase(
-                path.join(projectRoot, '.taskmaster', 'taskmaster.db')
-            ));
+            this.instances.set(projectRoot, new TaskHeroDatabase(dbConfig));
         }
         return this.instances.get(projectRoot);
     }
 }
 ```
+
+**Environment Variables for Database Configuration:**
+- `TASKHERO_DB_PATH`: Custom database file path
+- `TASKHERO_DB_TIMEOUT`: Connection timeout in milliseconds (default: 5000)
+- `TASKHERO_DB_VERBOSE`: Enable SQL logging (default: false)
+- `TASKHERO_DB_JOURNAL_MODE`: SQLite journal mode (default: WAL)
+- `TASKHERO_DB_SYNCHRONOUS`: SQLite synchronous mode (default: NORMAL)
+- `TASKHERO_DB_CACHE_SIZE`: SQLite cache size (default: 2000)
 
 #### Migration Process
 ```javascript
@@ -326,3 +348,122 @@ async function ensureDatabaseMigration(projectRoot) {
 - Enhanced reliability
 
 This migration will transform TaskHero into a more robust, scalable, and performant task management system while preserving the excellent user experience that users already know and love.
+
+## Proposed TaskHero Tasks
+
+### 1. SQLite3 Database Infrastructure Setup
+**Priority**: high | **Estimated Hours**: 24
+**Description**: Set up complete SQLite3 database infrastructure with schema, connections, and basic operations
+**Subtasks**:
+- 1.1 Add better-sqlite3 dependency and environment variable configuration
+- 1.2 Create complete database schema with all tables and constraints  
+- 1.3 Implement DatabaseManager class with connection pooling
+- 1.4 Create database migration utilities and versioning system
+- 1.5 Add transaction support and error handling
+
+### 2. Data Access Layer Implementation
+**Priority**: high | **Estimated Hours**: 32
+**Description**: Build comprehensive data access layer with all CRUD operations
+**Dependencies**: [1]
+**Subtasks**:
+- 2.1 Implement TaskHeroDatabase class with core methods
+- 2.2 Create project operations (create, get, update)
+- 2.3 Implement task operations with time tracking fields
+- 2.4 Build PRD operations and metadata management
+- 2.5 Add task dependency operations with validation
+- 2.6 Create configuration storage with backward compatibility
+
+### 3. JSON to Database Migration System
+**Priority**: high | **Estimated Hours**: 20
+**Description**: Create robust migration system from JSON files to SQLite database
+**Dependencies**: [2]
+**Subtasks**:
+- 3.1 Build JSON to SQLite migration utility
+- 3.2 Implement data validation and integrity checking
+- 3.3 Create automatic backup system with rollback capability
+- 3.4 Add migration performance optimization
+- 3.5 Create database initialization and setup scripts
+
+### 4. CLI Commands Integration
+**Priority**: high | **Estimated Hours**: 30
+**Description**: Update all CLI commands to use database layer while maintaining compatibility
+**Dependencies**: [2, 3]
+**Subtasks**:
+- 4.1 Update core task-manager module to use database
+- 4.2 Modify task listing and display commands
+- 4.3 Update task creation and modification commands
+- 4.4 Integrate dependency management commands
+- 4.5 Update PRD parsing and management commands
+- 4.6 Add error handling and backward compatibility
+
+### 5. MCP Server Database Integration
+**Priority**: high | **Estimated Hours**: 26
+**Description**: Integrate database operations into MCP server tools and direct functions
+**Dependencies**: [4]
+**Subtasks**:
+- 5.1 Update all MCP direct functions for database operations
+- 5.2 Modify MCP tools to work with database layer
+- 5.3 Implement session state management for database connections
+- 5.4 Add concurrent access handling and locking
+- 5.5 Ensure silent mode compatibility with database operations
+
+### 6. Web Application Database Integration  
+**Priority**: high | **Estimated Hours**: 44
+**Description**: Update web application and APIs to use database backend
+**Dependencies**: [4]
+**Subtasks**:
+- 6.1 Modify REST API endpoints for database operations
+- 6.2 Add advanced querying, filtering, and pagination
+- 6.3 Implement WebSocket integration for real-time updates
+- 6.4 Update React Kanban board for database integration
+- 6.5 Update terminal Kanban interface
+- 6.6 Add optimistic UI updates and conflict resolution
+- 6.7 Implement bulk operations support
+
+### 7. Performance Optimization
+**Priority**: medium | **Estimated Hours**: 18
+**Description**: Optimize database performance, indexing, and query efficiency
+**Dependencies**: [5, 6]
+**Subtasks**:
+- 7.1 Add and optimize database indexes for common queries
+- 7.2 Optimize SQL queries and add caching where appropriate
+- 7.3 Fine-tune connection pooling configuration
+- 7.4 Benchmark database performance vs JSON system
+
+### 8. Comprehensive Testing
+**Priority**: high | **Estimated Hours**: 26
+**Description**: Thorough testing of all components and migration process
+**Dependencies**: [5, 6, 7]
+**Subtasks**:
+- 8.1 Test CLI and MCP integration with database
+- 8.2 Test web application features with database backend
+- 8.3 Validate migration performance with various project sizes
+- 8.4 Conduct data integrity validation after migration
+- 8.5 Perform user acceptance testing across all interfaces
+
+### 9. Documentation and Migration Guide
+**Priority**: medium | **Estimated Hours**: 14
+**Description**: Update documentation and create migration guide for users
+**Dependencies**: [8]
+**Subtasks**:
+- 9.1 Update all technical documentation for database changes
+- 9.2 Create comprehensive migration guide for users
+- 9.3 Update API documentation and examples
+- 9.4 Create troubleshooting guide for migration issues
+
+### 10. Final Integration and Deployment
+**Priority**: high | **Estimated Hours**: 16
+**Description**: Final integration testing and preparation for deployment
+**Dependencies**: [8, 9]
+**Subtasks**:
+- 10.1 Conduct final end-to-end testing across all interfaces
+- 10.2 Validate automatic migration process in various scenarios
+- 10.3 Test rollback and recovery procedures
+- 10.4 Prepare deployment scripts and release notes
+
+### Summary
+- **Total Tasks**: 10 main tasks
+- **Total Subtasks**: 46 subtasks  
+- **Total Estimated Hours**: 250 hours
+- **High Priority Tasks**: 7
+- **Medium Priority Tasks**: 3
