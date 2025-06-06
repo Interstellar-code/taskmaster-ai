@@ -15,7 +15,7 @@ export interface TaskFormData {
   details?: string;
   testStrategy?: string;
   prdSource?: string;
-  subtasks?: SimpleSubtask[];
+  subtasks?: TaskMasterSubtaskForm[];
 }
 
 // Bulk operation interface for batch operations

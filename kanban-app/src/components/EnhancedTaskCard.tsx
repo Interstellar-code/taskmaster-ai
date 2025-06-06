@@ -40,9 +40,15 @@ interface CopyTaskData {
   details?: string;
   testStrategy?: string;
   subtasks?: Array<{
-    id: string;
+    id: string | number;
     title: string;
-    completed: boolean;
+    description?: string;
+    details?: string;
+    status: 'pending' | 'in-progress' | 'done' | 'review' | 'blocked' | 'deferred' | 'cancelled';
+    dependencies: (string | number)[];
+    parentTaskId?: string | number;
+    testStrategy?: string;
+    prdSource?: object | null;
   }>;
   prdSource?: string; // TaskCreateModal expects string, not object
 }
@@ -174,6 +180,40 @@ export function EnhancedTaskCard({ task, isOverlay, onTaskClick, onTaskUpdated, 
       // Fetch full task details including subtasks
       const fullTask = await taskService.getTaskById(task.id);
 
+      // Transform subtasks from legacy format to standardized TaskMaster format
+      const transformedSubtasks = fullTask.subtasks?.map(subtask => {
+        // Handle both legacy format (with completed boolean) and new format (with status)
+        let status: 'pending' | 'in-progress' | 'done' | 'review' | 'blocked' | 'deferred' | 'cancelled' = 'pending';
+
+        // Type guard for legacy format
+        const isLegacySubtask = (st: unknown): st is { completed: boolean } => {
+          return typeof st === 'object' && st !== null && 'completed' in st;
+        };
+
+        if (isLegacySubtask(subtask)) {
+          // Legacy format: convert completed boolean to status
+          status = subtask.completed ? 'done' : 'pending';
+        } else if ('status' in subtask) {
+          // New format: use existing status or default to pending
+          const validStatuses = ['pending', 'in-progress', 'done', 'review', 'blocked', 'deferred', 'cancelled'] as const;
+          const isValidStatus = (s: string): s is typeof validStatuses[number] =>
+            validStatuses.includes(s as typeof validStatuses[number]);
+          status = isValidStatus(subtask.status) ? subtask.status : 'pending';
+        }
+
+        return {
+          id: `subtask_${Date.now()}_${Math.random()}`,
+          title: subtask.title,
+          description: subtask.description || '',
+          details: subtask.details || '',
+          status: status,
+          dependencies: [], // Clear dependencies for copied subtasks as per user preference
+          parentTaskId: undefined, // Will be set when the parent task is created
+          testStrategy: ('testStrategy' in subtask && typeof subtask.testStrategy === 'string') ? subtask.testStrategy : '',
+          prdSource: subtask.prdSource || null,
+        };
+      }) || [];
+
       // Prepare copy data with "Copy of" prefix, remove ID and clear dependencies
       const copyData: CopyTaskData = {
         title: `Copy of ${fullTask.title}`,
@@ -183,11 +223,7 @@ export function EnhancedTaskCard({ task, isOverlay, onTaskClick, onTaskUpdated, 
         dependencies: [], // Clear dependencies for copied task
         details: fullTask.details,
         testStrategy: fullTask.testStrategy,
-        subtasks: fullTask.subtasks?.map(subtask => ({
-          id: `subtask_${Date.now()}_${Math.random()}`,
-          title: subtask.title,
-          completed: false, // Reset completion status for copied subtasks
-        })),
+        subtasks: transformedSubtasks,
         prdSource: fullTask.prdSource?.fileName,
       };
 

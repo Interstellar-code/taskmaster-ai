@@ -468,7 +468,7 @@ task-hero --version
 npm uninstall -g task-hero-ai
 
 # Clear npm cache
-npm cache clean --force
+ta
 
 # Install latest version
 npm install -g task-hero-ai
