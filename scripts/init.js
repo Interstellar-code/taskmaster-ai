@@ -22,12 +22,134 @@ import chalk from 'chalk';
 import figlet from 'figlet';
 import boxen from 'boxen';
 import gradient from 'gradient-string';
+import inquirer from 'inquirer';
 import { isSilentMode } from './modules/utils.js';
 import { convertAllCursorRulesToRooRules } from './modules/rule-transformer.js';
 import { execSync } from 'child_process';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+// Function to prompt user for AI editor selection
+async function selectAIEditors() {
+	if (isSilentMode()) {
+		// In silent mode (MCP), default to cursor for compatibility
+		return ['cursor'];
+	}
+
+	console.log(chalk.cyan('\n🤖 AI Editor Integration Setup'));
+	console.log(chalk.gray('TaskHero can integrate with multiple AI-powered code editors.\n'));
+
+	const answers = await inquirer.prompt([
+		{
+			type: 'checkbox',
+			name: 'editors',
+			message: 'Which AI editor(s) are you using? (Select all that apply)',
+			choices: [
+				{
+					name: 'Cursor (also works with Cline)',
+					value: 'cursor',
+					checked: true // Default to Cursor as it's most common
+				},
+				{
+					name: 'Augment AI',
+					value: 'augment',
+					checked: false
+				},
+				{
+					name: 'Roo Code',
+					value: 'roo',
+					checked: false
+				},
+				{
+					name: 'Windsurf',
+					value: 'windsurf',
+					checked: false
+				},
+				{
+					name: 'None (TaskHero only, no AI editor integration)',
+					value: 'none',
+					checked: false
+				}
+			],
+			validate: function(answer) {
+				if (answer.length < 1) {
+					return 'You must choose at least one option.';
+				}
+				// If "none" is selected with other options, show error
+				if (answer.includes('none') && answer.length > 1) {
+					return 'Cannot select "None" with other AI editors. Please choose either AI editors OR "None".';
+				}
+				return true;
+			}
+		}
+	]);
+
+	if (answers.editors.length > 0) {
+		const selectedNames = answers.editors.map(e => 
+			e === 'cursor' ? 'Cursor/Cline' : 
+			e === 'augment' ? 'Augment AI' :
+			e === 'roo' ? 'Roo Code' :
+			e === 'windsurf' ? 'Windsurf' :
+			e === 'none' ? 'None (TaskHero only)' : e
+		);
+		console.log(chalk.green(`\n✅ Selected: ${selectedNames.join(', ')}\n`));
+	}
+
+	return answers.editors;
+}
+
+// Function to detect existing TaskHero project
+function detectExistingProject(targetDir) {
+	const taskmasterDir = path.join(targetDir, '.taskmaster');
+	const tasksJsonPath = path.join(taskmasterDir, 'tasks', 'tasks.json');
+	const configPath = path.join(targetDir, '.taskmasterconfig');
+	
+	// Check for project indicators
+	const hasTaskmasterDir = fs.existsSync(taskmasterDir);
+	const hasTasksJson = fs.existsSync(tasksJsonPath);
+	const hasConfig = fs.existsSync(configPath);
+	
+	if (hasTaskmasterDir || hasTasksJson || hasConfig) {
+		// Try to get project name from config
+		let projectName = 'TaskHero Project';
+		
+		if (hasConfig) {
+			try {
+				const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+				if (config.projectName) {
+					projectName = config.projectName;
+				}
+			} catch (error) {
+				// Ignore config parsing errors
+			}
+		}
+		
+		// Count existing tasks if tasks.json exists
+		let taskCount = 0;
+		if (hasTasksJson) {
+			try {
+				const tasksData = JSON.parse(fs.readFileSync(tasksJsonPath, 'utf8'));
+				if (tasksData.tasks && Array.isArray(tasksData.tasks)) {
+					taskCount = tasksData.tasks.length;
+				}
+			} catch (error) {
+				// Ignore tasks.json parsing errors
+			}
+		}
+		
+		return {
+			exists: true,
+			projectName,
+			taskCount,
+			hasTaskmasterDir,
+			hasTasksJson,
+			hasConfig
+		};
+	}
+	
+	return { exists: false };
+}
 
 // Define log levels
 const LOG_LEVELS = {
@@ -146,20 +268,20 @@ function addShellAliases() {
 
 		// Check if aliases already exist
 		const configContent = fs.readFileSync(shellConfigFile, 'utf8');
-		if (configContent.includes("alias tm='task-master'")) {
-			log('info', 'Task Master aliases already exist in shell config.');
+		if (configContent.includes("alias th='task-hero'")) {
+			log('info', 'TaskHero aliases already exist in shell config.');
 			return true;
 		}
 
 		// Add aliases to the shell config file
 		const aliasBlock = `
-# Task Master aliases added on ${new Date().toLocaleDateString()}
-alias tm='task-master'
-alias taskmaster='task-master'
+# TaskHero aliases added on ${new Date().toLocaleDateString()}
+alias th='task-hero'
+alias taskhero='task-hero'
 `;
 
 		fs.appendFileSync(shellConfigFile, aliasBlock);
-		log('success', `Added Task Master aliases to ${shellConfigFile}`);
+		log('success', `Added TaskHero aliases to ${shellConfigFile}`);
 		log(
 			'info',
 			'To use the aliases in your current terminal, run: source ' +
@@ -320,8 +442,8 @@ function copyTemplateFile(templateName, targetPath, replacements = {}) {
 			sourcePath = path.join(
 				__dirname,
 				'..',
-				'.cursor',
-				'rules',
+				'assets',
+				'cursor-rules',
 				'dev_workflow.mdc'
 			);
 			break;
@@ -329,8 +451,8 @@ function copyTemplateFile(templateName, targetPath, replacements = {}) {
 			sourcePath = path.join(
 				__dirname,
 				'..',
-				'.cursor',
-				'rules',
+				'assets',
+				'cursor-rules',
 				'taskmaster.mdc'
 			);
 			break;
@@ -338,8 +460,8 @@ function copyTemplateFile(templateName, targetPath, replacements = {}) {
 			sourcePath = path.join(
 				__dirname,
 				'..',
-				'.cursor',
-				'rules',
+				'assets',
+				'cursor-rules',
 				'cursor_rules.mdc'
 			);
 			break;
@@ -347,8 +469,8 @@ function copyTemplateFile(templateName, targetPath, replacements = {}) {
 			sourcePath = path.join(
 				__dirname,
 				'..',
-				'.cursor',
-				'rules',
+				'assets',
+				'cursor-rules',
 				'self_improve.mdc'
 			);
 			break;
@@ -362,7 +484,7 @@ function copyTemplateFile(templateName, targetPath, replacements = {}) {
 			sourcePath = path.join(__dirname, '..', 'assets', 'roocode', '.roomodes');
 			break;
 		case 'augment-guidelines':
-			sourcePath = path.join(__dirname, '..', '.taskmaster', 'templates', 'augment-guidelines');
+			sourcePath = path.join(__dirname, '..', 'assets', 'augment-guidelines');
 			break;
 		case 'architect-rules':
 		case 'ask-rules':
@@ -517,10 +639,10 @@ async function initializeProject(options = {}) {
 
 		if (dryRun) {
 			log('info', 'DRY RUN MODE: No files will be modified');
-			log('info', 'Would initialize Task Master project');
+			log('info', 'Would initialize TaskHero project');
 			log('info', 'Would create/update necessary project files');
 			if (addAliases) {
-				log('info', 'Would add shell aliases for task-master');
+				log('info', 'Would add shell aliases for task-hero');
 			}
 			if (resetProject) {
 				log('info', 'Would reset project data for fresh start');
@@ -540,39 +662,68 @@ async function initializeProject(options = {}) {
 			}
 		}
 
-		createProjectStructure(addAliases, dryRun);
+		// Get AI editor selection
+		const selectedEditors = await selectAIEditors();
+
+		createProjectStructure(addAliases, dryRun, selectedEditors);
 	} else {
 		// Interactive logic
 		log('info', 'Required options not provided, proceeding with prompts.');
+		
+		// Detect existing project first
+		const existingProject = detectExistingProject(process.cwd());
+		
 		const rl = readline.createInterface({
 			input: process.stdin,
 			output: process.stdout
 		});
 
 		try {
+			let resetProjectPrompted = false;
+			
+			// If existing project detected, ask about continuing vs resetting
+			if (existingProject.exists) {
+				console.log(chalk.cyan(`\n📁 Existing TaskHero project detected: ${existingProject.projectName}`));
+				console.log(chalk.gray(`   Tasks found: ${existingProject.taskCount}`));
+				
+				const continueProjectInput = await promptQuestion(
+					rl,
+					chalk.cyan('Do you want to continue with this existing project? (Y/n): ')
+				);
+				const shouldContinue = continueProjectInput.trim().toLowerCase() !== 'n';
+				
+				if (!shouldContinue) {
+					const resetConfirmInput = await promptQuestion(
+						rl,
+						chalk.yellow('⚠️  Reset project data? This will clear all tasks, PRDs, reports and tests for a fresh start (y/N): ')
+					);
+					resetProjectPrompted = resetConfirmInput.trim().toLowerCase() === 'y';
+				}
+			} else {
+				// New project - still ask about reset in case there are partial files
+				const resetProjectInput = await promptQuestion(
+					rl,
+					chalk.cyan(
+						'Reset project data? This will clear all tasks, PRDs, reports and tests for a fresh start (y/N): '
+					)
+				);
+				resetProjectPrompted = resetProjectInput.trim().toLowerCase() === 'y';
+			}
+
 			// Only prompt for shell aliases
 			const addAliasesInput = await promptQuestion(
 				rl,
 				chalk.cyan(
-					'Add shell aliases for task-master? This lets you type "tm" instead of "task-master" (Y/n): '
+					'Add shell aliases for task-hero? This lets you type "th" instead of "task-hero" (Y/n): '
 				)
 			);
 			const addAliasesPrompted = addAliasesInput.trim().toLowerCase() !== 'n';
 
-			// Prompt for project reset
-			const resetProjectInput = await promptQuestion(
-				rl,
-				chalk.cyan(
-					'Reset project data? This will clear all tasks, PRDs, reports and tests for a fresh start (y/N): '
-				)
-			);
-			const resetProjectPrompted = resetProjectInput.trim().toLowerCase() === 'y';
-
 			// Confirm settings...
-			console.log('\nTask Master Project settings:');
+			console.log('\nTaskHero Project settings:');
 			console.log(
 				chalk.blue(
-					'Add shell aliases (so you can use "tm" instead of "task-master"):'
+					'Add shell aliases (so you can use "th" instead of "task-hero"):'
 				),
 				chalk.white(addAliasesPrompted ? 'Yes' : 'No')
 			);
@@ -606,10 +757,10 @@ async function initializeProject(options = {}) {
 
 			if (dryRun) {
 				log('info', 'DRY RUN MODE: No files will be modified');
-				log('info', 'Would initialize Task Master project');
+				log('info', 'Would initialize TaskHero project');
 				log('info', 'Would create/update necessary project files');
 				if (addAliasesPrompted) {
-					log('info', 'Would add shell aliases for task-master');
+					log('info', 'Would add shell aliases for task-hero');
 				}
 				if (resetProjectPrompted) {
 					log('info', 'Would reset project data for fresh start');
@@ -629,8 +780,12 @@ async function initializeProject(options = {}) {
 				}
 			}
 
+			// Get AI editor selection
+			rl.close();
+			const selectedEditors = await selectAIEditors();
+
 			// Create structure using only necessary values
-			createProjectStructure(addAliasesPrompted, dryRun);
+			createProjectStructure(addAliasesPrompted, dryRun, selectedEditors);
 		} catch (error) {
 			rl.close();
 			log('error', `Error during initialization process: ${error.message}`);
@@ -689,29 +844,167 @@ ${taskMasterDirName}/
 	}
 }
 
+// Function to generate dynamic getting started message based on selected editors
+function generateGettingStartedMessage(selectedEditors = []) {
+	// Determine the primary AI editor and appropriate messaging
+	let aiEditorName = 'your AI editor';
+	let mcpToolsInfo = '';
+	let workflowInfo = '';
+	
+	if (selectedEditors.includes('none')) {
+		aiEditorName = 'TaskHero CLI';
+		mcpToolsInfo = 'CLI: ';
+		workflowInfo = 'Use TaskHero CLI commands to';
+	} else if (selectedEditors.includes('cursor')) {
+		aiEditorName = 'Cursor Agent';
+		mcpToolsInfo = 'MCP Tool: ';
+		workflowInfo = 'Ask Cursor Agent (or run CLI) to';
+	} else if (selectedEditors.includes('augment')) {
+		aiEditorName = 'Augment AI';
+		mcpToolsInfo = 'CLI: ';
+		workflowInfo = 'Use Augment AI with TaskHero commands to';
+	} else if (selectedEditors.includes('windsurf')) {
+		aiEditorName = 'Windsurf';
+		mcpToolsInfo = 'CLI: ';
+		workflowInfo = 'Use Windsurf with TaskHero commands to';
+	} else if (selectedEditors.includes('roo')) {
+		aiEditorName = 'Roo Code';
+		mcpToolsInfo = 'CLI: ';
+		workflowInfo = 'Use Roo Code with TaskHero commands to';
+	}
+
+	// Build API keys instruction based on selected editors
+	let apiKeysInstruction = 'Add provider API keys to .env';
+	if (selectedEditors.includes('cursor')) {
+		apiKeysInstruction += ' (or inside the MCP config file i.e. .cursor/mcp.json)';
+	}
+
+	// Build step 3 based on whether MCP tools are available
+	let step3Content = '';
+	if (selectedEditors.includes('cursor')) {
+		step3Content = chalk.white('   â""â"€ ') +
+			chalk.dim('MCP Tool: ') +
+			chalk.cyan('parse_prd') +
+			chalk.dim(' | CLI: ') +
+			chalk.cyan('task-hero parse-prd scripts/prd.txt');
+	} else {
+		step3Content = chalk.white('   â""â"€ ') +
+			chalk.dim('CLI: ') +
+			chalk.cyan('task-hero parse-prd scripts/prd.txt');
+	}
+
+	// Build step 4 based on whether MCP tools are available
+	let step4Content = '';
+	if (selectedEditors.includes('cursor')) {
+		step4Content = chalk.white('   â""â"€ ') +
+			chalk.dim('MCP Tool: ') +
+			chalk.cyan('analyze_project_complexity') +
+			chalk.dim(' | CLI: ') +
+			chalk.cyan('task-hero analyze-complexity');
+	} else {
+		step4Content = chalk.white('   â""â"€ ') +
+			chalk.dim('CLI: ') +
+			chalk.cyan('task-hero analyze-complexity');
+	}
+
+	// Generate guidelines file reference based on selected editor
+	let guidelinesRef = '';
+	if (selectedEditors.includes('augment')) {
+		guidelinesRef = '\n' + chalk.dim('* Check .augment-guidelines for Augment AI integration workflow.');
+	} else if (selectedEditors.includes('cursor')) {
+		guidelinesRef = '\n' + chalk.dim('* Review .cursor/rules/ files for Cursor integration guidelines.');
+	} else if (selectedEditors.includes('windsurf')) {
+		guidelinesRef = '\n' + chalk.dim('* Check .windsurfrules for Windsurf integration guidelines.');
+	} else if (selectedEditors.includes('roo')) {
+		guidelinesRef = '\n' + chalk.dim('* Review .roo/rules/ files for Roo Code integration guidelines.');
+	}
+
+	return chalk.cyan.bold('Things you should do next:') +
+		'\n\n' +
+		chalk.white('1. ') +
+		chalk.yellow(
+			'Configure AI models (if needed) and add API keys to `.env`'
+		) +
+		'\n' +
+		chalk.white('   â"œâ"€ ') +
+		chalk.dim('Models: Use `task-hero models` commands') +
+		'\n' +
+		chalk.white('   â""â"€ ') +
+		chalk.dim(apiKeysInstruction) +
+		'\n' +
+		chalk.white('2. ') +
+		chalk.yellow(
+			'Discuss your idea with AI and ask for a PRD using example_prd.txt, and save it to scripts/PRD.txt'
+		) +
+		'\n' +
+		chalk.white('3. ') +
+		chalk.yellow(
+			`${workflowInfo} parse your PRD and generate initial tasks:`
+		) +
+		'\n' +
+		step3Content +
+		'\n' +
+		chalk.white('4. ') +
+		chalk.yellow(
+			`Ask ${aiEditorName} to analyze the complexity of the tasks in your PRD using research`
+		) +
+		'\n' +
+		step4Content +
+		'\n' +
+		chalk.white('5. ') +
+		chalk.yellow(
+			`Ask ${aiEditorName} to expand all of your tasks using the complexity analysis`
+		) +
+		'\n' +
+		chalk.white('6. ') +
+		chalk.yellow(`Ask ${aiEditorName} to begin working on the next task`) +
+		'\n' +
+		chalk.white('7. ') +
+		chalk.yellow(
+			`Ask ${aiEditorName} to set the status of one or many tasks/subtasks at a time. Use the task id from the task lists.`
+		) +
+		'\n' +
+		chalk.white('8. ') +
+		chalk.yellow(
+			`Ask ${aiEditorName} to update all tasks from a specific task id based on new learnings or pivots in your project.`
+		) +
+		'\n' +
+		chalk.white('9. ') +
+		chalk.green.bold('Ship it!') +
+		'\n\n' +
+		chalk.dim(
+			`* Use the task-hero command without arguments to see all available commands.`
+		) +
+		guidelinesRef;
+}
+
 // Function to create the project structure
-function createProjectStructure(addAliases, dryRun) {
+function createProjectStructure(addAliases, dryRun, selectedEditors = []) {
 	const targetDir = process.cwd();
 	log('info', `Initializing project in ${targetDir}`);
 
 	// Manage parent project's gitignore if we're in a subdirectory
 	manageProjectGitignore(targetDir);
 
-	// Create directories
-	ensureDirectoryExists(path.join(targetDir, '.cursor', 'rules'));
+	// Create directories based on selected AI editors
+	if (selectedEditors.includes('cursor')) {
+		ensureDirectoryExists(path.join(targetDir, '.cursor', 'rules'));
+	}
 
-	// Create Roo directories
-	ensureDirectoryExists(path.join(targetDir, '.roo'));
-	ensureDirectoryExists(path.join(targetDir, '.roo', 'rules'));
-	for (const mode of [
-		'architect',
-		'ask',
-		'boomerang',
-		'code',
-		'debug',
-		'test'
-	]) {
-		ensureDirectoryExists(path.join(targetDir, '.roo', `rules-${mode}`));
+	if (selectedEditors.includes('roo')) {
+		// Create Roo directories
+		ensureDirectoryExists(path.join(targetDir, '.roo'));
+		ensureDirectoryExists(path.join(targetDir, '.roo', 'rules'));
+		for (const mode of [
+			'architect',
+			'ask',
+			'boomerang',
+			'code',
+			'debug',
+			'test'
+		]) {
+			ensureDirectoryExists(path.join(targetDir, '.roo', `rules-${mode}`));
+		}
 	}
 
 	// Create TaskMaster directory structure
@@ -795,9 +1088,6 @@ function createProjectStructure(addAliases, dryRun) {
 		log('success', `Created default config.json at ${configJsonPath}`);
 	}
 
-	// Setup MCP configuration for integration with Cursor
-	setupMCPConfiguration(targetDir);
-
 	// Copy template files with replacements
 	const replacements = {
 		year: new Date().getFullYear()
@@ -822,51 +1112,67 @@ function createProjectStructure(addAliases, dryRun) {
 	// Copy .gitignore
 	copyTemplateFile('gitignore', path.join(targetDir, '.gitignore'));
 
-	// Copy dev_workflow.mdc
-	copyTemplateFile(
-		'dev_workflow.mdc',
-		path.join(targetDir, '.cursor', 'rules', 'dev_workflow.mdc')
-	);
-
-	// Copy taskmaster.mdc
-	copyTemplateFile(
-		'taskmaster.mdc',
-		path.join(targetDir, '.cursor', 'rules', 'taskmaster.mdc')
-	);
-
-	// Copy cursor_rules.mdc
-	copyTemplateFile(
-		'cursor_rules.mdc',
-		path.join(targetDir, '.cursor', 'rules', 'cursor_rules.mdc')
-	);
-
-	// Copy self_improve.mdc
-	copyTemplateFile(
-		'self_improve.mdc',
-		path.join(targetDir, '.cursor', 'rules', 'self_improve.mdc')
-	);
-
-	// Generate Roo rules from Cursor rules
-	log('info', 'Generating Roo rules from Cursor rules...');
-	convertAllCursorRulesToRooRules(targetDir);
-
-	// Copy .windsurfrules
-	copyTemplateFile('windsurfrules', path.join(targetDir, '.windsurfrules'));
-
-	// Copy .roomodes for Roo Code integration
-	copyTemplateFile('.roomodes', path.join(targetDir, '.roomodes'));
-
-	// Copy Augment AI guidelines
-	log('info', 'Setting up Augment AI workspace guidelines...');
-	copyTemplateFile('augment-guidelines', path.join(targetDir, '.augment-guidelines'));
-
-	// Copy Roo rule files for each mode
-	const rooModes = ['architect', 'ask', 'boomerang', 'code', 'debug', 'test'];
-	for (const mode of rooModes) {
+	// Copy AI editor files based on selection
+	if (selectedEditors.includes('none')) {
+		log('info', 'Skipping AI editor integration (None selected)');
+	} else if (selectedEditors.includes('cursor')) {
+		log('info', 'Setting up Cursor/Cline integration...');
+		
+		// Copy Cursor rule files
 		copyTemplateFile(
-			`${mode}-rules`,
-			path.join(targetDir, '.roo', `rules-${mode}`, `${mode}-rules`)
+			'dev_workflow.mdc',
+			path.join(targetDir, '.cursor', 'rules', 'dev_workflow.mdc')
 		);
+		copyTemplateFile(
+			'taskmaster.mdc',
+			path.join(targetDir, '.cursor', 'rules', 'taskmaster.mdc')
+		);
+		copyTemplateFile(
+			'cursor_rules.mdc',
+			path.join(targetDir, '.cursor', 'rules', 'cursor_rules.mdc')
+		);
+		copyTemplateFile(
+			'self_improve.mdc',
+			path.join(targetDir, '.cursor', 'rules', 'self_improve.mdc')
+		);
+
+		// Setup MCP configuration for Cursor
+		setupMCPConfiguration(targetDir);
+	}
+
+	if (selectedEditors.includes('roo')) {
+		log('info', 'Setting up Roo Code integration...');
+		
+		// Generate Roo rules from Cursor rules (if Cursor rules exist)
+		if (selectedEditors.includes('cursor')) {
+			convertAllCursorRulesToRooRules(targetDir);
+		}
+
+		// Copy .roomodes for Roo Code integration
+		copyTemplateFile('.roomodes', path.join(targetDir, '.roomodes'));
+
+		// Copy Roo rule files for each mode
+		const rooModes = ['architect', 'ask', 'boomerang', 'code', 'debug', 'test'];
+		for (const mode of rooModes) {
+			copyTemplateFile(
+				`${mode}-rules`,
+				path.join(targetDir, '.roo', `rules-${mode}`, `${mode}-rules`)
+			);
+		}
+	}
+
+	if (selectedEditors.includes('windsurf')) {
+		log('info', 'Setting up Windsurf integration...');
+		
+		// Copy .windsurfrules
+		copyTemplateFile('windsurfrules', path.join(targetDir, '.windsurfrules'));
+	}
+
+	if (selectedEditors.includes('augment')) {
+		log('info', 'Setting up Augment AI integration...');
+		
+		// Copy Augment AI guidelines
+		copyTemplateFile('augment-guidelines', path.join(targetDir, '.augment-guidelines'));
 	}
 
 	// Copy example_prd.txt
@@ -974,76 +1280,7 @@ function createProjectStructure(addAliases, dryRun) {
 	if (!isSilentMode()) {
 		console.log(
 			boxen(
-				chalk.cyan.bold('Things you should do next:') +
-					'\n\n' +
-					chalk.white('1. ') +
-					chalk.yellow(
-						'Configure AI models (if needed) and add API keys to `.env`'
-					) +
-					'\n' +
-					chalk.white('   â”œâ”€ ') +
-					chalk.dim('Models: Use `task-hero models` commands') +
-					'\n' +
-					chalk.white('   â””â”€ ') +
-					chalk.dim(
-						'Keys: Add provider API keys to .env (or inside the MCP config file i.e. .cursor/mcp.json)'
-					) +
-					'\n' +
-					chalk.white('2. ') +
-					chalk.yellow(
-						'Discuss your idea with AI and ask for a PRD using example_prd.txt, and save it to scripts/PRD.txt'
-					) +
-					'\n' +
-					chalk.white('3. ') +
-					chalk.yellow(
-						'Ask Cursor Agent (or run CLI) to parse your PRD and generate initial tasks:'
-					) +
-					'\n' +
-					chalk.white('   â””â”€ ') +
-					chalk.dim('MCP Tool: ') +
-					chalk.cyan('parse_prd') +
-					chalk.dim(' | CLI: ') +
-					chalk.cyan('task-hero parse-prd scripts/prd.txt') +
-					'\n' +
-					chalk.white('4. ') +
-					chalk.yellow(
-						'Ask Cursor to analyze the complexity of the tasks in your PRD using research'
-					) +
-					'\n' +
-					chalk.white('   â””â”€ ') +
-					chalk.dim('MCP Tool: ') +
-					chalk.cyan('analyze_project_complexity') +
-					chalk.dim(' | CLI: ') +
-					chalk.cyan('task-hero analyze-complexity') +
-					'\n' +
-					chalk.white('5. ') +
-					chalk.yellow(
-						'Ask Cursor to expand all of your tasks using the complexity analysis'
-					) +
-					'\n' +
-					chalk.white('6. ') +
-					chalk.yellow('Ask Cursor to begin working on the next task') +
-					'\n' +
-					chalk.white('7. ') +
-					chalk.yellow(
-						'Ask Cursor to set the status of one or many tasks/subtasks at a time. Use the task id from the task lists.'
-					) +
-					'\n' +
-					chalk.white('8. ') +
-					chalk.yellow(
-						'Ask Cursor to update all tasks from a specific task id based on new learnings or pivots in your project.'
-					) +
-					'\n' +
-					chalk.white('9. ') +
-					chalk.green.bold('Ship it!') +
-					'\n\n' +
-					chalk.dim(
-						'* Review the README.md file to learn how to use other commands via Cursor Agent.'
-					) +
-					'\n' +
-					chalk.dim(
-						'* Use the task-hero command without arguments to see all available commands.'
-					),
+				generateGettingStartedMessage(selectedEditors),
 				{
 					padding: 1,
 					margin: 1,
