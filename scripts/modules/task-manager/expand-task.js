@@ -18,13 +18,20 @@ import analyzeTaskComplexity from './analyze-task-complexity.js';
 import inquirer from 'inquirer';
 
 // Define Zod schema for PRD source metadata (inherited from parent task)
-const prdSourceSchema = z.object({
-	filePath: z.string().describe('Full path to the PRD file'),
-	fileName: z.string().describe('Name of the PRD file'),
-	parsedDate: z.string().describe('ISO timestamp when the PRD was parsed'),
-	fileHash: z.string().describe('SHA256 hash of the PRD file content'),
-	fileSize: z.number().int().positive().describe('Size of the PRD file in bytes')
-}).nullable().optional();
+const prdSourceSchema = z
+	.object({
+		filePath: z.string().describe('Full path to the PRD file'),
+		fileName: z.string().describe('Name of the PRD file'),
+		parsedDate: z.string().describe('ISO timestamp when the PRD was parsed'),
+		fileHash: z.string().describe('SHA256 hash of the PRD file content'),
+		fileSize: z
+			.number()
+			.int()
+			.positive()
+			.describe('Size of the PRD file in bytes')
+	})
+	.nullable()
+	.optional();
 
 // --- Zod Schemas (Keep from previous step) ---
 const subtaskSchema = z
@@ -407,7 +414,12 @@ function parseSubtasksFromText(
  * @param {boolean} outputFormat - Output format (text/json)
  * @returns {Promise<Object|null>} Complexity analysis result or null if declined
  */
-async function promptForComplexityAnalysis(task, tasksPath, context, outputFormat) {
+async function promptForComplexityAnalysis(
+	task,
+	tasksPath,
+	context,
+	outputFormat
+) {
 	const { session, mcpLog, projectRoot } = context;
 
 	// Skip prompt for MCP calls (non-interactive)
@@ -415,15 +427,22 @@ async function promptForComplexityAnalysis(task, tasksPath, context, outputForma
 		return null;
 	}
 
-	console.log(`\n🤔 No complexity analysis found for task ${task.id}: "${task.title}"`);
-	console.log('💡 Complexity analysis helps determine the optimal number of subtasks and provides better context for expansion.');
+	console.log(
+		`\n🤔 No complexity analysis found for task ${task.id}: "${task.title}"`
+	);
+	console.log(
+		'💡 Complexity analysis helps determine the optimal number of subtasks and provides better context for expansion.'
+	);
 
-	const { shouldAnalyze } = await inquirer.prompt([{
-		type: 'confirm',
-		name: 'shouldAnalyze',
-		message: 'Would you like to perform complexity analysis first? (Recommended)',
-		default: true
-	}]);
+	const { shouldAnalyze } = await inquirer.prompt([
+		{
+			type: 'confirm',
+			name: 'shouldAnalyze',
+			message:
+				'Would you like to perform complexity analysis first? (Recommended)',
+			default: true
+		}
+	]);
 
 	if (!shouldAnalyze) {
 		console.log('⏭️  Proceeding without complexity analysis...');
@@ -434,34 +453,50 @@ async function promptForComplexityAnalysis(task, tasksPath, context, outputForma
 
 	try {
 		// Run complexity analysis for this specific task
-		const result = await analyzeTaskComplexity({
-			file: tasksPath,
-			output: path.join(projectRoot || path.dirname(path.dirname(tasksPath)), '.taskmaster/reports/task-complexity-report.json'),
-			threshold: 1, // Analyze all tasks
-			research: false // Use standard analysis for speed
-		}, { session, mcpLog });
+		const result = await analyzeTaskComplexity(
+			{
+				file: tasksPath,
+				output: path.join(
+					projectRoot || path.dirname(path.dirname(tasksPath)),
+					'.taskmaster/reports/task-complexity-report.json'
+				),
+				threshold: 1, // Analyze all tasks
+				research: false // Use standard analysis for speed
+			},
+			{ session, mcpLog }
+		);
 
 		if (result && result.success) {
 			console.log('✅ Complexity analysis completed!');
 
 			// Read the generated report to get analysis for this task
-			const reportPath = path.join(projectRoot || path.dirname(path.dirname(tasksPath)), '.taskmaster/reports/task-complexity-report.json');
+			const reportPath = path.join(
+				projectRoot || path.dirname(path.dirname(tasksPath)),
+				'.taskmaster/reports/task-complexity-report.json'
+			);
 			if (fs.existsSync(reportPath)) {
 				const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
-				const taskAnalysis = report.complexityAnalysis?.find(a => a.taskId === task.id);
+				const taskAnalysis = report.complexityAnalysis?.find(
+					(a) => a.taskId === task.id
+				);
 
 				if (taskAnalysis) {
-					console.log(`📊 Task ${task.id} complexity score: ${taskAnalysis.complexityScore}/10`);
-					console.log(`🎯 Recommended subtasks: ${taskAnalysis.recommendedSubtasks}`);
+					console.log(
+						`📊 Task ${task.id} complexity score: ${taskAnalysis.complexityScore}/10`
+					);
+					console.log(
+						`🎯 Recommended subtasks: ${taskAnalysis.recommendedSubtasks}`
+					);
 					console.log(`💭 Reasoning: ${taskAnalysis.reasoning}`);
 					return taskAnalysis;
 				}
 			}
 		}
 
-		console.log('⚠️  Complexity analysis completed but no specific analysis found for this task.');
+		console.log(
+			'⚠️  Complexity analysis completed but no specific analysis found for this task.'
+		);
 		return null;
-
 	} catch (error) {
 		console.log(`❌ Complexity analysis failed: ${error.message}`);
 		console.log('⏭️  Proceeding without complexity analysis...');
@@ -607,7 +642,9 @@ async function expandTask(
 				if (taskAnalysis.reasoning) {
 					complexityReasoningContext = `\nComplexity Analysis Reasoning: ${taskAnalysis.reasoning}`;
 				}
-				logger.info(`Using prompted complexity analysis for task ${task.id}: Score ${taskAnalysis.complexityScore}`);
+				logger.info(
+					`Using prompted complexity analysis for task ${task.id}: Score ${taskAnalysis.complexityScore}`
+				);
 			}
 		}
 

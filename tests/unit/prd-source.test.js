@@ -133,15 +133,23 @@ describe('PRD Source Functionality', () => {
 
 			const result = ensureTaskBackwardCompatibility(taskData);
 
-			expect(result.tasks[0].subtasks[0]).toHaveProperty('prdSource', parentPrdSource);
-			expect(result.tasks[0].subtasks[1]).toHaveProperty('prdSource', parentPrdSource);
+			expect(result.tasks[0].subtasks[0]).toHaveProperty(
+				'prdSource',
+				parentPrdSource
+			);
+			expect(result.tasks[0].subtasks[1]).toHaveProperty(
+				'prdSource',
+				parentPrdSource
+			);
 		});
 
 		test('should handle null or invalid input gracefully', () => {
 			expect(ensureTaskBackwardCompatibility(null)).toBeNull();
 			expect(ensureTaskBackwardCompatibility(undefined)).toBeUndefined();
 			expect(ensureTaskBackwardCompatibility({})).toEqual({});
-			expect(ensureTaskBackwardCompatibility({ tasks: null })).toEqual({ tasks: null });
+			expect(ensureTaskBackwardCompatibility({ tasks: null })).toEqual({
+				tasks: null
+			});
 		});
 
 		test('should handle tasks without subtasks array', () => {
@@ -222,7 +230,9 @@ describe('PRD Source Functionality', () => {
 
 			// Test that parsedDate is a valid ISO string
 			expect(() => new Date(validPrdSource.parsedDate)).not.toThrow();
-			expect(new Date(validPrdSource.parsedDate).toISOString()).toBe(validPrdSource.parsedDate);
+			expect(new Date(validPrdSource.parsedDate).toISOString()).toBe(
+				validPrdSource.parsedDate
+			);
 
 			// Test that fileSize is positive
 			expect(validPrdSource.fileSize).toBeGreaterThan(0);
@@ -376,9 +386,15 @@ describe('PRD Source Functionality', () => {
 			expect(normalizedUnix).not.toContain('\\');
 			expect(normalizedRelative).not.toContain('\\');
 
-			expect(path.isAbsolute(normalizedWindows.replace(/\//g, path.sep))).toBe(true);
-			expect(path.isAbsolute(normalizedUnix.replace(/\//g, path.sep))).toBe(true);
-			expect(path.isAbsolute(normalizedRelative.replace(/\//g, path.sep))).toBe(true);
+			expect(path.isAbsolute(normalizedWindows.replace(/\//g, path.sep))).toBe(
+				true
+			);
+			expect(path.isAbsolute(normalizedUnix.replace(/\//g, path.sep))).toBe(
+				true
+			);
+			expect(path.isAbsolute(normalizedRelative.replace(/\//g, path.sep))).toBe(
+				true
+			);
 		});
 
 		test('should handle metadata extraction errors gracefully', () => {
@@ -476,13 +492,13 @@ describe('PRD Source Functionality', () => {
 			};
 
 			// Simulate task processing with PRD metadata
-			const processedTasks = mockTasks.map(task => ({
+			const processedTasks = mockTasks.map((task) => ({
 				...task,
 				prdSource: prdMetadata
 			}));
 
 			// Verify each task has the PRD source metadata
-			processedTasks.forEach(task => {
+			processedTasks.forEach((task) => {
 				expect(task.prdSource).toEqual(prdMetadata);
 				expect(task.prdSource.filePath).toBe(mockPrdPath);
 				expect(task.prdSource.fileName).toBe('test-prd.txt');

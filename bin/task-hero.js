@@ -303,7 +303,9 @@ program
 	.description('Launch interactive menu system')
 	.action(async () => {
 		try {
-			const { initializeInteractiveMenu } = await import('../src/menu/index.js');
+			const { initializeInteractiveMenu } = await import(
+				'../src/menu/index.js'
+			);
 			await initializeInteractiveMenu();
 		} catch (err) {
 			console.error(chalk.red('Error loading interactive menu:'), err.message);
@@ -317,7 +319,7 @@ program
 	.description('Start web interface')
 	.option('-p, --port <port>', 'Port to run on', '3000')
 	.option('-d, --dev', 'Development mode with hot reload')
-	.option('--no-open', 'Don\'t open browser automatically')
+	.option('--no-open', "Don't open browser automatically")
 	.action(async (options) => {
 		try {
 			const { startWebInterface } = await import('../src/web/server.js');
@@ -334,7 +336,7 @@ program
 	.option('--web', 'Start with web interface')
 	.option('-p, --port <port>', 'Port for web interface', '3000')
 	.option('-d, --dev', 'Development mode (web only)')
-	.option('--no-open', 'Don\'t open browser automatically (web only)')
+	.option('--no-open', "Don't open browser automatically (web only)")
 	.action(async (options) => {
 		try {
 			if (options.web) {
@@ -342,7 +344,9 @@ program
 				await startWebInterface(options);
 			} else {
 				// Current CLI behavior
-				const { initializeInteractiveMenu } = await import('../src/menu/index.js');
+				const { initializeInteractiveMenu } = await import(
+					'../src/menu/index.js'
+				);
 				await initializeInteractiveMenu();
 			}
 		} catch (err) {
@@ -352,8 +356,7 @@ program
 	});
 
 // Add menu option flag
-program
-	.option('-m, --menu', 'Launch interactive menu system');
+program.option('-m, --menu', 'Launch interactive menu system');
 
 // Use a temporary Command instance to get all command definitions
 const tempProgram = new Command();
@@ -379,12 +382,15 @@ tempProgram.commands.forEach((cmd) => {
 });
 
 // Check for --menu flag before parsing to avoid help display
-const hasMenuFlag = process.argv.includes('--menu') || process.argv.includes('-m');
+const hasMenuFlag =
+	process.argv.includes('--menu') || process.argv.includes('-m');
 
 if (hasMenuFlag) {
 	(async () => {
 		try {
-			const { initializeInteractiveMenu } = await import('../src/menu/index.js');
+			const { initializeInteractiveMenu } = await import(
+				'../src/menu/index.js'
+			);
 			await initializeInteractiveMenu();
 		} catch (err) {
 			console.error(chalk.red('Error loading interactive menu:'), err.message);

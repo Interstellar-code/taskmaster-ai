@@ -65,7 +65,8 @@ Do not include any explanatory text, markdown formatting, or code block markers 
 async function analyzeTaskComplexity(options, context = {}) {
 	const { session, mcpLog } = context;
 	const tasksPath = options.file || '.taskmaster/tasks/tasks.json';
-	const outputPath = options.output || '.taskmaster/reports/task-complexity-report.json';
+	const outputPath =
+		options.output || '.taskmaster/reports/task-complexity-report.json';
 	const thresholdScore = parseFloat(options.threshold || '5');
 	const useResearch = options.research || false;
 	const projectRoot = options.projectRoot;

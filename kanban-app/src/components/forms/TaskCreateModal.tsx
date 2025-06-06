@@ -180,14 +180,9 @@ export function TaskCreateModal({
       }));
       setAvailableTasks(tasks);
 
-      // Mock PRD data - in real implementation, fetch from API
-      const mockPRDs = [
-        { id: 'prd_001', title: 'TaskHero Kanban Enhancement PRD' },
-        { id: 'prd_002', title: 'API Integration PRD' },
-        { id: 'prd_003', title: 'UI/UX Improvements PRD' },
-      ].filter(prd => prd.id && prd.title); // Ensure valid PRDs
-
-      setAvailablePRDs(mockPRDs);
+      // Fetch real PRD data from API
+      const prds = await fetchPRDs();
+      setAvailablePRDs(prds);
     } catch (error) {
       console.error('Failed to fetch available data:', error);
       // Set empty arrays on error to prevent undefined issues
@@ -196,6 +191,26 @@ export function TaskCreateModal({
 
       // Show user-friendly error message
       showWarning('Load Warning', 'Could not load available tasks and PRDs. You can still create a task without dependencies.');
+    }
+  };
+
+  const fetchPRDs = async (): Promise<Array<{id: string, title: string}>> => {
+    try {
+      const response = await fetch('/api/v1/prds');
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success && result.data) {
+          return result.data.map((prd: any) => ({
+            id: prd.id || prd.fileName,
+            title: prd.title || prd.fileName || `PRD ${prd.id}`
+          }));
+        }
+      }
+      // Fallback to empty array if API call fails
+      return [];
+    } catch (error) {
+      console.warn('Failed to fetch PRDs, using fallback:', error);
+      return [];
     }
   };
 

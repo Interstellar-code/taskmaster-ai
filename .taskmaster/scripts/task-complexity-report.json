@@ -1,205 +1,205 @@
 {
-  "meta": {
-    "generatedAt": "2025-06-02T22:01:05.099Z",
-    "tasksAnalyzed": 24,
-    "totalTasks": 25,
-    "analysisCount": 24,
-    "thresholdScore": 1,
-    "projectName": "Task Master",
-    "usedResearch": false
-  },
-  "complexityAnalysis": [
-    {
-      "taskId": 60,
-      "taskTitle": "Initialize React Application with Vite and TypeScript",
-      "complexityScore": 3,
-      "recommendedSubtasks": 3,
-      "expansionPrompt": "Expand on the steps to initialize a React application with Vite and TypeScript, including command execution, project structure setup, and initial configuration adjustments.",
-      "reasoning": "This is a straightforward setup process using a well-documented CLI tool. The main complexity lies in ensuring correct options and initial configuration, but it's largely automated."
-    },
-    {
-      "taskId": 61,
-      "taskTitle": "Setup shadcn/ui and Tailwind CSS Integration",
-      "complexityScore": 4,
-      "recommendedSubtasks": 4,
-      "expansionPrompt": "Detail the process of integrating shadcn/ui and Tailwind CSS, covering installation of dependencies, Tailwind configuration, PostCSS setup, and initial shadcn/ui component integration.",
-      "reasoning": "Involves multiple steps: installing Tailwind, PostCSS, Autoprefixer, configuring Tailwind, and then initializing shadcn/ui. Each step has specific configuration requirements that need careful attention."
-    },
-    {
-      "taskId": 62,
-      "taskTitle": "Create Express.js API Server with Basic Routing",
-      "complexityScore": 3,
-      "recommendedSubtasks": 3,
-      "expansionPrompt": "Outline the steps to create an Express.js API server, including project initialization, Express and CORS installation, basic server file creation, and defining a root endpoint.",
-      "reasoning": "Relatively simple task involving basic Node.js and Express setup. The core steps are well-defined and don't involve complex logic."
-    },
-    {
-      "taskId": 63,
-      "taskTitle": "Integrate TaskMaster Core Functions with API",
-      "complexityScore": 5,
-      "recommendedSubtasks": 4,
-      "expansionPrompt": "Describe the integration of TaskMaster core functions into the Express.js API, focusing on identifying relevant functions, creating a wrapper module, and handling data serialization/deserialization.",
-      "reasoning": "This task requires understanding the existing TaskMaster core, designing an interface for it within the Express app, and handling data flow between the core and the API, which can involve some architectural decisions."
-    },
-    {
-      "taskId": 64,
-      "taskTitle": "Implement Basic Task Data Retrieval API Endpoints",
-      "complexityScore": 4,
-      "recommendedSubtasks": 3,
-      "expansionPrompt": "Detail the implementation of a GET API endpoint for task data retrieval, including reading `tasks.json`, parsing data, and implementing error handling.",
-      "reasoning": "Straightforward API endpoint creation, but requires careful handling of file I/O, JSON parsing, and basic error handling for file not found or malformed data."
-    },
-    {
-      "taskId": 65,
-      "taskTitle": "Setup Development Environment with Hot Reload and Build Scripts",
-      "complexityScore": 6,
-      "recommendedSubtasks": 5,
-      "expansionPrompt": "Elaborate on setting up a comprehensive development environment with hot reload and build scripts for both frontend and backend, including concurrent execution and production build configurations.",
-      "reasoning": "This task involves configuring multiple tools (Vite, Nodemon/ts-node-dev, concurrently) and ensuring they work together seamlessly for both development and production builds. It requires understanding of build processes and script orchestration."
-    },
-    {
-      "taskId": 66,
-      "taskTitle": "Create Responsive Three-Column Kanban Board Layout",
-      "complexityScore": 6,
-      "recommendedSubtasks": 5,
-      "expansionPrompt": "Detail the creation of a responsive three-column Kanban board layout, covering React component structure, Tailwind CSS for responsiveness, data fetching, and task distribution into columns.",
-      "reasoning": "Requires combining React component development with responsive CSS (Tailwind) and data manipulation (fetching and distributing tasks). Ensuring responsiveness across devices adds complexity."
-    },
-    {
-      "taskId": 67,
-      "taskTitle": "Implement TaskCard Component with Metadata Display",
-      "complexityScore": 4,
-      "recommendedSubtasks": 3,
-      "expansionPrompt": "Describe the implementation of the `TaskCard` component, focusing on accepting task props, using shadcn/ui Card, and displaying various task metadata with appropriate styling.",
-      "reasoning": "A standard component development task. The complexity comes from ensuring all metadata is displayed clearly and styled consistently using shadcn/ui and Tailwind."
-    },
-    {
-      "taskId": 68,
-      "taskTitle": "Setup @dnd-kit Library with Drag-and-Drop Context",
-      "complexityScore": 5,
-      "recommendedSubtasks": 4,
-      "expansionPrompt": "Explain the setup of the @dnd-kit library, including wrapping components with `DndContext`, configuring sensors and collision detection, and defining initial drag event handlers.",
-      "reasoning": "Setting up a drag-and-drop library involves understanding its core concepts (context, sensors, collision detection) and correctly integrating it into the React component tree. It's foundational for DND."
-    },
-    {
-      "taskId": 69,
-      "taskTitle": "Implement Drag-and-Drop Functionality Between Status Columns",
-      "complexityScore": 7,
-      "recommendedSubtasks": 5,
-      "expansionPrompt": "Detail the implementation of drag-and-drop functionality for tasks between Kanban columns, covering `Draggable` and `Droppable` components, state management for task status updates, and handling `onDragEnd` events.",
-      "reasoning": "This is a core feature. It requires careful state management, correct identification of draggable and droppable elements, and updating the UI based on drag events. Ensuring smooth user experience is key."
-    },
-    {
-      "taskId": 70,
-      "taskTitle": "Create Task Status Update API Endpoints",
-      "complexityScore": 5,
-      "recommendedSubtasks": 4,
-      "expansionPrompt": "Outline the creation of a PATCH API endpoint for updating task status, including handling the request payload, integrating with TaskMaster core, and implementing validation and error handling.",
-      "reasoning": "Similar to task retrieval, but involves handling incoming data, updating a specific record, and writing back to the file system, which adds a layer of complexity for data integrity and validation."
-    },
-    {
-      "taskId": 71,
-      "taskTitle": "Integrate Frontend Drag-and-Drop with Backend API Calls",
-      "complexityScore": 7,
-      "recommendedSubtasks": 5,
-      "expansionPrompt": "Describe the integration of frontend drag-and-drop actions with backend API calls, focusing on triggering PATCH requests from `onDragEnd`, handling asynchronous updates, and implementing error handling with potential UI rollback.",
-      "reasoning": "This task connects the UI interaction with persistence. It requires managing asynchronous operations, handling potential network errors, and ensuring data consistency between frontend and backend, including optimistic UI updates and rollbacks."
-    },
-    {
-      "taskId": 72,
-      "taskTitle": "Add Visual Feedback for Drag Operations",
-      "complexityScore": 5,
-      "recommendedSubtasks": 3,
-      "expansionPrompt": "Detail the process of adding visual feedback for drag operations, including using `@dnd-kit` hooks for styling draggable items and droppable areas, and potentially implementing `DragOverlay`.",
-      "reasoning": "Enhancing UX with visual cues. Requires understanding `@dnd-kit`'s styling capabilities and applying CSS/styles dynamically based on drag state. Can be tricky to get right visually."
-    },
-    {
-      "taskId": 73,
-      "taskTitle": "Implement Dependency Validation for Task Status Changes",
-      "complexityScore": 8,
-      "recommendedSubtasks": 6,
-      "expansionPrompt": "Elaborate on implementing dependency validation for task status changes, covering logic for preventing invalid moves (e.g., 'done' with pending dependencies), and integrating this validation in both frontend and backend with appropriate user feedback.",
-      "reasoning": "This is a critical business logic implementation. It requires complex validation rules, potentially recursive checks for dependencies, and consistent application of these rules across both frontend (for UX) and backend (for data integrity). Error messaging is also important."
-    },
-    {
-      "taskId": 74,
-      "taskTitle": "Create Task Detail Modal Component",
-      "complexityScore": 4,
-      "recommendedSubtasks": 3,
-      "expansionPrompt": "Describe the creation of a `TaskModal` component using shadcn/ui Dialog, including its trigger mechanism from `TaskCard` clicks and initial structure for displaying task properties.",
-      "reasoning": "Standard modal component creation using a UI library. The main part is setting up the dialog and passing data correctly."
-    },
-    {
-      "taskId": 75,
-      "taskTitle": "Implement Task Metadata Display in Modal",
-      "complexityScore": 4,
-      "recommendedSubtasks": 3,
-      "expansionPrompt": "Detail the implementation of displaying all task metadata within the `TaskModal`, focusing on populating fields, using appropriate input components, and formatting various data types.",
-      "reasoning": "Populating a form/display with data. Requires mapping task properties to UI elements and ensuring proper formatting for different data types (e.g., arrays for dependencies)."
-    },
-    {
-      "taskId": 76,
-      "taskTitle": "Integrate Tiptap Rich Text Editor for Task Details and Description",
-      "complexityScore": 6,
-      "recommendedSubtasks": 4,
-      "expansionPrompt": "Explain the integration of Tiptap rich text editor for task details and description fields, covering installation, replacing textareas, configuring basic extensions, and handling content loading/saving.",
-      "reasoning": "Integrating a rich text editor is more complex than a simple input field. It involves managing editor state, ensuring content persistence (loading and saving HTML/JSON), and configuring desired features."
-    },
-    {
-      "taskId": 77,
-      "taskTitle": "Create Task Update API Endpoints",
-      "complexityScore": 6,
-      "recommendedSubtasks": 4,
-      "expansionPrompt": "Outline the creation of a PUT API endpoint for updating all task properties, including handling the full payload, integrating with TaskMaster core for updates, and implementing comprehensive validation and error handling.",
-      "reasoning": "This endpoint handles a full task object, requiring more extensive validation for all fields and careful handling of the update logic in the TaskMaster core. Data integrity is paramount."
-    },
-    {
-      "taskId": 78,
-      "taskTitle": "Implement Form Validation and Error Handling for Task Updates",
-      "complexityScore": 7,
-      "recommendedSubtasks": 5,
-      "expansionPrompt": "Detail the implementation of client-side form validation and comprehensive error handling for task updates within the modal, including displaying user-friendly messages for validation failures and API errors.",
-      "reasoning": "Crucial for user experience and data integrity. Involves client-side validation (e.g., using a form library), displaying error messages, and robustly handling various types of API errors (network, server-side validation, etc.)."
-    },
-    {
-      "taskId": 79,
-      "taskTitle": "Add Save/Cancel Functionality with Optimistic UI Updates",
-      "complexityScore": 7,
-      "recommendedSubtasks": 4,
-      "expansionPrompt": "Describe adding save and cancel functionality to the task detail modal, focusing on triggering API calls, implementing optimistic UI updates with rollback on failure, and managing unsaved changes.",
-      "reasoning": "Optimistic UI adds significant complexity. It requires careful state management to immediately reflect changes while also having a rollback mechanism if the backend update fails. This improves perceived performance but is harder to implement correctly."
-    },
-    {
-      "taskId": 80,
-      "taskTitle": "Implement Responsive Design for Mobile and Tablet Devices",
-      "complexityScore": 6,
-      "recommendedSubtasks": 4,
-      "expansionPrompt": "Elaborate on implementing responsive design for the Kanban board and task details, covering the use of Tailwind CSS utilities, adapting layouts for different screen sizes, and ensuring usability on mobile.",
-      "reasoning": "Requires thorough testing across various screen sizes and potentially significant adjustments to CSS and component structure to ensure a good user experience on all devices. Not just about stacking elements."
-    },
-    {
-      "taskId": 81,
-      "taskTitle": "Add Loading States, Error Boundaries, and User Feedback Systems",
-      "complexityScore": 7,
-      "recommendedSubtasks": 5,
-      "expansionPrompt": "Detail the addition of loading states, React Error Boundaries, and a user feedback system (e.g., toast notifications), covering their implementation and integration for improved user experience.",
-      "reasoning": "These are cross-cutting concerns that require careful integration throughout the application. Error boundaries need to be strategically placed, and a consistent feedback system needs to be designed and implemented for various scenarios (success, error, loading)."
-    },
-    {
-      "taskId": 82,
-      "taskTitle": "Optimize Build Process and Create Production Deployment Scripts",
-      "complexityScore": 6,
-      "recommendedSubtasks": 4,
-      "expansionPrompt": "Outline the optimization of the build process for both frontend and backend, and the creation of production deployment scripts, including sequential builds and serving the compiled application.",
-      "reasoning": "Ensuring optimal production builds involves configuring bundlers (Vite) and Node.js correctly, and creating robust scripts that handle the entire build and potential deployment process. Requires understanding of production environments."
-    },
-    {
-      "taskId": 83,
-      "taskTitle": "Create Comprehensive Documentation and Setup Instructions",
-      "complexityScore": 5,
-      "recommendedSubtasks": 4,
-      "expansionPrompt": "Describe the creation of comprehensive documentation, including project overview, technology stack, detailed setup instructions for both frontend and backend, development/build scripts, and usage guidelines.",
-      "reasoning": "While not coding, this task requires clear, concise, and accurate writing, and a thorough understanding of the entire project setup and workflow. It's crucial for maintainability and onboarding."
-    }
-  ]
+	"meta": {
+		"generatedAt": "2025-06-02T22:01:05.099Z",
+		"tasksAnalyzed": 24,
+		"totalTasks": 25,
+		"analysisCount": 24,
+		"thresholdScore": 1,
+		"projectName": "Task Master",
+		"usedResearch": false
+	},
+	"complexityAnalysis": [
+		{
+			"taskId": 60,
+			"taskTitle": "Initialize React Application with Vite and TypeScript",
+			"complexityScore": 3,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Expand on the steps to initialize a React application with Vite and TypeScript, including command execution, project structure setup, and initial configuration adjustments.",
+			"reasoning": "This is a straightforward setup process using a well-documented CLI tool. The main complexity lies in ensuring correct options and initial configuration, but it's largely automated."
+		},
+		{
+			"taskId": 61,
+			"taskTitle": "Setup shadcn/ui and Tailwind CSS Integration",
+			"complexityScore": 4,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Detail the process of integrating shadcn/ui and Tailwind CSS, covering installation of dependencies, Tailwind configuration, PostCSS setup, and initial shadcn/ui component integration.",
+			"reasoning": "Involves multiple steps: installing Tailwind, PostCSS, Autoprefixer, configuring Tailwind, and then initializing shadcn/ui. Each step has specific configuration requirements that need careful attention."
+		},
+		{
+			"taskId": 62,
+			"taskTitle": "Create Express.js API Server with Basic Routing",
+			"complexityScore": 3,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Outline the steps to create an Express.js API server, including project initialization, Express and CORS installation, basic server file creation, and defining a root endpoint.",
+			"reasoning": "Relatively simple task involving basic Node.js and Express setup. The core steps are well-defined and don't involve complex logic."
+		},
+		{
+			"taskId": 63,
+			"taskTitle": "Integrate TaskMaster Core Functions with API",
+			"complexityScore": 5,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Describe the integration of TaskMaster core functions into the Express.js API, focusing on identifying relevant functions, creating a wrapper module, and handling data serialization/deserialization.",
+			"reasoning": "This task requires understanding the existing TaskMaster core, designing an interface for it within the Express app, and handling data flow between the core and the API, which can involve some architectural decisions."
+		},
+		{
+			"taskId": 64,
+			"taskTitle": "Implement Basic Task Data Retrieval API Endpoints",
+			"complexityScore": 4,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Detail the implementation of a GET API endpoint for task data retrieval, including reading `tasks.json`, parsing data, and implementing error handling.",
+			"reasoning": "Straightforward API endpoint creation, but requires careful handling of file I/O, JSON parsing, and basic error handling for file not found or malformed data."
+		},
+		{
+			"taskId": 65,
+			"taskTitle": "Setup Development Environment with Hot Reload and Build Scripts",
+			"complexityScore": 6,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Elaborate on setting up a comprehensive development environment with hot reload and build scripts for both frontend and backend, including concurrent execution and production build configurations.",
+			"reasoning": "This task involves configuring multiple tools (Vite, Nodemon/ts-node-dev, concurrently) and ensuring they work together seamlessly for both development and production builds. It requires understanding of build processes and script orchestration."
+		},
+		{
+			"taskId": 66,
+			"taskTitle": "Create Responsive Three-Column Kanban Board Layout",
+			"complexityScore": 6,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Detail the creation of a responsive three-column Kanban board layout, covering React component structure, Tailwind CSS for responsiveness, data fetching, and task distribution into columns.",
+			"reasoning": "Requires combining React component development with responsive CSS (Tailwind) and data manipulation (fetching and distributing tasks). Ensuring responsiveness across devices adds complexity."
+		},
+		{
+			"taskId": 67,
+			"taskTitle": "Implement TaskCard Component with Metadata Display",
+			"complexityScore": 4,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Describe the implementation of the `TaskCard` component, focusing on accepting task props, using shadcn/ui Card, and displaying various task metadata with appropriate styling.",
+			"reasoning": "A standard component development task. The complexity comes from ensuring all metadata is displayed clearly and styled consistently using shadcn/ui and Tailwind."
+		},
+		{
+			"taskId": 68,
+			"taskTitle": "Setup @dnd-kit Library with Drag-and-Drop Context",
+			"complexityScore": 5,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Explain the setup of the @dnd-kit library, including wrapping components with `DndContext`, configuring sensors and collision detection, and defining initial drag event handlers.",
+			"reasoning": "Setting up a drag-and-drop library involves understanding its core concepts (context, sensors, collision detection) and correctly integrating it into the React component tree. It's foundational for DND."
+		},
+		{
+			"taskId": 69,
+			"taskTitle": "Implement Drag-and-Drop Functionality Between Status Columns",
+			"complexityScore": 7,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Detail the implementation of drag-and-drop functionality for tasks between Kanban columns, covering `Draggable` and `Droppable` components, state management for task status updates, and handling `onDragEnd` events.",
+			"reasoning": "This is a core feature. It requires careful state management, correct identification of draggable and droppable elements, and updating the UI based on drag events. Ensuring smooth user experience is key."
+		},
+		{
+			"taskId": 70,
+			"taskTitle": "Create Task Status Update API Endpoints",
+			"complexityScore": 5,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Outline the creation of a PATCH API endpoint for updating task status, including handling the request payload, integrating with TaskMaster core, and implementing validation and error handling.",
+			"reasoning": "Similar to task retrieval, but involves handling incoming data, updating a specific record, and writing back to the file system, which adds a layer of complexity for data integrity and validation."
+		},
+		{
+			"taskId": 71,
+			"taskTitle": "Integrate Frontend Drag-and-Drop with Backend API Calls",
+			"complexityScore": 7,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Describe the integration of frontend drag-and-drop actions with backend API calls, focusing on triggering PATCH requests from `onDragEnd`, handling asynchronous updates, and implementing error handling with potential UI rollback.",
+			"reasoning": "This task connects the UI interaction with persistence. It requires managing asynchronous operations, handling potential network errors, and ensuring data consistency between frontend and backend, including optimistic UI updates and rollbacks."
+		},
+		{
+			"taskId": 72,
+			"taskTitle": "Add Visual Feedback for Drag Operations",
+			"complexityScore": 5,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Detail the process of adding visual feedback for drag operations, including using `@dnd-kit` hooks for styling draggable items and droppable areas, and potentially implementing `DragOverlay`.",
+			"reasoning": "Enhancing UX with visual cues. Requires understanding `@dnd-kit`'s styling capabilities and applying CSS/styles dynamically based on drag state. Can be tricky to get right visually."
+		},
+		{
+			"taskId": 73,
+			"taskTitle": "Implement Dependency Validation for Task Status Changes",
+			"complexityScore": 8,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "Elaborate on implementing dependency validation for task status changes, covering logic for preventing invalid moves (e.g., 'done' with pending dependencies), and integrating this validation in both frontend and backend with appropriate user feedback.",
+			"reasoning": "This is a critical business logic implementation. It requires complex validation rules, potentially recursive checks for dependencies, and consistent application of these rules across both frontend (for UX) and backend (for data integrity). Error messaging is also important."
+		},
+		{
+			"taskId": 74,
+			"taskTitle": "Create Task Detail Modal Component",
+			"complexityScore": 4,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Describe the creation of a `TaskModal` component using shadcn/ui Dialog, including its trigger mechanism from `TaskCard` clicks and initial structure for displaying task properties.",
+			"reasoning": "Standard modal component creation using a UI library. The main part is setting up the dialog and passing data correctly."
+		},
+		{
+			"taskId": 75,
+			"taskTitle": "Implement Task Metadata Display in Modal",
+			"complexityScore": 4,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Detail the implementation of displaying all task metadata within the `TaskModal`, focusing on populating fields, using appropriate input components, and formatting various data types.",
+			"reasoning": "Populating a form/display with data. Requires mapping task properties to UI elements and ensuring proper formatting for different data types (e.g., arrays for dependencies)."
+		},
+		{
+			"taskId": 76,
+			"taskTitle": "Integrate Tiptap Rich Text Editor for Task Details and Description",
+			"complexityScore": 6,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Explain the integration of Tiptap rich text editor for task details and description fields, covering installation, replacing textareas, configuring basic extensions, and handling content loading/saving.",
+			"reasoning": "Integrating a rich text editor is more complex than a simple input field. It involves managing editor state, ensuring content persistence (loading and saving HTML/JSON), and configuring desired features."
+		},
+		{
+			"taskId": 77,
+			"taskTitle": "Create Task Update API Endpoints",
+			"complexityScore": 6,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Outline the creation of a PUT API endpoint for updating all task properties, including handling the full payload, integrating with TaskMaster core for updates, and implementing comprehensive validation and error handling.",
+			"reasoning": "This endpoint handles a full task object, requiring more extensive validation for all fields and careful handling of the update logic in the TaskMaster core. Data integrity is paramount."
+		},
+		{
+			"taskId": 78,
+			"taskTitle": "Implement Form Validation and Error Handling for Task Updates",
+			"complexityScore": 7,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Detail the implementation of client-side form validation and comprehensive error handling for task updates within the modal, including displaying user-friendly messages for validation failures and API errors.",
+			"reasoning": "Crucial for user experience and data integrity. Involves client-side validation (e.g., using a form library), displaying error messages, and robustly handling various types of API errors (network, server-side validation, etc.)."
+		},
+		{
+			"taskId": 79,
+			"taskTitle": "Add Save/Cancel Functionality with Optimistic UI Updates",
+			"complexityScore": 7,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Describe adding save and cancel functionality to the task detail modal, focusing on triggering API calls, implementing optimistic UI updates with rollback on failure, and managing unsaved changes.",
+			"reasoning": "Optimistic UI adds significant complexity. It requires careful state management to immediately reflect changes while also having a rollback mechanism if the backend update fails. This improves perceived performance but is harder to implement correctly."
+		},
+		{
+			"taskId": 80,
+			"taskTitle": "Implement Responsive Design for Mobile and Tablet Devices",
+			"complexityScore": 6,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Elaborate on implementing responsive design for the Kanban board and task details, covering the use of Tailwind CSS utilities, adapting layouts for different screen sizes, and ensuring usability on mobile.",
+			"reasoning": "Requires thorough testing across various screen sizes and potentially significant adjustments to CSS and component structure to ensure a good user experience on all devices. Not just about stacking elements."
+		},
+		{
+			"taskId": 81,
+			"taskTitle": "Add Loading States, Error Boundaries, and User Feedback Systems",
+			"complexityScore": 7,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Detail the addition of loading states, React Error Boundaries, and a user feedback system (e.g., toast notifications), covering their implementation and integration for improved user experience.",
+			"reasoning": "These are cross-cutting concerns that require careful integration throughout the application. Error boundaries need to be strategically placed, and a consistent feedback system needs to be designed and implemented for various scenarios (success, error, loading)."
+		},
+		{
+			"taskId": 82,
+			"taskTitle": "Optimize Build Process and Create Production Deployment Scripts",
+			"complexityScore": 6,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Outline the optimization of the build process for both frontend and backend, and the creation of production deployment scripts, including sequential builds and serving the compiled application.",
+			"reasoning": "Ensuring optimal production builds involves configuring bundlers (Vite) and Node.js correctly, and creating robust scripts that handle the entire build and potential deployment process. Requires understanding of production environments."
+		},
+		{
+			"taskId": 83,
+			"taskTitle": "Create Comprehensive Documentation and Setup Instructions",
+			"complexityScore": 5,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Describe the creation of comprehensive documentation, including project overview, technology stack, detailed setup instructions for both frontend and backend, development/build scripts, and usage guidelines.",
+			"reasoning": "While not coding, this task requires clear, concise, and accurate writing, and a thorough understanding of the entire project setup and workflow. It's crucial for maintainability and onboarding."
+		}
+	]
 }

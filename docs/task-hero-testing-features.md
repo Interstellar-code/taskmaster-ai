@@ -33,6 +33,7 @@ tests/
 #### Key Jest Testing Features
 
 **Test Organization**:
+
 - **Unit Tests** (`tests/unit/`): Test individual functions, classes, and components in isolation
 - **Integration Tests** (`tests/integration/`): Test interactions between different modules and services
 - **End-to-End Tests** (`tests/e2e/`): Test complete user workflows and system behavior
@@ -40,10 +41,12 @@ tests/
 - **Test Fixtures** (`tests/fixtures/`): Reusable test data, mocks, and sample files
 
 **Configuration Files**:
+
 - **`tests/setup.js`**: Global Jest configuration, environment setup, and shared test utilities
 - **`tests/jest-testing-readme.md`**: Comprehensive guide for implementing Jest tests in your project
 
 **Jest Testing Capabilities**:
+
 - Automated test execution with watch mode
 - Code coverage reporting and thresholds
 - Mock implementations for external dependencies
@@ -65,11 +68,13 @@ TaskMaster AI provides structured manual testing capabilities for user acceptanc
 #### Manual Test Organization
 
 **Test Case Storage**:
+
 - **Location**: `tests/manual/` - All manual test cases and scripts are stored here
 - **Structure**: Organized by feature, user journey, and testing scenario
 - **Documentation**: Step-by-step test procedures and expected outcomes
 
 **Manual Testing Features**:
+
 - **Test Case Templates**: Standardized formats for creating manual test cases
 - **User Journey Testing**: Complete workflow testing from user perspective
 - **Exploratory Testing**: Guided exploration of application features
@@ -79,12 +84,14 @@ TaskMaster AI provides structured manual testing capabilities for user acceptanc
 #### Manual Testing Capabilities
 
 **Test Case Management**:
+
 - Structured test case creation and organization
 - Test execution tracking and results documentation
 - Bug reporting and issue tracking integration
 - Test coverage mapping to requirements
 
 **User-Focused Testing**:
+
 - User interface testing procedures
 - User experience validation workflows
 - Accessibility testing guidelines
@@ -124,6 +131,7 @@ TaskMaster AI's internal testing infrastructure ensures the reliability and perf
 **Scope**: TaskMaster AI's internal functions and modules
 **Coverage Target**: 90%+
 **Key Areas**:
+
 - Task management operations (`task-manager.test.js`)
 - AI service integrations (`ai-services-unified.test.js`)
 - Configuration management (`config-manager.test.js`)
@@ -132,6 +140,7 @@ TaskMaster AI's internal testing infrastructure ensures the reliability and perf
 - MCP tool implementations (`mcp/tools/`)
 
 **Notable Features**:
+
 - Comprehensive mocking of external dependencies
 - AI service response simulation
 - File system operation mocking
@@ -142,12 +151,14 @@ TaskMaster AI's internal testing infrastructure ensures the reliability and perf
 **Scope**: TaskMaster AI's module interactions and data flow
 **Coverage Target**: 85%+
 **Key Areas**:
+
 - PRD workflow integration (`prd-workflow.test.js`)
 - CLI command interactions
 - MCP server integration
 - Cross-module data consistency
 
 **Test Scenarios**:
+
 - Complete PRD-to-task generation workflows
 - Task status updates with dependency validation
 - PRD change detection and metadata updates
@@ -158,12 +169,14 @@ TaskMaster AI's internal testing infrastructure ensures the reliability and perf
 **Scope**: Complete TaskMaster AI workflows from CLI perspective
 **Coverage Target**: 80%+
 **Key Components**:
+
 - Automated E2E test runner (`run_e2e.sh`)
 - Multi-provider AI testing
 - Real CLI command execution
 - Cost tracking and analysis
 
 **E2E Test Features**:
+
 - Automated project initialization
 - PRD parsing with real AI models
 - Task expansion and status management
@@ -174,19 +187,21 @@ TaskMaster AI's internal testing infrastructure ensures the reliability and perf
 
 **Scope**: TaskMaster AI performance benchmarks and regression detection
 **Key Metrics**:
+
 - PRD parsing speed (< 30s for 10KB files)
 - Task listing performance (< 2s for 1000 tasks)
 - Memory usage limits (< 500MB for large datasets)
 - Change detection efficiency (< 5s for 100 PRD files)
 
 **Performance Benchmarks**:
+
 ```javascript
 const BENCHMARKS = {
-  PARSE_SMALL_PRD: 1000,      // < 1KB in < 1s
-  PARSE_MEDIUM_PRD: 5000,     // 1-10KB in < 5s
-  PARSE_LARGE_PRD: 30000,     // > 10KB in < 30s
-  LIST_TASKS_LARGE: 2000,     // > 1000 tasks in < 2s
-  MEMORY_LIMIT: 500 * 1024 * 1024  // 500MB limit
+	PARSE_SMALL_PRD: 1000, // < 1KB in < 1s
+	PARSE_MEDIUM_PRD: 5000, // 1-10KB in < 5s
+	PARSE_LARGE_PRD: 30000, // > 10KB in < 30s
+	LIST_TASKS_LARGE: 2000, // > 1000 tasks in < 2s
+	MEMORY_LIMIT: 500 * 1024 * 1024 // 500MB limit
 };
 ```
 
@@ -194,6 +209,7 @@ const BENCHMARKS = {
 
 **Scope**: TaskMaster AI's Windows, macOS, Linux compatibility
 **Key Areas**:
+
 - File path handling differences
 - Line ending variations
 - Permission handling
@@ -252,6 +268,7 @@ npm run test:performance   # Performance benchmarks
 ### Jest Testing Best Practices for Users
 
 #### 1. Test Organization
+
 - **Unit Tests**: Place in `tests/unit/` for testing individual functions and components
 - **Integration Tests**: Place in `tests/integration/` for testing module interactions
 - **E2E Tests**: Place in `tests/e2e/` for testing complete user workflows
@@ -259,43 +276,55 @@ npm run test:performance   # Performance benchmarks
 - **Test Fixtures**: Place in `tests/fixtures/` for reusable test data and mocks
 
 #### 2. Configuration Setup
+
 - **Global Setup**: Use `tests/setup.js` for Jest configuration and global test utilities
 - **Documentation**: Refer to `tests/jest-testing-readme.md` for detailed Jest testing guidelines
 
 #### 3. Test Writing Guidelines
+
 ```javascript
 // Example Jest test structure for users
 describe('User Feature', () => {
-  beforeEach(() => {
-    // Setup test environment
-  });
+	beforeEach(() => {
+		// Setup test environment
+	});
 
-  test('should perform expected behavior', () => {
-    // Test implementation
-    expect(result).toBe(expected);
-  });
+	test('should perform expected behavior', () => {
+		// Test implementation
+		expect(result).toBe(expected);
+	});
 });
 ```
 
 ### Manual Testing Best Practices for Users
 
 #### 1. Test Case Organization
+
 - **Location**: Store all manual test cases in `tests/manual/`
 - **Structure**: Organize by feature, user journey, and testing scenario
 - **Documentation**: Include step-by-step procedures and expected outcomes
 
 #### 2. Test Case Templates
+
 ```markdown
 # Manual Test Case Template
+
 ## Test Case ID: TC-001
+
 ## Feature: User Authentication
+
 ## Scenario: Login with valid credentials
+
 ## Steps:
+
 1. Navigate to login page
 2. Enter valid username and password
 3. Click login button
+
 ## Expected Result: User successfully logged in
+
 ## Actual Result: [To be filled during testing]
+
 ## Status: [Pass/Fail]
 ```
 
@@ -304,6 +333,7 @@ describe('User Feature', () => {
 ### 1. Internal AI Service Testing
 
 **Multi-Provider Support**: Internal tests cover all supported AI providers:
+
 - Anthropic Claude (multiple models)
 - OpenAI GPT models
 - Google Gemini
@@ -316,6 +346,7 @@ describe('User Feature', () => {
 ### 2. Internal MCP (Model Context Protocol) Testing
 
 **MCP Tool Testing**: Comprehensive testing of MCP server tools:
+
 - `add-task.test.js` - Task creation via MCP
 - `analyze-complexity.test.js` - Complexity analysis tools
 - `initialize-project.test.js` - Project initialization
@@ -325,6 +356,7 @@ describe('User Feature', () => {
 ### 3. Internal PRD Lifecycle Testing
 
 **Comprehensive PRD Testing Strategy** (`PRD_TESTING_STRATEGY.md`):
+
 - PRD schema validation and backward compatibility
 - Metadata capture and file hash tracking
 - Change detection and re-parsing workflows
@@ -353,11 +385,11 @@ When using TaskMaster AI's Jest testing capabilities, users can create and manag
 ```javascript
 // Example test data generation for user projects
 const generateTestData = (options) => {
-  return {
-    users: generateUsers(options.userCount),
-    products: generateProducts(options.productCount),
-    orders: generateOrders(options.orderCount)
-  };
+	return {
+		users: generateUsers(options.userCount),
+		products: generateProducts(options.productCount),
+		orders: generateOrders(options.orderCount)
+	};
 };
 ```
 
@@ -387,8 +419,12 @@ const generateTestData = (options) => {
 
 ```javascript
 // Automated test data generation for TaskMaster AI
-const generateTestPRD = (sizeKB) => { /* ... */ };
-const generateTestTasks = (count) => { /* ... */ };
+const generateTestPRD = (sizeKB) => {
+	/* ... */
+};
+const generateTestTasks = (count) => {
+	/* ... */
+};
 ```
 
 ## Internal Monitoring & Quality Assurance
@@ -442,6 +478,7 @@ process.env.ANTHROPIC_API_KEY = 'test-mock-api-key';
 ### Setting Up Jest Testing in Your Project
 
 1. **Initialize Testing Structure**:
+
    ```bash
    task-hero init:testing
    # Creates the standardized folder structure:
@@ -449,6 +486,7 @@ process.env.ANTHROPIC_API_KEY = 'test-mock-api-key';
    ```
 
 2. **Configure Jest Setup**:
+
    - Review and customize `tests/setup.js` for your project needs
    - Read `tests/jest-testing-readme.md` for detailed guidelines
 
@@ -456,15 +494,16 @@ process.env.ANTHROPIC_API_KEY = 'test-mock-api-key';
    ```javascript
    // tests/unit/example.test.js
    describe('Example Feature', () => {
-     test('should work correctly', () => {
-       expect(true).toBe(true);
-     });
+   	test('should work correctly', () => {
+   		expect(true).toBe(true);
+   	});
    });
    ```
 
 ### Setting Up Manual Testing
 
 1. **Create Manual Test Structure**:
+
    ```bash
    mkdir tests/manual
    # Store all manual test cases here
@@ -505,11 +544,13 @@ process.env.ANTHROPIC_API_KEY = 'test-mock-api-key';
 TaskMaster AI provides comprehensive testing capabilities that serve both user projects and its own internal quality assurance:
 
 ### User Testing Capabilities:
+
 - **Jest Testing Framework**: Complete automated testing solution with standardized structure
 - **Manual Testing Framework**: Structured approach to user acceptance and exploratory testing
 - **Best Practices**: Guidelines and templates for effective testing implementation
 
 ### Internal Testing Infrastructure:
+
 - **Multi-provider AI integration testing**
 - **Cross-platform compatibility validation**
 - **Performance regression detection**

@@ -127,6 +127,7 @@ task-hero web --no-open
 ### Access Points
 
 Once started, you can access:
+
 - **Main Interface**: `http://localhost:3000` (or your custom port)
 - **API Endpoints**: `http://localhost:3000/api`
 - **Health Check**: `http://localhost:3000/health`
@@ -134,6 +135,7 @@ Once started, you can access:
 ### First-Time Setup
 
 When you first run `task-hero web`, the system will:
+
 1. Automatically install web interface dependencies
 2. Build the application if needed
 3. Start the server

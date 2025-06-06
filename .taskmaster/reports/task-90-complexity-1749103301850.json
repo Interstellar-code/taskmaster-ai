@@ -1,21 +1,21 @@
 {
-  "meta": {
-    "generatedAt": "2025-06-05T06:01:44.633Z",
-    "tasksAnalyzed": 1,
-    "totalTasks": 9,
-    "analysisCount": 1,
-    "thresholdScore": 5,
-    "projectName": "Task Master",
-    "usedResearch": false
-  },
-  "complexityAnalysis": [
-    {
-      "taskId": 90,
-      "taskTitle": "Implement Task Deletion System",
-      "complexityScore": 9,
-      "recommendedSubtasks": 10,
-      "expansionPrompt": "Expand the 'Implement Backend Cascade Deletion Logic' subtask to include detailed steps for handling different types of related entities (e.g., subtasks, comments, attachments) and ensuring data integrity during the cascade deletion process. Also, detail the transactional requirements and error handling for partial deletions.",
-      "reasoning": "This task is highly complex due to the combination of frontend UI/UX, robust backend logic for cascade deletion and dependency cleanup, and the non-trivial implementation of a time-limited undo functionality. It requires careful consideration of data integrity, edge cases, and potential performance impacts, especially with cascade operations. The existing subtasks are a good start but some, like backend cascade deletion, will need further breakdown."
-    }
-  ]
+	"meta": {
+		"generatedAt": "2025-06-05T06:01:44.633Z",
+		"tasksAnalyzed": 1,
+		"totalTasks": 9,
+		"analysisCount": 1,
+		"thresholdScore": 5,
+		"projectName": "Task Master",
+		"usedResearch": false
+	},
+	"complexityAnalysis": [
+		{
+			"taskId": 90,
+			"taskTitle": "Implement Task Deletion System",
+			"complexityScore": 9,
+			"recommendedSubtasks": 10,
+			"expansionPrompt": "Expand the 'Implement Backend Cascade Deletion Logic' subtask to include detailed steps for handling different types of related entities (e.g., subtasks, comments, attachments) and ensuring data integrity during the cascade deletion process. Also, detail the transactional requirements and error handling for partial deletions.",
+			"reasoning": "This task is highly complex due to the combination of frontend UI/UX, robust backend logic for cascade deletion and dependency cleanup, and the non-trivial implementation of a time-limited undo functionality. It requires careful consideration of data integrity, edge cases, and potential performance impacts, especially with cascade operations. The existing subtasks are a good start but some, like backend cascade deletion, will need further breakdown."
+		}
+	]
 }

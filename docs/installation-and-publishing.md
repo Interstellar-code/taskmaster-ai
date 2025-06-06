@@ -35,11 +35,13 @@ task-hero menu
 ```
 
 **Benefits:**
+
 - ✅ Immediate access to your latest changes
 - ✅ Easy to modify and test
 - ✅ No need to republish for local testing
 
 **To uninstall:**
+
 ```bash
 npm unlink
 ```
@@ -99,11 +101,11 @@ Update the binary commands in `package.json`:
 
 ```json
 {
-  "bin": {
-    "task-hero": "bin/task-hero.js",
-    "task-hero-ai": "bin/task-hero.js",
-    "task-hero-mcp": "mcp-server/server.js"
-  }
+	"bin": {
+		"task-hero": "bin/task-hero.js",
+		"task-hero-ai": "bin/task-hero.js",
+		"task-hero-mcp": "mcp-server/server.js"
+	}
 }
 ```
 
@@ -270,6 +272,7 @@ To automate the entire version management process:
 #### Option 1: Manual Version Bump + Auto Publish
 
 1. **Update version locally**:
+
 ```bash
 npm version patch  # or minor/major
 git push origin main --tags
@@ -284,6 +287,7 @@ git push origin main --tags
 #### Option 2: Fully Automated with Changesets
 
 1. **Create changeset**:
+
 ```bash
 npx changeset add
 # Follow prompts to describe changes
@@ -293,6 +297,7 @@ git push
 ```
 
 2. **GitHub Actions creates PR**:
+
    - Automatically updates version in package.json
    - Generates changelog
    - Creates release PR
@@ -426,6 +431,7 @@ task-hero web --no-open
 ```
 
 **Features:**
+
 - ✅ **Visual Kanban Board** - Drag and drop tasks between status columns
 - ✅ **Task Management** - Create, edit, and delete tasks with rich metadata
 - ✅ **PRD Integration** - Filter tasks by PRD source and track progress
@@ -435,6 +441,7 @@ task-hero web --no-open
 - ✅ **Responsive Design** - Works on desktop, tablet, and mobile devices
 
 **Access Points:**
+
 - **Main Interface**: `http://localhost:3000` (or your custom port)
 - **API Endpoints**: `http://localhost:3000/api`
 - **Health Check**: `http://localhost:3000/health`
@@ -497,6 +504,7 @@ npm install -g task-hero-ai@latest
 **Cause**: npm's global update behavior can be inconsistent, especially on Windows and when packages have been installed from different sources.
 
 **Root Causes**:
+
 - npm caches old package information
 - Global packages installed with different permissions
 - Package installed from different registries
@@ -524,6 +532,7 @@ npm config get prefix
 ```
 
 **Why `npm update -g` often fails**:
+
 - npm's global update mechanism is known to be unreliable
 - It may not detect version changes properly
 - Cache issues can prevent updates
@@ -532,12 +541,14 @@ npm config get prefix
 #### Issue: Permission errors during update
 
 **Windows**:
+
 ```powershell
 # Run PowerShell as Administrator
 npm update -g task-hero-ai
 ```
 
 **macOS/Linux**:
+
 ```bash
 # Use sudo (not recommended for npm)
 sudo npm update -g task-hero-ai
@@ -586,6 +597,7 @@ npm list -g --depth=0 | grep task-hero
 To help users know when updates are available, you can:
 
 1. **Add update checker to your app**:
+
 ```javascript
 // In your main application
 import { checkForUpdates } from 'update-notifier';
@@ -602,6 +614,7 @@ We provide update scripts to simplify the update process for users:
 #### Using the Update Scripts
 
 **Linux/macOS**:
+
 ```bash
 # Make script executable
 chmod +x scripts/update-taskmaster.sh
@@ -611,6 +624,7 @@ bash scripts/update-taskmaster.sh
 ```
 
 **Windows**:
+
 ```batch
 # Run the update script
 scripts\update-taskmaster.bat
@@ -640,31 +654,36 @@ scripts\update-taskmaster.bat
 
 Include these scripts in your package and document them in your README:
 
-```markdown
+````markdown
 ## Updating TaskMaster AI
 
 ### Automatic Update (Recommended)
+
 - **Linux/macOS**: `bash scripts/update-taskmaster.sh`
 - **Windows**: `scripts\update-taskmaster.bat`
 
 ### Manual Update
+
 ```bash
 npm uninstall -g task-hero-ai
 npm cache clean --force
 npm install -g task-hero-ai
 ```
+````
 
 ## Troubleshooting
 
 ### Common Issues
 
 **1. Permission Errors on Windows**
+
 ```bash
 # Run PowerShell as Administrator
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
 **2. npm Link Issues**
+
 ```bash
 # Clear npm cache
 npm cache clean --force
@@ -675,6 +694,7 @@ npm link
 ```
 
 **3. Package Name Conflicts**
+
 ```bash
 # Check if name is available
 npm view task-hero-ai
@@ -686,6 +706,7 @@ npm view task-hero-ai
 ```
 
 **4. Binary Not Found After Installation**
+
 ```bash
 # Check npm global bin directory
 npm config get prefix

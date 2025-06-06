@@ -189,14 +189,14 @@ function ensureTaskBackwardCompatibility(taskData) {
 	}
 
 	// Add prdSource field to tasks that don't have it
-	taskData.tasks = taskData.tasks.map(task => {
+	taskData.tasks = taskData.tasks.map((task) => {
 		if (!task.hasOwnProperty('prdSource')) {
 			task.prdSource = null; // Set to null for existing tasks without PRD source
 		}
 
 		// Also ensure subtasks have prdSource field
 		if (task.subtasks && Array.isArray(task.subtasks)) {
-			task.subtasks = task.subtasks.map(subtask => {
+			task.subtasks = task.subtasks.map((subtask) => {
 				if (!subtask.hasOwnProperty('prdSource')) {
 					subtask.prdSource = task.prdSource; // Inherit from parent task
 				}

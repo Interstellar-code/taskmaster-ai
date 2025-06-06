@@ -38,5 +38,3 @@ export class AnthropicAIProvider extends BaseAIProvider {
 		}
 	}
 }
-
-

@@ -330,7 +330,7 @@ export function findPRDDocumentPath(projectRoot, explicitPath, log) {
 		'prd/done/',
 		'prd/',
 		'scripts/',
-		'', // Project root
+		'' // Project root
 	];
 
 	const commonFileNames = ['PRD.md', 'prd.md', 'PRD.txt', 'prd.txt'];
@@ -414,7 +414,12 @@ export function resolveTasksOutputPath(projectRoot, explicitPath, log) {
 	}
 
 	// Default output path: .taskmaster/tasks/tasks.json in the project root (new structure)
-	const defaultPath = path.resolve(projectRoot, '.taskmaster', 'tasks', 'tasks.json');
+	const defaultPath = path.resolve(
+		projectRoot,
+		'.taskmaster',
+		'tasks',
+		'tasks.json'
+	);
 	log.info(`Using default tasks output path: ${defaultPath}`);
 
 	// Ensure the directory exists

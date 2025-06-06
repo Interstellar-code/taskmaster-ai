@@ -1,6 +1,6 @@
 # Task ID: 59
 # Title: Integrate v0.16.0 upstream changes selectively
-# Status: done
+# Status: in-progress
 # Dependencies: 84
 # Priority: high
 # PRD Source: None (manually created)
@@ -12,7 +12,7 @@ testI editor integrations (.augment-guidelines, .cursor/rules, .roo/rules, .wind
 test stractery
 
 # Subtasks:
-## 59.6. rohit [pending]
+## 59.6. rohit [done]
 ### Dependencies: None
 ### Description: 
 ### Details:

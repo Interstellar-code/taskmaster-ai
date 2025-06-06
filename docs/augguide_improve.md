@@ -46,26 +46,31 @@ This analysis identifies critical outdated information in TaskMaster's Augment g
 ### 2.1 🚨 Outdated Information Identified
 
 #### 1. **Configuration System (CRITICAL)**
+
 - **Current Template**: References `.taskmasterconfig` for AI models
 - **Reality**: Configuration moved to `.taskmaster/config.json` after v0.16 merger
 - **Impact**: High - Causes confusion about configuration location
 
 #### 2. **File Organization Structure (CRITICAL)**
+
 - **Current Template**: References `tasks/tasks.json` and `tasks/task_XXX.txt`
 - **Reality**: Files moved to `.taskmaster/tasks/` directory structure
 - **Impact**: High - Incorrect file paths for all operations
 
 #### 3. **PRD Management (MISSING)**
+
 - **Current Template**: References only `scripts/` for PRD files
 - **Reality**: Comprehensive PRD lifecycle system with `.taskmaster/prd/` structure
 - **Impact**: High - Missing entire PRD management system
 
 #### 4. **Package Information (OUTDATED)**
+
 - **Current Template**: No reference to current package name
 - **Reality**: Published as `task-hero-ai` package with specific bin commands
 - **Impact**: Medium - Incorrect installation/usage guidance
 
 #### 5. **Command Reference (INCOMPLETE)**
+
 - **Current Template**: Missing many new commands
 - **Reality**: Extensive PRD commands, Kanban board, integrity checks
 - **Impact**: Medium - Incomplete command knowledge
@@ -73,12 +78,14 @@ This analysis identifies critical outdated information in TaskMaster's Augment g
 ## 3. Detailed Outdated Items & Corrections
 
 ### 3.1 Configuration System
+
 ```diff
 - **Configuration**: `.taskmasterconfig` for AI models, `.env` for API keys
 + **Configuration**: `.taskmaster/config.json` for AI models, `.env` for API keys
 ```
 
 ### 3.2 File Organization
+
 ```diff
 - `tasks/tasks.json` - Main task data file
 - `tasks/task_XXX.txt` - Individual task markdown files
@@ -91,6 +98,7 @@ This analysis identifies critical outdated information in TaskMaster's Augment g
 ```
 
 ### 3.3 Missing PRD Management System
+
 ```diff
 + ### PRD Lifecycle Management
 + - `.taskmaster/prd/pending/` - New PRDs awaiting processing
@@ -101,6 +109,7 @@ This analysis identifies critical outdated information in TaskMaster's Augment g
 ```
 
 ### 3.4 Missing Commands
+
 ```diff
 + ### PRD Management Commands
 + - `task-master prd` - List PRDs with filtering
@@ -113,6 +122,7 @@ This analysis identifies critical outdated information in TaskMaster's Augment g
 ```
 
 ### 3.5 Missing Kanban Board Features
+
 ```diff
 + ### Interactive Kanban Board
 + - Task Kanban board with drag-and-drop status updates
@@ -124,6 +134,7 @@ This analysis identifies critical outdated information in TaskMaster's Augment g
 ## 4. Dynamic Variable Enhancement Proposals
 
 ### 4.1 **Project State Variables**
+
 ```javascript
 // Dynamic variables that could be injected
 ${PROJECT_NAME} - From .taskmaster/config.json
@@ -134,6 +145,7 @@ ${ACTIVE_PRDS} - List of in-progress PRDs
 ```
 
 ### 4.2 **Configuration-Based Context**
+
 ```javascript
 // AI model configuration awareness
 ${MAIN_AI_MODEL} - Currently configured main AI model
@@ -142,6 +154,7 @@ ${AVAILABLE_PROVIDERS} - List of configured AI providers
 ```
 
 ### 4.3 **File Structure Discovery**
+
 ```javascript
 // Dynamic file structure based on actual project
 ${TASK_FILES} - List of current task files
@@ -152,8 +165,10 @@ ${CUSTOM_TEMPLATES} - Available custom templates
 ## 5. Recommended Template Improvements
 
 ### 5.1 **Accurate Directory Structure Section**
+
 ```markdown
 ## Current Project Structure
+
 - `.taskmaster/` - Main TaskMaster directory
   - `config.json` - AI models and global settings
   - `tasks/` - Task management
@@ -167,8 +182,10 @@ ${CUSTOM_TEMPLATES} - Available custom templates
 ```
 
 ### 2. **Complete Command Reference**
+
 ```markdown
 ### PRD Lifecycle Commands
+
 - `task-master prd` - List and filter PRDs
 - `task-master prd-show <id>` - Show PRD details with linked tasks
 - `task-master prd-status <id> <status>` - Update PRD status
@@ -178,6 +195,7 @@ ${CUSTOM_TEMPLATES} - Available custom templates
 - `task-master prd-integrity` - Check file integrity and fix issues
 
 ### Interactive Features
+
 - Kanban board for tasks with drag-and-drop status updates
 - PRD Kanban board for PRD lifecycle visualization
 - Interactive menu system with breadcrumb navigation
@@ -185,8 +203,10 @@ ${CUSTOM_TEMPLATES} - Available custom templates
 ```
 
 ### 3. **Package and Installation Context**
+
 ```markdown
 ## Package Information
+
 - **NPM Package**: `task-hero-ai`
 - **Binary Commands**: `task-hero`, `task-hero-ai`, `task-hero-mcp`
 - **Current Version**: Check package.json for latest version
@@ -196,6 +216,7 @@ ${CUSTOM_TEMPLATES} - Available custom templates
 ## 6. Implementation Roadmap
 
 ### 6.1 Phase 1: Critical Fixes (Immediate) ✅ **COMPLETED**
+
 1. ✅ Update configuration file references (`.taskmasterconfig` → `.taskmaster/config.json`)
 2. ✅ Correct file organization paths (`tasks/` → `.taskmaster/tasks/`)
 3. ✅ Add missing PRD management system documentation
@@ -206,6 +227,7 @@ ${CUSTOM_TEMPLATES} - Available custom templates
 8. ✅ Generate new `.augment-guidelines` file for verification
 
 **Phase 1 Results:**
+
 - Fixed all critical outdated information that could mislead Augment AI
 - Updated template with accurate file paths and command references
 - Added comprehensive PRD lifecycle management documentation
@@ -215,12 +237,14 @@ ${CUSTOM_TEMPLATES} - Available custom templates
 - Generated updated `.augment-guidelines` file (187 lines) with all improvements
 
 ### 6.2 Phase 2: Dynamic Enhancement (Short-term)
+
 1. Implement template variable injection system
 2. Add project state awareness
 3. Create configuration-based context generation
 4. Implement real-time project statistics
 
 ### Phase 3: Advanced Features (Medium-term)
+
 1. Custom template support per project
 2. Team-specific guideline templates
 3. Integration with project analytics
@@ -229,16 +253,19 @@ ${CUSTOM_TEMPLATES} - Available custom templates
 ## Technical Implementation Notes
 
 ### Template Generation Location
+
 - Current: `.taskmaster/templates/augment-guidelines`
 - Generated to: `.augment-guidelines` in project root
 - Process: Copy during `task-master init`
 
 ### Dynamic Variable Injection Points
+
 1. **During Init**: Inject basic project structure
 2. **Runtime Updates**: Update when project state changes
 3. **On-Demand**: Regenerate when requested by user
 
 ### Backward Compatibility
+
 - Maintain support for existing `.augment-guidelines` files
 - Provide migration path for outdated templates
 - Offer template update command for existing projects
@@ -252,8 +279,10 @@ Priority should be given to fixing the critical configuration and file organizat
 ## Appendix A: Complete Corrected Template Sections
 
 ### Corrected Core Technologies & Architecture
+
 ```markdown
 ## Core Technologies & Architecture
+
 - **Runtime**: Node.js with ES modules (>=18.0.0)
 - **CLI Framework**: Commander.js for command-line interface
 - **Interactive UI**: Inquirer.js with chalk for colored output and boxen for styled containers
@@ -265,8 +294,10 @@ Priority should be given to fixing the critical configuration and file organizat
 ```
 
 ### Corrected File Organization
+
 ```markdown
 ### File Organization
+
 - `.taskmaster/config.json` - AI models and global configuration
 - `.taskmaster/tasks/tasks.json` - Main task data file
 - `.taskmaster/tasks/task_XXX.txt` - Individual task files
@@ -284,10 +315,12 @@ Priority should be given to fixing the critical configuration and file organizat
 ```
 
 ### Complete Command Reference Update
+
 ```markdown
 ## TaskMaster Command Reference
 
 ### Essential Commands
+
 - `task-hero init` or `task-master init` - Initialize new project
 - `task-hero menu` or `task-master menu` - Launch interactive menu (recommended)
 - `task-hero parse-prd --input=<file>` - Generate tasks from PRD
@@ -296,6 +329,7 @@ Priority should be given to fixing the critical configuration and file organizat
 - `task-hero set-status --id=<id> --status=<status>` - Update task status
 
 ### Task Management
+
 - `task-hero add-task --prompt="<description>"` - Add new task
 - `task-hero update-task --id=<id> --prompt="<context>"` - Update specific task
 - `task-hero expand --id=<id>` - Break task into subtasks
@@ -304,6 +338,7 @@ Priority should be given to fixing the critical configuration and file organizat
 - `task-hero move-task --id=<id> --after=<target-id>` - Reorder tasks
 
 ### PRD Lifecycle Management
+
 - `task-hero prd` - List PRDs with optional filtering
 - `task-hero prd-show <prd-id>` - Show detailed PRD information
 - `task-hero prd-status <prd-id> <status>` - Update PRD status
@@ -315,6 +350,7 @@ Priority should be given to fixing the critical configuration and file organizat
 - `task-hero tasks-from-prd --prd=<file>` - Show tasks from specific PRD
 
 ### Advanced Features
+
 - `task-hero analyze-complexity` - Analyze task complexity
 - `task-hero models --setup` - Configure AI models
 - `task-hero add-dependency --id=<id> --depends-on=<id>` - Add dependencies
@@ -328,8 +364,10 @@ Priority should be given to fixing the critical configuration and file organizat
 Based on the user's documented preferences, the template should also include:
 
 ### Task Format Preferences
+
 ```markdown
 ### Task File Format
+
 - Tasks are stored as numbered text files (task_001.txt, task_002.txt, etc.)
 - User prefers markdown format for tasks when possible
 - Custom task templates can be configured per project
@@ -337,8 +375,10 @@ Based on the user's documented preferences, the template should also include:
 ```
 
 ### Workflow Preferences
+
 ```markdown
 ### Recommended Workflow
+
 - Use interactive menu (`task-hero menu`) for better UX
 - Set task status to 'in-progress' before starting work
 - Update task status to 'done' when complete
@@ -349,8 +389,10 @@ Based on the user's documented preferences, the template should also include:
 ```
 
 ### Kanban Board Features
+
 ```markdown
 ### Interactive Kanban Boards
+
 - Task Kanban board with 75% terminal viewport coverage
 - PRD Kanban board for lifecycle management
 - Drag-and-drop status updates with keyboard navigation
@@ -364,8 +406,10 @@ Based on the user's documented preferences, the template should also include:
 ## Appendix C: Integration Patterns
 
 ### MCP Server Integration
+
 ```markdown
 ### MCP Tools Available
+
 - All CLI commands available as MCP tools
 - Real-time project state synchronization
 - Editor integration with Cursor, Windsurf, VS Code
@@ -373,8 +417,10 @@ Based on the user's documented preferences, the template should also include:
 ```
 
 ### AI Editor Integration Files
+
 ```markdown
 ### Generated Integration Files
+
 - `.augment-guidelines` - This file for Augment AI
 - `.cursor/rules/` - Cursor AI workspace rules
 - `.windsurfrules` - Windsurf AI rules
@@ -386,15 +432,18 @@ Based on the user's documented preferences, the template should also include:
 ### Immediate Actions Required
 
 1. **Update Template File** (`.taskmaster/templates/augment-guidelines`)
+
    - Fix configuration file references
    - Update file organization paths
    - Add PRD management system documentation
    - Include complete command reference
 
 2. **Add Template Regeneration Command**
+
    ```bash
    task-hero update-guidelines
    ```
+
    - Allow users to update existing `.augment-guidelines` files
    - Preserve custom modifications where possible
    - Provide migration warnings for breaking changes
@@ -409,29 +458,31 @@ Based on the user's documented preferences, the template should also include:
 ```javascript
 // Proposed template generation with dynamic variables
 function generateAugmentGuidelines(projectRoot) {
-    const config = loadConfig(projectRoot);
-    const projectStats = getProjectStatistics(projectRoot);
-    const templateVars = {
-        PROJECT_NAME: config.global.projectName,
-        TASK_COUNT: projectStats.totalTasks,
-        PRD_COUNT: projectStats.totalPrds,
-        COMPLETION_RATE: projectStats.completionPercentage,
-        MAIN_AI_MODEL: config.models.main.modelId,
-        PACKAGE_VERSION: getPackageVersion()
-    };
+	const config = loadConfig(projectRoot);
+	const projectStats = getProjectStatistics(projectRoot);
+	const templateVars = {
+		PROJECT_NAME: config.global.projectName,
+		TASK_COUNT: projectStats.totalTasks,
+		PRD_COUNT: projectStats.totalPrds,
+		COMPLETION_RATE: projectStats.completionPercentage,
+		MAIN_AI_MODEL: config.models.main.modelId,
+		PACKAGE_VERSION: getPackageVersion()
+	};
 
-    return processTemplate(templateVars);
+	return processTemplate(templateVars);
 }
 ```
 
 ### Validation and Testing
 
 1. **Template Accuracy Validation**
+
    - Verify all file paths exist in actual projects
    - Test all command references for accuracy
    - Validate configuration file locations
 
 2. **Integration Testing**
+
    - Test with Augment AI to ensure improved context understanding
    - Verify command suggestions are accurate
    - Check file path recommendations work correctly
@@ -444,11 +495,13 @@ function generateAugmentGuidelines(projectRoot) {
 ### Migration Strategy
 
 1. **Existing Projects**
+
    - Detect outdated `.augment-guidelines` files
    - Offer automatic update with backup
    - Provide migration report showing changes
 
 2. **New Projects**
+
    - Generate updated template automatically
    - Include all current features and commands
    - Ensure dynamic variables are populated correctly
@@ -505,6 +558,7 @@ flowchart TD
 ### Workflow Verification Status: ✅ **COMPLETE**
 
 **Phase 1 Implementation Results:**
+
 - ✅ Updated Augment Guidelines Template with complete workflow
 - ✅ Updated Command Reference with all missing commands
 - ✅ Added PRD context passing for better integration
@@ -513,6 +567,7 @@ flowchart TD
 - ✅ Included "no API keys" scenario for pure tracking functionality
 
 **Integration Quality:**
+
 - **Augment Guidelines Template**: 297+ lines with comprehensive workflow
 - **Command Reference**: 567+ lines with complete command coverage
 - **Context Passing**: PRD → Task → Subtask context flow implemented
@@ -598,6 +653,7 @@ flowchart TD
 ### Workflow Phase Breakdown
 
 #### 🧠 **Phase 1: Intelligent PRD Analysis & Planning (Steps 1-3)**
+
 ```bash
 # Augment AI performs deep analysis BEFORE using TaskMaster:
 # Block 2: Analyze PRD content, identify complexity patterns
@@ -605,6 +661,7 @@ flowchart TD
 ```
 
 **Key Actions:**
+
 - **Block 1**: 🟣 User provides PRD document to Augment
 - **Block 2**: 🟢 Augment performs intelligent PRD analysis:
   - Identifies complexity patterns and technical challenges
@@ -616,12 +673,14 @@ flowchart TD
   - Defines dependencies and relationships
 
 #### 📋 **Phase 2: TaskMaster Documentation (Steps 4-7)**
+
 ```bash
 # Block 4: Augment documents the pre-analyzed structure:
 task-hero parse-prd --input=requirements.txt    # Document initial tasks
 ```
 
 **Key Actions:**
+
 - **Block 4**: 🟢 Augment runs `task-hero parse-prd --input=prd-file.txt`
 - **Block 5-7**: 🔵 TaskMaster processes and stores the structure:
   - AI analyzes PRD and creates tasks (using Augment's analysis)
@@ -629,6 +688,7 @@ task-hero parse-prd --input=requirements.txt    # Document initial tasks
   - PRD metadata created in `.taskmaster/prd/`
 
 #### 🧩 **Phase 3: Dynamic Subtask Creation (Steps 8-15)**
+
 ```bash
 # Augment creates subtasks based on its analysis:
 task-hero expand --id=X                         # Block 10: Expand complex tasks
@@ -636,6 +696,7 @@ task-hero expand --id=X.Y                       # Block 13: Expand complex subta
 ```
 
 **Key Actions:**
+
 - **Block 8**: 🟢 Augment creates detailed subtask structure:
   - Analyzes each task complexity (already done in Phase 1)
   - Generates detailed subtasks with implementation steps
@@ -647,6 +708,7 @@ task-hero expand --id=X.Y                       # Block 13: Expand complex subta
 - **Block 15**: Complete task hierarchy finalized
 
 #### 🎯 **Phase 4: Task Execution Cycle (Steps 16-30)**
+
 ```bash
 # Augment AI execution pattern:
 task-hero next                                  # Block 16: Find next available task
@@ -657,6 +719,7 @@ task-hero prd-sync                              # Block 25: Sync PRD status
 ```
 
 **Key Actions:**
+
 - **Block 16**: 🟢 Augment runs `task-hero next`
 - **Block 17**: 🔵 TaskMaster identifies next available task
 - **Block 18**: 🟢 Augment runs `task-hero set-status --id=X --status=in-progress`
@@ -667,17 +730,20 @@ task-hero prd-sync                              # Block 25: Sync PRD status
 - **Block 25**: 🟢 Augment runs `task-hero prd-sync`
 
 #### 🎉 **Phase 5: Project Completion (Steps 28-30)**
+
 ```bash
 # Final PRD archiving:
 task-hero prd-archive prd_XXX                  # Block 29: Archive completed PRD
 ```
 
 **Key Actions:**
+
 - **Block 28**: 🎉 PRD completion detected
 - **Block 29**: 🟢 Augment runs `task-hero prd-archive prd_XXX`
 - **Block 30**: ✨ Project milestone achieved
 
 #### 🚫 **Error Handling & Blocking Issues (Alternative Path)**
+
 ```bash
 # When tasks are blocked:
 task-hero set-status --id=X --status=blocked   # Block 23B: Mark as blocked
@@ -686,12 +752,14 @@ task-hero set-status --id=X --status=blocked   # Block 23B: Mark as blocked
 ```
 
 **Key Actions:**
+
 - **Block 23B**: 🟢 Augment runs `task-hero set-status --id=X --status=blocked`
 - **Block 24B**: 🟠 User documents blocking issue
 - **Block 25B**: 🟢 Augment helps resolve dependencies
 - **Block 27B**: Move to different task if issue persists
 
 ### Color Legend
+
 - 🟢 **Green**: Augment AI actions (running TaskMaster commands)
 - 🟠 **Orange**: User manual actions (development, configuration)
 - 🔵 **Blue**: TaskMaster system actions (AI processing, file operations)
@@ -703,16 +771,19 @@ task-hero set-status --id=X --status=blocked   # Block 23B: Mark as blocked
 #### 🤖 **How Augment Should Use This Flow**
 
 1. **Context Awareness**
+
    - Always check if TaskMaster project is initialized before suggesting commands
    - Understand current project state by checking `.taskmaster/` directory
    - Reference PRD metadata when making task-related suggestions
 
 2. **Command Sequencing**
+
    - Follow the logical flow: init → parse-prd → analyze → expand → execute
    - Don't skip complexity analysis for complex PRDs
    - Always sync PRD status after task completion
 
 3. **User Guidance**
+
    - Suggest using interactive menu (`task-hero menu`) for better UX
    - Recommend Kanban board for visual project management
    - Guide users through proper task status transitions
@@ -749,16 +820,19 @@ graph LR
 #### 🎯 **Best Practices for Augment AI**
 
 1. **Always Use Correct Commands**
+
    - Use `task-hero` or `task-master` (both work)
    - Reference correct file paths (`.taskmaster/` not `tasks/`)
    - Use proper status values: pending, in-progress, done, blocked, etc.
 
 2. **Maintain Project Context**
+
    - Track which PRD is being worked on
    - Understand task dependencies and order
    - Monitor overall project completion status
 
 3. **Provide Helpful Suggestions**
+
    - Suggest next logical steps in the workflow
    - Recommend complexity analysis for large PRDs
    - Guide users to use visual tools when appropriate
@@ -779,18 +853,21 @@ The updated workflow positions Augment AI as the intelligent analysis layer that
 #### **1. PRD Analysis Intelligence (Block 2)**
 
 **Augment Guidelines Enhancement:**
+
 ```markdown
 ### Intelligent PRD Analysis Protocol
 
 When a user provides a PRD, Augment should:
 
 1. **Complexity Pattern Recognition**
+
    - Identify technical complexity indicators (APIs, databases, integrations)
    - Recognize architectural patterns (microservices, monolith, serverless)
    - Detect dependency chains and critical path items
    - Assess testing complexity and deployment requirements
 
 2. **Task Breakdown Strategy**
+
    - Determine optimal number of main tasks (3-25 based on PRD size)
    - Identify which tasks will need subtask expansion
    - Plan dependency relationships between tasks
@@ -806,18 +883,21 @@ When a user provides a PRD, Augment should:
 #### **2. Dynamic Task Structure Generation (Block 3)**
 
 **Implementation Approach:**
+
 ```markdown
 ### Task Structure Generation Protocol
 
 Augment should generate a complete mental model including:
 
 **Main Task Structure:**
+
 - Task titles with clear scope boundaries
 - Complexity scores (1-10) for each task
 - Dependency relationships and sequencing
 - Priority levels based on critical path analysis
 
 **Subtask Hierarchy Design:**
+
 - Detailed subtasks for tasks with complexity > 6
 - Implementation steps for each subtask
 - Testing strategies for validation
@@ -825,32 +905,38 @@ Augment should generate a complete mental model including:
 
 **Example Mental Model:**
 ```
+
 Task 5: "Implement User Authentication" (Complexity: 8)
 ├── 5.1: "Setup OAuth Provider Integration" (Complexity: 6)
-│   ├── 5.1.1: "Configure OAuth credentials"
-│   ├── 5.1.2: "Implement OAuth callback handler"
-│   └── 5.1.3: "Add OAuth error handling"
+│ ├── 5.1.1: "Configure OAuth credentials"
+│ ├── 5.1.2: "Implement OAuth callback handler"
+│ └── 5.1.3: "Add OAuth error handling"
 ├── 5.2: "Create User Session Management" (Complexity: 7)
-│   ├── 5.2.1: "Design session storage schema"
-│   ├── 5.2.2: "Implement session middleware"
-│   └── 5.2.3: "Add session security measures"
+│ ├── 5.2.1: "Design session storage schema"
+│ ├── 5.2.2: "Implement session middleware"
+│ └── 5.2.3: "Add session security measures"
 └── 5.3: "Build Authentication UI Components" (Complexity: 5)
+
 ```
+
 ```
 
 #### **3. Dynamic Subtask Creation Strategy**
 
 **Augment Guidelines for Subtask Generation:**
+
 ```markdown
 ### Dynamic Subtask Creation Rules
 
 **When to Create Subtasks:**
+
 - Task complexity score > 6 (automatically expand)
 - Task involves multiple technical domains
 - Task has more than 3 distinct implementation steps
 - Task requires integration with external systems
 
 **Subtask Generation Process:**
+
 1. **Analyze Task Scope**: Break down into logical implementation units
 2. **Create Subtask Hierarchy**: Design 3-7 subtasks per complex task
 3. **Define Dependencies**: Establish prerequisite relationships
@@ -858,6 +944,7 @@ Task 5: "Implement User Authentication" (Complexity: 8)
 5. **Plan Testing Strategy**: Define validation approach for each subtask
 
 **Nested Subtask Rules:**
+
 - Create nested subtasks when subtask complexity > 5
 - Limit nesting to 3 levels maximum (X.Y.Z)
 - Ensure each nested subtask is actionable (1-2 days work)
@@ -866,16 +953,20 @@ Task 5: "Implement User Authentication" (Complexity: 8)
 #### **4. TaskMaster Integration Points**
 
 **How Augment Uses TaskMaster Commands:**
-```markdown
+
+````markdown
 ### TaskMaster Command Usage Strategy
 
 **Phase 1: Document Initial Structure**
+
 ```bash
 # After Augment completes analysis, document the structure:
 task-hero parse-prd --input=prd-file.txt
 ```
+````
 
 **Phase 2: Create Subtask Hierarchy**
+
 ```bash
 # For each complex task identified in analysis:
 task-hero expand --id=5 --num=3 --prompt="OAuth integration, session management, UI components"
@@ -886,6 +977,7 @@ task-hero expand --id=5.2 --num=3 --prompt="Session storage, middleware, securit
 ```
 
 **Phase 3: Execution Management**
+
 ```bash
 # Augment manages the execution flow:
 task-hero next                                    # Find optimal next task
@@ -893,7 +985,8 @@ task-hero set-status --id=5.1 --status=in-progress  # Start specific subtask
 task-hero set-status --id=5.1 --status=done         # Complete subtask
 task-hero prd-sync                                # Update PRD status
 ```
-```
+
+````
 
 #### **5. Zero User Intervention Strategy**
 
@@ -915,21 +1008,24 @@ task-hero prd-sync                                # Update PRD status
 - Document blocking issues when they occur (Block 24B)
 
 **Everything Else is Automated by Augment**
-```
+````
 
 #### **6. PRD Reference Integration**
 
 **Leveraging PRD Context:**
+
 ```markdown
 ### PRD-Driven Intelligence
 
 **Context Awareness:**
+
 - Reference original PRD sections when creating subtasks
 - Maintain traceability from requirements to implementation
 - Use PRD technical specifications for subtask details
 - Incorporate PRD acceptance criteria into task validation
 
 **Dynamic Adaptation:**
+
 - Adjust task complexity based on PRD technical depth
 - Modify subtask structure based on PRD architectural requirements
 - Align task priorities with PRD business objectives

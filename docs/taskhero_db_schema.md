@@ -300,21 +300,25 @@ erDiagram
 ## Key Design Principles
 
 ### 1. **Scalability**
+
 - Separate tables for different entity types to allow independent scaling
 - Indexed foreign keys for efficient joins
 - JSON columns for flexible metadata storage
 
 ### 2. **Data Integrity**
+
 - Foreign key constraints to maintain referential integrity
 - Enum constraints for status fields
 - Audit trail for all critical operations
 
 ### 3. **Flexibility**
+
 - JSON metadata columns for extensible data storage
 - Configurable kanban board structures
 - Support for multiple AI providers and models
 
 ### 4. **Performance**
+
 - Optimized for common query patterns (tasks by project, PRDs by status)
 - Separate tables for large text content (details, descriptions)
 - Efficient indexing strategy for search and filtering
@@ -322,12 +326,14 @@ erDiagram
 ## Migration Considerations
 
 ### From JSON to SQL
+
 1. **Data Transformation**: Current JSON structures map directly to table rows
 2. **Relationship Extraction**: Dependencies and references become foreign keys
 3. **Metadata Preservation**: Complex nested data stored in JSON columns
 4. **File Path Management**: Absolute paths converted to relative with base path configuration
 
 ### Backward Compatibility
+
 - Maintain JSON export functionality for existing integrations
 - API layer abstracts database changes from CLI and web interfaces
 - Configuration migration tools for seamless transition

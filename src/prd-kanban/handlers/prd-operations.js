@@ -14,440 +14,446 @@ import fs from 'fs';
  * @returns {string} - Path to tasks.json file
  */
 function getTasksJsonPath(projectRoot) {
-    // Try new structure first
-    const newPath = path.join(projectRoot, '.taskmaster', 'tasks', 'tasks.json');
-    if (fs.existsSync(newPath)) {
-        return newPath;
-    }
+	// Try new structure first
+	const newPath = path.join(projectRoot, '.taskmaster', 'tasks', 'tasks.json');
+	if (fs.existsSync(newPath)) {
+		return newPath;
+	}
 
-    // Fall back to old structure
-    const oldPath = path.join(projectRoot, 'tasks', 'tasks.json');
-    return oldPath;
+	// Fall back to old structure
+	const oldPath = path.join(projectRoot, 'tasks', 'tasks.json');
+	return oldPath;
 }
 
 /**
  * PRD Operations Handler class
  */
 export class PRDOperationsHandler {
-    constructor(board) {
-        this.board = board;
-        this.projectRoot = board.projectRoot;
-        this.prdsPath = board.prdsPath;
-        this.tasksPath = getTasksJsonPath(this.projectRoot);
-    }
+	constructor(board) {
+		this.board = board;
+		this.projectRoot = board.projectRoot;
+		this.prdsPath = board.prdsPath;
+		this.tasksPath = getTasksJsonPath(this.projectRoot);
+	}
 
-    /**
-     * Show PRD details
-     */
-    async showPRDDetails() {
-        const selectedPRD = this.board.getSelectedPRD();
+	/**
+	 * Show PRD details
+	 */
+	async showPRDDetails() {
+		const selectedPRD = this.board.getSelectedPRD();
 
-        if (!selectedPRD) {
-            return {
-                success: false,
-                message: 'No PRD selected'
-            };
-        }
+		if (!selectedPRD) {
+			return {
+				success: false,
+				message: 'No PRD selected'
+			};
+		}
 
-        try {
-            // Get full PRD details
-            const fullPRD = await this.getFullPRDDetails(selectedPRD.id);
+		try {
+			// Get full PRD details
+			const fullPRD = await this.getFullPRDDetails(selectedPRD.id);
 
-            // Show details popup
-            if (this.board.prdDetailsPopup) {
-                const result = await this.board.prdDetailsPopup.show(fullPRD);
-                if (result) {
-                    this.board.render();
-                }
-            }
+			// Show details popup
+			if (this.board.prdDetailsPopup) {
+				const result = await this.board.prdDetailsPopup.show(fullPRD);
+				if (result) {
+					this.board.render();
+				}
+			}
 
-            return {
-                success: true,
-                message: `Showing details for PRD ${selectedPRD.id}`,
-                prd: fullPRD
-            };
+			return {
+				success: true,
+				message: `Showing details for PRD ${selectedPRD.id}`,
+				prd: fullPRD
+			};
+		} catch (error) {
+			return {
+				success: false,
+				message: `Error loading PRD details: ${error.message}`,
+				error
+			};
+		}
+	}
 
-        } catch (error) {
-            return {
-                success: false,
-                message: `Error loading PRD details: ${error.message}`,
-                error
-            };
-        }
-    }
+	/**
+	 * Show linked tasks
+	 */
+	async showLinkedTasks() {
+		const selectedPRD = this.board.getSelectedPRD();
+		if (!selectedPRD) {
+			return {
+				success: false,
+				message: 'No PRD selected'
+			};
+		}
 
-    /**
-     * Show linked tasks
-     */
-    async showLinkedTasks() {
-        const selectedPRD = this.board.getSelectedPRD();
-        if (!selectedPRD) {
-            return {
-                success: false,
-                message: 'No PRD selected'
-            };
-        }
+		try {
+			// Get linked tasks
+			const linkedTasks = await this.getLinkedTasks(selectedPRD.id);
 
-        try {
-            // Get linked tasks
-            const linkedTasks = await this.getLinkedTasks(selectedPRD.id);
-            
-            // Show tasks popup
-            if (this.board.prdDetailsPopup) {
-                this.board.prdDetailsPopup.show(selectedPRD, 'tasks', linkedTasks);
-            }
+			// Show tasks popup
+			if (this.board.prdDetailsPopup) {
+				this.board.prdDetailsPopup.show(selectedPRD, 'tasks', linkedTasks);
+			}
 
-            return {
-                success: true,
-                message: `Showing ${linkedTasks.length} linked tasks for PRD ${selectedPRD.id}`,
-                tasks: linkedTasks
-            };
+			return {
+				success: true,
+				message: `Showing ${linkedTasks.length} linked tasks for PRD ${selectedPRD.id}`,
+				tasks: linkedTasks
+			};
+		} catch (error) {
+			return {
+				success: false,
+				message: `Error loading linked tasks: ${error.message}`,
+				error
+			};
+		}
+	}
 
-        } catch (error) {
-            return {
-                success: false,
-                message: `Error loading linked tasks: ${error.message}`,
-                error
-            };
-        }
-    }
+	/**
+	 * Show statistics
+	 */
+	async showStatistics() {
+		try {
+			// Calculate statistics
+			const stats = await this.calculateStatistics();
 
-    /**
-     * Show statistics
-     */
-    async showStatistics() {
-        try {
-            // Calculate statistics
-            const stats = await this.calculateStatistics();
-            
-            // Show statistics popup
-            if (this.board.prdDetailsPopup) {
-                this.board.prdDetailsPopup.show(null, 'statistics', stats);
-            }
+			// Show statistics popup
+			if (this.board.prdDetailsPopup) {
+				this.board.prdDetailsPopup.show(null, 'statistics', stats);
+			}
 
-            return {
-                success: true,
-                message: 'Showing PRD statistics',
-                statistics: stats
-            };
+			return {
+				success: true,
+				message: 'Showing PRD statistics',
+				statistics: stats
+			};
+		} catch (error) {
+			return {
+				success: false,
+				message: `Error calculating statistics: ${error.message}`,
+				error
+			};
+		}
+	}
 
-        } catch (error) {
-            return {
-                success: false,
-                message: `Error calculating statistics: ${error.message}`,
-                error
-            };
-        }
-    }
+	/**
+	 * Get full PRD details
+	 */
+	async getFullPRDDetails(prdId) {
+		try {
+			const prdsData = await readJSON(this.prdsPath);
+			const prd = prdsData.prds.find((p) => p.id === prdId);
 
-    /**
-     * Get full PRD details
-     */
-    async getFullPRDDetails(prdId) {
-        try {
-            const prdsData = await readJSON(this.prdsPath);
-            const prd = prdsData.prds.find(p => p.id === prdId);
-            
-            if (!prd) {
-                throw new Error(`PRD ${prdId} not found`);
-            }
+			if (!prd) {
+				throw new Error(`PRD ${prdId} not found`);
+			}
 
-            // Add additional computed fields
-            const linkedTasks = await this.getLinkedTasks(prdId);
-            const taskStats = this.calculateTaskStats(linkedTasks);
+			// Add additional computed fields
+			const linkedTasks = await this.getLinkedTasks(prdId);
+			const taskStats = this.calculateTaskStats(linkedTasks);
 
-            return {
-                ...prd,
-                linkedTasksCount: linkedTasks.length,
-                taskStats,
-                linkedTasks: linkedTasks.slice(0, 5) // First 5 tasks for preview
-            };
+			return {
+				...prd,
+				linkedTasksCount: linkedTasks.length,
+				taskStats,
+				linkedTasks: linkedTasks.slice(0, 5) // First 5 tasks for preview
+			};
+		} catch (error) {
+			console.error(
+				chalk.red('Error getting full PRD details:'),
+				error.message
+			);
+			throw error;
+		}
+	}
 
-        } catch (error) {
-            console.error(chalk.red('Error getting full PRD details:'), error.message);
-            throw error;
-        }
-    }
+	/**
+	 * Get linked tasks for a PRD
+	 */
+	async getLinkedTasks(prdId) {
+		try {
+			const tasksData = await readJSON(this.tasksPath);
+			const tasks = tasksData.tasks || [];
 
-    /**
-     * Get linked tasks for a PRD
-     */
-    async getLinkedTasks(prdId) {
-        try {
-            const tasksData = await readJSON(this.tasksPath);
-            const tasks = tasksData.tasks || [];
+			// Get PRD details to access linkedTaskIds
+			const prd = this.board.getAllPRDs().find((p) => p.id === prdId);
 
-            // Get PRD details to access linkedTaskIds
-            const prd = this.board.getAllPRDs().find(p => p.id === prdId);
+			// Find tasks linked to this PRD using multiple approaches
+			const linkedTasks = tasks.filter((task) => {
+				// Approach 1: Check if task has prdSource.prdId that matches this PRD
+				if (task.prdSource && task.prdSource.prdId === prdId) {
+					return true;
+				}
 
-            // Find tasks linked to this PRD using multiple approaches
-            const linkedTasks = tasks.filter(task => {
-                // Approach 1: Check if task has prdSource.prdId that matches this PRD
-                if (task.prdSource && task.prdSource.prdId === prdId) {
-                    return true;
-                }
+				// Approach 2: Check if task ID is in PRD's linkedTaskIds array
+				if (prd && prd.linkedTaskIds && prd.linkedTaskIds.includes(task.id)) {
+					return true;
+				}
 
-                // Approach 2: Check if task ID is in PRD's linkedTaskIds array
-                if (prd && prd.linkedTaskIds && prd.linkedTaskIds.includes(task.id)) {
-                    return true;
-                }
+				// Approach 3: Check if task's prdSource fileName matches PRD fileName (fallback)
+				if (prd && task.prdSource && task.prdSource.fileName === prd.fileName) {
+					return true;
+				}
 
-                // Approach 3: Check if task's prdSource fileName matches PRD fileName (fallback)
-                if (prd && task.prdSource && task.prdSource.fileName === prd.fileName) {
-                    return true;
-                }
+				// Approach 4: Check legacy fields for compatibility
+				if (
+					(task.linkedTasks && task.linkedTasks.includes(prdId)) ||
+					(task.metadata && task.metadata.prdSource === prdId)
+				) {
+					return true;
+				}
 
-                // Approach 4: Check legacy fields for compatibility
-                if ((task.linkedTasks && task.linkedTasks.includes(prdId)) ||
-                    (task.metadata && task.metadata.prdSource === prdId)) {
-                    return true;
-                }
+				return false;
+			});
 
-                return false;
-            });
+			return linkedTasks;
+		} catch (error) {
+			console.error(chalk.red('Error getting linked tasks:'), error.message);
+			return [];
+		}
+	}
 
-            return linkedTasks;
+	/**
+	 * Calculate task statistics for a PRD
+	 */
+	calculateTaskStats(tasks) {
+		const stats = {
+			total: tasks.length,
+			pending: 0,
+			'in-progress': 0,
+			done: 0,
+			blocked: 0,
+			deferred: 0,
+			cancelled: 0,
+			completionPercentage: 0
+		};
 
-        } catch (error) {
-            console.error(chalk.red('Error getting linked tasks:'), error.message);
-            return [];
-        }
-    }
+		tasks.forEach((task) => {
+			const status = task.status || 'pending';
+			if (stats.hasOwnProperty(status)) {
+				stats[status]++;
+			}
+		});
 
-    /**
-     * Calculate task statistics for a PRD
-     */
-    calculateTaskStats(tasks) {
-        const stats = {
-            total: tasks.length,
-            pending: 0,
-            'in-progress': 0,
-            done: 0,
-            blocked: 0,
-            deferred: 0,
-            cancelled: 0,
-            completionPercentage: 0
-        };
+		if (stats.total > 0) {
+			stats.completionPercentage = Math.round((stats.done / stats.total) * 100);
+		}
 
-        tasks.forEach(task => {
-            const status = task.status || 'pending';
-            if (stats.hasOwnProperty(status)) {
-                stats[status]++;
-            }
-        });
+		return stats;
+	}
 
-        if (stats.total > 0) {
-            stats.completionPercentage = Math.round((stats.done / stats.total) * 100);
-        }
+	/**
+	 * Calculate overall statistics
+	 */
+	async calculateStatistics() {
+		try {
+			const allPRDs = this.board.getAllPRDs();
+			const allTasks = await this.getAllTasks();
 
-        return stats;
-    }
+			const prdStats = {
+				total: allPRDs.length,
+				pending: 0,
+				'in-progress': 0,
+				done: 0,
+				byPriority: { high: 0, medium: 0, low: 0 },
+				byComplexity: { high: 0, medium: 0, low: 0 }
+			};
 
-    /**
-     * Calculate overall statistics
-     */
-    async calculateStatistics() {
-        try {
-            const allPRDs = this.board.getAllPRDs();
-            const allTasks = await this.getAllTasks();
+			const taskStats = {
+				total: allTasks.length,
+				pending: 0,
+				'in-progress': 0,
+				done: 0,
+				blocked: 0,
+				deferred: 0,
+				cancelled: 0,
+				linkedToPRDs: 0
+			};
 
-            const prdStats = {
-                total: allPRDs.length,
-                pending: 0,
-                'in-progress': 0,
-                done: 0,
-                byPriority: { high: 0, medium: 0, low: 0 },
-                byComplexity: { high: 0, medium: 0, low: 0 }
-            };
+			// Calculate PRD statistics
+			allPRDs.forEach((prd) => {
+				const status = prd.status || 'pending';
+				if (prdStats.hasOwnProperty(status)) {
+					prdStats[status]++;
+				}
 
-            const taskStats = {
-                total: allTasks.length,
-                pending: 0,
-                'in-progress': 0,
-                done: 0,
-                blocked: 0,
-                deferred: 0,
-                cancelled: 0,
-                linkedToPRDs: 0
-            };
+				const priority = prd.priority || 'medium';
+				if (prdStats.byPriority.hasOwnProperty(priority)) {
+					prdStats.byPriority[priority]++;
+				}
 
-            // Calculate PRD statistics
-            allPRDs.forEach(prd => {
-                const status = prd.status || 'pending';
-                if (prdStats.hasOwnProperty(status)) {
-                    prdStats[status]++;
-                }
+				const complexity = prd.complexity || 'medium';
+				if (prdStats.byComplexity.hasOwnProperty(complexity)) {
+					prdStats.byComplexity[complexity]++;
+				}
+			});
 
-                const priority = prd.priority || 'medium';
-                if (prdStats.byPriority.hasOwnProperty(priority)) {
-                    prdStats.byPriority[priority]++;
-                }
+			// Calculate task statistics
+			allTasks.forEach((task) => {
+				const status = task.status || 'pending';
+				if (taskStats.hasOwnProperty(status)) {
+					taskStats[status]++;
+				}
 
-                const complexity = prd.complexity || 'medium';
-                if (prdStats.byComplexity.hasOwnProperty(complexity)) {
-                    prdStats.byComplexity[complexity]++;
-                }
-            });
+				if (task.prdSource || (task.metadata && task.metadata.prdSource)) {
+					taskStats.linkedToPRDs++;
+				}
+			});
 
-            // Calculate task statistics
-            allTasks.forEach(task => {
-                const status = task.status || 'pending';
-                if (taskStats.hasOwnProperty(status)) {
-                    taskStats[status]++;
-                }
+			// Calculate completion percentages
+			prdStats.completionPercentage =
+				prdStats.total > 0
+					? Math.round((prdStats.done / prdStats.total) * 100)
+					: 0;
 
-                if (task.prdSource || (task.metadata && task.metadata.prdSource)) {
-                    taskStats.linkedToPRDs++;
-                }
-            });
+			taskStats.completionPercentage =
+				taskStats.total > 0
+					? Math.round((taskStats.done / taskStats.total) * 100)
+					: 0;
 
-            // Calculate completion percentages
-            prdStats.completionPercentage = prdStats.total > 0 ? 
-                Math.round((prdStats.done / prdStats.total) * 100) : 0;
-            
-            taskStats.completionPercentage = taskStats.total > 0 ? 
-                Math.round((taskStats.done / taskStats.total) * 100) : 0;
+			return {
+				prds: prdStats,
+				tasks: taskStats,
+				overview: {
+					totalPRDs: prdStats.total,
+					totalTasks: taskStats.total,
+					prdCompletionRate: prdStats.completionPercentage,
+					taskCompletionRate: taskStats.completionPercentage,
+					tasksPerPRD:
+						prdStats.total > 0
+							? Math.round(taskStats.linkedToPRDs / prdStats.total)
+							: 0
+				}
+			};
+		} catch (error) {
+			console.error(chalk.red('Error calculating statistics:'), error.message);
+			throw error;
+		}
+	}
 
-            return {
-                prds: prdStats,
-                tasks: taskStats,
-                overview: {
-                    totalPRDs: prdStats.total,
-                    totalTasks: taskStats.total,
-                    prdCompletionRate: prdStats.completionPercentage,
-                    taskCompletionRate: taskStats.completionPercentage,
-                    tasksPerPRD: prdStats.total > 0 ? Math.round(taskStats.linkedToPRDs / prdStats.total) : 0
-                }
-            };
+	/**
+	 * Get all tasks
+	 */
+	async getAllTasks() {
+		try {
+			const tasksData = await readJSON(this.tasksPath);
+			return tasksData.tasks || [];
+		} catch (error) {
+			console.error(chalk.red('Error getting all tasks:'), error.message);
+			return [];
+		}
+	}
 
-        } catch (error) {
-            console.error(chalk.red('Error calculating statistics:'), error.message);
-            throw error;
-        }
-    }
+	/**
+	 * Archive PRD if it's in done status
+	 */
+	async archivePRD() {
+		const selectedPRD = this.board.getSelectedPRD();
+		if (!selectedPRD) {
+			return {
+				success: false,
+				message: 'No PRD selected'
+			};
+		}
 
-    /**
-     * Get all tasks
-     */
-    async getAllTasks() {
-        try {
-            const tasksData = await readJSON(this.tasksPath);
-            return tasksData.tasks || [];
-        } catch (error) {
-            console.error(chalk.red('Error getting all tasks:'), error.message);
-            return [];
-        }
-    }
+		try {
+			// Check if PRD is in done status
+			if (selectedPRD.status !== 'done') {
+				return {
+					success: false,
+					message: `Cannot archive PRD ${selectedPRD.id}: PRD must be in 'done' status (currently: ${selectedPRD.status})`
+				};
+			}
 
-    /**
-     * Archive PRD if it's in done status
-     */
-    async archivePRD() {
-        const selectedPRD = this.board.getSelectedPRD();
-        if (!selectedPRD) {
-            return {
-                success: false,
-                message: 'No PRD selected'
-            };
-        }
+			// Check if all linked tasks are completed
+			const linkedTasks = await this.getLinkedTasks(selectedPRD.id);
+			const incompleteTasks = linkedTasks.filter(
+				(task) => task.status !== 'done' && task.status !== 'completed'
+			);
 
-        try {
-            // Check if PRD is in done status
-            if (selectedPRD.status !== 'done') {
-                return {
-                    success: false,
-                    message: `Cannot archive PRD ${selectedPRD.id}: PRD must be in 'done' status (currently: ${selectedPRD.status})`
-                };
-            }
+			if (incompleteTasks.length > 0) {
+				return {
+					success: false,
+					message: `Cannot archive PRD ${selectedPRD.id}: ${incompleteTasks.length} linked tasks are not completed`
+				};
+			}
 
-            // Check if all linked tasks are completed
-            const linkedTasks = await this.getLinkedTasks(selectedPRD.id);
-            const incompleteTasks = linkedTasks.filter(task =>
-                task.status !== 'done' && task.status !== 'completed'
-            );
+			// Import the archive function
+			const { archivePrd } = await import(
+				'../../../scripts/modules/prd-manager/prd-archiving.js'
+			);
 
-            if (incompleteTasks.length > 0) {
-                return {
-                    success: false,
-                    message: `Cannot archive PRD ${selectedPRD.id}: ${incompleteTasks.length} linked tasks are not completed`
-                };
-            }
+			// Archive the PRD with proper options
+			const result = await archivePrd(selectedPRD.id, {
+				prdsPath: this.prdsPath,
+				force: true // Force archive from Kanban board
+			});
 
-            // Import the archive function
-            const { archivePrd } = await import('../../../scripts/modules/prd-manager/prd-archiving.js');
+			if (result.success) {
+				// Refresh the board to reflect changes
+				await this.board.refreshBoard();
 
-            // Archive the PRD with proper options
-            const result = await archivePrd(selectedPRD.id, {
-                prdsPath: this.prdsPath,
-                force: true // Force archive from Kanban board
-            });
+				return {
+					success: true,
+					message: `PRD ${selectedPRD.id} archived successfully`
+				};
+			} else {
+				return {
+					success: false,
+					message: `Failed to archive PRD ${selectedPRD.id}: ${result.error}`
+				};
+			}
+		} catch (error) {
+			return {
+				success: false,
+				message: `Error archiving PRD: ${error.message}`,
+				error
+			};
+		}
+	}
 
-            if (result.success) {
-                // Refresh the board to reflect changes
-                await this.board.refreshBoard();
+	/**
+	 * Export PRD data
+	 */
+	async exportPRDData(format = 'json') {
+		const selectedPRD = this.board.getSelectedPRD();
+		if (!selectedPRD) {
+			return {
+				success: false,
+				message: 'No PRD selected'
+			};
+		}
 
-                return {
-                    success: true,
-                    message: `PRD ${selectedPRD.id} archived successfully`
-                };
-            } else {
-                return {
-                    success: false,
-                    message: `Failed to archive PRD ${selectedPRD.id}: ${result.error}`
-                };
-            }
+		try {
+			const fullPRD = await this.getFullPRDDetails(selectedPRD.id);
+			const linkedTasks = await this.getLinkedTasks(selectedPRD.id);
 
-        } catch (error) {
-            return {
-                success: false,
-                message: `Error archiving PRD: ${error.message}`,
-                error
-            };
-        }
-    }
+			const exportData = {
+				prd: fullPRD,
+				linkedTasks,
+				exportedAt: new Date().toISOString(),
+				format
+			};
 
-    /**
-     * Export PRD data
-     */
-    async exportPRDData(format = 'json') {
-        const selectedPRD = this.board.getSelectedPRD();
-        if (!selectedPRD) {
-            return {
-                success: false,
-                message: 'No PRD selected'
-            };
-        }
-
-        try {
-            const fullPRD = await this.getFullPRDDetails(selectedPRD.id);
-            const linkedTasks = await this.getLinkedTasks(selectedPRD.id);
-
-            const exportData = {
-                prd: fullPRD,
-                linkedTasks,
-                exportedAt: new Date().toISOString(),
-                format
-            };
-
-            return {
-                success: true,
-                message: `PRD data exported in ${format} format`,
-                data: exportData
-            };
-
-        } catch (error) {
-            return {
-                success: false,
-                message: `Error exporting PRD data: ${error.message}`,
-                error
-            };
-        }
-    }
+			return {
+				success: true,
+				message: `PRD data exported in ${format} format`,
+				data: exportData
+			};
+		} catch (error) {
+			return {
+				success: false,
+				message: `Error exporting PRD data: ${error.message}`,
+				error
+			};
+		}
+	}
 }
 
 /**
  * Create a PRD operations handler instance
  */
 export function createPRDOperationsHandler(board) {
-    return new PRDOperationsHandler(board);
+	return new PRDOperationsHandler(board);
 }

@@ -36,8 +36,14 @@ describe('PRD Change Detection', () => {
 			const originalContent = 'Original PRD content';
 			const modifiedContent = 'Modified PRD content';
 
-			const originalHash = crypto.createHash('sha256').update(originalContent, 'utf8').digest('hex');
-			const modifiedHash = crypto.createHash('sha256').update(modifiedContent, 'utf8').digest('hex');
+			const originalHash = crypto
+				.createHash('sha256')
+				.update(originalContent, 'utf8')
+				.digest('hex');
+			const modifiedHash = crypto
+				.createHash('sha256')
+				.update(modifiedContent, 'utf8')
+				.digest('hex');
 
 			expect(originalHash).not.toBe(modifiedHash);
 		});
@@ -46,8 +52,14 @@ describe('PRD Change Detection', () => {
 			const content1 = 'Same PRD content';
 			const content2 = 'Same PRD content';
 
-			const hash1 = crypto.createHash('sha256').update(content1, 'utf8').digest('hex');
-			const hash2 = crypto.createHash('sha256').update(content2, 'utf8').digest('hex');
+			const hash1 = crypto
+				.createHash('sha256')
+				.update(content1, 'utf8')
+				.digest('hex');
+			const hash2 = crypto
+				.createHash('sha256')
+				.update(content2, 'utf8')
+				.digest('hex');
 
 			expect(hash1).toBe(hash2);
 		});
@@ -56,8 +68,14 @@ describe('PRD Change Detection', () => {
 			const content1 = 'PRD content without extra spaces';
 			const content2 = 'PRD content  without extra spaces'; // Extra space
 
-			const hash1 = crypto.createHash('sha256').update(content1, 'utf8').digest('hex');
-			const hash2 = crypto.createHash('sha256').update(content2, 'utf8').digest('hex');
+			const hash1 = crypto
+				.createHash('sha256')
+				.update(content1, 'utf8')
+				.digest('hex');
+			const hash2 = crypto
+				.createHash('sha256')
+				.update(content2, 'utf8')
+				.digest('hex');
 
 			expect(hash1).not.toBe(hash2);
 		});
@@ -66,8 +84,14 @@ describe('PRD Change Detection', () => {
 			const contentLF = 'Line 1\nLine 2\nLine 3';
 			const contentCRLF = 'Line 1\r\nLine 2\r\nLine 3';
 
-			const hashLF = crypto.createHash('sha256').update(contentLF, 'utf8').digest('hex');
-			const hashCRLF = crypto.createHash('sha256').update(contentCRLF, 'utf8').digest('hex');
+			const hashLF = crypto
+				.createHash('sha256')
+				.update(contentLF, 'utf8')
+				.digest('hex');
+			const hashCRLF = crypto
+				.createHash('sha256')
+				.update(contentCRLF, 'utf8')
+				.digest('hex');
 
 			expect(hashLF).not.toBe(hashCRLF);
 		});
@@ -115,7 +139,10 @@ describe('PRD Change Detection', () => {
 			};
 
 			const newContent = 'Modified PRD content';
-			const newHash = crypto.createHash('sha256').update(newContent, 'utf8').digest('hex');
+			const newHash = crypto
+				.createHash('sha256')
+				.update(newContent, 'utf8')
+				.digest('hex');
 			const newStats = { size: 2048 };
 
 			fsExistsSyncSpy.mockReturnValue(true);
@@ -124,7 +151,7 @@ describe('PRD Change Detection', () => {
 
 			// Simulate change detection
 			const changes = [];
-			mockTaskData.tasks.forEach(task => {
+			mockTaskData.tasks.forEach((task) => {
 				if (task.prdSource && task.prdSource.fileHash !== newHash) {
 					changes.push({
 						filePath: task.prdSource.filePath,
@@ -164,7 +191,7 @@ describe('PRD Change Detection', () => {
 
 			// Simulate missing file detection
 			const changes = [];
-			mockTaskData.tasks.forEach(task => {
+			mockTaskData.tasks.forEach((task) => {
 				if (task.prdSource && !fs.existsSync(task.prdSource.filePath)) {
 					changes.push({
 						filePath: task.prdSource.filePath,
@@ -180,7 +207,10 @@ describe('PRD Change Detection', () => {
 
 		test('should handle files with no changes', () => {
 			const originalContent = 'Unchanged PRD content';
-			const originalHash = crypto.createHash('sha256').update(originalContent, 'utf8').digest('hex');
+			const originalHash = crypto
+				.createHash('sha256')
+				.update(originalContent, 'utf8')
+				.digest('hex');
 
 			const mockTaskData = {
 				tasks: [
@@ -203,9 +233,12 @@ describe('PRD Change Detection', () => {
 
 			// Simulate no change detection
 			const changes = [];
-			const currentHash = crypto.createHash('sha256').update(originalContent, 'utf8').digest('hex');
-			
-			mockTaskData.tasks.forEach(task => {
+			const currentHash = crypto
+				.createHash('sha256')
+				.update(originalContent, 'utf8')
+				.digest('hex');
+
+			mockTaskData.tasks.forEach((task) => {
 				if (task.prdSource && task.prdSource.fileHash !== currentHash) {
 					changes.push({
 						filePath: task.prdSource.filePath,
@@ -266,7 +299,7 @@ describe('PRD Change Detection', () => {
 			const changes = [];
 			const uniquePRDs = new Map();
 
-			mockTaskData.tasks.forEach(task => {
+			mockTaskData.tasks.forEach((task) => {
 				if (task.prdSource) {
 					uniquePRDs.set(task.prdSource.filePath, task.prdSource);
 				}
@@ -282,8 +315,11 @@ describe('PRD Change Detection', () => {
 				} else {
 					try {
 						const content = fs.readFileSync(filePath, 'utf8');
-						const currentHash = crypto.createHash('sha256').update(content, 'utf8').digest('hex');
-						
+						const currentHash = crypto
+							.createHash('sha256')
+							.update(content, 'utf8')
+							.digest('hex');
+
 						if (prdSource.fileHash !== currentHash) {
 							changes.push({
 								filePath: filePath,
@@ -303,8 +339,12 @@ describe('PRD Change Detection', () => {
 			});
 
 			expect(changes).toHaveLength(2);
-			expect(changes.find(c => c.fileName === 'prd1.txt').changeType).toBe('modified');
-			expect(changes.find(c => c.fileName === 'prd2.txt').changeType).toBe('missing');
+			expect(changes.find((c) => c.fileName === 'prd1.txt').changeType).toBe(
+				'modified'
+			);
+			expect(changes.find((c) => c.fileName === 'prd2.txt').changeType).toBe(
+				'missing'
+			);
 		});
 	});
 
@@ -356,8 +396,8 @@ describe('PRD Change Detection', () => {
 			};
 
 			// Should not attempt to check files for manual tasks
-			const prdTasks = mockTaskData.tasks.filter(task => 
-				task.prdSource && task.prdSource.filePath
+			const prdTasks = mockTaskData.tasks.filter(
+				(task) => task.prdSource && task.prdSource.filePath
 			);
 
 			expect(prdTasks).toHaveLength(0);

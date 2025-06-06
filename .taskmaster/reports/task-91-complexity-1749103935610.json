@@ -1,21 +1,21 @@
 {
-  "meta": {
-    "generatedAt": "2025-06-05T06:12:18.988Z",
-    "tasksAnalyzed": 1,
-    "totalTasks": 9,
-    "analysisCount": 1,
-    "thresholdScore": 5,
-    "projectName": "Task Master",
-    "usedResearch": false
-  },
-  "complexityAnalysis": [
-    {
-      "taskId": 91,
-      "taskTitle": "Copy of Integrate v0.16.0",
-      "complexityScore": 9,
-      "recommendedSubtasks": 10,
-      "expansionPrompt": "Break down the integration of v0.16.0 into distinct phases, including: initial analysis of changes, preservation of custom features, implementation of new directory structure, integration of each new AI provider (AWS Bedrock, Google Vertex AI, Azure), Node.js update, environment variable setup, and specific bug fixes. Detail the steps for creating and managing the integration branch 'dev_rohit' for selective merging.",
-      "reasoning": "This task is highly complex due to the need to integrate a new upstream version while preserving numerous custom features. It involves significant architectural changes (new directory structure), multiple new third-party integrations (AWS, Google, Azure AI), a Node.js version update, environment variable management, and specific bug fixes. The 'selective merging' aspect adds further complexity, requiring careful branch management and conflict resolution. Each focus area (1-7) represents a substantial piece of work, and preserving custom features will require extensive testing and validation."
-    }
-  ]
+	"meta": {
+		"generatedAt": "2025-06-05T06:12:18.988Z",
+		"tasksAnalyzed": 1,
+		"totalTasks": 9,
+		"analysisCount": 1,
+		"thresholdScore": 5,
+		"projectName": "Task Master",
+		"usedResearch": false
+	},
+	"complexityAnalysis": [
+		{
+			"taskId": 91,
+			"taskTitle": "Copy of Integrate v0.16.0",
+			"complexityScore": 9,
+			"recommendedSubtasks": 10,
+			"expansionPrompt": "Break down the integration of v0.16.0 into distinct phases, including: initial analysis of changes, preservation of custom features, implementation of new directory structure, integration of each new AI provider (AWS Bedrock, Google Vertex AI, Azure), Node.js update, environment variable setup, and specific bug fixes. Detail the steps for creating and managing the integration branch 'dev_rohit' for selective merging.",
+			"reasoning": "This task is highly complex due to the need to integrate a new upstream version while preserving numerous custom features. It involves significant architectural changes (new directory structure), multiple new third-party integrations (AWS, Google, Azure AI), a Node.js version update, environment variable management, and specific bug fixes. The 'selective merging' aspect adds further complexity, requiring careful branch management and conflict resolution. Each focus area (1-7) represents a substantial piece of work, and preserving custom features will require extensive testing and validation."
+		}
+	]
 }

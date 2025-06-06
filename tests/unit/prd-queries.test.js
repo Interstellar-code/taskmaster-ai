@@ -68,8 +68,8 @@ describe('PRD Query and Filtering', () => {
 	describe('listPRDs function', () => {
 		test('should extract unique PRD sources', () => {
 			const prdSources = new Map();
-			
-			mockTaskData.tasks.forEach(task => {
+
+			mockTaskData.tasks.forEach((task) => {
 				if (task.prdSource && task.prdSource.fileName) {
 					const fileName = task.prdSource.fileName;
 					if (!prdSources.has(fileName)) {
@@ -89,14 +89,18 @@ describe('PRD Query and Filtering', () => {
 			const prdList = Array.from(prdSources.values());
 
 			expect(prdList).toHaveLength(2);
-			expect(prdList.find(p => p.fileName === 'requirements.txt').taskCount).toBe(2);
-			expect(prdList.find(p => p.fileName === 'api-spec.md').taskCount).toBe(1);
+			expect(
+				prdList.find((p) => p.fileName === 'requirements.txt').taskCount
+			).toBe(2);
+			expect(prdList.find((p) => p.fileName === 'api-spec.md').taskCount).toBe(
+				1
+			);
 		});
 
 		test('should sort PRDs by task count', () => {
 			const prdSources = new Map();
-			
-			mockTaskData.tasks.forEach(task => {
+
+			mockTaskData.tasks.forEach((task) => {
 				if (task.prdSource && task.prdSource.fileName) {
 					const fileName = task.prdSource.fileName;
 					if (!prdSources.has(fileName)) {
@@ -109,7 +113,9 @@ describe('PRD Query and Filtering', () => {
 				}
 			});
 
-			const prdList = Array.from(prdSources.values()).sort((a, b) => b.taskCount - a.taskCount);
+			const prdList = Array.from(prdSources.values()).sort(
+				(a, b) => b.taskCount - a.taskCount
+			);
 
 			expect(prdList[0].fileName).toBe('requirements.txt');
 			expect(prdList[0].taskCount).toBe(2);
@@ -118,19 +124,19 @@ describe('PRD Query and Filtering', () => {
 		});
 
 		test('should handle tasks without PRD sources', () => {
-			const tasksWithoutPRD = mockTaskData.tasks.filter(task => 
-				!task.prdSource || !task.prdSource.fileName
+			const tasksWithoutPRD = mockTaskData.tasks.filter(
+				(task) => !task.prdSource || !task.prdSource.fileName
 			);
 
 			expect(tasksWithoutPRD).toHaveLength(2);
-			expect(tasksWithoutPRD.map(t => t.id)).toEqual([4, 5]);
+			expect(tasksWithoutPRD.map((t) => t.id)).toEqual([4, 5]);
 		});
 
 		test('should handle empty task list', () => {
 			const emptyData = { tasks: [] };
 			const prdSources = new Map();
-			
-			emptyData.tasks.forEach(task => {
+
+			emptyData.tasks.forEach((task) => {
 				if (task.prdSource && task.prdSource.fileName) {
 					// This should not execute
 					prdSources.set(task.prdSource.fileName, task.prdSource);
@@ -144,7 +150,7 @@ describe('PRD Query and Filtering', () => {
 	describe('tasksFromPRD function', () => {
 		test('should filter tasks by exact PRD file name', () => {
 			const prdFilter = 'requirements.txt';
-			const filteredTasks = mockTaskData.tasks.filter(task => {
+			const filteredTasks = mockTaskData.tasks.filter((task) => {
 				if (!task.prdSource || !task.prdSource.fileName) {
 					return false;
 				}
@@ -152,16 +158,18 @@ describe('PRD Query and Filtering', () => {
 			});
 
 			expect(filteredTasks).toHaveLength(2);
-			expect(filteredTasks.map(t => t.id)).toEqual([1, 3]);
+			expect(filteredTasks.map((t) => t.id)).toEqual([1, 3]);
 		});
 
 		test('should filter tasks by partial PRD file name', () => {
 			const prdFilter = 'api';
-			const filteredTasks = mockTaskData.tasks.filter(task => {
+			const filteredTasks = mockTaskData.tasks.filter((task) => {
 				if (!task.prdSource || !task.prdSource.fileName) {
 					return false;
 				}
-				return task.prdSource.fileName.toLowerCase().includes(prdFilter.toLowerCase());
+				return task.prdSource.fileName
+					.toLowerCase()
+					.includes(prdFilter.toLowerCase());
 			});
 
 			expect(filteredTasks).toHaveLength(1);
@@ -170,7 +178,7 @@ describe('PRD Query and Filtering', () => {
 
 		test('should filter tasks by file path', () => {
 			const pathFilter = '/path/to/requirements.txt';
-			const filteredTasks = mockTaskData.tasks.filter(task => {
+			const filteredTasks = mockTaskData.tasks.filter((task) => {
 				if (!task.prdSource || !task.prdSource.filePath) {
 					return false;
 				}
@@ -178,21 +186,21 @@ describe('PRD Query and Filtering', () => {
 			});
 
 			expect(filteredTasks).toHaveLength(2);
-			expect(filteredTasks.map(t => t.id)).toEqual([1, 3]);
+			expect(filteredTasks.map((t) => t.id)).toEqual([1, 3]);
 		});
 
 		test('should combine PRD filter with status filter', () => {
 			const prdFilter = 'requirements.txt';
 			const statusFilter = 'pending';
-			
-			const filteredTasks = mockTaskData.tasks.filter(task => {
+
+			const filteredTasks = mockTaskData.tasks.filter((task) => {
 				if (!task.prdSource || !task.prdSource.fileName) {
 					return false;
 				}
-				
+
 				const matchesPrd = task.prdSource.fileName === prdFilter;
 				const matchesStatus = task.status === statusFilter;
-				
+
 				return matchesPrd && matchesStatus;
 			});
 
@@ -202,11 +210,13 @@ describe('PRD Query and Filtering', () => {
 
 		test('should handle case-insensitive filtering', () => {
 			const prdFilter = 'REQUIREMENTS.TXT';
-			const filteredTasks = mockTaskData.tasks.filter(task => {
+			const filteredTasks = mockTaskData.tasks.filter((task) => {
 				if (!task.prdSource || !task.prdSource.fileName) {
 					return false;
 				}
-				return task.prdSource.fileName.toLowerCase() === prdFilter.toLowerCase();
+				return (
+					task.prdSource.fileName.toLowerCase() === prdFilter.toLowerCase()
+				);
 			});
 
 			expect(filteredTasks).toHaveLength(2);
@@ -214,7 +224,7 @@ describe('PRD Query and Filtering', () => {
 
 		test('should return empty array for non-existent PRD', () => {
 			const prdFilter = 'nonexistent.txt';
-			const filteredTasks = mockTaskData.tasks.filter(task => {
+			const filteredTasks = mockTaskData.tasks.filter((task) => {
 				if (!task.prdSource || !task.prdSource.fileName) {
 					return false;
 				}
@@ -228,7 +238,7 @@ describe('PRD Query and Filtering', () => {
 	describe('showPRDSource function', () => {
 		test('should find PRD source for specific task', () => {
 			const taskId = 1;
-			const task = mockTaskData.tasks.find(t => t.id === taskId);
+			const task = mockTaskData.tasks.find((t) => t.id === taskId);
 
 			expect(task).toBeDefined();
 			expect(task.prdSource).toBeDefined();
@@ -238,7 +248,7 @@ describe('PRD Query and Filtering', () => {
 
 		test('should handle task without PRD source', () => {
 			const taskId = 4;
-			const task = mockTaskData.tasks.find(t => t.id === taskId);
+			const task = mockTaskData.tasks.find((t) => t.id === taskId);
 
 			expect(task).toBeDefined();
 			expect(task.prdSource).toBeNull();
@@ -246,14 +256,14 @@ describe('PRD Query and Filtering', () => {
 
 		test('should handle non-existent task', () => {
 			const taskId = 999;
-			const task = mockTaskData.tasks.find(t => t.id === taskId);
+			const task = mockTaskData.tasks.find((t) => t.id === taskId);
 
 			expect(task).toBeUndefined();
 		});
 
 		test('should return complete PRD metadata', () => {
 			const taskId = 2;
-			const task = mockTaskData.tasks.find(t => t.id === taskId);
+			const task = mockTaskData.tasks.find((t) => t.id === taskId);
 
 			expect(task.prdSource).toHaveProperty('filePath');
 			expect(task.prdSource).toHaveProperty('fileName');
@@ -268,38 +278,38 @@ describe('PRD Query and Filtering', () => {
 
 	describe('PRD filtering options', () => {
 		test('should filter for PRD-only tasks', () => {
-			const prdOnlyTasks = mockTaskData.tasks.filter(task => 
-				task.prdSource && task.prdSource.fileName
+			const prdOnlyTasks = mockTaskData.tasks.filter(
+				(task) => task.prdSource && task.prdSource.fileName
 			);
 
 			expect(prdOnlyTasks).toHaveLength(3);
-			expect(prdOnlyTasks.map(t => t.id)).toEqual([1, 2, 3]);
+			expect(prdOnlyTasks.map((t) => t.id)).toEqual([1, 2, 3]);
 		});
 
 		test('should filter for manual-only tasks', () => {
-			const manualOnlyTasks = mockTaskData.tasks.filter(task => 
-				!task.prdSource || !task.prdSource.fileName
+			const manualOnlyTasks = mockTaskData.tasks.filter(
+				(task) => !task.prdSource || !task.prdSource.fileName
 			);
 
 			expect(manualOnlyTasks).toHaveLength(2);
-			expect(manualOnlyTasks.map(t => t.id)).toEqual([4, 5]);
+			expect(manualOnlyTasks.map((t) => t.id)).toEqual([4, 5]);
 		});
 
 		test('should combine multiple filters', () => {
 			const prdFilter = 'requirements.txt';
 			const statusFilter = 'pending';
-			
-			const filteredTasks = mockTaskData.tasks.filter(task => {
+
+			const filteredTasks = mockTaskData.tasks.filter((task) => {
 				// PRD filter
 				const hasPrdSource = task.prdSource && task.prdSource.fileName;
 				if (!hasPrdSource) return false;
-				
+
 				const matchesPrd = task.prdSource.fileName === prdFilter;
 				if (!matchesPrd) return false;
-				
+
 				// Status filter
 				const matchesStatus = task.status === statusFilter;
-				
+
 				return matchesStatus;
 			});
 
@@ -317,7 +327,7 @@ describe('PRD Query and Filtering', () => {
 				uniquePRDFiles: new Set()
 			};
 
-			mockTaskData.tasks.forEach(task => {
+			mockTaskData.tasks.forEach((task) => {
 				if (task.prdSource && task.prdSource.fileName) {
 					stats.tasksFromPRDs++;
 					stats.uniquePRDFiles.add(task.prdSource.fileName);
@@ -335,7 +345,7 @@ describe('PRD Query and Filtering', () => {
 		test('should calculate PRD completion rates', () => {
 			const prdStats = new Map();
 
-			mockTaskData.tasks.forEach(task => {
+			mockTaskData.tasks.forEach((task) => {
 				if (task.prdSource && task.prdSource.fileName) {
 					const fileName = task.prdSource.fileName;
 					if (!prdStats.has(fileName)) {
@@ -346,10 +356,10 @@ describe('PRD Query and Filtering', () => {
 							inProgress: 0
 						});
 					}
-					
+
 					const stats = prdStats.get(fileName);
 					stats.total++;
-					
+
 					if (task.status === 'done') {
 						stats.completed++;
 					} else if (task.status === 'pending') {

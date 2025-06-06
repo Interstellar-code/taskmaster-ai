@@ -3,12 +3,12 @@
  */
 
 import chalk from 'chalk';
-import { 
-    BOX_CHARS, 
-    getTerminalSize, 
-    calculateColumnWidths,
-    createHorizontalLine,
-    getStatusDisplay
+import {
+	BOX_CHARS,
+	getTerminalSize,
+	calculateColumnWidths,
+	createHorizontalLine,
+	getStatusDisplay
 } from '../../src/kanban/utils/terminal-utils.js';
 
 console.log(chalk.blue('Testing terminal utilities...'));

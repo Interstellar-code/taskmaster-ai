@@ -24,15 +24,15 @@ import { createPRDConfirmationPopup } from './components/prd-confirmation-popup.
  * @returns {string} - Path to prds.json file
  */
 function getPRDsJsonPath(projectRoot) {
-    // Try new structure first
-    const newPath = path.join(projectRoot, '.taskmaster', 'prd', 'prds.json');
-    if (fs.existsSync(newPath)) {
-        return newPath;
-    }
+	// Try new structure first
+	const newPath = path.join(projectRoot, '.taskmaster', 'prd', 'prds.json');
+	if (fs.existsSync(newPath)) {
+		return newPath;
+	}
 
-    // Fall back to old structure
-    const oldPath = path.join(projectRoot, 'prd', 'prds.json');
-    return oldPath;
+	// Fall back to old structure
+	const oldPath = path.join(projectRoot, 'prd', 'prds.json');
+	return oldPath;
 }
 
 /**
@@ -41,284 +41,293 @@ function getPRDsJsonPath(projectRoot) {
  * @returns {string} - Path to tasks.json file
  */
 function getTasksJsonPath(projectRoot) {
-    // Try new structure first
-    const newPath = path.join(projectRoot, '.taskmaster', 'tasks', 'tasks.json');
-    if (fs.existsSync(newPath)) {
-        return newPath;
-    }
+	// Try new structure first
+	const newPath = path.join(projectRoot, '.taskmaster', 'tasks', 'tasks.json');
+	if (fs.existsSync(newPath)) {
+		return newPath;
+	}
 
-    // Fall back to old structure
-    const oldPath = path.join(projectRoot, 'tasks', 'tasks.json');
-    return oldPath;
+	// Fall back to old structure
+	const oldPath = path.join(projectRoot, 'tasks', 'tasks.json');
+	return oldPath;
 }
 
 /**
  * PRD Kanban Board class - Following Task Kanban Architecture
  */
 export class PRDKanbanBoard {
-    constructor() {
-        this.boardLayout = new PRDBoardLayout();
-        this.prds = [];
-        this.projectRoot = findProjectRoot();
-        this.prdsPath = getPRDsJsonPath(this.projectRoot);
-        this.isRunning = false;
-        this.onQuitCallback = null;
+	constructor() {
+		this.boardLayout = new PRDBoardLayout();
+		this.prds = [];
+		this.projectRoot = findProjectRoot();
+		this.prdsPath = getPRDsJsonPath(this.projectRoot);
+		this.isRunning = false;
+		this.onQuitCallback = null;
 
-        // Initialize handlers - SAME PATTERN AS TASK KANBAN
-        this.keyboardHandler = createPRDKeyboardHandler(this);
-        this.navigationHandler = createPRDNavigationHandler(this.boardLayout);
-        this.statusHandler = createPRDStatusHandler(this);
-        this.operationsHandler = createPRDOperationsHandler(this);
+		// Initialize handlers - SAME PATTERN AS TASK KANBAN
+		this.keyboardHandler = createPRDKeyboardHandler(this);
+		this.navigationHandler = createPRDNavigationHandler(this.boardLayout);
+		this.statusHandler = createPRDStatusHandler(this);
+		this.operationsHandler = createPRDOperationsHandler(this);
 
-        // Initialize UI components - SAME PATTERN AS TASK KANBAN
-        this.statusBar = createPRDStatusBar();
-        this.prdDetailsPopup = createPRDDetailsPopup();
-        this.helpPopup = createPRDHelpPopup();
-        this.confirmationPopup = createPRDConfirmationPopup();
-    }
+		// Initialize UI components - SAME PATTERN AS TASK KANBAN
+		this.statusBar = createPRDStatusBar();
+		this.prdDetailsPopup = createPRDDetailsPopup();
+		this.helpPopup = createPRDHelpPopup();
+		this.confirmationPopup = createPRDConfirmationPopup();
+	}
 
-    /**
-     * Initialize and start the PRD Kanban board
-     */
-    async start() {
-        try {
-            console.log(chalk.blue('Loading PRD Kanban board...'));
+	/**
+	 * Initialize and start the PRD Kanban board
+	 */
+	async start() {
+		try {
+			console.log(chalk.blue('Loading PRD Kanban board...'));
 
-            // Load PRDs from JSON
-            await this.loadPRDs();
+			// Load PRDs from JSON
+			await this.loadPRDs();
 
-            // Start keyboard handler
-            this.keyboardHandler.start();
+			// Start keyboard handler
+			this.keyboardHandler.start();
 
-            // Start the board
-            this.isRunning = true;
-            this.render();
+			// Start the board
+			this.isRunning = true;
+			this.render();
 
-            console.log(chalk.green('PRD Kanban board started. Press Q to quit.'));
+			console.log(chalk.green('PRD Kanban board started. Press Q to quit.'));
 
-            // Return a promise that resolves when the board is quit
-            return new Promise((resolve) => {
-                this.onQuitCallback = resolve;
-            });
+			// Return a promise that resolves when the board is quit
+			return new Promise((resolve) => {
+				this.onQuitCallback = resolve;
+			});
+		} catch (error) {
+			console.error(
+				chalk.red('Error starting PRD Kanban board:'),
+				error.message
+			);
+			this.cleanup();
+			throw error;
+		}
+	}
 
-        } catch (error) {
-            console.error(chalk.red('Error starting PRD Kanban board:'), error.message);
-            this.cleanup();
-            throw error;
-        }
-    }
+	/**
+	 * Load PRDs from JSON file
+	 */
+	async loadPRDs() {
+		try {
+			const prdsData = await readJSON(this.prdsPath);
+			this.prds = prdsData.prds || [];
+			console.log(chalk.green(`Loaded ${this.prds.length} PRDs`));
 
-    /**
-     * Load PRDs from JSON file
-     */
-    async loadPRDs() {
-        try {
-            const prdsData = await readJSON(this.prdsPath);
-            this.prds = prdsData.prds || [];
-            console.log(chalk.green(`Loaded ${this.prds.length} PRDs`));
+			// Load PRDs into board layout
+			this.boardLayout.loadPRDs(this.prds);
+		} catch (error) {
+			console.error(chalk.red('Error loading PRDs:'), error.message);
+			this.prds = [];
+			this.boardLayout.loadPRDs([]);
+		}
+	}
 
-            // Load PRDs into board layout
-            this.boardLayout.loadPRDs(this.prds);
+	/**
+	 * Render the board
+	 */
+	render() {
+		// Get current board state for status bar
+		const boardState = this.getBoardState();
+		this.boardLayout.render(
+			this.statusBar,
+			this.prdDetailsPopup,
+			this.helpPopup,
+			boardState,
+			this.confirmationPopup
+		);
+	}
 
-        } catch (error) {
-            console.error(chalk.red('Error loading PRDs:'), error.message);
-            this.prds = [];
-            this.boardLayout.loadPRDs([]);
-        }
-    }
+	/**
+	 * Navigation methods (called by keyboard handler)
+	 */
+	moveToNextColumn() {
+		return this.navigationHandler.moveToNextColumn();
+	}
 
-    /**
-     * Render the board
-     */
-    render() {
-        // Get current board state for status bar
-        const boardState = this.getBoardState();
-        this.boardLayout.render(this.statusBar, this.prdDetailsPopup, this.helpPopup, boardState, this.confirmationPopup);
-    }
+	moveToPreviousColumn() {
+		return this.navigationHandler.moveToPreviousColumn();
+	}
 
-    /**
-     * Navigation methods (called by keyboard handler)
-     */
-    moveToNextColumn() {
-        return this.navigationHandler.moveToNextColumn();
-    }
+	moveSelectionUp() {
+		return this.navigationHandler.moveSelectionUp();
+	}
 
-    moveToPreviousColumn() {
-        return this.navigationHandler.moveToPreviousColumn();
-    }
+	moveSelectionDown() {
+		return this.navigationHandler.moveSelectionDown();
+	}
 
-    moveSelectionUp() {
-        return this.navigationHandler.moveSelectionUp();
-    }
+	/**
+	 * PRD status update methods
+	 */
+	movePRDToStatus(status) {
+		return this.statusHandler.movePRDToStatus(status);
+	}
 
-    moveSelectionDown() {
-        return this.navigationHandler.moveSelectionDown();
-    }
+	/**
+	 * PRD operations
+	 */
+	async showPRDDetails() {
+		return await this.operationsHandler.showPRDDetails();
+	}
 
-    /**
-     * PRD status update methods
-     */
-    movePRDToStatus(status) {
-        return this.statusHandler.movePRDToStatus(status);
-    }
+	showLinkedTasks() {
+		return this.operationsHandler.showLinkedTasks();
+	}
 
-    /**
-     * PRD operations
-     */
-    async showPRDDetails() {
-        return await this.operationsHandler.showPRDDetails();
-    }
+	showStatistics() {
+		return this.operationsHandler.showStatistics();
+	}
 
-    showLinkedTasks() {
-        return this.operationsHandler.showLinkedTasks();
-    }
+	/**
+	 * Show archive confirmation dialog
+	 */
+	showArchiveConfirmation() {
+		const selectedPRD = this.getSelectedPRD();
+		if (!selectedPRD) {
+			return { success: false, message: 'No PRD selected' };
+		}
 
-    showStatistics() {
-        return this.operationsHandler.showStatistics();
-    }
+		const title = '⚠️ Archive PRD';
+		const message = `Are you sure you want to archive PRD ${selectedPRD.id}?\n\nThis will move it to the archived folder and remove it from the active board.`;
 
-    /**
-     * Show archive confirmation dialog
-     */
-    showArchiveConfirmation() {
-        const selectedPRD = this.getSelectedPRD();
-        if (!selectedPRD) {
-            return { success: false, message: 'No PRD selected' };
-        }
+		this.confirmationPopup.show(
+			title,
+			message,
+			async () => {
+				// User confirmed - proceed with archiving
+				const result = await this.operationsHandler.archivePRD();
+				if (result && result.success) {
+					console.log(chalk.green(result.message));
+					setTimeout(() => {
+						this.render();
+					}, 1500);
+				} else if (result && !result.success) {
+					console.log(chalk.red(result.message));
+					setTimeout(() => {
+						this.render();
+					}, 2000);
+				}
+			},
+			() => {
+				// User cancelled - just re-render
+				this.render();
+			}
+		);
 
-        const title = '⚠️ Archive PRD';
-        const message = `Are you sure you want to archive PRD ${selectedPRD.id}?\n\nThis will move it to the archived folder and remove it from the active board.`;
+		this.render();
+		return { success: true, message: 'Archive confirmation shown' };
+	}
 
-        this.confirmationPopup.show(
-            title,
-            message,
-            async () => {
-                // User confirmed - proceed with archiving
-                const result = await this.operationsHandler.archivePRD();
-                if (result && result.success) {
-                    console.log(chalk.green(result.message));
-                    setTimeout(() => {
-                        this.render();
-                    }, 1500);
-                } else if (result && !result.success) {
-                    console.log(chalk.red(result.message));
-                    setTimeout(() => {
-                        this.render();
-                    }, 2000);
-                }
-            },
-            () => {
-                // User cancelled - just re-render
-                this.render();
-            }
-        );
+	showHelp() {
+		this.helpPopup.open();
+		this.render();
+	}
 
-        this.render();
-        return { success: true, message: 'Archive confirmation shown' };
-    }
+	/**
+	 * Board control methods
+	 */
+	async refreshBoard() {
+		try {
+			await this.loadPRDs();
+			this.render();
+			console.log(chalk.green('Board refreshed'));
+		} catch (error) {
+			console.error(chalk.red('Error refreshing board:'), error.message);
+		}
+	}
 
-    showHelp() {
-        this.helpPopup.open();
-        this.render();
-    }
+	/**
+	 * Quit the board
+	 */
+	quit() {
+		this.isRunning = false;
+		this.cleanup();
+		if (this.onQuitCallback) {
+			this.onQuitCallback();
+		}
+	}
 
-    /**
-     * Board control methods
-     */
-    async refreshBoard() {
-        try {
-            await this.loadPRDs();
-            this.render();
-            console.log(chalk.green('Board refreshed'));
-        } catch (error) {
-            console.error(chalk.red('Error refreshing board:'), error.message);
-        }
-    }
+	/**
+	 * Cleanup resources
+	 */
+	cleanup() {
+		if (this.keyboardHandler) {
+			this.keyboardHandler.stop();
+		}
 
-    /**
-     * Quit the board
-     */
-    quit() {
-        this.isRunning = false;
-        this.cleanup();
-        if (this.onQuitCallback) {
-            this.onQuitCallback();
-        }
-    }
+		// Show cursor and clear screen
+		process.stdout.write('\x1b[?25h'); // Show cursor
+		console.clear();
+	}
 
-    /**
-     * Cleanup resources
-     */
-    cleanup() {
-        if (this.keyboardHandler) {
-            this.keyboardHandler.stop();
-        }
-        
-        // Show cursor and clear screen
-        process.stdout.write('\x1b[?25h'); // Show cursor
-        console.clear();
-    }
+	/**
+	 * Get current selected PRD
+	 */
+	getSelectedPRD() {
+		const currentColumn = this.boardLayout.getCurrentColumn();
+		if (currentColumn && currentColumn.hasPRDs()) {
+			return currentColumn.getSelectedPRD();
+		}
+		return null;
+	}
 
-    /**
-     * Get current selected PRD
-     */
-    getSelectedPRD() {
-        const currentColumn = this.boardLayout.getCurrentColumn();
-        if (currentColumn && currentColumn.hasPRDs()) {
-            return currentColumn.getSelectedPRD();
-        }
-        return null;
-    }
+	/**
+	 * Get current board state for status bar
+	 */
+	getBoardState() {
+		const currentColumn = this.boardLayout.getCurrentColumn();
+		const selectedPRD = this.getSelectedPRD();
 
-    /**
-     * Get current board state for status bar
-     */
-    getBoardState() {
-        const currentColumn = this.boardLayout.getCurrentColumn();
-        const selectedPRD = this.getSelectedPRD();
+		// Calculate PRD counts by status
+		const statusCounts = {
+			pending: 0,
+			'in-progress': 0,
+			done: 0
+		};
 
-        // Calculate PRD counts by status
-        const statusCounts = {
-            pending: 0,
-            'in-progress': 0,
-            done: 0
-        };
+		this.prds.forEach((prd) => {
+			const status = prd.status || 'pending';
+			if (statusCounts.hasOwnProperty(status)) {
+				statusCounts[status]++;
+			}
+		});
 
-        this.prds.forEach(prd => {
-            const status = prd.status || 'pending';
-            if (statusCounts.hasOwnProperty(status)) {
-                statusCounts[status]++;
-            }
-        });
+		return {
+			currentColumn: currentColumn
+				? currentColumn.getStatusTitle().toLowerCase()
+				: null,
+			selectedPRD: selectedPRD,
+			statusCounts: statusCounts,
+			totalPRDs: this.prds.length,
+			mode: 'normal' // Can be extended for different modes
+		};
+	}
 
-        return {
-            currentColumn: currentColumn ? currentColumn.getStatusTitle().toLowerCase() : null,
-            selectedPRD: selectedPRD,
-            statusCounts: statusCounts,
-            totalPRDs: this.prds.length,
-            mode: 'normal' // Can be extended for different modes
-        };
-    }
+	/**
+	 * Get all PRDs
+	 */
+	getAllPRDs() {
+		return this.prds;
+	}
 
-    /**
-     * Get all PRDs
-     */
-    getAllPRDs() {
-        return this.prds;
-    }
-
-    /**
-     * Get PRDs by status
-     */
-    getPRDsByStatus(status) {
-        return this.prds.filter(prd => prd.status === status);
-    }
+	/**
+	 * Get PRDs by status
+	 */
+	getPRDsByStatus(status) {
+		return this.prds.filter((prd) => prd.status === status);
+	}
 }
 
 /**
  * Create and start a PRD Kanban board
  */
 export async function createPRDKanbanBoard() {
-    const board = new PRDKanbanBoard();
-    return board;
+	const board = new PRDKanbanBoard();
+	return board;
 }

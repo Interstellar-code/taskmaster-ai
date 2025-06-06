@@ -39,6 +39,7 @@ npm run menu
 ```
 
 **Note**: After updating to the latest version, all menu launch methods should work correctly:
+
 - `task-master menu` ✅
 - `task-master --menu` ✅
 - `task-master -m` ✅
@@ -48,18 +49,22 @@ npm run menu
 The interactive menu is organized into logical categories:
 
 ### 📁 Project Management
+
 - **🚀 Initialize Project** - Set up a new TaskMaster project
 - **📄 Parse PRD** - Generate tasks from Product Requirements Document with smart file selection
 - **🤖 Configure Models** - Set up AI model configuration
 
 #### Enhanced PRD Parsing Features
+
 The Parse PRD option includes intelligent features:
+
 - **📁 File Browser** - Automatically finds PRD files in common locations (scripts/, docs/, requirements/, etc.)
 - **⚠️ Existing Task Detection** - Warns when tasks already exist and offers to append or replace
 - **🔄 Append Mode** - Automatically uses `--append` flag when adding to existing projects
 - **📄 Multiple Input Methods** - Browse files, enter path manually, or use default location
 
 ### 📋 Task Operations
+
 - **📋 List Tasks** - View all tasks with status
 - **🔍 Next Task** - Find the next task to work on
 - **👁️ Show Task** - Display detailed task information
@@ -67,6 +72,7 @@ The Parse PRD option includes intelligent features:
 - **🔄 Generate Files** - Create individual task files
 
 ### 🔧 Task Management
+
 - **➕ Add Task** - Create new tasks using AI
 - **✏️ Update Task** - Modify existing task details
 - **🔄 Update Multiple** - Batch update tasks
@@ -74,6 +80,7 @@ The Parse PRD option includes intelligent features:
 - **📦 Move Task** - Reorder tasks
 
 ### 📝 Subtask Operations
+
 - **➕ Add Subtask** - Create subtasks for existing tasks
 - **✏️ Update Subtask** - Modify subtask details
 - **🗑️ Remove Subtask** - Delete subtasks
@@ -81,6 +88,7 @@ The Parse PRD option includes intelligent features:
 - **🧹 Clear Subtasks** - Remove all subtasks from a task
 
 ### 📊 Analysis & Dependencies
+
 - **🔍 Analyze Complexity** - Analyze task complexity
 - **📊 Complexity Report** - Generate complexity reports
 - **➕ Add Dependency** - Create task dependencies
@@ -89,12 +97,14 @@ The Parse PRD option includes intelligent features:
 - **🔧 Fix Dependencies** - Automatically fix dependency issues
 
 ### ❓ Help & Information
+
 - **📖 Command Reference** - Complete command documentation
 - **🚀 Quick Start Guide** - Step-by-step getting started
 - **⌨️ Keyboard Shortcuts** - Navigation shortcuts
 - **🔧 Configuration Help** - Setup and configuration guide
 
 ### ⚙️ Settings
+
 - **🔬 Toggle Research Mode** - Enable/disable research features
 - **📁 Set Default File Paths** - Configure default paths
 - **🐛 Debug Mode** - Enable debug logging
@@ -103,6 +113,7 @@ The Parse PRD option includes intelligent features:
 ## Navigation
 
 ### Keyboard Shortcuts
+
 - **↑/↓ Arrow Keys** - Navigate menu options
 - **Enter** - Select option
 - **Ctrl+C** - Exit menu
@@ -110,6 +121,7 @@ The Parse PRD option includes intelligent features:
 - **Tab** - Auto-complete (in prompts)
 
 ### Menu Features
+
 - **Breadcrumb Navigation** - Shows current location (e.g., "Main Menu > Task Operations")
 - **Back Navigation** - Return to previous menu level
 - **Project Information** - Real-time display of project status
@@ -118,6 +130,7 @@ The Parse PRD option includes intelligent features:
 ## Project Information Display
 
 The menu header shows:
+
 - **Project Name** - Current project name
 - **Task Count** - Total tasks and pending tasks
 - **Configuration Status** - Whether project is properly configured
@@ -126,6 +139,7 @@ The menu header shows:
 ## Parameter Prompting
 
 When commands require parameters, the menu will prompt you with:
+
 - **Input Validation** - Ensures valid input before execution
 - **Default Values** - Sensible defaults where applicable
 - **Help Text** - Clear descriptions of what each parameter does
@@ -134,6 +148,7 @@ When commands require parameters, the menu will prompt you with:
 ## Error Handling
 
 The menu includes robust error handling:
+
 - **Command Failures** - Clear error messages with context
 - **Recovery Options** - Choose how to proceed after errors
 - **Logging** - Debug information for troubleshooting
@@ -142,6 +157,7 @@ The menu includes robust error handling:
 ## Examples
 
 ### Basic Workflow
+
 1. Launch menu: `task-master menu`
 2. Select "📁 Project Management"
 3. Choose "🚀 Initialize Project"
@@ -150,6 +166,7 @@ The menu includes robust error handling:
 6. Select "📄 Parse PRD" to generate tasks
 
 ### Task Management Workflow
+
 1. Select "📋 Task Operations"
 2. Choose "📋 List Tasks" to see current tasks
 3. Select "🔍 Next Task" to find what to work on
@@ -158,6 +175,7 @@ The menu includes robust error handling:
 ## Configuration
 
 The menu system respects your TaskMaster configuration:
+
 - **Model Settings** - Uses configured AI models
 - **Project Settings** - Reads from `.taskmasterconfig`
 - **Environment Variables** - Respects debug and development settings
@@ -177,16 +195,19 @@ These files help AI assistants understand your TaskMaster project structure and 
 ## Troubleshooting
 
 ### Menu Won't Start
+
 - Ensure TaskMaster is properly installed
 - Check that all dependencies are installed (`npm install`)
 - Verify Node.js version compatibility
 
 ### Commands Fail
+
 - Check project initialization (`task-master init`)
 - Verify model configuration (`task-master models --setup`)
 - Check API keys in `.env` file
 
 ### Performance Issues
+
 - Enable debug mode to identify bottlenecks
 - Check system resources
 - Verify project file permissions
@@ -194,13 +215,17 @@ These files help AI assistants understand your TaskMaster project structure and 
 ## Advanced Features
 
 ### Debug Mode
+
 Enable debug logging by setting environment variable:
+
 ```bash
 DEBUG=1 task-master menu
 ```
 
 ### Development Mode
+
 For development and troubleshooting:
+
 ```bash
 NODE_ENV=development task-master menu
 ```
@@ -208,6 +233,7 @@ NODE_ENV=development task-master menu
 ## Integration with CLI
 
 The interactive menu is fully integrated with the CLI:
+
 - All menu actions execute the same commands as CLI
 - Parameters are validated the same way
 - Output and error handling are consistent
@@ -216,18 +242,21 @@ The interactive menu is fully integrated with the CLI:
 ## Benefits
 
 ### User Experience
+
 - **No Command Memorization** - Visual menu eliminates need to remember syntax
 - **Guided Workflows** - Step-by-step processes for complex operations
 - **Context Awareness** - Shows relevant information and options
 - **Error Prevention** - Input validation prevents common mistakes
 
 ### Productivity
+
 - **Faster Navigation** - Quick access to all features
 - **Batch Operations** - Efficient handling of multiple tasks
 - **Smart Defaults** - Reduces repetitive input
 - **Real-time Feedback** - Immediate status updates
 
 ### Accessibility
+
 - **Keyboard Navigation** - Full keyboard support
 - **Clear Visual Hierarchy** - Organized, easy-to-scan interface
 - **Consistent Patterns** - Predictable navigation and interaction

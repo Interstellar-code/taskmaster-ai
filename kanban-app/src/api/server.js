@@ -16,15 +16,16 @@ import {
 import { findTasksJsonPath } from '../../../mcp-server/src/core/utils/path-utils.js';
 import { createLogger } from './logger.js';
 import mcpApiRoutes from './routes.js';
+import { findAvailablePort } from '../../../src/utils/port-utils.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 3003;
+let PORT = process.env.PORT ? parseInt(process.env.PORT) : (process.env.API_PORT ? parseInt(process.env.API_PORT) : null);
 
 // Create logger instance
-const logger = createLogger('TaskMaster-API');
+const logger = createLogger('TaskHero-API');
 
 // TaskMaster Core Integration
 let isTaskMasterInitialized = false;
@@ -234,11 +235,11 @@ async function initializeTaskMasterCore() {
 // Root route
 app.get('/', (req, res) => {
   res.json({
-    message: 'TaskMaster Kanban API Server',
+    message: 'TaskHero Kanban API Server',
     version: '1.0.0',
     status: 'running',
     timestamp: new Date().toISOString(),
-    integration: isTaskMasterInitialized ? 'TaskMaster Core (Active)' : 'Legacy File Operations',
+    integration: isTaskMasterInitialized ? 'TaskHero Core (Active)' : 'Legacy File Operations',
     coreInitialized: isTaskMasterInitialized,
     availableFunctions: isTaskMasterInitialized ? getAvailableFunctions() : [],
     endpoints: {
@@ -513,39 +514,65 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start server with TaskMaster core initialization
-app.listen(PORT, async () => {
-  logger.info(`🚀 TaskMaster Kanban API Server running on port ${PORT}`);
-  logger.info(`📍 Server URL: http://localhost:${PORT}`);
-  logger.info(`🏥 Health check: http://localhost:${PORT}/health`);
-  logger.info(`📚 API docs: http://localhost:${PORT}/api`);
-  logger.info(`⏰ Started at: ${new Date().toISOString()}`);
-
-  // Initialize TaskMaster Core Integration (with timeout)
+// Start server with TaskMaster core initialization and dynamic port discovery
+async function startServer() {
   try {
-    const initPromise = initializeTaskMasterCore();
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Initialization timeout')), 10000)
-    );
-
-    const initResult = await Promise.race([initPromise, timeoutPromise]);
-
-    logger.info(`🎯 TaskMaster Core Status: ${isTaskMasterInitialized ? 'Active' : 'Fallback Mode'}`);
-    if (isTaskMasterInitialized) {
-      logger.info(`📁 Project Root: ${projectRoot}`);
-      logger.info(`📄 Tasks File: ${tasksJsonPath}`);
-      logger.info(`🔧 Available Functions: ${getAvailableFunctions().length}`);
+    // Find available port if not specified via environment
+    if (!PORT) {
+      PORT = await findAvailablePort(3003);
+      logger.info(`🔍 Found available API port: ${PORT}`);
     }
-  } catch (error) {
-    logger.error(`❌ TaskMaster Core initialization failed: ${error.message}`);
-    logger.info(`⚠️  Running in fallback mode`);
-    isTaskMasterInitialized = false;
-    app.locals.taskMasterInitialized = false;
-  }
+    
+    const server = app.listen(PORT, async () => {
+      logger.info(`🚀 TaskHero Kanban API Server running on port ${PORT}`);
+      logger.info(`📍 Server URL: http://localhost:${PORT}`);
+      logger.info(`🏥 Health check: http://localhost:${PORT}/health`);
+      logger.info(`📚 API docs: http://localhost:${PORT}/api`);
+      logger.info(`⏰ Started at: ${new Date().toISOString()}`);
 
-  logger.info(`🧪 Test endpoints: http://localhost:${PORT}/api/core/status`);
-  logger.info(`📋 List tasks: http://localhost:${PORT}/api/v1/tasks`);
-  logger.info(`➡️  Next task: http://localhost:${PORT}/api/core/tasks/next`);
-});
+      // Initialize TaskMaster Core Integration (with timeout)
+      try {
+        const initPromise = initializeTaskMasterCore();
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Initialization timeout')), 10000)
+        );
+
+        const initResult = await Promise.race([initPromise, timeoutPromise]);
+
+        logger.info(`🎯 TaskMaster Core Status: ${isTaskMasterInitialized ? 'Active' : 'Fallback Mode'}`);
+        if (isTaskMasterInitialized) {
+          logger.info(`📁 Project Root: ${projectRoot}`);
+          logger.info(`📄 Tasks File: ${tasksJsonPath}`);
+          logger.info(`🔧 Available Functions: ${getAvailableFunctions().length}`);
+        }
+      } catch (error) {
+        logger.error(`❌ TaskMaster Core initialization failed: ${error.message}`);
+        logger.info(`⚠️  Running in fallback mode`);
+        isTaskMasterInitialized = false;
+        app.locals.taskMasterInitialized = false;
+      }
+
+      logger.info(`🧪 Test endpoints: http://localhost:${PORT}/api/core/status`);
+      logger.info(`📋 List tasks: http://localhost:${PORT}/api/v1/tasks`);
+      logger.info(`➡️  Next task: http://localhost:${PORT}/api/core/tasks/next`);
+    });
+    
+    // Store the actual port used for export
+    app.locals.actualPort = PORT;
+    
+    return server;
+  } catch (error) {
+    logger.error(`❌ Failed to start server: ${error.message}`);
+    process.exit(1);
+  }
+}
+
+// Only start the server if not being imported for integration
+// By default, we use integrated mode through the web server
+// But allow standalone startup for development mode
+if (!process.env.SKIP_API_STARTUP) {
+  // Start the server
+  const server = await startServer();
+}
 
 export default app;

@@ -113,7 +113,7 @@ describe('PRD Metadata Extraction', () => {
 				'../parent/file.txt'
 			];
 
-			testPaths.forEach(testPath => {
+			testPaths.forEach((testPath) => {
 				const normalized = path.resolve(testPath).replace(/\\/g, '/');
 				expect(normalized).not.toContain('\\');
 				expect(path.isAbsolute(normalized.replace(/\//g, path.sep))).toBe(true);
@@ -125,9 +125,18 @@ describe('PRD Metadata Extraction', () => {
 			const content2 = 'Test content';
 			const content3 = 'Different content';
 
-			const hash1 = crypto.createHash('sha256').update(content1, 'utf8').digest('hex');
-			const hash2 = crypto.createHash('sha256').update(content2, 'utf8').digest('hex');
-			const hash3 = crypto.createHash('sha256').update(content3, 'utf8').digest('hex');
+			const hash1 = crypto
+				.createHash('sha256')
+				.update(content1, 'utf8')
+				.digest('hex');
+			const hash2 = crypto
+				.createHash('sha256')
+				.update(content2, 'utf8')
+				.digest('hex');
+			const hash3 = crypto
+				.createHash('sha256')
+				.update(content3, 'utf8')
+				.digest('hex');
 
 			expect(hash1).toBe(hash2);
 			expect(hash1).not.toBe(hash3);
@@ -136,13 +145,19 @@ describe('PRD Metadata Extraction', () => {
 
 		test('should handle different file encodings', () => {
 			const content = 'Test content with special chars: àáâãäå';
-			
+
 			// Test UTF-8 encoding
-			const utf8Hash = crypto.createHash('sha256').update(content, 'utf8').digest('hex');
+			const utf8Hash = crypto
+				.createHash('sha256')
+				.update(content, 'utf8')
+				.digest('hex');
 			expect(utf8Hash).toMatch(/^[a-f0-9]{64}$/);
 
 			// Hash should be consistent for same content
-			const utf8Hash2 = crypto.createHash('sha256').update(content, 'utf8').digest('hex');
+			const utf8Hash2 = crypto
+				.createHash('sha256')
+				.update(content, 'utf8')
+				.digest('hex');
 			expect(utf8Hash).toBe(utf8Hash2);
 		});
 
@@ -155,7 +170,10 @@ describe('PRD Metadata Extraction', () => {
 			fsStatSyncSpy.mockReturnValue(mockStats);
 
 			const startTime = Date.now();
-			const hash = crypto.createHash('sha256').update(largeContent, 'utf8').digest('hex');
+			const hash = crypto
+				.createHash('sha256')
+				.update(largeContent, 'utf8')
+				.digest('hex');
 			const endTime = Date.now();
 
 			expect(hash).toMatch(/^[a-f0-9]{64}$/);
@@ -187,7 +205,9 @@ describe('PRD Metadata Extraction', () => {
 
 			// Test date format
 			expect(() => new Date(validMetadata.parsedDate)).not.toThrow();
-			expect(new Date(validMetadata.parsedDate).toISOString()).toBe(validMetadata.parsedDate);
+			expect(new Date(validMetadata.parsedDate).toISOString()).toBe(
+				validMetadata.parsedDate
+			);
 
 			// Test positive file size
 			expect(validMetadata.fileSize).toBeGreaterThanOrEqual(0);
@@ -198,7 +218,7 @@ describe('PRD Metadata Extraction', () => {
 		test('should handle Windows paths', () => {
 			const windowsPath = 'C:\\Users\\test\\documents\\prd.txt';
 			const normalized = path.resolve(windowsPath).replace(/\\/g, '/');
-			
+
 			expect(normalized).not.toContain('\\');
 			expect(path.basename(normalized)).toBe('prd.txt');
 		});
@@ -206,14 +226,14 @@ describe('PRD Metadata Extraction', () => {
 		test('should handle Unix paths', () => {
 			const unixPath = '/home/user/documents/prd.txt';
 			const normalized = path.resolve(unixPath).replace(/\\/g, '/');
-			
+
 			expect(path.basename(normalized)).toBe('prd.txt');
 		});
 
 		test('should handle relative paths', () => {
 			const relativePath = './documents/prd.txt';
 			const normalized = path.resolve(relativePath).replace(/\\/g, '/');
-			
+
 			expect(path.isAbsolute(normalized.replace(/\//g, path.sep))).toBe(true);
 			expect(path.basename(normalized)).toBe('prd.txt');
 		});
@@ -221,7 +241,7 @@ describe('PRD Metadata Extraction', () => {
 		test('should handle special characters in paths', () => {
 			const specialPath = '/path/with spaces/file-name_123.txt';
 			const normalized = path.resolve(specialPath).replace(/\\/g, '/');
-			
+
 			expect(path.basename(normalized)).toBe('file-name_123.txt');
 		});
 	});
@@ -244,7 +264,7 @@ describe('PRD Metadata Extraction', () => {
 
 		test('should handle network path errors', () => {
 			const networkPath = '//server/share/file.txt';
-			
+
 			fsExistsSyncSpy.mockReturnValue(false);
 
 			// Should handle network paths gracefully

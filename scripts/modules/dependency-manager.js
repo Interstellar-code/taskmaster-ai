@@ -505,8 +505,10 @@ function validateTaskStatusTransition(tasks, taskId, newStatus) {
 
 	// Check if it's a subtask ID (e.g., "85.1")
 	if (typeof taskId === 'string' && taskId.includes('.')) {
-		const [parentId, subtaskId] = taskId.split('.').map(id => parseInt(id, 10));
-		const parentTask = tasks.find(t => t.id === parentId);
+		const [parentId, subtaskId] = taskId
+			.split('.')
+			.map((id) => parseInt(id, 10));
+		const parentTask = tasks.find((t) => t.id === parentId);
 
 		if (!parentTask || !parentTask.subtasks) {
 			return {
@@ -515,10 +517,10 @@ function validateTaskStatusTransition(tasks, taskId, newStatus) {
 			};
 		}
 
-		task = parentTask.subtasks.find(st => st.id === subtaskId);
+		task = parentTask.subtasks.find((st) => st.id === subtaskId);
 	} else {
 		// Regular task ID
-		task = tasks.find(t => String(t.id) === String(taskId));
+		task = tasks.find((t) => String(t.id) === String(taskId));
 	}
 
 	if (!task) {
@@ -538,8 +540,12 @@ function validateTaskStatusTransition(tasks, taskId, newStatus) {
 		const incompleteDeps = [];
 
 		for (const depId of task.dependencies) {
-			const depTask = tasks.find(t => String(t.id) === String(depId));
-			if (depTask && depTask.status !== 'done' && depTask.status !== 'in-progress') {
+			const depTask = tasks.find((t) => String(t.id) === String(depId));
+			if (
+				depTask &&
+				depTask.status !== 'done' &&
+				depTask.status !== 'in-progress'
+			) {
 				incompleteDeps.push({
 					id: depId,
 					title: depTask.title,
@@ -549,7 +555,9 @@ function validateTaskStatusTransition(tasks, taskId, newStatus) {
 		}
 
 		if (incompleteDeps.length > 0) {
-			const depList = incompleteDeps.map(dep => `Task ${dep.id} (${dep.status})`).join(', ');
+			const depList = incompleteDeps
+				.map((dep) => `Task ${dep.id} (${dep.status})`)
+				.join(', ');
 			return {
 				valid: false,
 				error: `Cannot start Task ${taskId}. Dependencies not met: ${depList}`,

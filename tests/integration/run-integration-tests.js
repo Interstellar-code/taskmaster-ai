@@ -19,19 +19,26 @@ console.log(chalk.cyan('🧪 TaskMaster v0.16.0 Integration Test Suite'));
 console.log(chalk.gray('Testing all integrated upstream changes...\n'));
 
 // Check if test dependencies are available
-const packageJson = JSON.parse(fs.readFileSync(join(projectRoot, 'package.json'), 'utf8'));
-const hasTestDeps = packageJson.devDependencies && 
-                   packageJson.devDependencies.mocha && 
-                   packageJson.devDependencies.chai;
+const packageJson = JSON.parse(
+	fs.readFileSync(join(projectRoot, 'package.json'), 'utf8')
+);
+const hasTestDeps =
+	packageJson.devDependencies &&
+	packageJson.devDependencies.mocha &&
+	packageJson.devDependencies.chai;
 
 if (!hasTestDeps) {
 	console.log(chalk.yellow('⚠️  Installing test dependencies...'));
-	
-	const installProcess = spawn('npm', ['install', '--save-dev', 'mocha', 'chai'], {
-		cwd: projectRoot,
-		stdio: 'inherit'
-	});
-	
+
+	const installProcess = spawn(
+		'npm',
+		['install', '--save-dev', 'mocha', 'chai'],
+		{
+			cwd: projectRoot,
+			stdio: 'inherit'
+		}
+	);
+
 	installProcess.on('close', (code) => {
 		if (code === 0) {
 			console.log(chalk.green('✅ Test dependencies installed\n'));
@@ -47,13 +54,17 @@ if (!hasTestDeps) {
 
 function runTests() {
 	console.log(chalk.cyan('Running integration tests...\n'));
-	
-	const testProcess = spawn('npx', ['mocha', 'tests/unit/integration-test.js', '--reporter', 'spec'], {
-		cwd: projectRoot,
-		stdio: 'inherit',
-		env: { ...process.env, NODE_ENV: 'test' }
-	});
-	
+
+	const testProcess = spawn(
+		'npx',
+		['mocha', 'tests/unit/integration-test.js', '--reporter', 'spec'],
+		{
+			cwd: projectRoot,
+			stdio: 'inherit',
+			env: { ...process.env, NODE_ENV: 'test' }
+		}
+	);
+
 	testProcess.on('close', (code) => {
 		if (code === 0) {
 			console.log(chalk.green('\n✅ All integration tests passed!'));
@@ -63,16 +74,22 @@ function runTests() {
 			console.log('  ✅ Phase 3: Directory Structure Migration');
 			console.log('  ✅ Unique Features Preservation');
 			console.log('  ✅ Configuration Management');
-			
+
 			console.log(chalk.green('\n🎉 v0.16.0 Integration Complete!'));
-			console.log(chalk.gray('All upstream changes successfully integrated while preserving unique features.'));
+			console.log(
+				chalk.gray(
+					'All upstream changes successfully integrated while preserving unique features.'
+				)
+			);
 		} else {
 			console.error(chalk.red('\n❌ Some tests failed'));
-			console.log(chalk.yellow('Please review the test output above and fix any issues.'));
+			console.log(
+				chalk.yellow('Please review the test output above and fix any issues.')
+			);
 			process.exit(1);
 		}
 	});
-	
+
 	testProcess.on('error', (error) => {
 		console.error(chalk.red('Failed to run tests:'), error.message);
 		process.exit(1);

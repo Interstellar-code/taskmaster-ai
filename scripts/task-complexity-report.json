@@ -1,549 +1,549 @@
 {
-  "meta": {
-    "generatedAt": "2025-06-01T12:40:37.737Z",
-    "tasksAnalyzed": 10,
-    "totalTasks": 48,
-    "analysisCount": 67,
-    "thresholdScore": 5,
-    "projectName": "Taskmaster",
-    "usedResearch": false
-  },
-  "complexityAnalysis": [
-    {
-      "taskId": 60,
-      "taskTitle": "Implement Mentor System with Round-Table Discussion Feature",
-      "complexityScore": 8,
-      "recommendedSubtasks": 7,
-      "expansionPrompt": "The current 7 subtasks for implementing the mentor system appear well-structured. Consider if any additional subtasks are needed for mentor personality consistency, discussion quality evaluation, or performance optimization with multiple mentors.",
-      "reasoning": "This task involves creating a sophisticated mentor simulation system with round-table discussions. The complexity is high due to the need for personality simulation, complex LLM integration, and structured discussion management. The 7 existing subtasks cover the main implementation areas from architecture to testing."
-    },
-    {
-      "taskId": 62,
-      "taskTitle": "Add --simple Flag to Update Commands for Direct Text Input",
-      "complexityScore": 4,
-      "recommendedSubtasks": 8,
-      "expansionPrompt": "The current 8 subtasks for implementing the --simple flag appear comprehensive. Consider if any additional subtasks are needed for user experience testing or documentation updates.",
-      "reasoning": "This task involves adding a simple flag option to bypass AI processing for updates. The complexity is relatively low as it primarily involves modifying existing command handlers and adding a flag. The 8 existing subtasks are very detailed and cover all aspects of implementation from command parsing to testing."
-    },
-    {
-      "taskId": 63,
-      "taskTitle": "Add pnpm Support for the Taskmaster Package",
-      "complexityScore": 5,
-      "recommendedSubtasks": 8,
-      "expansionPrompt": "The current 8 subtasks for adding pnpm support appear comprehensive. Consider if any additional subtasks are needed for CI/CD integration, performance comparison, or documentation updates.",
-      "reasoning": "This task involves ensuring the package works correctly with pnpm as an alternative package manager. The complexity is moderate as it requires careful testing of installation processes and scripts across different environments. The 8 existing subtasks cover all major aspects from documentation to binary verification."
-    },
-    {
-      "taskId": 64,
-      "taskTitle": "Add Yarn Support for Taskmaster Installation",
-      "complexityScore": 5,
-      "recommendedSubtasks": 9,
-      "expansionPrompt": "The current 9 subtasks for adding Yarn support appear comprehensive. Consider if any additional subtasks are needed for performance testing, CI/CD integration, or compatibility with different Yarn versions.",
-      "reasoning": "This task involves ensuring the package works correctly with Yarn as an alternative package manager. The complexity is moderate as it requires careful testing of installation processes and scripts across different environments. The 9 existing subtasks are very detailed and cover all aspects from configuration to testing."
-    },
-    {
-      "taskId": 65,
-      "taskTitle": "Add Bun Support for Taskmaster Installation",
-      "complexityScore": 6,
-      "recommendedSubtasks": 6,
-      "expansionPrompt": "The current 6 subtasks for adding Bun support appear well-structured. Consider if any additional subtasks are needed for handling Bun-specific issues, performance testing, or documentation updates.",
-      "reasoning": "This task involves adding support for the newer Bun package manager. The complexity is slightly higher than the other package manager tasks due to Bun's differences from Node.js and potential compatibility issues. The 6 existing subtasks cover the main implementation areas from research to documentation."
-    },
-    {
-      "taskId": 67,
-      "taskTitle": "Add CLI JSON output and Cursor keybindings integration",
-      "complexityScore": 5,
-      "recommendedSubtasks": 5,
-      "expansionPrompt": "The current 5 subtasks for implementing JSON output and Cursor keybindings appear well-structured. Consider if any additional subtasks are needed for testing across different operating systems, documentation updates, or user experience improvements.",
-      "reasoning": "This task involves two distinct features: adding JSON output to CLI commands and creating a keybindings installation command. The complexity is moderate as it requires careful handling of different output formats and OS-specific file paths. The 5 existing subtasks cover the main implementation areas for both features."
-    },
-    {
-      "taskId": 68,
-      "taskTitle": "Ability to create tasks without parsing PRD",
-      "complexityScore": 3,
-      "recommendedSubtasks": 2,
-      "expansionPrompt": "The current 2 subtasks for implementing task creation without PRD appear appropriate. Consider if any additional subtasks are needed for validation, error handling, or integration with existing task management workflows.",
-      "reasoning": "This task involves a relatively simple modification to allow task creation without requiring a PRD document. The complexity is low as it primarily involves creating a form interface and saving functionality. The 2 existing subtasks cover the main implementation areas of UI design and data saving."
-    },
-    {
-      "taskId": 72,
-      "taskTitle": "Implement PDF Generation for Project Progress and Dependency Overview",
-      "complexityScore": 7,
-      "recommendedSubtasks": 6,
-      "expansionPrompt": "The current 6 subtasks for implementing PDF generation appear comprehensive. Consider if any additional subtasks are needed for handling large projects, additional visualization options, or integration with existing reporting tools.",
-      "reasoning": "This task involves creating a feature to generate PDF reports of project progress and dependency visualization. The complexity is high due to the need for PDF generation, data collection, and visualization integration. The 6 existing subtasks cover the main implementation areas from library selection to export options."
-    },
-    {
-      "taskId": 75,
-      "taskTitle": "Integrate Google Search Grounding for Research Role",
-      "complexityScore": 5,
-      "recommendedSubtasks": 4,
-      "expansionPrompt": "The current 4 subtasks for integrating Google Search Grounding appear well-structured. Consider if any additional subtasks are needed for testing with different query types, error handling, or performance optimization.",
-      "reasoning": "This task involves updating the AI service layer to enable Google Search Grounding for research roles. The complexity is moderate as it requires careful integration with the existing AI service architecture and conditional logic. The 4 existing subtasks cover the main implementation areas from service layer modification to testing."
-    },
-    {
-      "taskId": 76,
-      "taskTitle": "Develop E2E Test Framework for Taskmaster MCP Server (FastMCP over stdio)",
-      "complexityScore": 8,
-      "recommendedSubtasks": 7,
-      "expansionPrompt": "The current 7 subtasks for developing the E2E test framework appear comprehensive. Consider if any additional subtasks are needed for test result reporting, CI/CD integration, or performance benchmarking.",
-      "reasoning": "This task involves creating a sophisticated end-to-end testing framework for the MCP server. The complexity is high due to the need for subprocess management, protocol handling, and robust test case definition. The 7 existing subtasks cover the main implementation areas from architecture to documentation."
-    },
-    {
-      "taskId": 77,
-      "taskTitle": "Implement AI Usage Telemetry for Taskmaster (with external analytics endpoint)",
-      "complexityScore": 7,
-      "recommendedSubtasks": 18,
-      "expansionPrompt": "The current 18 subtasks for implementing AI usage telemetry appear very comprehensive. Consider if any additional subtasks are needed for security hardening, privacy compliance, or user feedback collection.",
-      "reasoning": "This task involves creating a telemetry system to track AI usage metrics. The complexity is high due to the need for secure data transmission, comprehensive data collection, and integration across multiple commands. The 18 existing subtasks are extremely detailed and cover all aspects of implementation from core utility to provider-specific updates."
-    },
-    {
-      "taskId": 80,
-      "taskTitle": "Implement Unique User ID Generation and Storage During Installation",
-      "complexityScore": 4,
-      "recommendedSubtasks": 5,
-      "expansionPrompt": "The current 5 subtasks for implementing unique user ID generation appear well-structured. Consider if any additional subtasks are needed for privacy compliance, security auditing, or integration with the telemetry system.",
-      "reasoning": "This task involves generating and storing a unique user identifier during installation. The complexity is relatively low as it primarily involves UUID generation and configuration file management. The 5 existing subtasks cover the main implementation areas from script structure to documentation."
-    },
-    {
-      "taskId": 81,
-      "taskTitle": "Task #81: Implement Comprehensive Local Telemetry System with Future Server Integration Capability",
-      "complexityScore": 8,
-      "recommendedSubtasks": 6,
-      "expansionPrompt": "The current 6 subtasks for implementing the comprehensive local telemetry system appear well-structured. Consider if any additional subtasks are needed for data migration, storage optimization, or visualization tools.",
-      "reasoning": "This task involves expanding the telemetry system to capture additional metrics and implement local storage with future server integration capability. The complexity is high due to the breadth of data collection, storage requirements, and privacy considerations. The 6 existing subtasks cover the main implementation areas from data collection to user-facing benefits."
-    },
-    {
-      "taskId": 82,
-      "taskTitle": "Update supported-models.json with token limit fields",
-      "complexityScore": 3,
-      "recommendedSubtasks": 1,
-      "expansionPrompt": "This task appears straightforward enough to be implemented without further subtasks. Focus on researching accurate token limit values for each model and ensuring backward compatibility.",
-      "reasoning": "This task involves a simple update to the supported-models.json file to include new token limit fields. The complexity is low as it primarily involves research and data entry. No subtasks are necessary as the task is well-defined and focused."
-    },
-    {
-      "taskId": 83,
-      "taskTitle": "Update config-manager.js defaults and getters",
-      "complexityScore": 4,
-      "recommendedSubtasks": 1,
-      "expansionPrompt": "This task appears straightforward enough to be implemented without further subtasks. Focus on updating the DEFAULTS object and related getter functions while maintaining backward compatibility.",
-      "reasoning": "This task involves updating the config-manager.js module to replace maxTokens with more specific token limit fields. The complexity is relatively low as it primarily involves modifying existing code rather than creating new functionality. No subtasks are necessary as the task is well-defined and focused."
-    },
-    {
-      "taskId": 84,
-      "taskTitle": "Implement token counting utility",
-      "complexityScore": 5,
-      "recommendedSubtasks": 1,
-      "expansionPrompt": "This task appears well-defined enough to be implemented without further subtasks. Focus on implementing accurate token counting for different models and proper fallback mechanisms.",
-      "reasoning": "This task involves creating a utility function to count tokens for different AI models. The complexity is moderate as it requires integration with the tiktoken library and handling different tokenization schemes. No subtasks are necessary as the task is well-defined and focused."
-    },
-    {
-      "taskId": 69,
-      "taskTitle": "Enhance Analyze Complexity for Specific Task IDs",
-      "complexityScore": 7,
-      "recommendedSubtasks": 6,
-      "expansionPrompt": "Break down the task 'Enhance Analyze Complexity for Specific Task IDs' into 6 subtasks focusing on: 1) Core logic modification to accept ID parameters, 2) Report merging functionality, 3) CLI interface updates, 4) MCP tool integration, 5) Documentation updates, and 6) Comprehensive testing across all components.",
-      "reasoning": "This task involves modifying existing functionality across multiple components (core logic, CLI, MCP) with complex logic for filtering tasks and merging reports. The implementation requires careful handling of different parameter combinations and edge cases. The task has interdependent components that need to work together seamlessly, and the report merging functionality adds significant complexity."
-    },
-    {
-      "taskId": 70,
-      "taskTitle": "Implement 'diagram' command for Mermaid diagram generation",
-      "complexityScore": 6,
-      "recommendedSubtasks": 5,
-      "expansionPrompt": "Break down the 'diagram' command implementation into 5 subtasks: 1) Command interface and parameter handling, 2) Task data extraction and transformation to Mermaid syntax, 3) Diagram rendering with status color coding, 4) Output formatting and file export functionality, and 5) Error handling and edge case management.",
-      "reasoning": "This task requires implementing a new feature rather than modifying existing code, which reduces complexity from integration challenges. However, it involves working with visualization logic, dependency mapping, and multiple output formats. The color coding based on status and handling of dependency relationships adds moderate complexity. The task is well-defined but requires careful attention to diagram formatting and error handling."
-    },
-    {
-      "taskId": 85,
-      "taskTitle": "Update ai-services-unified.js for dynamic token limits",
-      "complexityScore": 7,
-      "recommendedSubtasks": 5,
-      "expansionPrompt": "Break down the update of ai-services-unified.js for dynamic token limits into subtasks such as: (1) Import and integrate the token counting utility, (2) Refactor _unifiedServiceRunner to calculate and enforce dynamic token limits, (3) Update error handling for token limit violations, (4) Add and verify logging for token usage, (5) Write and execute tests for various prompt and model scenarios.",
-      "reasoning": "This task involves significant code changes to a core function, integration of a new utility, dynamic logic for multiple models, and robust error handling. It also requires comprehensive testing for edge cases and integration, making it moderately complex and best managed by splitting into focused subtasks."
-    },
-    {
-      "taskId": 86,
-      "taskTitle": "Update .taskmasterconfig schema and user guide",
-      "complexityScore": 6,
-      "recommendedSubtasks": 4,
-      "expansionPrompt": "Expand this task into subtasks: (1) Draft a migration guide for users, (2) Update user documentation to explain new config fields, (3) Modify schema validation logic in config-manager.js, (4) Test and validate backward compatibility and error messaging.",
-      "reasoning": "The task spans documentation, schema changes, migration guidance, and validation logic. While not algorithmically complex, it requires careful coordination and thorough testing to ensure a smooth user transition and robust validation."
-    },
-    {
-      "taskId": 87,
-      "taskTitle": "Implement validation and error handling",
-      "complexityScore": 5,
-      "recommendedSubtasks": 4,
-      "expansionPrompt": "Decompose this task into: (1) Add validation logic for model and config loading, (2) Implement error handling and fallback mechanisms, (3) Enhance logging and reporting for token usage, (4) Develop helper functions for configuration suggestions and improvements.",
-      "reasoning": "This task is primarily about adding validation, error handling, and logging. While important for robustness, the logic is straightforward and can be modularized into a few clear subtasks."
-    },
-    {
-      "taskId": 89,
-      "taskTitle": "Introduce Prioritize Command with Enhanced Priority Levels",
-      "complexityScore": 6,
-      "recommendedSubtasks": 5,
-      "expansionPrompt": "Expand this task into: (1) Implement the prioritize command with all required flags and shorthands, (2) Update CLI output and help documentation for new priority levels, (3) Ensure backward compatibility with existing commands, (4) Add error handling for invalid inputs, (5) Write and run tests for all command scenarios.",
-      "reasoning": "This CLI feature requires command parsing, updating internal logic for new priority levels, documentation, and robust error handling. The complexity is moderate due to the need for backward compatibility and comprehensive testing."
-    },
-    {
-      "taskId": 90,
-      "taskTitle": "Implement Subtask Progress Analyzer and Reporting System",
-      "complexityScore": 8,
-      "recommendedSubtasks": 6,
-      "expansionPrompt": "Break down the analyzer implementation into: (1) Design and implement progress tracking logic, (2) Develop status validation and issue detection, (3) Build the reporting system with multiple output formats, (4) Integrate analyzer with the existing task management system, (5) Optimize for performance and scalability, (6) Write unit, integration, and performance tests.",
-      "reasoning": "This is a complex, multi-faceted feature involving data analysis, reporting, integration, and performance optimization. It touches many parts of the system and requires careful design, making it one of the most complex tasks in the list."
-    },
-    {
-      "taskId": 91,
-      "taskTitle": "Implement Move Command for Tasks and Subtasks",
-      "complexityScore": 7,
-      "recommendedSubtasks": 5,
-      "expansionPrompt": "Expand this task into: (1) Implement move logic for tasks and subtasks, (2) Handle edge cases (invalid ids, non-existent parents, circular dependencies), (3) Update CLI to support move command with flags, (4) Ensure data integrity and update relationships, (5) Write and execute tests for various move scenarios.",
-      "reasoning": "Moving tasks and subtasks requires careful handling of hierarchical data, edge cases, and data integrity. The command must be robust and user-friendly, necessitating multiple focused subtasks for safe implementation."
-    },
-    {
-      "taskId": 11,
-      "taskTitle": "Update package.json",
-      "complexityScore": 2,
-      "recommendedSubtasks": 3,
-      "expansionPrompt": "Break down the process of updating `package.json` into specific steps: locating the file, modifying each specified field, and verifying changes. Include a step for running `npm install` and checking for new dependency issues.",
-      "reasoning": "This task is straightforward, involving specific field updates in a single file. The main complexity is ensuring all references are caught and `npm install` doesn't break."
-    },
-    {
-      "taskId": 12,
-      "taskTitle": "Rename Core Application Files and Update Internal References",
-      "complexityScore": 4,
-      "recommendedSubtasks": 4,
-      "expansionPrompt": "Detail the steps for renaming each specified file, then outline the process for updating internal references within `README.md` and `index.js`. Include steps for verifying file renames and running the application to check for broken references.",
-      "reasoning": "Renaming files is simple, but updating internal references can be tricky, especially if paths or variable names are involved. It requires careful search and replace and verification."
-    },
-    {
-      "taskId": 13,
-      "taskTitle": "Global String Replacement (TaskMaster to TaskHero)",
-      "complexityScore": 7,
-      "recommendedSubtasks": 5,
-      "expansionPrompt": "Outline the strategy for performing a global search and replace, including the use of specific tools or commands. Detail the verification steps, emphasizing comprehensive code review, global search for remaining instances, and running all tests (unit and integration) to catch regressions.",
-      "reasoning": "Global string replacement is inherently risky. While tools can automate it, ensuring no unintended changes or broken functionality requires extensive verification and testing across the entire codebase."
-    },
-    {
-      "taskId": 14,
-      "taskTitle": "Update Documentation Files",
-      "complexityScore": 3,
-      "recommendedSubtasks": 3,
-      "expansionPrompt": "Specify the directories and files to be reviewed and updated. Detail the process for ensuring consistency in branding, checking for broken links, and verifying the tone and messaging across all documentation.",
-      "reasoning": "This is a manual review and update task. It's not complex technically but requires thoroughness to ensure all documentation is consistent and accurate."
-    },
-    {
-      "taskId": 15,
-      "taskTitle": "Update CLI Commands and UI Text",
-      "complexityScore": 5,
-      "recommendedSubtasks": 4,
-      "expansionPrompt": "Identify key areas for CLI and UI text updates. Detail the process for modifying command definitions, help text, error messages, and banner/logo text. Outline a testing strategy that includes running various CLI commands and manually inspecting UI elements.",
-      "reasoning": "This involves identifying specific code sections for CLI and UI text, which can be spread out. Testing requires interacting with the application's interface and commands, adding a layer of manual verification."
-    },
-    {
-      "taskId": 16,
-      "taskTitle": "Update Dependencies and External References",
-      "complexityScore": 6,
-      "recommendedSubtasks": 4,
-      "expansionPrompt": "List potential locations for external references beyond `package.json` (e.g., configuration files, build scripts, CI/CD pipelines). Detail the process for identifying and updating hardcoded URLs, API endpoints, and MCP configuration examples. Include steps for verifying npm package configuration and testing MCP server integration.",
-      "reasoning": "This task requires a deep understanding of the project's external integrations and configurations. Missing a hardcoded reference can lead to subtle bugs or deployment issues. Testing external integrations adds complexity."
-    },
-    {
-      "taskId": 17,
-      "taskTitle": "Update Testing and Build Files",
-      "complexityScore": 5,
-      "recommendedSubtasks": 4,
-      "expansionPrompt": "Outline the process for reviewing and updating test descriptions, variable names, and assertions within the `tests/` directory. Detail the steps for checking `jest.config.js` and any build/deployment scripts for project name references. Include a step for running all tests and verifying build/deployment pipeline execution.",
-      "reasoning": "Updating tests and build files is crucial for maintaining pipeline integrity. It requires careful modification to avoid breaking existing tests or build processes, followed by full test suite execution."
-    },
-    {
-      "taskId": 18,
-      "taskTitle": "Functional Testing of CLI Commands",
-      "complexityScore": 7,
-      "recommendedSubtasks": 5,
-      "expansionPrompt": "Develop a detailed test plan for functional testing of CLI commands, covering all primary commands, various arguments, and options. Include steps for verifying output messages, help text, and error handling. Emphasize the development of a comprehensive test suite and automation where possible.",
-      "reasoning": "This is a dedicated testing task that requires thorough planning and execution. Ensuring all CLI functionalities work correctly with new branding and potential command name changes is critical and time-consuming."
-    },
-    {
-      "taskId": 19,
-      "taskTitle": "Integration Testing of MCP Server and Components",
-      "complexityScore": 8,
-      "recommendedSubtasks": 5,
-      "expansionPrompt": "Outline the process for deploying the rebranded application and MCP server in a test environment. Detail the end-to-end test scenarios to verify data flow, API calls, and overall system functionality. Include steps for monitoring logs and verifying data consistency and communication between components.",
-      "reasoning": "Integration testing is complex as it involves multiple components interacting. Setting up the test environment, designing comprehensive end-to-end scenarios, and debugging integration issues can be challenging."
-    },
-    {
-      "taskId": 20,
-      "taskTitle": "Final Codebase and Documentation Review",
-      "complexityScore": 6,
-      "recommendedSubtasks": 4,
-      "expansionPrompt": "Detail the process for a final global search for 'TaskMaster' variations across all files. Outline the steps for a comprehensive manual review of all documentation for branding consistency, valid links, and correct references. Include a step for engaging a fresh pair of eyes for documentation review.",
-      "reasoning": "This is a critical quality assurance step. While it's a review, it requires meticulous attention to detail and a systematic approach to ensure no branding inconsistencies or old references remain."
-    },
-    {
-      "taskId": 21,
-      "taskTitle": "Enhance Task Schema with PRD Source Field",
-      "complexityScore": 7,
-      "recommendedSubtasks": 5,
-      "expansionPrompt": "Detail the steps for modifying the task object schema to include the `prdSource` field with its specified sub-fields. Outline the strategy for ensuring backward compatibility for existing tasks, including handling `tasks.json` and `task_xxx.txt` file formats. Specify unit and integration tests for schema parsing, serialization, and graceful handling of existing data.",
-      "reasoning": "Modifying a core data schema is complex due to its ripple effect. It requires careful planning for backward compatibility, data migration (even if implicit), and robust testing to prevent data corruption or application crashes."
-    },
-    {
-      "taskId": 22,
-      "taskTitle": "Integrate PRD Metadata Capture into Parse Command",
-      "complexityScore": 7,
-      "recommendedSubtasks": 5,
-      "expansionPrompt": "Outline the modifications needed for the `parse-prd` command in `scripts/modules/commands.js` to extract and populate all `prdSource` fields. Detail the implementation of `fileHash` calculation and handling of file paths. Specify unit tests for correct field population and end-to-end tests for accurate storage in task files.",
-      "reasoning": "This task involves modifying an existing command to extract new data, calculate hashes, and correctly populate a nested object. It requires careful coding and thorough testing to ensure data integrity and accuracy."
-    },
-    {
-      "taskId": 23,
-      "taskTitle": "Display PRD Source in Task Views and Reports",
-      "complexityScore": 6,
-      "recommendedSubtasks": 4,
-      "expansionPrompt": "Identify all UI components (task list, task details, project dashboard, interactive menu) that need modification. Detail the specific changes for each view to display `prdSource` information. Outline a manual UI testing plan and consider automated UI element checks for regression.",
-      "reasoning": "This task involves UI modifications across multiple components. While not technically complex, it requires careful attention to layout, formatting, and ensuring consistency across different views. Manual UI testing can be time-consuming."
-    },
-    {
-      "taskId": 24,
-      "taskTitle": "Implement PRD Source Query and Filter Commands",
-      "complexityScore": 7,
-      "recommendedSubtasks": 5,
-      "expansionPrompt": "Define the new commands (`list-prds`, `tasks-from-prd`, `show-prd-source`) and their expected behavior. Detail the implementation of data retrieval and filtering logic, emphasizing efficiency. Specify unit tests for command logic and integration tests for data store interaction and accurate results.",
-      "reasoning": "Implementing new commands with filtering and querying capabilities requires designing robust data retrieval logic, handling various input parameters, and ensuring efficient performance, especially with large datasets."
-    },
-    {
-      "taskId": 25,
-      "taskTitle": "Implement PRD Change Detection and Flagging",
-      "complexityScore": 8,
-      "recommendedSubtasks": 6,
-      "expansionPrompt": "Design the mechanism for detecting PRD file modifications (e.g., new command, background process). Detail the comparison logic for `fileHash` and `fileSize`. Define how tasks will be flagged as outdated and consider real-time detection vs. periodic checks. Specify unit tests for change detection and end-to-end tests for accurate flagging.",
-      "reasoning": "This task involves implementing a core change management feature. It requires robust file system interaction, hash calculation, and a clear strategy for flagging tasks, which can impact downstream processes. Ensuring accuracy and efficiency is key."
-    },
-    {
-      "taskId": 26,
-      "taskTitle": "Develop PRD Re-parsing and Update Logic",
-      "complexityScore": 9,
-      "recommendedSubtasks": 7,
-      "expansionPrompt": "Design the `reparse-prd` command, including the `--update-existing` flag. Detail the logic for re-reading PRD files, identifying and updating existing tasks (e.g., by comparing titles/descriptions), and creating new tasks. Outline the structure and management of `prd-history.json`. Specify unit tests for re-parsing logic and integration tests for task data updates and history tracking.",
-      "reasoning": "This is a highly complex task involving sophisticated logic for identifying changes between PRD versions, updating existing tasks, creating new ones, and maintaining a history. It requires careful design to avoid data loss or inconsistencies."
-    },
-    {
-      "taskId": 27,
-      "taskTitle": "Implement PRD Traceability Reporting",
-      "complexityScore": 6,
-      "recommendedSubtasks": 4,
-      "expansionPrompt": "Design the `prd-traceability-report` command, including format options (e.g., CSV, JSON). Detail the data points to be included in the report (task ID, title, PRD file path, parsed date, etc.). Outline the report generation logic and specify unit tests for output format and data accuracy, along with manual review steps.",
-      "reasoning": "Generating reports requires careful data aggregation and formatting. While not as complex as schema changes or re-parsing, ensuring the report is accurate, complete, and in the correct format for compliance adds a layer of detail."
-    },
-    {
-      "taskId": 28,
-      "taskTitle": "Establish Comprehensive Testing Strategy",
-      "complexityScore": 8,
-      "recommendedSubtasks": 6,
-      "expansionPrompt": "Develop a detailed test plan covering unit, integration, end-to-end, performance, and cross-platform compatibility for all new PRD source tracking features. Specify key test scenarios for each type of testing. Outline the automation strategy and metrics for test coverage. Include steps for regular test suite review and maintenance.",
-      "reasoning": "This is a meta-task that requires strategic planning and coordination across all new features. Designing a comprehensive testing strategy, including automation and performance considerations, is a significant undertaking that impacts the quality of the entire feature set."
-    },
-    {
-      "taskId": 34,
-      "taskTitle": "Terminal Kanban Board Layout and Display",
-      "complexityScore": 7,
-      "recommendedSubtasks": 5,
-      "expansionPrompt": "Break down the implementation of the Kanban board layout into distinct subtasks, including: 1. Initializing the chosen terminal UI framework (Blessed.js/Ink.js). 2. Designing and rendering the three main columns ('pending', 'in-progress', 'done') with ASCII art. 3. Implementing dynamic resizing logic for columns based on terminal dimensions. 4. Displaying column headers with task counts and 'No tasks' placeholders. 5. Integrating initial JSON data loading to populate the board.",
-      "reasoning": "This task involves foundational UI setup, dynamic layout adjustments, and integration with existing data structures. The choice of UI framework and the need for responsive design add complexity. It's a critical dependency for subsequent tasks."
-    },
-    {
-      "taskId": 35,
-      "taskTitle": "ASCII Task Card Design and Metadata Display",
-      "complexityScore": 6,
-      "recommendedSubtasks": 4,
-      "expansionPrompt": "Detail the subtasks for designing and rendering ASCII task cards: 1. Defining the structure and visual elements of an individual task card using ASCII box drawing. 2. Implementing logic to display task ID, title, priority (with color/symbols), dependencies count, and PRD source indicator. 3. Developing title truncation with ellipsis and ensuring full title accessibility. 4. Ensuring cards fit within column width constraints and maintain consistent styling.",
-      "reasoning": "This task builds directly on the previous one, focusing on the visual representation of individual tasks. It requires careful formatting, conditional rendering (priority colors, PRD icon), and text manipulation (truncation)."
-    },
-    {
-      "taskId": 36,
-      "taskTitle": "Keyboard Navigation and Status Updates",
-      "complexityScore": 8,
-      "recommendedSubtasks": 6,
-      "expansionPrompt": "Outline the subtasks for implementing keyboard navigation and status updates: 1. Setting up keyboard event listeners for arrow keys and number keys. 2. Implementing navigation logic for moving between tasks within a column and between columns. 3. Developing task selection/highlighting visual feedback. 4. Implementing logic for changing task status based on number key presses (1, 2, 3). 5. Integrating with TaskMaster utilities to persist status changes to tasks.json. 6. Ensuring immediate board refresh and column task count updates after status changes.",
-      "reasoning": "This task is highly interactive, requiring robust keyboard event handling, state management (selected task, task status), visual feedback, and persistent data updates. It's a core user interaction feature."
-    },
-    {
-      "taskId": 37,
-      "taskTitle": "Quick Task Operations via Keyboard",
-      "complexityScore": 7,
-      "recommendedSubtasks": 5,
-      "expansionPrompt": "Break down the implementation of quick task operations: 1. Implementing 'V' for detailed task view (e.g., in a bottom panel). 2. Implementing 'D' for task deletion with confirmation and persistence. 3. Implementing 'E' for inline task title editing and persistence. 4. Implementing 'I' for displaying task ID/metadata in the status bar. 5. Implementing 'R' for refreshing the board from tasks.json. Ensure all operations use existing TaskMaster utilities for data persistence and trigger immediate board refreshes.",
-      "reasoning": "This task involves multiple distinct keyboard shortcuts, each triggering a different operation (display, delete, edit, refresh). Each operation requires specific UI handling, data manipulation, and persistence, adding to its complexity."
-    },
-    {
-      "taskId": 38,
-      "taskTitle": "Terminal Board Navigation and Controls & Menu Integration",
-      "complexityScore": 8,
-      "recommendedSubtasks": 6,
-      "expansionPrompt": "Detail the subtasks for implementing board navigation, controls, and menu integration: 1. Implementing keyboard shortcuts for 'F' (filter), '/' (search), 'S' (statistics), 'H' (help overlay), and 'Q' (exit). 2. Developing the UI and logic for the filter mode. 3. Developing the UI and logic for the search mode. 4. Implementing the display of board statistics and help overlay. 5. Integrating the Kanban board view into the existing TaskMaster 'Task Operations' submenu. 6. Ensuring smooth transitions into and out of the Kanban interface and consistent status bar updates.",
-      "reasoning": "This task is complex due to the variety of features (filtering, searching, statistics, help) and the need for seamless integration with an existing menu system. Each control requires its own UI and logic, and the overall state management for these modes adds significant complexity."
-    },
-    {
-      "taskId": 39,
-      "taskTitle": "Implement Core PRD Directory Structure",
-      "complexityScore": 2,
-      "recommendedSubtasks": 3,
-      "expansionPrompt": "Break down the implementation of the core PRD directory structure into distinct steps, including directory creation, file initialization, and verification.",
-      "reasoning": "This task is straightforward, involving basic file system operations. The complexity comes from ensuring all specified directories and the file are correctly created and initialized."
-    },
-    {
-      "taskId": 40,
-      "taskTitle": "Develop PRD Metadata Schema and Management",
-      "complexityScore": 7,
-      "recommendedSubtasks": 6,
-      "expansionPrompt": "Detail the development of the PRD metadata schema and management, including schema definition, read/write functions, data integrity, thread safety, and specific field implementations.",
-      "reasoning": "This task involves designing a robust data schema, implementing read/write operations, ensuring data integrity, and handling potential concurrency issues (thread-safety), which adds significant complexity."
-    },
-    {
-      "taskId": 41,
-      "taskTitle": "Enhance Task-to-PRD Linking",
-      "complexityScore": 5,
-      "recommendedSubtasks": 4,
-      "expansionPrompt": "Outline the enhancement of task-to-PRD linking, focusing on modifying the task data structure, populating `prdSource` during creation/update, and ensuring data consistency.",
-      "reasoning": "This task requires modifying an existing data structure and ensuring proper data population and maintenance across different operations, which can be moderately complex depending on the existing codebase."
-    },
-    {
-      "taskId": 42,
-      "taskTitle": "Implement Automated PRD Status Management",
-      "complexityScore": 8,
-      "recommendedSubtasks": 7,
-      "expansionPrompt": "Elaborate on the implementation of automated PRD status management, covering the background process/trigger design, logic for status transitions based on task completion, `taskStats` updates, and consideration of efficiency mechanisms like file watching.",
-      "reasoning": "This task involves complex logic for monitoring task statuses, calculating completion percentages, updating PRD status dynamically, and potentially implementing a background process or efficient triggering mechanism. Edge cases and performance need careful consideration."
-    },
-    {
-      "taskId": 43,
-      "taskTitle": "Develop Automated PRD File Movement",
-      "complexityScore": 7,
-      "recommendedSubtasks": 6,
-      "expansionPrompt": "Detail the development of automated PRD file movement, including module design, atomic file operations, filename preservation, and implementation of a robust backup mechanism.",
-      "reasoning": "This task involves critical file system operations that must be atomic and robust to prevent data loss. Implementing a reliable backup mechanism and ensuring correct file path updates adds to the complexity."
-    },
-    {
-      "taskId": 44,
-      "taskTitle": "Extend CLI with PRD Management Commands",
-      "complexityScore": 6,
-      "recommendedSubtasks": 5,
-      "expansionPrompt": "Break down the extension of the CLI with PRD management commands, specifying each command's implementation, argument parsing, data retrieval, output formatting, and validation logic.",
-      "reasoning": "This task involves implementing multiple CLI commands, each with different functionalities (list, show, status update, sync). It requires careful handling of arguments, data retrieval, and output formatting, but the core logic for each command is relatively contained."
-    },
-    {
-      "taskId": 45,
-      "taskTitle": "Integrate PRD Features with Kanban and Interactive Menu",
-      "complexityScore": 6,
-      "recommendedSubtasks": 5,
-      "expansionPrompt": "Outline the integration of PRD features into the Kanban board and interactive menu, detailing the modifications required for Kanban filtering options and the structure/options of the new 'PRD Management' menu section.",
-      "reasoning": "This task involves modifying existing UI components (Kanban board and interactive menu) to incorporate new features. It requires understanding the existing UI framework and ensuring seamless integration and user experience."
-    },
-    {
-      "taskId": 46,
-      "taskTitle": "Develop PRD Migration System",
-      "complexityScore": 8,
-      "recommendedSubtasks": 7,
-      "expansionPrompt": "Detail the development of the PRD migration system, including parsing existing PRD files, extracting metadata, creating `prds.json` entries, moving files, and implementing `--dry-run` and `--backup` functionalities.",
-      "reasoning": "This task is complex due to the need to parse potentially unstructured existing PRD files, extract metadata, correctly populate the new `prds.json` schema, and perform file system operations with robust error handling, dry-run, and backup capabilities."
-    },
-    {
-      "taskId": 47,
-      "taskTitle": "Implement PRD Version Control and History",
-      "complexityScore": 9,
-      "recommendedSubtasks": 8,
-      "expansionPrompt": "Elaborate on the implementation of PRD version control and history, covering snapshot creation logic (triggers, timestamping, descriptions), storage strategy in `archived/versions`, and the detailed steps for implementing a reliable rollback mechanism.",
-      "reasoning": "Implementing version control requires careful design of snapshot triggers, storage, and a robust rollback mechanism that can restore both file content and associated metadata. This involves significant state management and file system interaction."
-    },
-    {
-      "taskId": 48,
-      "taskTitle": "Update AI Agent Guidelines for PRD Management",
-      "complexityScore": 3,
-      "recommendedSubtasks": 3,
-      "expansionPrompt": "Break down the update of AI agent guidelines for PRD management, specifying which files need modification and the key instructions to be added regarding PRD organization, status tracking, linking, and creation.",
-      "reasoning": "This task is primarily documentation-based, involving updating existing guideline files. While important, it doesn't involve complex code development or system integration."
-    },
-    {
-      "taskId": 49,
-      "taskTitle": "Initialize Terminal UI Framework (Blessed.js)",
-      "complexityScore": 4,
-      "recommendedSubtasks": 3,
-      "expansionPrompt": "Break down the task of initializing the Blessed.js terminal UI framework. Focus on setting up the screen, creating a basic layout structure (e.g., a main container), and implementing initial cross-platform compatibility checks and error handling for the terminal environment. Include steps for dependency management and basic 'quit' functionality.",
-      "reasoning": "This task involves setting up a new UI framework, which has inherent complexities like environment setup, basic layout, and cross-platform considerations. While Blessed.js simplifies much of this, initial setup always requires careful attention to detail and testing across different OS/terminal combinations. It's foundational for subsequent tasks."
-    },
-    {
-      "taskId": 50,
-      "taskTitle": "Develop Core Kanban Board Layout and Column Rendering",
-      "complexityScore": 7,
-      "recommendedSubtasks": 5,
-      "expansionPrompt": "Detail the implementation of the core Kanban board layout. Include subtasks for designing and implementing ASCII art for columns, developing dynamic sizing logic for terminal width/height, rendering column headers with PRD counts, and implementing the 'No PRDs' placeholder. Specify the use of Chalk.js for styling and integration with the Blessed.js layout.",
-      "reasoning": "This task is complex due to the dynamic nature of the layout (adapting to terminal size), the need for precise ASCII art rendering, and integrating data (PRD counts) into the UI. Dynamic sizing and ensuring consistent visual appearance across different terminal sizes can be tricky and require careful calculation and testing."
-    },
-    {
-      "taskId": 51,
-      "taskTitle": "Implement ASCII PRD Card Design and Metadata Display",
-      "complexityScore": 6,
-      "recommendedSubtasks": 4,
-      "expansionPrompt": "Outline the steps for implementing the ASCII PRD card design. Focus on creating a reusable component for a single PRD card, displaying all specified metadata (ID, title, priority, complexity, linked task count, completion percentage) with appropriate formatting and colors. Include subtasks for title truncation, text wrapping, and integrating with existing PRD data utilities.",
-      "reasoning": "This task involves detailed UI rendering for each card, including multiple data points, conditional styling (colors for priority/complexity), and text manipulation (truncation, wrapping). While not as complex as dynamic layout, ensuring all metadata is displayed correctly and robustly for varying data lengths adds complexity."
-    },
-    {
-      "taskId": 52,
-      "taskTitle": "Develop Keyboard Navigation and PRD Selection",
-      "complexityScore": 7,
-      "recommendedSubtasks": 5,
-      "expansionPrompt": "Break down the development of keyboard navigation and PRD selection. Include subtasks for setting up event listeners for arrow keys, managing the state of the currently selected PRD (column and index), implementing visual highlighting/borders for selection, and dynamically updating the status bar with selection details and available shortcuts. Consider edge cases like empty columns or reaching board boundaries.",
-      "reasoning": "Implementing robust keyboard navigation requires careful state management, handling various arrow key inputs, and ensuring visual feedback is immediate and accurate. Edge cases (e.g., navigating into/out of empty columns, reaching board limits) add significant complexity. Updating the status bar dynamically also requires good integration."
-    },
-    {
-      "taskId": 53,
-      "taskTitle": "Implement PRD Status Updates via Keyboard",
-      "complexityScore": 8,
-      "recommendedSubtasks": 6,
-      "expansionPrompt": "Detail the implementation of PRD status updates via keyboard. Include subtasks for handling number key presses (1-4) for status changes, updating the in-memory PRD data, persisting changes to `prd/prds.json` using existing utilities, triggering the automatic PRD file organization logic, and refreshing the UI to reflect the new status and updated column counts. Emphasize error handling and data consistency.",
-      "reasoning": "This task is highly complex because it involves not just UI updates but also critical data persistence and file system manipulation. Ensuring atomicity of operations (UI update, JSON update, file move) and handling potential errors during file operations, while maintaining data consistency with existing TaskMaster utilities, makes this a high-risk and complex task."
-    },
-    {
-      "taskId": 54,
-      "taskTitle": "Integrate PRD Kanban Board into Project Management Menu",
-      "complexityScore": 3,
-      "recommendedSubtasks": 2,
-      "expansionPrompt": "Outline the steps to integrate the PRD Kanban board into the Project Management menu. Focus on modifying the existing menu definition to add the new option, implementing the launch mechanism for the Kanban board, and ensuring a clean return to the Project Management menu upon exiting the Kanban board. Consider how to pass necessary context or state between the menu and the board.",
-      "reasoning": "This is a relatively straightforward integration task. It primarily involves modifying existing menu structures and ensuring proper flow between the menu and the new Kanban board component. The main complexity lies in ensuring a smooth transition and return."
-    },
-    {
-      "taskId": 55,
-      "taskTitle": "Implement Quick PRD Operations via Keyboard Shortcuts",
-      "complexityScore": 8,
-      "recommendedSubtasks": 6,
-      "expansionPrompt": "Break down the implementation of quick PRD operations via keyboard shortcuts. For each shortcut ('V', 'T', 'S', 'I', 'R', 'O'), define a subtask for handling the key press, retrieving the necessary PRD data using existing utilities, and implementing the specific display or action (e.g., detailed view overlay, task list, statistics, status bar update, board refresh, opening file location). Emphasize error handling and graceful degradation for file operations.",
-      "reasoning": "This task is complex because it involves implementing multiple distinct functionalities, each requiring data retrieval, specific UI rendering (overlays, status bar updates), and potentially external system interactions (opening file explorer). Ensuring each operation is robust, uses existing utilities correctly, and provides good user feedback adds significant complexity."
-    },
-    {
-      "taskId": 56,
-      "taskTitle": "Develop Board Navigation and Control Features",
-      "complexityScore": 7,
-      "recommendedSubtasks": 5,
-      "expansionPrompt": "Detail the development of board navigation and control features. Include subtasks for implementing event listeners for 'F', '/', 'C', 'H', 'Q', and Tab keys. For each, specify the required UI state changes (e.g., toggling filter mode, activating search input, displaying statistics/help overlay, exiting). Focus on dynamically updating the status bar to reflect the current mode and available shortcuts.",
-      "reasoning": "This task involves implementing several distinct control mechanisms, some of which (filter, search) might require additional UI elements or input handling. Managing different 'modes' of the board and ensuring the status bar accurately reflects the current context adds a layer of complexity. The Tab key for cycling sections also requires careful focus management."
-    },
-    {
-      "taskId": 57,
-      "taskTitle": "Ensure Full PRD Tracking System Integration and Data Consistency",
-      "complexityScore": 9,
-      "recommendedSubtasks": 4,
-      "expansionPrompt": "Outline the comprehensive steps to ensure full PRD tracking system integration and data consistency. Focus on verifying all read/write operations with `prd/prds.json` use existing TaskMaster utilities, confirming that PRD status updates correctly trigger file system organization, and establishing a robust testing strategy for data integrity across all operations. Include steps for validating adherence to existing PRD data models and validation rules.",
-      "reasoning": "This is a critical, overarching task that focuses on data integrity and system-wide consistency. It requires a deep understanding of the existing PRD tracking system and careful verification of all interactions. The complexity comes from ensuring that the new Kanban board doesn't introduce data inconsistencies or break existing file organization logic, requiring thorough testing and validation across all data flows."
-    },
-    {
-      "taskId": 58,
-      "taskTitle": "Cross-Platform Testing, Integration Testing, and Documentation",
-      "complexityScore": 6,
-      "recommendedSubtasks": 5,
-      "expansionPrompt": "Break down the comprehensive testing and documentation task. Include subtasks for planning and executing cross-platform tests (Windows, macOS, Linux terminals), conducting integration tests with the existing PRD tracking and menu systems, and developing user-facing documentation (user guide for Kanban board, shortcuts) and technical documentation (UI architecture, integration points). Emphasize bug reporting and resolution processes.",
-      "reasoning": "While not a development task, this is crucial for product quality. The complexity comes from the breadth of testing required (cross-platform, integration, user acceptance) and the need for clear, comprehensive documentation. It requires systematic execution and attention to detail across multiple environments."
-    }
-  ]
+	"meta": {
+		"generatedAt": "2025-06-01T12:40:37.737Z",
+		"tasksAnalyzed": 10,
+		"totalTasks": 48,
+		"analysisCount": 67,
+		"thresholdScore": 5,
+		"projectName": "Taskmaster",
+		"usedResearch": false
+	},
+	"complexityAnalysis": [
+		{
+			"taskId": 60,
+			"taskTitle": "Implement Mentor System with Round-Table Discussion Feature",
+			"complexityScore": 8,
+			"recommendedSubtasks": 7,
+			"expansionPrompt": "The current 7 subtasks for implementing the mentor system appear well-structured. Consider if any additional subtasks are needed for mentor personality consistency, discussion quality evaluation, or performance optimization with multiple mentors.",
+			"reasoning": "This task involves creating a sophisticated mentor simulation system with round-table discussions. The complexity is high due to the need for personality simulation, complex LLM integration, and structured discussion management. The 7 existing subtasks cover the main implementation areas from architecture to testing."
+		},
+		{
+			"taskId": 62,
+			"taskTitle": "Add --simple Flag to Update Commands for Direct Text Input",
+			"complexityScore": 4,
+			"recommendedSubtasks": 8,
+			"expansionPrompt": "The current 8 subtasks for implementing the --simple flag appear comprehensive. Consider if any additional subtasks are needed for user experience testing or documentation updates.",
+			"reasoning": "This task involves adding a simple flag option to bypass AI processing for updates. The complexity is relatively low as it primarily involves modifying existing command handlers and adding a flag. The 8 existing subtasks are very detailed and cover all aspects of implementation from command parsing to testing."
+		},
+		{
+			"taskId": 63,
+			"taskTitle": "Add pnpm Support for the Taskmaster Package",
+			"complexityScore": 5,
+			"recommendedSubtasks": 8,
+			"expansionPrompt": "The current 8 subtasks for adding pnpm support appear comprehensive. Consider if any additional subtasks are needed for CI/CD integration, performance comparison, or documentation updates.",
+			"reasoning": "This task involves ensuring the package works correctly with pnpm as an alternative package manager. The complexity is moderate as it requires careful testing of installation processes and scripts across different environments. The 8 existing subtasks cover all major aspects from documentation to binary verification."
+		},
+		{
+			"taskId": 64,
+			"taskTitle": "Add Yarn Support for Taskmaster Installation",
+			"complexityScore": 5,
+			"recommendedSubtasks": 9,
+			"expansionPrompt": "The current 9 subtasks for adding Yarn support appear comprehensive. Consider if any additional subtasks are needed for performance testing, CI/CD integration, or compatibility with different Yarn versions.",
+			"reasoning": "This task involves ensuring the package works correctly with Yarn as an alternative package manager. The complexity is moderate as it requires careful testing of installation processes and scripts across different environments. The 9 existing subtasks are very detailed and cover all aspects from configuration to testing."
+		},
+		{
+			"taskId": 65,
+			"taskTitle": "Add Bun Support for Taskmaster Installation",
+			"complexityScore": 6,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "The current 6 subtasks for adding Bun support appear well-structured. Consider if any additional subtasks are needed for handling Bun-specific issues, performance testing, or documentation updates.",
+			"reasoning": "This task involves adding support for the newer Bun package manager. The complexity is slightly higher than the other package manager tasks due to Bun's differences from Node.js and potential compatibility issues. The 6 existing subtasks cover the main implementation areas from research to documentation."
+		},
+		{
+			"taskId": 67,
+			"taskTitle": "Add CLI JSON output and Cursor keybindings integration",
+			"complexityScore": 5,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "The current 5 subtasks for implementing JSON output and Cursor keybindings appear well-structured. Consider if any additional subtasks are needed for testing across different operating systems, documentation updates, or user experience improvements.",
+			"reasoning": "This task involves two distinct features: adding JSON output to CLI commands and creating a keybindings installation command. The complexity is moderate as it requires careful handling of different output formats and OS-specific file paths. The 5 existing subtasks cover the main implementation areas for both features."
+		},
+		{
+			"taskId": 68,
+			"taskTitle": "Ability to create tasks without parsing PRD",
+			"complexityScore": 3,
+			"recommendedSubtasks": 2,
+			"expansionPrompt": "The current 2 subtasks for implementing task creation without PRD appear appropriate. Consider if any additional subtasks are needed for validation, error handling, or integration with existing task management workflows.",
+			"reasoning": "This task involves a relatively simple modification to allow task creation without requiring a PRD document. The complexity is low as it primarily involves creating a form interface and saving functionality. The 2 existing subtasks cover the main implementation areas of UI design and data saving."
+		},
+		{
+			"taskId": 72,
+			"taskTitle": "Implement PDF Generation for Project Progress and Dependency Overview",
+			"complexityScore": 7,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "The current 6 subtasks for implementing PDF generation appear comprehensive. Consider if any additional subtasks are needed for handling large projects, additional visualization options, or integration with existing reporting tools.",
+			"reasoning": "This task involves creating a feature to generate PDF reports of project progress and dependency visualization. The complexity is high due to the need for PDF generation, data collection, and visualization integration. The 6 existing subtasks cover the main implementation areas from library selection to export options."
+		},
+		{
+			"taskId": 75,
+			"taskTitle": "Integrate Google Search Grounding for Research Role",
+			"complexityScore": 5,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "The current 4 subtasks for integrating Google Search Grounding appear well-structured. Consider if any additional subtasks are needed for testing with different query types, error handling, or performance optimization.",
+			"reasoning": "This task involves updating the AI service layer to enable Google Search Grounding for research roles. The complexity is moderate as it requires careful integration with the existing AI service architecture and conditional logic. The 4 existing subtasks cover the main implementation areas from service layer modification to testing."
+		},
+		{
+			"taskId": 76,
+			"taskTitle": "Develop E2E Test Framework for Taskmaster MCP Server (FastMCP over stdio)",
+			"complexityScore": 8,
+			"recommendedSubtasks": 7,
+			"expansionPrompt": "The current 7 subtasks for developing the E2E test framework appear comprehensive. Consider if any additional subtasks are needed for test result reporting, CI/CD integration, or performance benchmarking.",
+			"reasoning": "This task involves creating a sophisticated end-to-end testing framework for the MCP server. The complexity is high due to the need for subprocess management, protocol handling, and robust test case definition. The 7 existing subtasks cover the main implementation areas from architecture to documentation."
+		},
+		{
+			"taskId": 77,
+			"taskTitle": "Implement AI Usage Telemetry for Taskmaster (with external analytics endpoint)",
+			"complexityScore": 7,
+			"recommendedSubtasks": 18,
+			"expansionPrompt": "The current 18 subtasks for implementing AI usage telemetry appear very comprehensive. Consider if any additional subtasks are needed for security hardening, privacy compliance, or user feedback collection.",
+			"reasoning": "This task involves creating a telemetry system to track AI usage metrics. The complexity is high due to the need for secure data transmission, comprehensive data collection, and integration across multiple commands. The 18 existing subtasks are extremely detailed and cover all aspects of implementation from core utility to provider-specific updates."
+		},
+		{
+			"taskId": 80,
+			"taskTitle": "Implement Unique User ID Generation and Storage During Installation",
+			"complexityScore": 4,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "The current 5 subtasks for implementing unique user ID generation appear well-structured. Consider if any additional subtasks are needed for privacy compliance, security auditing, or integration with the telemetry system.",
+			"reasoning": "This task involves generating and storing a unique user identifier during installation. The complexity is relatively low as it primarily involves UUID generation and configuration file management. The 5 existing subtasks cover the main implementation areas from script structure to documentation."
+		},
+		{
+			"taskId": 81,
+			"taskTitle": "Task #81: Implement Comprehensive Local Telemetry System with Future Server Integration Capability",
+			"complexityScore": 8,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "The current 6 subtasks for implementing the comprehensive local telemetry system appear well-structured. Consider if any additional subtasks are needed for data migration, storage optimization, or visualization tools.",
+			"reasoning": "This task involves expanding the telemetry system to capture additional metrics and implement local storage with future server integration capability. The complexity is high due to the breadth of data collection, storage requirements, and privacy considerations. The 6 existing subtasks cover the main implementation areas from data collection to user-facing benefits."
+		},
+		{
+			"taskId": 82,
+			"taskTitle": "Update supported-models.json with token limit fields",
+			"complexityScore": 3,
+			"recommendedSubtasks": 1,
+			"expansionPrompt": "This task appears straightforward enough to be implemented without further subtasks. Focus on researching accurate token limit values for each model and ensuring backward compatibility.",
+			"reasoning": "This task involves a simple update to the supported-models.json file to include new token limit fields. The complexity is low as it primarily involves research and data entry. No subtasks are necessary as the task is well-defined and focused."
+		},
+		{
+			"taskId": 83,
+			"taskTitle": "Update config-manager.js defaults and getters",
+			"complexityScore": 4,
+			"recommendedSubtasks": 1,
+			"expansionPrompt": "This task appears straightforward enough to be implemented without further subtasks. Focus on updating the DEFAULTS object and related getter functions while maintaining backward compatibility.",
+			"reasoning": "This task involves updating the config-manager.js module to replace maxTokens with more specific token limit fields. The complexity is relatively low as it primarily involves modifying existing code rather than creating new functionality. No subtasks are necessary as the task is well-defined and focused."
+		},
+		{
+			"taskId": 84,
+			"taskTitle": "Implement token counting utility",
+			"complexityScore": 5,
+			"recommendedSubtasks": 1,
+			"expansionPrompt": "This task appears well-defined enough to be implemented without further subtasks. Focus on implementing accurate token counting for different models and proper fallback mechanisms.",
+			"reasoning": "This task involves creating a utility function to count tokens for different AI models. The complexity is moderate as it requires integration with the tiktoken library and handling different tokenization schemes. No subtasks are necessary as the task is well-defined and focused."
+		},
+		{
+			"taskId": 69,
+			"taskTitle": "Enhance Analyze Complexity for Specific Task IDs",
+			"complexityScore": 7,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "Break down the task 'Enhance Analyze Complexity for Specific Task IDs' into 6 subtasks focusing on: 1) Core logic modification to accept ID parameters, 2) Report merging functionality, 3) CLI interface updates, 4) MCP tool integration, 5) Documentation updates, and 6) Comprehensive testing across all components.",
+			"reasoning": "This task involves modifying existing functionality across multiple components (core logic, CLI, MCP) with complex logic for filtering tasks and merging reports. The implementation requires careful handling of different parameter combinations and edge cases. The task has interdependent components that need to work together seamlessly, and the report merging functionality adds significant complexity."
+		},
+		{
+			"taskId": 70,
+			"taskTitle": "Implement 'diagram' command for Mermaid diagram generation",
+			"complexityScore": 6,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Break down the 'diagram' command implementation into 5 subtasks: 1) Command interface and parameter handling, 2) Task data extraction and transformation to Mermaid syntax, 3) Diagram rendering with status color coding, 4) Output formatting and file export functionality, and 5) Error handling and edge case management.",
+			"reasoning": "This task requires implementing a new feature rather than modifying existing code, which reduces complexity from integration challenges. However, it involves working with visualization logic, dependency mapping, and multiple output formats. The color coding based on status and handling of dependency relationships adds moderate complexity. The task is well-defined but requires careful attention to diagram formatting and error handling."
+		},
+		{
+			"taskId": 85,
+			"taskTitle": "Update ai-services-unified.js for dynamic token limits",
+			"complexityScore": 7,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Break down the update of ai-services-unified.js for dynamic token limits into subtasks such as: (1) Import and integrate the token counting utility, (2) Refactor _unifiedServiceRunner to calculate and enforce dynamic token limits, (3) Update error handling for token limit violations, (4) Add and verify logging for token usage, (5) Write and execute tests for various prompt and model scenarios.",
+			"reasoning": "This task involves significant code changes to a core function, integration of a new utility, dynamic logic for multiple models, and robust error handling. It also requires comprehensive testing for edge cases and integration, making it moderately complex and best managed by splitting into focused subtasks."
+		},
+		{
+			"taskId": 86,
+			"taskTitle": "Update .taskmasterconfig schema and user guide",
+			"complexityScore": 6,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Expand this task into subtasks: (1) Draft a migration guide for users, (2) Update user documentation to explain new config fields, (3) Modify schema validation logic in config-manager.js, (4) Test and validate backward compatibility and error messaging.",
+			"reasoning": "The task spans documentation, schema changes, migration guidance, and validation logic. While not algorithmically complex, it requires careful coordination and thorough testing to ensure a smooth user transition and robust validation."
+		},
+		{
+			"taskId": 87,
+			"taskTitle": "Implement validation and error handling",
+			"complexityScore": 5,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Decompose this task into: (1) Add validation logic for model and config loading, (2) Implement error handling and fallback mechanisms, (3) Enhance logging and reporting for token usage, (4) Develop helper functions for configuration suggestions and improvements.",
+			"reasoning": "This task is primarily about adding validation, error handling, and logging. While important for robustness, the logic is straightforward and can be modularized into a few clear subtasks."
+		},
+		{
+			"taskId": 89,
+			"taskTitle": "Introduce Prioritize Command with Enhanced Priority Levels",
+			"complexityScore": 6,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Expand this task into: (1) Implement the prioritize command with all required flags and shorthands, (2) Update CLI output and help documentation for new priority levels, (3) Ensure backward compatibility with existing commands, (4) Add error handling for invalid inputs, (5) Write and run tests for all command scenarios.",
+			"reasoning": "This CLI feature requires command parsing, updating internal logic for new priority levels, documentation, and robust error handling. The complexity is moderate due to the need for backward compatibility and comprehensive testing."
+		},
+		{
+			"taskId": 90,
+			"taskTitle": "Implement Subtask Progress Analyzer and Reporting System",
+			"complexityScore": 8,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "Break down the analyzer implementation into: (1) Design and implement progress tracking logic, (2) Develop status validation and issue detection, (3) Build the reporting system with multiple output formats, (4) Integrate analyzer with the existing task management system, (5) Optimize for performance and scalability, (6) Write unit, integration, and performance tests.",
+			"reasoning": "This is a complex, multi-faceted feature involving data analysis, reporting, integration, and performance optimization. It touches many parts of the system and requires careful design, making it one of the most complex tasks in the list."
+		},
+		{
+			"taskId": 91,
+			"taskTitle": "Implement Move Command for Tasks and Subtasks",
+			"complexityScore": 7,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Expand this task into: (1) Implement move logic for tasks and subtasks, (2) Handle edge cases (invalid ids, non-existent parents, circular dependencies), (3) Update CLI to support move command with flags, (4) Ensure data integrity and update relationships, (5) Write and execute tests for various move scenarios.",
+			"reasoning": "Moving tasks and subtasks requires careful handling of hierarchical data, edge cases, and data integrity. The command must be robust and user-friendly, necessitating multiple focused subtasks for safe implementation."
+		},
+		{
+			"taskId": 11,
+			"taskTitle": "Update package.json",
+			"complexityScore": 2,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Break down the process of updating `package.json` into specific steps: locating the file, modifying each specified field, and verifying changes. Include a step for running `npm install` and checking for new dependency issues.",
+			"reasoning": "This task is straightforward, involving specific field updates in a single file. The main complexity is ensuring all references are caught and `npm install` doesn't break."
+		},
+		{
+			"taskId": 12,
+			"taskTitle": "Rename Core Application Files and Update Internal References",
+			"complexityScore": 4,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Detail the steps for renaming each specified file, then outline the process for updating internal references within `README.md` and `index.js`. Include steps for verifying file renames and running the application to check for broken references.",
+			"reasoning": "Renaming files is simple, but updating internal references can be tricky, especially if paths or variable names are involved. It requires careful search and replace and verification."
+		},
+		{
+			"taskId": 13,
+			"taskTitle": "Global String Replacement (TaskMaster to TaskHero)",
+			"complexityScore": 7,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Outline the strategy for performing a global search and replace, including the use of specific tools or commands. Detail the verification steps, emphasizing comprehensive code review, global search for remaining instances, and running all tests (unit and integration) to catch regressions.",
+			"reasoning": "Global string replacement is inherently risky. While tools can automate it, ensuring no unintended changes or broken functionality requires extensive verification and testing across the entire codebase."
+		},
+		{
+			"taskId": 14,
+			"taskTitle": "Update Documentation Files",
+			"complexityScore": 3,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Specify the directories and files to be reviewed and updated. Detail the process for ensuring consistency in branding, checking for broken links, and verifying the tone and messaging across all documentation.",
+			"reasoning": "This is a manual review and update task. It's not complex technically but requires thoroughness to ensure all documentation is consistent and accurate."
+		},
+		{
+			"taskId": 15,
+			"taskTitle": "Update CLI Commands and UI Text",
+			"complexityScore": 5,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Identify key areas for CLI and UI text updates. Detail the process for modifying command definitions, help text, error messages, and banner/logo text. Outline a testing strategy that includes running various CLI commands and manually inspecting UI elements.",
+			"reasoning": "This involves identifying specific code sections for CLI and UI text, which can be spread out. Testing requires interacting with the application's interface and commands, adding a layer of manual verification."
+		},
+		{
+			"taskId": 16,
+			"taskTitle": "Update Dependencies and External References",
+			"complexityScore": 6,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "List potential locations for external references beyond `package.json` (e.g., configuration files, build scripts, CI/CD pipelines). Detail the process for identifying and updating hardcoded URLs, API endpoints, and MCP configuration examples. Include steps for verifying npm package configuration and testing MCP server integration.",
+			"reasoning": "This task requires a deep understanding of the project's external integrations and configurations. Missing a hardcoded reference can lead to subtle bugs or deployment issues. Testing external integrations adds complexity."
+		},
+		{
+			"taskId": 17,
+			"taskTitle": "Update Testing and Build Files",
+			"complexityScore": 5,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Outline the process for reviewing and updating test descriptions, variable names, and assertions within the `tests/` directory. Detail the steps for checking `jest.config.js` and any build/deployment scripts for project name references. Include a step for running all tests and verifying build/deployment pipeline execution.",
+			"reasoning": "Updating tests and build files is crucial for maintaining pipeline integrity. It requires careful modification to avoid breaking existing tests or build processes, followed by full test suite execution."
+		},
+		{
+			"taskId": 18,
+			"taskTitle": "Functional Testing of CLI Commands",
+			"complexityScore": 7,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Develop a detailed test plan for functional testing of CLI commands, covering all primary commands, various arguments, and options. Include steps for verifying output messages, help text, and error handling. Emphasize the development of a comprehensive test suite and automation where possible.",
+			"reasoning": "This is a dedicated testing task that requires thorough planning and execution. Ensuring all CLI functionalities work correctly with new branding and potential command name changes is critical and time-consuming."
+		},
+		{
+			"taskId": 19,
+			"taskTitle": "Integration Testing of MCP Server and Components",
+			"complexityScore": 8,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Outline the process for deploying the rebranded application and MCP server in a test environment. Detail the end-to-end test scenarios to verify data flow, API calls, and overall system functionality. Include steps for monitoring logs and verifying data consistency and communication between components.",
+			"reasoning": "Integration testing is complex as it involves multiple components interacting. Setting up the test environment, designing comprehensive end-to-end scenarios, and debugging integration issues can be challenging."
+		},
+		{
+			"taskId": 20,
+			"taskTitle": "Final Codebase and Documentation Review",
+			"complexityScore": 6,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Detail the process for a final global search for 'TaskMaster' variations across all files. Outline the steps for a comprehensive manual review of all documentation for branding consistency, valid links, and correct references. Include a step for engaging a fresh pair of eyes for documentation review.",
+			"reasoning": "This is a critical quality assurance step. While it's a review, it requires meticulous attention to detail and a systematic approach to ensure no branding inconsistencies or old references remain."
+		},
+		{
+			"taskId": 21,
+			"taskTitle": "Enhance Task Schema with PRD Source Field",
+			"complexityScore": 7,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Detail the steps for modifying the task object schema to include the `prdSource` field with its specified sub-fields. Outline the strategy for ensuring backward compatibility for existing tasks, including handling `tasks.json` and `task_xxx.txt` file formats. Specify unit and integration tests for schema parsing, serialization, and graceful handling of existing data.",
+			"reasoning": "Modifying a core data schema is complex due to its ripple effect. It requires careful planning for backward compatibility, data migration (even if implicit), and robust testing to prevent data corruption or application crashes."
+		},
+		{
+			"taskId": 22,
+			"taskTitle": "Integrate PRD Metadata Capture into Parse Command",
+			"complexityScore": 7,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Outline the modifications needed for the `parse-prd` command in `scripts/modules/commands.js` to extract and populate all `prdSource` fields. Detail the implementation of `fileHash` calculation and handling of file paths. Specify unit tests for correct field population and end-to-end tests for accurate storage in task files.",
+			"reasoning": "This task involves modifying an existing command to extract new data, calculate hashes, and correctly populate a nested object. It requires careful coding and thorough testing to ensure data integrity and accuracy."
+		},
+		{
+			"taskId": 23,
+			"taskTitle": "Display PRD Source in Task Views and Reports",
+			"complexityScore": 6,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Identify all UI components (task list, task details, project dashboard, interactive menu) that need modification. Detail the specific changes for each view to display `prdSource` information. Outline a manual UI testing plan and consider automated UI element checks for regression.",
+			"reasoning": "This task involves UI modifications across multiple components. While not technically complex, it requires careful attention to layout, formatting, and ensuring consistency across different views. Manual UI testing can be time-consuming."
+		},
+		{
+			"taskId": 24,
+			"taskTitle": "Implement PRD Source Query and Filter Commands",
+			"complexityScore": 7,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Define the new commands (`list-prds`, `tasks-from-prd`, `show-prd-source`) and their expected behavior. Detail the implementation of data retrieval and filtering logic, emphasizing efficiency. Specify unit tests for command logic and integration tests for data store interaction and accurate results.",
+			"reasoning": "Implementing new commands with filtering and querying capabilities requires designing robust data retrieval logic, handling various input parameters, and ensuring efficient performance, especially with large datasets."
+		},
+		{
+			"taskId": 25,
+			"taskTitle": "Implement PRD Change Detection and Flagging",
+			"complexityScore": 8,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "Design the mechanism for detecting PRD file modifications (e.g., new command, background process). Detail the comparison logic for `fileHash` and `fileSize`. Define how tasks will be flagged as outdated and consider real-time detection vs. periodic checks. Specify unit tests for change detection and end-to-end tests for accurate flagging.",
+			"reasoning": "This task involves implementing a core change management feature. It requires robust file system interaction, hash calculation, and a clear strategy for flagging tasks, which can impact downstream processes. Ensuring accuracy and efficiency is key."
+		},
+		{
+			"taskId": 26,
+			"taskTitle": "Develop PRD Re-parsing and Update Logic",
+			"complexityScore": 9,
+			"recommendedSubtasks": 7,
+			"expansionPrompt": "Design the `reparse-prd` command, including the `--update-existing` flag. Detail the logic for re-reading PRD files, identifying and updating existing tasks (e.g., by comparing titles/descriptions), and creating new tasks. Outline the structure and management of `prd-history.json`. Specify unit tests for re-parsing logic and integration tests for task data updates and history tracking.",
+			"reasoning": "This is a highly complex task involving sophisticated logic for identifying changes between PRD versions, updating existing tasks, creating new ones, and maintaining a history. It requires careful design to avoid data loss or inconsistencies."
+		},
+		{
+			"taskId": 27,
+			"taskTitle": "Implement PRD Traceability Reporting",
+			"complexityScore": 6,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Design the `prd-traceability-report` command, including format options (e.g., CSV, JSON). Detail the data points to be included in the report (task ID, title, PRD file path, parsed date, etc.). Outline the report generation logic and specify unit tests for output format and data accuracy, along with manual review steps.",
+			"reasoning": "Generating reports requires careful data aggregation and formatting. While not as complex as schema changes or re-parsing, ensuring the report is accurate, complete, and in the correct format for compliance adds a layer of detail."
+		},
+		{
+			"taskId": 28,
+			"taskTitle": "Establish Comprehensive Testing Strategy",
+			"complexityScore": 8,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "Develop a detailed test plan covering unit, integration, end-to-end, performance, and cross-platform compatibility for all new PRD source tracking features. Specify key test scenarios for each type of testing. Outline the automation strategy and metrics for test coverage. Include steps for regular test suite review and maintenance.",
+			"reasoning": "This is a meta-task that requires strategic planning and coordination across all new features. Designing a comprehensive testing strategy, including automation and performance considerations, is a significant undertaking that impacts the quality of the entire feature set."
+		},
+		{
+			"taskId": 34,
+			"taskTitle": "Terminal Kanban Board Layout and Display",
+			"complexityScore": 7,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Break down the implementation of the Kanban board layout into distinct subtasks, including: 1. Initializing the chosen terminal UI framework (Blessed.js/Ink.js). 2. Designing and rendering the three main columns ('pending', 'in-progress', 'done') with ASCII art. 3. Implementing dynamic resizing logic for columns based on terminal dimensions. 4. Displaying column headers with task counts and 'No tasks' placeholders. 5. Integrating initial JSON data loading to populate the board.",
+			"reasoning": "This task involves foundational UI setup, dynamic layout adjustments, and integration with existing data structures. The choice of UI framework and the need for responsive design add complexity. It's a critical dependency for subsequent tasks."
+		},
+		{
+			"taskId": 35,
+			"taskTitle": "ASCII Task Card Design and Metadata Display",
+			"complexityScore": 6,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Detail the subtasks for designing and rendering ASCII task cards: 1. Defining the structure and visual elements of an individual task card using ASCII box drawing. 2. Implementing logic to display task ID, title, priority (with color/symbols), dependencies count, and PRD source indicator. 3. Developing title truncation with ellipsis and ensuring full title accessibility. 4. Ensuring cards fit within column width constraints and maintain consistent styling.",
+			"reasoning": "This task builds directly on the previous one, focusing on the visual representation of individual tasks. It requires careful formatting, conditional rendering (priority colors, PRD icon), and text manipulation (truncation)."
+		},
+		{
+			"taskId": 36,
+			"taskTitle": "Keyboard Navigation and Status Updates",
+			"complexityScore": 8,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "Outline the subtasks for implementing keyboard navigation and status updates: 1. Setting up keyboard event listeners for arrow keys and number keys. 2. Implementing navigation logic for moving between tasks within a column and between columns. 3. Developing task selection/highlighting visual feedback. 4. Implementing logic for changing task status based on number key presses (1, 2, 3). 5. Integrating with TaskMaster utilities to persist status changes to tasks.json. 6. Ensuring immediate board refresh and column task count updates after status changes.",
+			"reasoning": "This task is highly interactive, requiring robust keyboard event handling, state management (selected task, task status), visual feedback, and persistent data updates. It's a core user interaction feature."
+		},
+		{
+			"taskId": 37,
+			"taskTitle": "Quick Task Operations via Keyboard",
+			"complexityScore": 7,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Break down the implementation of quick task operations: 1. Implementing 'V' for detailed task view (e.g., in a bottom panel). 2. Implementing 'D' for task deletion with confirmation and persistence. 3. Implementing 'E' for inline task title editing and persistence. 4. Implementing 'I' for displaying task ID/metadata in the status bar. 5. Implementing 'R' for refreshing the board from tasks.json. Ensure all operations use existing TaskMaster utilities for data persistence and trigger immediate board refreshes.",
+			"reasoning": "This task involves multiple distinct keyboard shortcuts, each triggering a different operation (display, delete, edit, refresh). Each operation requires specific UI handling, data manipulation, and persistence, adding to its complexity."
+		},
+		{
+			"taskId": 38,
+			"taskTitle": "Terminal Board Navigation and Controls & Menu Integration",
+			"complexityScore": 8,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "Detail the subtasks for implementing board navigation, controls, and menu integration: 1. Implementing keyboard shortcuts for 'F' (filter), '/' (search), 'S' (statistics), 'H' (help overlay), and 'Q' (exit). 2. Developing the UI and logic for the filter mode. 3. Developing the UI and logic for the search mode. 4. Implementing the display of board statistics and help overlay. 5. Integrating the Kanban board view into the existing TaskMaster 'Task Operations' submenu. 6. Ensuring smooth transitions into and out of the Kanban interface and consistent status bar updates.",
+			"reasoning": "This task is complex due to the variety of features (filtering, searching, statistics, help) and the need for seamless integration with an existing menu system. Each control requires its own UI and logic, and the overall state management for these modes adds significant complexity."
+		},
+		{
+			"taskId": 39,
+			"taskTitle": "Implement Core PRD Directory Structure",
+			"complexityScore": 2,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Break down the implementation of the core PRD directory structure into distinct steps, including directory creation, file initialization, and verification.",
+			"reasoning": "This task is straightforward, involving basic file system operations. The complexity comes from ensuring all specified directories and the file are correctly created and initialized."
+		},
+		{
+			"taskId": 40,
+			"taskTitle": "Develop PRD Metadata Schema and Management",
+			"complexityScore": 7,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "Detail the development of the PRD metadata schema and management, including schema definition, read/write functions, data integrity, thread safety, and specific field implementations.",
+			"reasoning": "This task involves designing a robust data schema, implementing read/write operations, ensuring data integrity, and handling potential concurrency issues (thread-safety), which adds significant complexity."
+		},
+		{
+			"taskId": 41,
+			"taskTitle": "Enhance Task-to-PRD Linking",
+			"complexityScore": 5,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Outline the enhancement of task-to-PRD linking, focusing on modifying the task data structure, populating `prdSource` during creation/update, and ensuring data consistency.",
+			"reasoning": "This task requires modifying an existing data structure and ensuring proper data population and maintenance across different operations, which can be moderately complex depending on the existing codebase."
+		},
+		{
+			"taskId": 42,
+			"taskTitle": "Implement Automated PRD Status Management",
+			"complexityScore": 8,
+			"recommendedSubtasks": 7,
+			"expansionPrompt": "Elaborate on the implementation of automated PRD status management, covering the background process/trigger design, logic for status transitions based on task completion, `taskStats` updates, and consideration of efficiency mechanisms like file watching.",
+			"reasoning": "This task involves complex logic for monitoring task statuses, calculating completion percentages, updating PRD status dynamically, and potentially implementing a background process or efficient triggering mechanism. Edge cases and performance need careful consideration."
+		},
+		{
+			"taskId": 43,
+			"taskTitle": "Develop Automated PRD File Movement",
+			"complexityScore": 7,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "Detail the development of automated PRD file movement, including module design, atomic file operations, filename preservation, and implementation of a robust backup mechanism.",
+			"reasoning": "This task involves critical file system operations that must be atomic and robust to prevent data loss. Implementing a reliable backup mechanism and ensuring correct file path updates adds to the complexity."
+		},
+		{
+			"taskId": 44,
+			"taskTitle": "Extend CLI with PRD Management Commands",
+			"complexityScore": 6,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Break down the extension of the CLI with PRD management commands, specifying each command's implementation, argument parsing, data retrieval, output formatting, and validation logic.",
+			"reasoning": "This task involves implementing multiple CLI commands, each with different functionalities (list, show, status update, sync). It requires careful handling of arguments, data retrieval, and output formatting, but the core logic for each command is relatively contained."
+		},
+		{
+			"taskId": 45,
+			"taskTitle": "Integrate PRD Features with Kanban and Interactive Menu",
+			"complexityScore": 6,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Outline the integration of PRD features into the Kanban board and interactive menu, detailing the modifications required for Kanban filtering options and the structure/options of the new 'PRD Management' menu section.",
+			"reasoning": "This task involves modifying existing UI components (Kanban board and interactive menu) to incorporate new features. It requires understanding the existing UI framework and ensuring seamless integration and user experience."
+		},
+		{
+			"taskId": 46,
+			"taskTitle": "Develop PRD Migration System",
+			"complexityScore": 8,
+			"recommendedSubtasks": 7,
+			"expansionPrompt": "Detail the development of the PRD migration system, including parsing existing PRD files, extracting metadata, creating `prds.json` entries, moving files, and implementing `--dry-run` and `--backup` functionalities.",
+			"reasoning": "This task is complex due to the need to parse potentially unstructured existing PRD files, extract metadata, correctly populate the new `prds.json` schema, and perform file system operations with robust error handling, dry-run, and backup capabilities."
+		},
+		{
+			"taskId": 47,
+			"taskTitle": "Implement PRD Version Control and History",
+			"complexityScore": 9,
+			"recommendedSubtasks": 8,
+			"expansionPrompt": "Elaborate on the implementation of PRD version control and history, covering snapshot creation logic (triggers, timestamping, descriptions), storage strategy in `archived/versions`, and the detailed steps for implementing a reliable rollback mechanism.",
+			"reasoning": "Implementing version control requires careful design of snapshot triggers, storage, and a robust rollback mechanism that can restore both file content and associated metadata. This involves significant state management and file system interaction."
+		},
+		{
+			"taskId": 48,
+			"taskTitle": "Update AI Agent Guidelines for PRD Management",
+			"complexityScore": 3,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Break down the update of AI agent guidelines for PRD management, specifying which files need modification and the key instructions to be added regarding PRD organization, status tracking, linking, and creation.",
+			"reasoning": "This task is primarily documentation-based, involving updating existing guideline files. While important, it doesn't involve complex code development or system integration."
+		},
+		{
+			"taskId": 49,
+			"taskTitle": "Initialize Terminal UI Framework (Blessed.js)",
+			"complexityScore": 4,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Break down the task of initializing the Blessed.js terminal UI framework. Focus on setting up the screen, creating a basic layout structure (e.g., a main container), and implementing initial cross-platform compatibility checks and error handling for the terminal environment. Include steps for dependency management and basic 'quit' functionality.",
+			"reasoning": "This task involves setting up a new UI framework, which has inherent complexities like environment setup, basic layout, and cross-platform considerations. While Blessed.js simplifies much of this, initial setup always requires careful attention to detail and testing across different OS/terminal combinations. It's foundational for subsequent tasks."
+		},
+		{
+			"taskId": 50,
+			"taskTitle": "Develop Core Kanban Board Layout and Column Rendering",
+			"complexityScore": 7,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Detail the implementation of the core Kanban board layout. Include subtasks for designing and implementing ASCII art for columns, developing dynamic sizing logic for terminal width/height, rendering column headers with PRD counts, and implementing the 'No PRDs' placeholder. Specify the use of Chalk.js for styling and integration with the Blessed.js layout.",
+			"reasoning": "This task is complex due to the dynamic nature of the layout (adapting to terminal size), the need for precise ASCII art rendering, and integrating data (PRD counts) into the UI. Dynamic sizing and ensuring consistent visual appearance across different terminal sizes can be tricky and require careful calculation and testing."
+		},
+		{
+			"taskId": 51,
+			"taskTitle": "Implement ASCII PRD Card Design and Metadata Display",
+			"complexityScore": 6,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Outline the steps for implementing the ASCII PRD card design. Focus on creating a reusable component for a single PRD card, displaying all specified metadata (ID, title, priority, complexity, linked task count, completion percentage) with appropriate formatting and colors. Include subtasks for title truncation, text wrapping, and integrating with existing PRD data utilities.",
+			"reasoning": "This task involves detailed UI rendering for each card, including multiple data points, conditional styling (colors for priority/complexity), and text manipulation (truncation, wrapping). While not as complex as dynamic layout, ensuring all metadata is displayed correctly and robustly for varying data lengths adds complexity."
+		},
+		{
+			"taskId": 52,
+			"taskTitle": "Develop Keyboard Navigation and PRD Selection",
+			"complexityScore": 7,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Break down the development of keyboard navigation and PRD selection. Include subtasks for setting up event listeners for arrow keys, managing the state of the currently selected PRD (column and index), implementing visual highlighting/borders for selection, and dynamically updating the status bar with selection details and available shortcuts. Consider edge cases like empty columns or reaching board boundaries.",
+			"reasoning": "Implementing robust keyboard navigation requires careful state management, handling various arrow key inputs, and ensuring visual feedback is immediate and accurate. Edge cases (e.g., navigating into/out of empty columns, reaching board limits) add significant complexity. Updating the status bar dynamically also requires good integration."
+		},
+		{
+			"taskId": 53,
+			"taskTitle": "Implement PRD Status Updates via Keyboard",
+			"complexityScore": 8,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "Detail the implementation of PRD status updates via keyboard. Include subtasks for handling number key presses (1-4) for status changes, updating the in-memory PRD data, persisting changes to `prd/prds.json` using existing utilities, triggering the automatic PRD file organization logic, and refreshing the UI to reflect the new status and updated column counts. Emphasize error handling and data consistency.",
+			"reasoning": "This task is highly complex because it involves not just UI updates but also critical data persistence and file system manipulation. Ensuring atomicity of operations (UI update, JSON update, file move) and handling potential errors during file operations, while maintaining data consistency with existing TaskMaster utilities, makes this a high-risk and complex task."
+		},
+		{
+			"taskId": 54,
+			"taskTitle": "Integrate PRD Kanban Board into Project Management Menu",
+			"complexityScore": 3,
+			"recommendedSubtasks": 2,
+			"expansionPrompt": "Outline the steps to integrate the PRD Kanban board into the Project Management menu. Focus on modifying the existing menu definition to add the new option, implementing the launch mechanism for the Kanban board, and ensuring a clean return to the Project Management menu upon exiting the Kanban board. Consider how to pass necessary context or state between the menu and the board.",
+			"reasoning": "This is a relatively straightforward integration task. It primarily involves modifying existing menu structures and ensuring proper flow between the menu and the new Kanban board component. The main complexity lies in ensuring a smooth transition and return."
+		},
+		{
+			"taskId": 55,
+			"taskTitle": "Implement Quick PRD Operations via Keyboard Shortcuts",
+			"complexityScore": 8,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "Break down the implementation of quick PRD operations via keyboard shortcuts. For each shortcut ('V', 'T', 'S', 'I', 'R', 'O'), define a subtask for handling the key press, retrieving the necessary PRD data using existing utilities, and implementing the specific display or action (e.g., detailed view overlay, task list, statistics, status bar update, board refresh, opening file location). Emphasize error handling and graceful degradation for file operations.",
+			"reasoning": "This task is complex because it involves implementing multiple distinct functionalities, each requiring data retrieval, specific UI rendering (overlays, status bar updates), and potentially external system interactions (opening file explorer). Ensuring each operation is robust, uses existing utilities correctly, and provides good user feedback adds significant complexity."
+		},
+		{
+			"taskId": 56,
+			"taskTitle": "Develop Board Navigation and Control Features",
+			"complexityScore": 7,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Detail the development of board navigation and control features. Include subtasks for implementing event listeners for 'F', '/', 'C', 'H', 'Q', and Tab keys. For each, specify the required UI state changes (e.g., toggling filter mode, activating search input, displaying statistics/help overlay, exiting). Focus on dynamically updating the status bar to reflect the current mode and available shortcuts.",
+			"reasoning": "This task involves implementing several distinct control mechanisms, some of which (filter, search) might require additional UI elements or input handling. Managing different 'modes' of the board and ensuring the status bar accurately reflects the current context adds a layer of complexity. The Tab key for cycling sections also requires careful focus management."
+		},
+		{
+			"taskId": 57,
+			"taskTitle": "Ensure Full PRD Tracking System Integration and Data Consistency",
+			"complexityScore": 9,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Outline the comprehensive steps to ensure full PRD tracking system integration and data consistency. Focus on verifying all read/write operations with `prd/prds.json` use existing TaskMaster utilities, confirming that PRD status updates correctly trigger file system organization, and establishing a robust testing strategy for data integrity across all operations. Include steps for validating adherence to existing PRD data models and validation rules.",
+			"reasoning": "This is a critical, overarching task that focuses on data integrity and system-wide consistency. It requires a deep understanding of the existing PRD tracking system and careful verification of all interactions. The complexity comes from ensuring that the new Kanban board doesn't introduce data inconsistencies or break existing file organization logic, requiring thorough testing and validation across all data flows."
+		},
+		{
+			"taskId": 58,
+			"taskTitle": "Cross-Platform Testing, Integration Testing, and Documentation",
+			"complexityScore": 6,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Break down the comprehensive testing and documentation task. Include subtasks for planning and executing cross-platform tests (Windows, macOS, Linux terminals), conducting integration tests with the existing PRD tracking and menu systems, and developing user-facing documentation (user guide for Kanban board, shortcuts) and technical documentation (UI architecture, integration points). Emphasize bug reporting and resolution processes.",
+			"reasoning": "While not a development task, this is crucial for product quality. The complexity comes from the breadth of testing required (cross-platform, integration, user acceptance) and the need for clear, comprehensive documentation. It requires systematic execution and attention to detail across multiple environments."
+		}
+	]
 }

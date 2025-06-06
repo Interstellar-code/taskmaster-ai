@@ -182,15 +182,23 @@ export async function analyzeTaskComplexityDirect(args, log, context = {}) {
 					if (tasksData && tasksData.tasks) {
 						let updated = false;
 
-						analysisArray.forEach(analysis => {
-							const taskIndex = tasksData.tasks.findIndex(task => task.id === analysis.taskId);
+						analysisArray.forEach((analysis) => {
+							const taskIndex = tasksData.tasks.findIndex(
+								(task) => task.id === analysis.taskId
+							);
 							if (taskIndex !== -1) {
-								tasksData.tasks[taskIndex].complexityScore = analysis.complexityScore;
+								tasksData.tasks[taskIndex].complexityScore =
+									analysis.complexityScore;
 								tasksData.tasks[taskIndex].complexityLevel =
-									analysis.complexityScore >= 8 ? 'high' :
-									analysis.complexityScore >= 5 ? 'medium' : 'low';
+									analysis.complexityScore >= 8
+										? 'high'
+										: analysis.complexityScore >= 5
+											? 'medium'
+											: 'low';
 								updated = true;
-								log.info(`Updated task ${analysis.taskId} with complexity score ${analysis.complexityScore}`);
+								log.info(
+									`Updated task ${analysis.taskId} with complexity score ${analysis.complexityScore}`
+								);
 							}
 						});
 
@@ -200,7 +208,9 @@ export async function analyzeTaskComplexityDirect(args, log, context = {}) {
 						}
 					}
 				} catch (updateError) {
-					log.warn(`Failed to update tasks with complexity scores: ${updateError.message}`);
+					log.warn(
+						`Failed to update tasks with complexity scores: ${updateError.message}`
+					);
 					// Don't fail the whole operation if updating tasks fails
 				}
 			}

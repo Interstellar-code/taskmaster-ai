@@ -1,7 +1,10 @@
 import chalk from 'chalk';
 
 import { log } from '../utils.js';
-import { isValidTaskStatus, TASK_STATUS_OPTIONS } from '../../../src/constants/task-status.js';
+import {
+	isValidTaskStatus,
+	TASK_STATUS_OPTIONS
+} from '../../../src/constants/task-status.js';
 import { validateTaskStatusTransition } from '../dependency-manager.js';
 
 /**
@@ -26,7 +29,11 @@ async function updateSingleTaskStatus(
 	}
 
 	// Validate dependencies before status change
-	const dependencyValidation = validateTaskStatusTransition(data.tasks, taskIdInput, newStatus);
+	const dependencyValidation = validateTaskStatusTransition(
+		data.tasks,
+		taskIdInput,
+		newStatus
+	);
 	if (!dependencyValidation.valid) {
 		throw new Error(dependencyValidation.error);
 	}

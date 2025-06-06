@@ -45,7 +45,10 @@ function listTasks(
 		// Old function signature - prdFiltersOrOutputFormat is actually outputFormat
 		actualOutputFormat = prdFiltersOrOutputFormat;
 		prdFilters = {};
-	} else if (typeof prdFiltersOrOutputFormat === 'object' && prdFiltersOrOutputFormat !== null) {
+	} else if (
+		typeof prdFiltersOrOutputFormat === 'object' &&
+		prdFiltersOrOutputFormat !== null
+	) {
 		// New function signature - prdFiltersOrOutputFormat contains PRD filter options
 		prdFilters = prdFiltersOrOutputFormat;
 		actualOutputFormat = outputFormat;
@@ -83,21 +86,29 @@ function listTasks(
 		if (prdFilters.prdFilter) {
 			// Filter by specific PRD file
 			const prdFilterLower = prdFilters.prdFilter.toLowerCase();
-			filteredTasks = filteredTasks.filter(task => {
+			filteredTasks = filteredTasks.filter((task) => {
 				if (!task.prdSource || !task.prdSource.fileName) {
 					return false;
 				}
 				const fileName = task.prdSource.fileName.toLowerCase();
 				const filePath = task.prdSource.filePath.toLowerCase();
-				return fileName.includes(prdFilterLower) || filePath.includes(prdFilterLower) ||
-					   fileName === prdFilterLower || filePath.endsWith(prdFilterLower);
+				return (
+					fileName.includes(prdFilterLower) ||
+					filePath.includes(prdFilterLower) ||
+					fileName === prdFilterLower ||
+					filePath.endsWith(prdFilterLower)
+				);
 			});
 		} else if (prdFilters.manualOnly) {
 			// Show only manually created tasks (no PRD source)
-			filteredTasks = filteredTasks.filter(task => !task.prdSource || !task.prdSource.fileName);
+			filteredTasks = filteredTasks.filter(
+				(task) => !task.prdSource || !task.prdSource.fileName
+			);
 		} else if (prdFilters.prdOnly) {
 			// Show only tasks from PRD files
-			filteredTasks = filteredTasks.filter(task => task.prdSource && task.prdSource.fileName);
+			filteredTasks = filteredTasks.filter(
+				(task) => task.prdSource && task.prdSource.fileName
+			);
 		}
 
 		// Calculate completion statistics
@@ -329,9 +340,15 @@ function listTasks(
 		terminalWidth = Math.max(terminalWidth, 80);
 
 		// Calculate PRD source statistics
-		const tasksWithPrdSource = data.tasks.filter(task => task.prdSource && task.prdSource.fileName);
-		const manualTasks = data.tasks.filter(task => !task.prdSource || !task.prdSource.fileName);
-		const uniquePrdSources = [...new Set(tasksWithPrdSource.map(task => task.prdSource.fileName))];
+		const tasksWithPrdSource = data.tasks.filter(
+			(task) => task.prdSource && task.prdSource.fileName
+		);
+		const manualTasks = data.tasks.filter(
+			(task) => !task.prdSource || !task.prdSource.fileName
+		);
+		const uniquePrdSources = [
+			...new Set(tasksWithPrdSource.map((task) => task.prdSource.fileName))
+		];
 
 		// Create dashboard content
 		const projectDashboardContent =
@@ -351,7 +368,9 @@ function listTasks(
 			`${chalk.blue('•')} ${chalk.white('Tasks from PRDs:')} ${tasksWithPrdSource.length}\n` +
 			`${chalk.gray('•')} ${chalk.white('Manual tasks:')} ${manualTasks.length}\n` +
 			`${chalk.magenta('•')} ${chalk.white('Unique PRD files:')} ${uniquePrdSources.length}` +
-			(uniquePrdSources.length > 0 ? `\n${chalk.dim('   ' + uniquePrdSources.slice(0, 3).join(', ') + (uniquePrdSources.length > 3 ? '...' : ''))}` : '');
+			(uniquePrdSources.length > 0
+				? `\n${chalk.dim('   ' + uniquePrdSources.slice(0, 3).join(', ') + (uniquePrdSources.length > 3 ? '...' : ''))}`
+				: '');
 
 		const dependencyDashboardContent =
 			chalk.white.bold('Dependency Status & Next Task') +
@@ -506,7 +525,9 @@ function listTasks(
 		const complexityWidth = Math.floor(
 			availableWidth * (complexityWidthPct / 100)
 		);
-		const prdSourceWidth = Math.floor(availableWidth * (prdSourceWidthPct / 100));
+		const prdSourceWidth = Math.floor(
+			availableWidth * (prdSourceWidthPct / 100)
+		);
 		const titleWidth = Math.floor(availableWidth * (titleWidthPct / 100));
 
 		// Create a table with correct borders and spacing
@@ -571,7 +592,9 @@ function listTasks(
 			// Format PRD Source
 			let prdSourceText = chalk.gray('Manual');
 			if (task.prdSource && task.prdSource.fileName) {
-				prdSourceText = chalk.blue(truncate(task.prdSource.fileName, prdSourceWidth - 3));
+				prdSourceText = chalk.blue(
+					truncate(task.prdSource.fileName, prdSourceWidth - 3)
+				);
 			}
 
 			// Add the row without truncating dependencies
@@ -644,10 +667,14 @@ function listTasks(
 					// Format subtask PRD Source (inherit from parent)
 					let subtaskPrdSourceText = chalk.gray('Manual');
 					if (subtask.prdSource && subtask.prdSource.fileName) {
-						subtaskPrdSourceText = chalk.blue(truncate(subtask.prdSource.fileName, prdSourceWidth - 3));
+						subtaskPrdSourceText = chalk.blue(
+							truncate(subtask.prdSource.fileName, prdSourceWidth - 3)
+						);
 					} else if (task.prdSource && task.prdSource.fileName) {
 						// Inherit from parent task if subtask doesn't have its own
-						subtaskPrdSourceText = chalk.dim(chalk.blue(truncate(task.prdSource.fileName, prdSourceWidth - 3)));
+						subtaskPrdSourceText = chalk.dim(
+							chalk.blue(truncate(task.prdSource.fileName, prdSourceWidth - 3))
+						);
 					}
 
 					// Add the subtask row without truncating dependencies
@@ -730,7 +757,9 @@ function listTasks(
 							cancelled: chalk.gray
 						};
 						const statusColor =
-							statusColors[typeof status === 'string' ? status.toLowerCase() : 'pending'] || chalk.white;
+							statusColors[
+								typeof status === 'string' ? status.toLowerCase() : 'pending'
+							] || chalk.white;
 						// Ensure subtask ID is displayed correctly using parent ID from the original task object
 						return `${chalk.cyan(`${parentTaskForSubtasks.id}.${subtask.id}`)} [${statusColor(status)}] ${subtask.title}`;
 					})

@@ -28,8 +28,12 @@ export async function checkPRDChanges(tasksPath) {
 
 		// Extract unique PRD sources
 		const prdSources = new Map();
-		data.tasks.forEach(task => {
-			if (task.prdSource && task.prdSource.fileName && task.prdSource.filePath) {
+		data.tasks.forEach((task) => {
+			if (
+				task.prdSource &&
+				task.prdSource.fileName &&
+				task.prdSource.filePath
+			) {
 				const filePath = task.prdSource.filePath;
 				if (!prdSources.has(filePath)) {
 					prdSources.set(filePath, {
@@ -68,7 +72,6 @@ export async function checkPRDChanges(tasksPath) {
 			changedFiles: changes.length,
 			changes: changes
 		};
-
 	} catch (error) {
 		log('error', `Error checking PRD changes: ${error.message}`);
 		return {
@@ -106,7 +109,7 @@ async function checkSinglePRDFile(filePath, prdInfo) {
 		// Get current file stats and content
 		const stats = fs.statSync(filePath);
 		const currentContent = fs.readFileSync(filePath, 'utf8');
-		
+
 		// Calculate current hash
 		const hash = crypto.createHash('sha256');
 		hash.update(currentContent, 'utf8');
@@ -139,7 +142,6 @@ async function checkSinglePRDFile(filePath, prdInfo) {
 			fileName: prdInfo.fileName,
 			message: 'No changes detected'
 		};
-
 	} catch (error) {
 		return {
 			hasChanged: true,
@@ -183,7 +185,11 @@ export function displayPRDChanges(results, format = 'table') {
 		return;
 	}
 
-	console.log(chalk.yellow(`⚠️  ${results.changedFiles} of ${results.totalPRDFiles} PRD file(s) have changed`));
+	console.log(
+		chalk.yellow(
+			`⚠️  ${results.changedFiles} of ${results.totalPRDFiles} PRD file(s) have changed`
+		)
+	);
 	console.log('');
 
 	results.changes.forEach((change, index) => {
@@ -191,30 +197,56 @@ export function displayPRDChanges(results, format = 'table') {
 		console.log(chalk.gray(`   Path: ${change.filePath}`));
 		console.log(chalk.gray(`   Change Type: ${change.changeType}`));
 		console.log(chalk.gray(`   Message: ${change.message}`));
-		
+
 		if (change.changeType === 'modified') {
-			console.log(chalk.gray(`   Original Hash: ${change.originalHash.substring(0, 16)}...`));
-			console.log(chalk.gray(`   Current Hash:  ${change.currentHash.substring(0, 16)}...`));
-			console.log(chalk.gray(`   Size: ${change.originalSize} → ${change.currentSize} bytes`));
+			console.log(
+				chalk.gray(
+					`   Original Hash: ${change.originalHash.substring(0, 16)}...`
+				)
+			);
+			console.log(
+				chalk.gray(
+					`   Current Hash:  ${change.currentHash.substring(0, 16)}...`
+				)
+			);
+			console.log(
+				chalk.gray(
+					`   Size: ${change.originalSize} → ${change.currentSize} bytes`
+				)
+			);
 			if (change.lastModified) {
-				console.log(chalk.gray(`   Last Modified: ${new Date(change.lastModified).toLocaleString()}`));
+				console.log(
+					chalk.gray(
+						`   Last Modified: ${new Date(change.lastModified).toLocaleString()}`
+					)
+				);
 			}
 		}
-		
+
 		if (change.taskIds && change.taskIds.length > 0) {
-			console.log(chalk.gray(`   Affected Tasks: ${change.taskIds.join(', ')}`));
+			console.log(
+				chalk.gray(`   Affected Tasks: ${change.taskIds.join(', ')}`)
+			);
 		}
-		
+
 		console.log('');
 	});
 
 	// Show recommendations
 	console.log(chalk.blue.bold('💡 Recommendations:'));
-	results.changes.forEach(change => {
+	results.changes.forEach((change) => {
 		if (change.changeType === 'modified') {
-			console.log(chalk.yellow(`• Consider re-parsing ${change.fileName} to update affected tasks (${change.taskIds.join(', ')})`));
+			console.log(
+				chalk.yellow(
+					`• Consider re-parsing ${change.fileName} to update affected tasks (${change.taskIds.join(', ')})`
+				)
+			);
 		} else if (change.changeType === 'deleted') {
-			console.log(chalk.red(`• PRD file ${change.fileName} is missing - tasks ${change.taskIds.join(', ')} may need attention`));
+			console.log(
+				chalk.red(
+					`• PRD file ${change.fileName} is missing - tasks ${change.taskIds.join(', ')} may need attention`
+				)
+			);
 		}
 	});
 }
@@ -241,7 +273,7 @@ export async function updatePRDMetadata(tasksPath, prdFilePath) {
 		// Read current PRD file
 		const stats = fs.statSync(prdFilePath);
 		const content = fs.readFileSync(prdFilePath, 'utf8');
-		
+
 		// Calculate new hash
 		const hash = crypto.createHash('sha256');
 		hash.update(content, 'utf8');
@@ -258,7 +290,7 @@ export async function updatePRDMetadata(tasksPath, prdFilePath) {
 
 		// Update all tasks that reference this PRD file
 		let updatedCount = 0;
-		data.tasks.forEach(task => {
+		data.tasks.forEach((task) => {
 			if (task.prdSource && task.prdSource.filePath === newMetadata.filePath) {
 				task.prdSource = newMetadata;
 				updatedCount++;
@@ -273,7 +305,6 @@ export async function updatePRDMetadata(tasksPath, prdFilePath) {
 			updatedTasks: updatedCount,
 			newMetadata: newMetadata
 		};
-
 	} catch (error) {
 		log('error', `Error updating PRD metadata: ${error.message}`);
 		return {

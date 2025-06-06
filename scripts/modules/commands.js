@@ -110,10 +110,15 @@ function setupGitignoreCommand(options) {
 	const projectGitignore = path.join(projectRoot, '.gitignore');
 
 	// Check if we're in a subdirectory of another project
-	const isSubdirectoryInstall = projectRoot !== targetDir && fs.existsSync(projectGitignore);
+	const isSubdirectoryInstall =
+		projectRoot !== targetDir && fs.existsSync(projectGitignore);
 
 	if (!isSubdirectoryInstall) {
-		console.log(chalk.yellow('No parent project detected or no .gitignore found in parent directory.'));
+		console.log(
+			chalk.yellow(
+				'No parent project detected or no .gitignore found in parent directory.'
+			)
+		);
 		console.log(chalk.blue(`Current directory: ${targetDir}`));
 		console.log(chalk.blue(`Parent directory: ${projectRoot}`));
 		return;
@@ -136,13 +141,21 @@ ${taskHeroDirName}/
 `;
 
 	// Check if TaskHero rules already exist
-	if (gitignoreContent.includes(`# TaskHero AI - Ignore everything in ${taskHeroDirName}/`)) {
-		console.log(chalk.green('TaskHero gitignore rules already exist in parent project.'));
+	if (
+		gitignoreContent.includes(
+			`# TaskHero AI - Ignore everything in ${taskHeroDirName}/`
+		)
+	) {
+		console.log(
+			chalk.green('TaskHero gitignore rules already exist in parent project.')
+		);
 		return;
 	}
 
 	if (options.dryRun) {
-		console.log(chalk.blue('DRY RUN: Would add the following to parent .gitignore:'));
+		console.log(
+			chalk.blue('DRY RUN: Would add the following to parent .gitignore:')
+		);
 		console.log(chalk.gray(taskHeroRules));
 		return;
 	}
@@ -151,8 +164,14 @@ ${taskHeroDirName}/
 	const updatedContent = gitignoreContent.trim() + '\n' + taskHeroRules;
 	fs.writeFileSync(projectGitignore, updatedContent);
 
-	console.log(chalk.green(`✅ Updated ${projectGitignore} with TaskHero-specific rules`));
-	console.log(chalk.blue(`📁 TaskHero directory will be ignored except for prd/ and tasks/ folders`));
+	console.log(
+		chalk.green(`✅ Updated ${projectGitignore} with TaskHero-specific rules`)
+	);
+	console.log(
+		chalk.blue(
+			`📁 TaskHero directory will be ignored except for prd/ and tasks/ folders`
+		)
+	);
 	console.log(chalk.gray('Rules added:'));
 	console.log(chalk.gray(taskHeroRules));
 }
@@ -683,7 +702,11 @@ function registerCommands(programInstance) {
 			'-i, --input <file>',
 			'Path to the PRD file (alternative to positional argument)'
 		)
-		.option('-o, --output <file>', 'Output file path', '.taskmaster/tasks/tasks.json')
+		.option(
+			'-o, --output <file>',
+			'Output file path',
+			'.taskmaster/tasks/tasks.json'
+		)
 		.option('-n, --num-tasks <number>', 'Number of tasks to generate', '10')
 		.option('-f, --force', 'Skip confirmation when overwriting existing tasks')
 		.option(
@@ -714,7 +737,9 @@ function registerCommands(programInstance) {
 			// Validate auto-expand option
 			if (autoExpand && !append) {
 				console.error(
-					chalk.red('Error: --auto-expand can only be used with --append option')
+					chalk.red(
+						'Error: --auto-expand can only be used with --append option'
+					)
 				);
 				console.log(
 					chalk.yellow('Usage: task-master parse-prd --append --auto-expand')
@@ -847,7 +872,11 @@ function registerCommands(programInstance) {
 		.description(
 			'Update multiple tasks with ID >= "from" based on new information or implementation changes'
 		)
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks/tasks.json'
+		)
 		.option(
 			'--from <id>',
 			'Task ID to start updating from (tasks with ID >= this value will be updated)',
@@ -928,7 +957,11 @@ function registerCommands(programInstance) {
 		.description(
 			'Update a single specific task by ID with new information (use --id parameter)'
 		)
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks/tasks.json'
+		)
 		.option('-i, --id <id>', 'Task ID to update (required)')
 		.option(
 			'-p, --prompt <text>',
@@ -1081,7 +1114,11 @@ function registerCommands(programInstance) {
 		.description(
 			'Update a subtask by appending additional timestamped information'
 		)
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks/tasks.json'
+		)
 		.option(
 			'-i, --id <id>',
 			'Subtask ID to update in format "parentId.subtaskId" (required)'
@@ -1235,7 +1272,11 @@ function registerCommands(programInstance) {
 	programInstance
 		.command('generate')
 		.description('Generate task files from tasks.json')
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks/tasks.json'
+		)
 		.option('-o, --output <dir>', 'Output directory', '.taskmaster/tasks')
 		.action(async (options) => {
 			const tasksPath = options.file;
@@ -1261,7 +1302,11 @@ function registerCommands(programInstance) {
 			'-s, --status <status>',
 			`New status (one of: ${TASK_STATUS_OPTIONS.join(', ')})`
 		)
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks/tasks.json'
+		)
 		.action(async (options) => {
 			const tasksPath = options.file;
 			const taskId = options.id;
@@ -1293,7 +1338,11 @@ function registerCommands(programInstance) {
 	programInstance
 		.command('list')
 		.description('List all tasks')
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks/tasks.json'
+		)
 		.option(
 			'-r, --report <report>',
 			'Path to the complexity report file',
@@ -1446,7 +1495,11 @@ function registerCommands(programInstance) {
 			'Minimum complexity score to recommend expansion (1-10)',
 			'5'
 		)
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks/tasks.json'
+		)
 		.option(
 			'-r, --research',
 			'Use Perplexity AI for research-backed complexity analysis'
@@ -1492,7 +1545,11 @@ function registerCommands(programInstance) {
 	programInstance
 		.command('clear-subtasks')
 		.description('Clear subtasks from specified tasks')
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks/tasks.json'
+		)
 		.option(
 			'-i, --id <ids>',
 			'Task IDs (comma-separated) to clear subtasks from'
@@ -1530,7 +1587,11 @@ function registerCommands(programInstance) {
 	programInstance
 		.command('add-task')
 		.description('Add a new task using AI, optionally providing manual details')
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks/tasks.json'
+		)
 		.option(
 			'-p, --prompt <prompt>',
 			'Description of the task to add (required if not using manual fields)'
@@ -1572,7 +1633,12 @@ function registerCommands(programInstance) {
 
 			const tasksPath =
 				options.file ||
-				path.join(findProjectRoot() || '.', '.taskmaster', 'tasks', 'tasks.json') || // Ensure tasksPath is also relative to a found root or current dir
+				path.join(
+					findProjectRoot() || '.',
+					'.taskmaster',
+					'tasks',
+					'tasks.json'
+				) || // Ensure tasksPath is also relative to a found root or current dir
 				'.taskmaster/tasks/tasks.json';
 
 			// Correctly determine projectRoot
@@ -1645,7 +1711,11 @@ function registerCommands(programInstance) {
 		.description(
 			`Show the next task to work on based on dependencies and status${chalk.reset('')}`
 		)
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks/tasks.json'
+		)
 		.option(
 			'-r, --report <report>',
 			'Path to the complexity report file',
@@ -1666,7 +1736,11 @@ function registerCommands(programInstance) {
 		.argument('[id]', 'Task ID to show')
 		.option('-i, --id <id>', 'Task ID to show')
 		.option('-s, --status <status>', 'Filter subtasks by status') // ADDED status option
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks/tasks.json'
+		)
 		.option(
 			'-r, --report <report>',
 			'Path to the complexity report file',
@@ -1693,7 +1767,11 @@ function registerCommands(programInstance) {
 		.description('Add a dependency to a task')
 		.option('-i, --id <id>', 'Task ID to add dependency to')
 		.option('-d, --depends-on <id>', 'Task ID that will become a dependency')
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks/tasks.json'
+		)
 		.action(async (options) => {
 			const tasksPath = options.file;
 			const taskId = options.id;
@@ -1724,7 +1802,11 @@ function registerCommands(programInstance) {
 		.description('Remove a dependency from a task')
 		.option('-i, --id <id>', 'Task ID to remove dependency from')
 		.option('-d, --depends-on <id>', 'Task ID to remove as a dependency')
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks/tasks.json'
+		)
 		.action(async (options) => {
 			const tasksPath = options.file;
 			const taskId = options.id;
@@ -1755,7 +1837,11 @@ function registerCommands(programInstance) {
 		.description(
 			`Identify invalid dependencies without fixing them${chalk.reset('')}`
 		)
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks/tasks.json'
+		)
 		.action(async (options) => {
 			await validateDependenciesCommand(options.file);
 		});
@@ -1764,7 +1850,11 @@ function registerCommands(programInstance) {
 	programInstance
 		.command('fix-dependencies')
 		.description(`Fix invalid dependencies automatically${chalk.reset('')}`)
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks/tasks.json'
+		)
 		.action(async (options) => {
 			await fixDependenciesCommand(options.file);
 		});
@@ -1786,7 +1876,11 @@ function registerCommands(programInstance) {
 	programInstance
 		.command('add-subtask')
 		.description('Add a subtask to an existing task')
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks/tasks.json'
+		)
 		.option('-p, --parent <id>', 'Parent task ID (required)')
 		.option('-i, --task-id <id>', 'Existing task ID to convert to subtask')
 		.option(
@@ -1976,7 +2070,11 @@ function registerCommands(programInstance) {
 	programInstance
 		.command('remove-subtask')
 		.description('Remove a subtask from its parent task')
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks/tasks.json'
+		)
 		.option(
 			'-i, --id <id>',
 			'Subtask ID(s) to remove in format "parentId.subtaskId" (can be comma-separated for multiple subtasks)'
@@ -2128,7 +2226,11 @@ function registerCommands(programInstance) {
 			'-i, --id <ids>',
 			'ID(s) of the task(s) or subtask(s) to remove (e.g., "5", "5.2", or "5,6.1,7")'
 		)
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks/tasks.json'
+		)
 		.option('-y, --yes', 'Skip confirmation prompt', false)
 		.action(async (options) => {
 			const tasksPath = options.file;
@@ -2359,10 +2461,15 @@ function registerCommands(programInstance) {
 		.action(async () => {
 			try {
 				// Dynamic import to avoid circular dependencies
-				const { initializeInteractiveMenu } = await import('../../src/menu/index.js');
+				const { initializeInteractiveMenu } = await import(
+					'../../src/menu/index.js'
+				);
 				await initializeInteractiveMenu();
 			} catch (err) {
-				console.error(chalk.red('Error loading interactive menu:'), err.message);
+				console.error(
+					chalk.red('Error loading interactive menu:'),
+					err.message
+				);
 				process.exit(1);
 			}
 		});
@@ -2379,7 +2486,10 @@ function registerCommands(programInstance) {
 		.option('--skip-install', 'Skip installing dependencies')
 		.option('--dry-run', 'Show what would be done without making changes')
 		.option('--aliases', 'Add shell aliases (th, taskhero)')
-		.option('--reset', 'Reset project data (clear all tasks, PRDs, reports, and tests)')
+		.option(
+			'--reset',
+			'Reset project data (clear all tasks, PRDs, reports, and tests)'
+		)
 		.action(async (cmdOptions) => {
 			// cmdOptions contains parsed arguments
 			try {
@@ -2625,7 +2735,11 @@ Examples:
 	programInstance
 		.command('list-prds')
 		.description('List all unique PRD files that have generated tasks')
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks/tasks.json'
+		)
 		.option('--format <format>', 'Output format (table, json)', 'table')
 		.action(async (options) => {
 			const { listPRDs } = await import('./task-manager/prd-queries.js');
@@ -2636,31 +2750,48 @@ Examples:
 	programInstance
 		.command('tasks-from-prd')
 		.description('Show all tasks generated from a specific PRD file')
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks/tasks.json'
+		)
 		.option('--prd <prd>', 'PRD file path or name to filter by (required)')
 		.option('--format <format>', 'Output format (table, json)', 'table')
 		.option('--status <status>', 'Filter tasks by status')
 		.action(async (options) => {
 			if (!options.prd) {
 				console.error(chalk.red('Error: --prd option is required'));
-				console.log(chalk.yellow('Usage: task-master tasks-from-prd --prd=<prd-file>'));
+				console.log(
+					chalk.yellow('Usage: task-master tasks-from-prd --prd=<prd-file>')
+				);
 				process.exit(1);
 			}
 			const { tasksFromPRD } = await import('./task-manager/prd-queries.js');
-			await tasksFromPRD(options.file, options.prd, options.format, options.status);
+			await tasksFromPRD(
+				options.file,
+				options.prd,
+				options.format,
+				options.status
+			);
 		});
 
 	// show-prd-source command
 	programInstance
 		.command('show-prd-source')
 		.description('Display PRD source information for a specific task')
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks/tasks.json'
+		)
 		.option('--id <id>', 'Task ID to show PRD source for (required)')
 		.option('--format <format>', 'Output format (table, json)', 'table')
 		.action(async (options) => {
 			if (!options.id) {
 				console.error(chalk.red('Error: --id option is required'));
-				console.log(chalk.yellow('Usage: task-master show-prd-source --id=<task-id>'));
+				console.log(
+					chalk.yellow('Usage: task-master show-prd-source --id=<task-id>')
+				);
 				process.exit(1);
 			}
 			const { showPRDSource } = await import('./task-manager/prd-queries.js');
@@ -2671,10 +2802,16 @@ Examples:
 	programInstance
 		.command('check-prd-changes')
 		.description('Check if PRD files referenced in tasks have been modified')
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks/tasks.json'
+		)
 		.option('--format <format>', 'Output format (table, json)', 'table')
 		.action(async (options) => {
-			const { checkPRDChanges, displayPRDChanges } = await import('./task-manager/prd-monitor.js');
+			const { checkPRDChanges, displayPRDChanges } = await import(
+				'./task-manager/prd-monitor.js'
+			);
 			const results = await checkPRDChanges(options.file);
 			displayPRDChanges(results, options.format);
 		});
@@ -2682,22 +2819,40 @@ Examples:
 	// update-prd-metadata command
 	programInstance
 		.command('update-prd-metadata')
-		.description('Update PRD metadata for tasks after a PRD file has been modified')
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
+		.description(
+			'Update PRD metadata for tasks after a PRD file has been modified'
+		)
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks/tasks.json'
+		)
 		.option('--prd <prd>', 'Path to the modified PRD file (required)')
 		.action(async (options) => {
 			if (!options.prd) {
 				console.error(chalk.red('Error: --prd option is required'));
-				console.log(chalk.yellow('Usage: task-hero update-prd-metadata --prd=<prd-file-path>'));
+				console.log(
+					chalk.yellow(
+						'Usage: task-hero update-prd-metadata --prd=<prd-file-path>'
+					)
+				);
 				process.exit(1);
 			}
-			const { updatePRDMetadata } = await import('./task-manager/prd-monitor.js');
+			const { updatePRDMetadata } = await import(
+				'./task-manager/prd-monitor.js'
+			);
 			const result = await updatePRDMetadata(options.file, options.prd);
 
 			if (result.success) {
-				console.log(chalk.green(`✓ Updated PRD metadata for ${result.updatedTasks} task(s)`));
+				console.log(
+					chalk.green(
+						`✓ Updated PRD metadata for ${result.updatedTasks} task(s)`
+					)
+				);
 				console.log(chalk.gray(`New hash: ${result.newMetadata.fileHash}`));
-				console.log(chalk.gray(`New size: ${result.newMetadata.fileSize} bytes`));
+				console.log(
+					chalk.gray(`New size: ${result.newMetadata.fileSize} bytes`)
+				);
 			} else {
 				console.error(chalk.red(`Error: ${result.error}`));
 				process.exit(1);
@@ -2708,7 +2863,11 @@ Examples:
 	programInstance
 		.command('move')
 		.description('Move a task or subtask to a new position')
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks/tasks.json'
+		)
 		.option(
 			'--from <id>',
 			'ID of the task/subtask to move (e.g., "5" or "5.2"). Can be comma-separated to move multiple tasks (e.g., "5,6,7")'
@@ -2840,9 +2999,15 @@ Examples:
 		.command('prd')
 		.alias('prds')
 		.description('List PRDs with optional filtering')
-		.option('-s, --status <status>', 'Filter by status (pending|in-progress|done|archived)')
+		.option(
+			'-s, --status <status>',
+			'Filter by status (pending|in-progress|done|archived)'
+		)
 		.option('-p, --priority <priority>', 'Filter by priority (low|medium|high)')
-		.option('-c, --complexity <complexity>', 'Filter by complexity (low|medium|high)')
+		.option(
+			'-c, --complexity <complexity>',
+			'Filter by complexity (low|medium|high)'
+		)
 		.option('-f, --format <format>', 'Output format (table|json)', 'table')
 		.option('-t, --include-tasks', 'Include linked task information')
 		.action((options) => {
@@ -2871,9 +3036,14 @@ Examples:
 	// prd sync command
 	programInstance
 		.command('prd-sync [prd-id]')
-		.description('Sync PRD status with linked tasks (e.g., prd_001 or all PRDs if no ID)')
+		.description(
+			'Sync PRD status with linked tasks (e.g., prd_001 or all PRDs if no ID)'
+		)
 		.option('-f, --force', 'Force status sync even if no changes detected')
-		.option('-d, --dry-run', 'Show what would be changed without making changes')
+		.option(
+			'-d, --dry-run',
+			'Show what would be changed without making changes'
+		)
 		.action((prdId, options) => {
 			syncPrdStatus(prdId, options);
 		});
@@ -2882,7 +3052,10 @@ Examples:
 	programInstance
 		.command('prd-organize')
 		.description('Organize PRD files into status-based directories')
-		.option('-d, --dry-run', 'Show what would be organized without making changes')
+		.option(
+			'-d, --dry-run',
+			'Show what would be organized without making changes'
+		)
 		.action((options) => {
 			organizePrds(options);
 		});
@@ -2902,12 +3075,20 @@ Examples:
 		.description('Migrate existing PRD files into tracking system')
 		.option('-d, --directory <dir>', 'Directory to scan for PRD files', '.')
 		.option('--dry-run', 'Show what would be migrated without making changes')
-		.option('-e, --extensions <exts>', 'File extensions to scan (comma-separated)', '.txt,.md')
-		.option('-s, --status <status>', 'Target status for migrated PRDs', 'pending')
+		.option(
+			'-e, --extensions <exts>',
+			'File extensions to scan (comma-separated)',
+			'.txt,.md'
+		)
+		.option(
+			'-s, --status <status>',
+			'Target status for migrated PRDs',
+			'pending'
+		)
 		.option('--no-move', 'Do not move files to status directories')
 		.option('--no-link', 'Do not link existing tasks')
 		.action((options) => {
-			const extensions = options.extensions.split(',').map(ext => ext.trim());
+			const extensions = options.extensions.split(',').map((ext) => ext.trim());
 			migratePrds({
 				directory: options.directory,
 				dryRun: options.dryRun,
@@ -2939,7 +3120,9 @@ Examples:
 	// prd track command
 	programInstance
 		.command('prd-track <prd-id>')
-		.description('Track changes to PRD file and create new version if changed (e.g., prd_001)')
+		.description(
+			'Track changes to PRD file and create new version if changed (e.g., prd_001)'
+		)
 		.option('-a, --author <author>', 'Author of the changes', 'user')
 		.action((prdId, options) => {
 			trackPrdChanges(prdId, {
@@ -2960,7 +3143,10 @@ Examples:
 		.command('prd-archive [prd-id]')
 		.description('Archive a completed PRD and all associated tasks')
 		.option('-f, --force', 'Force archive even if tasks are not completed')
-		.option('-d, --dry-run', 'Show what would be archived without making changes')
+		.option(
+			'-d, --dry-run',
+			'Show what would be archived without making changes'
+		)
 		.option('--no-interactive', 'Disable interactive mode (requires prd-id)')
 		.action(async (prdId, options) => {
 			await archivePrdCommand(prdId, {
@@ -2974,7 +3160,11 @@ Examples:
 	programInstance
 		.command('prd-extract <archive-path>')
 		.description('Extract a PRD archive to view its contents')
-		.option('-o, --output <dir>', 'Output directory for extracted files', './extracted')
+		.option(
+			'-o, --output <dir>',
+			'Output directory for extracted files',
+			'./extracted'
+		)
 		.action(async (archivePath, options) => {
 			await extractPrdArchiveCommand(archivePath, {
 				outputDir: options.output
@@ -2985,7 +3175,10 @@ Examples:
 	programInstance
 		.command('prd-migrate-archives')
 		.description('Migrate legacy GZIP archives to proper ZIP format')
-		.option('-d, --dry-run', 'Show what would be migrated without making changes')
+		.option(
+			'-d, --dry-run',
+			'Show what would be migrated without making changes'
+		)
 		.option('--archive-dir <dir>', 'Custom archive directory path')
 		.action(async (options) => {
 			await migrateLegacyArchivesCommand({
@@ -2997,7 +3190,9 @@ Examples:
 	// prd sync-metadata command
 	programInstance
 		.command('prd-sync-metadata [prd-id]')
-		.description('Sync PRD file metadata headers with prds.json data (e.g., prd_001 or all PRDs)')
+		.description(
+			'Sync PRD file metadata headers with prds.json data (e.g., prd_001 or all PRDs)'
+		)
 		.option('-f, --force', 'Force metadata sync even if no changes detected')
 		.option('-b, --backup', 'Create backup files before updating')
 		.action((prdId, options) => {
@@ -3008,7 +3203,11 @@ Examples:
 	programInstance
 		.command('setup-gitignore')
 		.description('Setup gitignore rules for TaskHero in parent project')
-		.option('-d, --directory <dir>', 'TaskHero directory name', path.basename(process.cwd()))
+		.option(
+			'-d, --directory <dir>',
+			'TaskHero directory name',
+			path.basename(process.cwd())
+		)
 		.option('--dry-run', 'Show what would be added without making changes')
 		.action((options) => {
 			setupGitignoreCommand(options);
@@ -3017,34 +3216,52 @@ Examples:
 	// migrate command - Directory structure migration
 	programInstance
 		.command('migrate')
-		.description('Migrate from old directory structure to new .taskmaster/ structure')
+		.description(
+			'Migrate from old directory structure to new .taskmaster/ structure'
+		)
 		.option('--check', 'Check if migration is needed without performing it')
 		.option('--clean', 'Remove old files after successful migration')
 		.option('--force', 'Force migration even if new structure already exists')
 		.action(async (options) => {
-			const { migrateDirectoryStructure, needsMigration } = await import('./directory-migration.js');
+			const { migrateDirectoryStructure, needsMigration } = await import(
+				'./directory-migration.js'
+			);
 			const { findProjectRoot } = await import('./utils.js');
 
 			try {
 				const projectRoot = findProjectRoot();
 				if (!projectRoot) {
-					console.error(chalk.red('Error: Could not find project root directory'));
+					console.error(
+						chalk.red('Error: Could not find project root directory')
+					);
 					process.exit(1);
 				}
 
 				if (options.check) {
 					const migrationNeeded = needsMigration(projectRoot);
 					if (migrationNeeded) {
-						console.log(chalk.yellow('Migration needed: Old directory structure detected'));
-						console.log(chalk.cyan('Run "task-master migrate" to perform migration'));
+						console.log(
+							chalk.yellow('Migration needed: Old directory structure detected')
+						);
+						console.log(
+							chalk.cyan('Run "task-master migrate" to perform migration')
+						);
 					} else {
-						console.log(chalk.green('No migration needed: New directory structure already in use'));
+						console.log(
+							chalk.green(
+								'No migration needed: New directory structure already in use'
+							)
+						);
 					}
 					return;
 				}
 
 				if (!options.force && !needsMigration(projectRoot)) {
-					console.log(chalk.green('No migration needed: New directory structure already in use'));
+					console.log(
+						chalk.green(
+							'No migration needed: New directory structure already in use'
+						)
+					);
 					console.log(chalk.cyan('Use --force to migrate anyway'));
 					return;
 				}
@@ -3062,10 +3279,16 @@ Examples:
 					console.log('  .taskmaster/config.json - Configuration');
 
 					if (!options.clean) {
-						console.log(chalk.yellow('\nOld files preserved. Use --clean to remove them after verification.'));
+						console.log(
+							chalk.yellow(
+								'\nOld files preserved. Use --clean to remove them after verification.'
+							)
+						);
 					}
 				} else {
-					console.error(chalk.red('❌ Migration failed. Check logs for details.'));
+					console.error(
+						chalk.red('❌ Migration failed. Check logs for details.')
+					);
 					process.exit(1);
 				}
 			} catch (error) {
@@ -3282,16 +3505,21 @@ async function runCLI(argv = process.argv) {
 		const programInstance = setupCLI();
 		await programInstance.parseAsync(argv);
 
-	// Handle --menu flag
-	if (programInstance.opts().menu) {
-		try {
-			const { initializeInteractiveMenu } = await import('../../src/menu/index.js');
-			await initializeInteractiveMenu();
-		} catch (err) {
-			console.error(chalk.red('Error loading interactive menu:'), err.message);
-			process.exit(1);
+		// Handle --menu flag
+		if (programInstance.opts().menu) {
+			try {
+				const { initializeInteractiveMenu } = await import(
+					'../../src/menu/index.js'
+				);
+				await initializeInteractiveMenu();
+			} catch (err) {
+				console.error(
+					chalk.red('Error loading interactive menu:'),
+					err.message
+				);
+				process.exit(1);
+			}
 		}
-	}
 
 		// After command execution, check if an update is available
 		const updateInfo = await updateCheckPromise;

@@ -22,17 +22,28 @@ import { displayAiUsageSummary } from '../ui.js';
 import expandTask from './expand-task.js';
 import analyzeTaskComplexity from './analyze-task-complexity.js';
 import { updatePrdFileOnParse } from '../prd-manager/prd-file-metadata.js';
-import { findPrdById, readPrdsMetadata, generatePrdId } from '../prd-manager/prd-utils.js';
+import {
+	findPrdById,
+	readPrdsMetadata,
+	generatePrdId
+} from '../prd-manager/prd-utils.js';
 import { createPrdFromFile } from '../prd-manager/prd-write-operations.js';
 
 // Define the Zod schema for PRD source metadata
-const prdSourceSchema = z.object({
-	filePath: z.string().describe('Full path to the PRD file'),
-	fileName: z.string().describe('Name of the PRD file'),
-	parsedDate: z.string().describe('ISO timestamp when the PRD was parsed'),
-	fileHash: z.string().describe('SHA256 hash of the PRD file content'),
-	fileSize: z.number().int().positive().describe('Size of the PRD file in bytes')
-}).nullable().optional();
+const prdSourceSchema = z
+	.object({
+		filePath: z.string().describe('Full path to the PRD file'),
+		fileName: z.string().describe('Name of the PRD file'),
+		parsedDate: z.string().describe('ISO timestamp when the PRD was parsed'),
+		fileHash: z.string().describe('SHA256 hash of the PRD file content'),
+		fileSize: z
+			.number()
+			.int()
+			.positive()
+			.describe('Size of the PRD file in bytes')
+	})
+	.nullable()
+	.optional();
 
 // Define the Zod schema for a SINGLE task object
 const prdSingleTaskSchema = z.object({
@@ -130,19 +141,19 @@ const EXPANSION_CONFIG = {
 
 	// Weight factors for different criteria (total should be 100)
 	WEIGHTS: {
-		LENGTH: 25,           // Weight for text length analysis
-		KEYWORDS: 30,         // Weight for complexity keywords
-		STRUCTURE: 20,        // Weight for structural complexity
-		TECHNICAL: 15,        // Weight for technical indicators
-		SCOPE: 10            // Weight for scope indicators
+		LENGTH: 25, // Weight for text length analysis
+		KEYWORDS: 30, // Weight for complexity keywords
+		STRUCTURE: 20, // Weight for structural complexity
+		TECHNICAL: 15, // Weight for technical indicators
+		SCOPE: 10 // Weight for scope indicators
 	},
 
 	// Length thresholds
 	LENGTH_THRESHOLDS: {
-		SHORT: 100,          // < 100 chars = simple
-		MEDIUM: 250,         // 100-250 chars = moderate
-		LONG: 500,           // 250-500 chars = complex
-		VERY_LONG: 1000      // > 500 chars = very complex
+		SHORT: 100, // < 100 chars = simple
+		MEDIUM: 250, // 100-250 chars = moderate
+		LONG: 500, // 250-500 chars = complex
+		VERY_LONG: 1000 // > 500 chars = very complex
 	},
 
 	// Keyword categories with different weights
@@ -150,39 +161,90 @@ const EXPANSION_CONFIG = {
 		HIGH_COMPLEXITY: {
 			weight: 3,
 			keywords: [
-				'architecture', 'framework', 'infrastructure', 'microservice',
-				'distributed', 'scalable', 'enterprise', 'integration',
-				'authentication', 'authorization', 'security', 'encryption'
+				'architecture',
+				'framework',
+				'infrastructure',
+				'microservice',
+				'distributed',
+				'scalable',
+				'enterprise',
+				'integration',
+				'authentication',
+				'authorization',
+				'security',
+				'encryption'
 			]
 		},
 		MEDIUM_COMPLEXITY: {
 			weight: 2,
 			keywords: [
-				'implement', 'develop', 'design', 'create', 'build',
-				'configure', 'setup', 'establish', 'database', 'api',
-				'interface', 'component', 'module', 'service', 'system'
+				'implement',
+				'develop',
+				'design',
+				'create',
+				'build',
+				'configure',
+				'setup',
+				'establish',
+				'database',
+				'api',
+				'interface',
+				'component',
+				'module',
+				'service',
+				'system'
 			]
 		},
 		LOW_COMPLEXITY: {
 			weight: 1,
 			keywords: [
-				'update', 'modify', 'fix', 'adjust', 'change', 'add',
-				'remove', 'delete', 'install', 'deploy', 'test'
+				'update',
+				'modify',
+				'fix',
+				'adjust',
+				'change',
+				'add',
+				'remove',
+				'delete',
+				'install',
+				'deploy',
+				'test'
 			]
 		}
 	},
 
 	// Technical complexity indicators
 	TECHNICAL_INDICATORS: [
-		'algorithm', 'optimization', 'performance', 'caching', 'queue',
-		'async', 'concurrent', 'parallel', 'real-time', 'streaming',
-		'machine learning', 'ai', 'ml', 'neural', 'model'
+		'algorithm',
+		'optimization',
+		'performance',
+		'caching',
+		'queue',
+		'async',
+		'concurrent',
+		'parallel',
+		'real-time',
+		'streaming',
+		'machine learning',
+		'ai',
+		'ml',
+		'neural',
+		'model'
 	],
 
 	// Scope indicators (multiple requirements/features)
 	SCOPE_INDICATORS: [
-		' and ', ' or ', 'including', 'such as', 'multiple', 'various',
-		'different', 'several', 'both', 'either', 'as well as'
+		' and ',
+		' or ',
+		'including',
+		'such as',
+		'multiple',
+		'various',
+		'different',
+		'several',
+		'both',
+		'either',
+		'as well as'
 	]
 };
 
@@ -232,25 +294,31 @@ function calculateComplexityScore(task) {
 	let keywordScore = 0;
 	let foundKeywords = [];
 
-	Object.entries(EXPANSION_CONFIG.KEYWORD_CATEGORIES).forEach(([category, config]) => {
-		const matchedKeywords = config.keywords.filter(keyword =>
-			combinedText.includes(keyword)
-		);
-		if (matchedKeywords.length > 0) {
-			keywordScore += matchedKeywords.length * config.weight * 10;
-			foundKeywords.push(...matchedKeywords);
+	Object.entries(EXPANSION_CONFIG.KEYWORD_CATEGORIES).forEach(
+		([category, config]) => {
+			const matchedKeywords = config.keywords.filter((keyword) =>
+				combinedText.includes(keyword)
+			);
+			if (matchedKeywords.length > 0) {
+				keywordScore += matchedKeywords.length * config.weight * 10;
+				foundKeywords.push(...matchedKeywords);
+			}
 		}
-	});
+	);
 
 	keywordScore = Math.min(keywordScore, 100); // Cap at 100
 	analysis.breakdown.keywords = keywordScore;
 	if (foundKeywords.length > 0) {
-		analysis.reasons.push(`Contains complexity keywords: ${foundKeywords.slice(0, 3).join(', ')}${foundKeywords.length > 3 ? '...' : ''}`);
+		analysis.reasons.push(
+			`Contains complexity keywords: ${foundKeywords.slice(0, 3).join(', ')}${foundKeywords.length > 3 ? '...' : ''}`
+		);
 	}
 
 	// 3. Structural Complexity (20% weight)
 	let structureScore = 0;
-	const sentences = description.split(/[.!?]+/).filter(s => s.trim().length > 0);
+	const sentences = description
+		.split(/[.!?]+/)
+		.filter((s) => s.trim().length > 0);
 	const bulletPoints = (combinedText.match(/[•\-\*]\s/g) || []).length;
 	const numberedLists = (combinedText.match(/\d+\.\s/g) || []).length;
 
@@ -272,19 +340,21 @@ function calculateComplexityScore(task) {
 
 	// 4. Technical Complexity (15% weight)
 	let technicalScore = 0;
-	const technicalMatches = EXPANSION_CONFIG.TECHNICAL_INDICATORS.filter(indicator =>
-		combinedText.includes(indicator)
+	const technicalMatches = EXPANSION_CONFIG.TECHNICAL_INDICATORS.filter(
+		(indicator) => combinedText.includes(indicator)
 	);
 
 	if (technicalMatches.length > 0) {
 		technicalScore = Math.min(technicalMatches.length * 25, 100);
-		analysis.reasons.push(`Technical complexity: ${technicalMatches.slice(0, 2).join(', ')}`);
+		analysis.reasons.push(
+			`Technical complexity: ${technicalMatches.slice(0, 2).join(', ')}`
+		);
 	}
 	analysis.breakdown.technical = technicalScore;
 
 	// 5. Scope Analysis (10% weight)
 	let scopeScore = 0;
-	const scopeMatches = EXPANSION_CONFIG.SCOPE_INDICATORS.filter(indicator =>
+	const scopeMatches = EXPANSION_CONFIG.SCOPE_INDICATORS.filter((indicator) =>
 		combinedText.includes(indicator)
 	);
 
@@ -297,10 +367,11 @@ function calculateComplexityScore(task) {
 	// Calculate weighted final score
 	analysis.score = Math.round(
 		(analysis.breakdown.length * EXPANSION_CONFIG.WEIGHTS.LENGTH +
-		 analysis.breakdown.keywords * EXPANSION_CONFIG.WEIGHTS.KEYWORDS +
-		 analysis.breakdown.structure * EXPANSION_CONFIG.WEIGHTS.STRUCTURE +
-		 analysis.breakdown.technical * EXPANSION_CONFIG.WEIGHTS.TECHNICAL +
-		 analysis.breakdown.scope * EXPANSION_CONFIG.WEIGHTS.SCOPE) / 100
+			analysis.breakdown.keywords * EXPANSION_CONFIG.WEIGHTS.KEYWORDS +
+			analysis.breakdown.structure * EXPANSION_CONFIG.WEIGHTS.STRUCTURE +
+			analysis.breakdown.technical * EXPANSION_CONFIG.WEIGHTS.TECHNICAL +
+			analysis.breakdown.scope * EXPANSION_CONFIG.WEIGHTS.SCOPE) /
+			100
 	);
 
 	return analysis;
@@ -321,13 +392,15 @@ async function identifyComplexTasksWithAnalysis(tasks, complexityReportPath) {
 	// Try to read complexity analysis results
 	try {
 		if (fs.existsSync(complexityReportPath)) {
-			complexityReport = JSON.parse(fs.readFileSync(complexityReportPath, 'utf8'));
+			complexityReport = JSON.parse(
+				fs.readFileSync(complexityReportPath, 'utf8')
+			);
 		}
 	} catch (error) {
 		// Fallback to basic criteria if complexity report is unavailable
 	}
 
-	tasks.forEach(task => {
+	tasks.forEach((task) => {
 		// Skip tasks that already have subtasks
 		if (task.subtasks && task.subtasks.length > 0) return;
 
@@ -338,7 +411,9 @@ async function identifyComplexTasksWithAnalysis(tasks, complexityReportPath) {
 
 		// First, try to use complexity analysis results
 		if (complexityReport?.complexityAnalysis) {
-			taskAnalysis = complexityReport.complexityAnalysis.find(a => a.taskId === task.id);
+			taskAnalysis = complexityReport.complexityAnalysis.find(
+				(a) => a.taskId === task.id
+			);
 
 			if (taskAnalysis) {
 				// Use complexity score threshold (5+ out of 10 = complex)
@@ -351,7 +426,8 @@ async function identifyComplexTasksWithAnalysis(tasks, complexityReportPath) {
 		// Fallback to intelligent criteria if no complexity analysis
 		if (!taskAnalysis) {
 			const fallbackAnalysis = calculateComplexityScore(task);
-			shouldExpand = fallbackAnalysis.score >= EXPANSION_CONFIG.COMPLEXITY_THRESHOLD;
+			shouldExpand =
+				fallbackAnalysis.score >= EXPANSION_CONFIG.COMPLEXITY_THRESHOLD;
 			expansionReason = `Fallback analysis score: ${fallbackAnalysis.score}/100. Reasons: ${fallbackAnalysis.reasons.join(', ')}`;
 
 			// Convert 0-100 score to recommended subtasks
@@ -376,8 +452,10 @@ async function identifyComplexTasksWithAnalysis(tasks, complexityReportPath) {
 
 	// Sort by complexity score or fallback score (highest first)
 	return complexTasks.sort((a, b) => {
-		const scoreA = a.complexityAnalysis?.complexityScore || (a.complexityAnalysis?.score || 0);
-		const scoreB = b.complexityAnalysis?.complexityScore || (b.complexityAnalysis?.score || 0);
+		const scoreA =
+			a.complexityAnalysis?.complexityScore || a.complexityAnalysis?.score || 0;
+		const scoreB =
+			b.complexityAnalysis?.complexityScore || b.complexityAnalysis?.score || 0;
 		return scoreB - scoreA;
 	});
 }
@@ -394,7 +472,7 @@ function identifyComplexTasks(tasks, options = {}) {
 	const threshold = options.threshold || EXPANSION_CONFIG.COMPLEXITY_THRESHOLD;
 	const complexTasks = [];
 
-	tasks.forEach(task => {
+	tasks.forEach((task) => {
 		// Skip tasks that already have subtasks
 		if (task.subtasks && task.subtasks.length > 0) return;
 
@@ -409,8 +487,8 @@ function identifyComplexTasks(tasks, options = {}) {
 	});
 
 	// Sort by complexity score (highest first)
-	return complexTasks.sort((a, b) =>
-		b.complexityAnalysis.score - a.complexityAnalysis.score
+	return complexTasks.sort(
+		(a, b) => b.complexityAnalysis.score - a.complexityAnalysis.score
 	);
 }
 
@@ -421,7 +499,8 @@ function identifyComplexTasks(tasks, options = {}) {
  * @param {Object} options - Options object with logging and session info
  */
 async function handleAutoExpansion(newTasks, tasksPath, options) {
-	const { reportProgress, mcpLog, session, projectRoot, outputFormat } = options;
+	const { reportProgress, mcpLog, session, projectRoot, outputFormat } =
+		options;
 	const isMCP = !!mcpLog;
 
 	const logFn = mcpLog || {
@@ -442,31 +521,52 @@ async function handleAutoExpansion(newTasks, tasksPath, options) {
 
 	try {
 		const startTime = Date.now();
-		report('🔍 Step 1: Performing comprehensive complexity analysis...', 'info');
+		report(
+			'🔍 Step 1: Performing comprehensive complexity analysis...',
+			'info'
+		);
 
 		// First, perform complexity analysis on all new tasks
-		const complexityReportPath = path.join(projectRoot || path.dirname(path.dirname(tasksPath)), '.taskmaster/reports/task-complexity-report.json');
+		const complexityReportPath = path.join(
+			projectRoot || path.dirname(path.dirname(tasksPath)),
+			'.taskmaster/reports/task-complexity-report.json'
+		);
 
 		try {
-			await analyzeTaskComplexity({
-				file: tasksPath,
-				output: complexityReportPath,
-				threshold: 1, // Analyze all tasks
-				research: false // Use standard analysis for speed
-			}, { mcpLog, session, projectRoot });
+			await analyzeTaskComplexity(
+				{
+					file: tasksPath,
+					output: complexityReportPath,
+					threshold: 1, // Analyze all tasks
+					research: false // Use standard analysis for speed
+				},
+				{ mcpLog, session, projectRoot }
+			);
 
 			report('✅ Complexity analysis completed successfully!', 'success');
 		} catch (analysisError) {
-			report(`⚠️  Complexity analysis failed: ${analysisError.message}. Using fallback criteria.`, 'warn');
+			report(
+				`⚠️  Complexity analysis failed: ${analysisError.message}. Using fallback criteria.`,
+				'warn'
+			);
 		}
 
-		report('🔍 Step 2: Identifying tasks suitable for auto-expansion...', 'info');
+		report(
+			'🔍 Step 2: Identifying tasks suitable for auto-expansion...',
+			'info'
+		);
 
 		// Use both complexity analysis results and fallback criteria
-		const complexTasks = await identifyComplexTasksWithAnalysis(newTasks, complexityReportPath);
+		const complexTasks = await identifyComplexTasksWithAnalysis(
+			newTasks,
+			complexityReportPath
+		);
 
 		if (complexTasks.length > 0) {
-			report(`🎯 Found ${complexTasks.length} complex task(s) suitable for expansion:`, 'info');
+			report(
+				`🎯 Found ${complexTasks.length} complex task(s) suitable for expansion:`,
+				'info'
+			);
 
 			// Display detailed analysis for each complex task
 			complexTasks.forEach((task, index) => {
@@ -474,20 +574,35 @@ async function handleAutoExpansion(newTasks, tasksPath, options) {
 
 				if (task.complexityAnalysis?.complexityScore) {
 					// From complexity analysis
-					report(`      Complexity Score: ${task.complexityAnalysis.complexityScore}/10`, 'info');
-					report(`      Recommended Subtasks: ${task.recommendedSubtasks}`, 'info');
+					report(
+						`      Complexity Score: ${task.complexityAnalysis.complexityScore}/10`,
+						'info'
+					);
+					report(
+						`      Recommended Subtasks: ${task.recommendedSubtasks}`,
+						'info'
+					);
 					if (task.complexityAnalysis.reasoning) {
-						report(`      Analysis: ${task.complexityAnalysis.reasoning}`, 'info');
+						report(
+							`      Analysis: ${task.complexityAnalysis.reasoning}`,
+							'info'
+						);
 					}
 				} else {
 					// From fallback analysis
 					report(`      ${task.expansionReason}`, 'info');
-					report(`      Recommended Subtasks: ${task.recommendedSubtasks}`, 'info');
+					report(
+						`      Recommended Subtasks: ${task.recommendedSubtasks}`,
+						'info'
+					);
 				}
 			});
 
 			report('⚡ Auto-expanding complex tasks...', 'info');
-			report(`📊 Progress: [${' '.repeat(complexTasks.length)}] 0/${complexTasks.length}`, 'info');
+			report(
+				`📊 Progress: [${' '.repeat(complexTasks.length)}] 0/${complexTasks.length}`,
+				'info'
+			);
 			let expandedCount = 0;
 
 			for (let i = 0; i < complexTasks.length; i++) {
@@ -496,13 +611,20 @@ async function handleAutoExpansion(newTasks, tasksPath, options) {
 
 				try {
 					// Update progress bar
-					const progressBar = '█'.repeat(i) + '░'.repeat(complexTasks.length - i);
-					report(`📊 Progress: [${progressBar}] ${i}/${complexTasks.length}`, 'info');
+					const progressBar =
+						'█'.repeat(i) + '░'.repeat(complexTasks.length - i);
+					report(
+						`📊 Progress: [${progressBar}] ${i}/${complexTasks.length}`,
+						'info'
+					);
 
 					const scoreDisplay = task.complexityAnalysis?.complexityScore
 						? `${task.complexityAnalysis.complexityScore}/10`
 						: 'fallback analysis';
-					report(`   ${i + 1}/${complexTasks.length} Expanding task ${task.id} (score: ${scoreDisplay})...`, 'info');
+					report(
+						`   ${i + 1}/${complexTasks.length} Expanding task ${task.id} (score: ${scoreDisplay})...`,
+						'info'
+					);
 
 					// Use recommended subtasks from analysis
 					const numSubtasks = task.recommendedSubtasks || 3;
@@ -529,69 +651,114 @@ async function handleAutoExpansion(newTasks, tasksPath, options) {
 
 					expandedCount++;
 					const taskDuration = Date.now() - taskStartTime;
-					report(`   ✅ Successfully expanded task ${task.id} into ${numSubtasks} subtasks (${taskDuration}ms)`, 'success');
+					report(
+						`   ✅ Successfully expanded task ${task.id} into ${numSubtasks} subtasks (${taskDuration}ms)`,
+						'success'
+					);
 				} catch (error) {
 					const taskDuration = Date.now() - taskStartTime;
-					report(`   ❌ Failed to expand task ${task.id} after ${taskDuration}ms: ${error.message}`, 'error');
+					report(
+						`   ❌ Failed to expand task ${task.id} after ${taskDuration}ms: ${error.message}`,
+						'error'
+					);
 				}
 			}
 
 			// Final progress update
 			const finalProgressBar = '█'.repeat(complexTasks.length);
-			report(`📊 Progress: [${finalProgressBar}] ${complexTasks.length}/${complexTasks.length} - Complete!`, 'success');
+			report(
+				`📊 Progress: [${finalProgressBar}] ${complexTasks.length}/${complexTasks.length} - Complete!`,
+				'success'
+			);
 
 			// Calculate total duration
 			const totalDuration = Date.now() - startTime;
-			const avgTimePerTask = expandedCount > 0 ? Math.round(totalDuration / expandedCount) : 0;
+			const avgTimePerTask =
+				expandedCount > 0 ? Math.round(totalDuration / expandedCount) : 0;
 
 			// Display enhanced summary with timing
-			report(`✅ Intelligent auto-expansion completed in ${totalDuration}ms!`, 'success');
+			report(
+				`✅ Intelligent auto-expansion completed in ${totalDuration}ms!`,
+				'success'
+			);
 			report(`📊 Detailed Summary:`, 'info');
-			report(`   • ${complexTasks.length} complex tasks identified using intelligent criteria`, 'info');
+			report(
+				`   • ${complexTasks.length} complex tasks identified using intelligent criteria`,
+				'info'
+			);
 			report(`   • ${expandedCount} tasks successfully expanded`, 'info');
 			report(`   • Total processing time: ${totalDuration}ms`, 'info');
 
 			if (expandedCount > 0) {
 				// Calculate average scores (handle both analysis types)
-				const analysisScores = complexTasks.slice(0, expandedCount).map(task =>
-					task.complexityAnalysis?.complexityScore || 0
-				).filter(score => score > 0);
+				const analysisScores = complexTasks
+					.slice(0, expandedCount)
+					.map((task) => task.complexityAnalysis?.complexityScore || 0)
+					.filter((score) => score > 0);
 
 				if (analysisScores.length > 0) {
-					const avgScore = Math.round(analysisScores.reduce((sum, score) => sum + score, 0) / analysisScores.length);
-					report(`   • Average complexity score: ${avgScore}/10 (from ${analysisScores.length} analyzed tasks)`, 'info');
+					const avgScore = Math.round(
+						analysisScores.reduce((sum, score) => sum + score, 0) /
+							analysisScores.length
+					);
+					report(
+						`   • Average complexity score: ${avgScore}/10 (from ${analysisScores.length} analyzed tasks)`,
+						'info'
+					);
 				}
 
 				report(`   • Average time per expansion: ${avgTimePerTask}ms`, 'info');
 
 				// Calculate total subtasks created using recommended counts
-				const totalSubtasks = complexTasks.slice(0, expandedCount).reduce((sum, task) => {
-					return sum + (task.recommendedSubtasks || 3);
-				}, 0);
+				const totalSubtasks = complexTasks
+					.slice(0, expandedCount)
+					.reduce((sum, task) => {
+						return sum + (task.recommendedSubtasks || 3);
+					}, 0);
 				report(`   • Total subtasks created: ${totalSubtasks}`, 'info');
 
 				// Show analysis method breakdown
-				const analysisCount = complexTasks.slice(0, expandedCount).filter(t => t.complexityAnalysis?.complexityScore).length;
+				const analysisCount = complexTasks
+					.slice(0, expandedCount)
+					.filter((t) => t.complexityAnalysis?.complexityScore).length;
 				const fallbackCount = expandedCount - analysisCount;
 				if (analysisCount > 0 && fallbackCount > 0) {
-					report(`   • Analysis methods: ${analysisCount} AI-analyzed, ${fallbackCount} fallback criteria`, 'info');
+					report(
+						`   • Analysis methods: ${analysisCount} AI-analyzed, ${fallbackCount} fallback criteria`,
+						'info'
+					);
 				}
 			}
 
 			if (expandedCount < complexTasks.length) {
-				report(`   ⚠️  ${complexTasks.length - expandedCount} tasks failed to expand`, 'warn');
+				report(
+					`   ⚠️  ${complexTasks.length - expandedCount} tasks failed to expand`,
+					'warn'
+				);
 			}
 
 			// Performance insights
-			if (totalDuration > 30000) { // > 30 seconds
-				report(`   💡 Performance note: Expansion took ${Math.round(totalDuration/1000)}s. Consider using smaller batches for large PRDs.`, 'info');
+			if (totalDuration > 30000) {
+				// > 30 seconds
+				report(
+					`   💡 Performance note: Expansion took ${Math.round(totalDuration / 1000)}s. Consider using smaller batches for large PRDs.`,
+					'info'
+				);
 			}
 		} else {
-			report('✅ No tasks met the complexity threshold for auto-expansion.', 'info');
-			report(`   (Threshold: ${EXPANSION_CONFIG.COMPLEXITY_THRESHOLD}/100)`, 'info');
-			report(`   💡 Tip: You can manually expand tasks using 'task-master expand --id=<id>'`, 'info');
+			report(
+				'✅ No tasks met the complexity threshold for auto-expansion.',
+				'info'
+			);
+			report(
+				`   (Threshold: ${EXPANSION_CONFIG.COMPLEXITY_THRESHOLD}/100)`,
+				'info'
+			);
+			report(
+				`   💡 Tip: You can manually expand tasks using 'task-master expand --id=<id>'`,
+				'info'
+			);
 		}
-
 	} catch (error) {
 		report(`❌ Error in auto-expansion process: ${error.message}`, 'error');
 		// Don't throw - auto-expansion failure shouldn't break the main PRD parsing
@@ -910,7 +1077,9 @@ Guidelines:
 				const existingPrd = findPrdById(prdId, 'prd/prds.json');
 				if (!existingPrd) {
 					const registrationResult = createPrdFromFile(prdPath, {
-						title: prdMetadata.title || path.basename(prdPath, path.extname(prdPath)),
+						title:
+							prdMetadata.title ||
+							path.basename(prdPath, path.extname(prdPath)),
 						description: `PRD parsed and registered automatically during task generation`,
 						priority: 'medium',
 						complexity: 'medium',
@@ -921,19 +1090,30 @@ Guidelines:
 					if (registrationResult.success) {
 						report(`✅ Registered PRD ${prdId} in tracking system`, 'info');
 					} else {
-						report(`⚠️ Failed to register PRD in tracking system: ${registrationResult.error}`, 'warn');
+						report(
+							`⚠️ Failed to register PRD in tracking system: ${registrationResult.error}`,
+							'warn'
+						);
 					}
 				} else {
-					report(`ℹ️ PRD ${prdId} already registered in tracking system`, 'info');
+					report(
+						`ℹ️ PRD ${prdId} already registered in tracking system`,
+						'info'
+					);
 				}
 			} catch (registrationError) {
-				report(`⚠️ Error registering PRD in tracking system: ${registrationError.message}`, 'warn');
+				report(
+					`⚠️ Error registering PRD in tracking system: ${registrationError.message}`,
+					'warn'
+				);
 			}
 
 			// Link newly created tasks to the PRD
 			try {
-				const { addTaskToPrd } = await import('../prd-manager/prd-write-operations.js');
-				const newTaskIds = processedNewTasks.map(task => task.id);
+				const { addTaskToPrd } = await import(
+					'../prd-manager/prd-write-operations.js'
+				);
+				const newTaskIds = processedNewTasks.map((task) => task.id);
 				let linkedCount = 0;
 
 				for (const taskId of newTaskIds) {
@@ -941,7 +1121,10 @@ Guidelines:
 					if (linkResult.success) {
 						linkedCount++;
 					} else {
-						report(`⚠️ Failed to link task ${taskId} to PRD ${prdId}: ${linkResult.error}`, 'warn');
+						report(
+							`⚠️ Failed to link task ${taskId} to PRD ${prdId}: ${linkResult.error}`,
+							'warn'
+						);
 					}
 				}
 
@@ -949,11 +1132,16 @@ Guidelines:
 					report(`✅ Linked ${linkedCount} tasks to PRD ${prdId}`, 'info');
 				}
 			} catch (linkingError) {
-				report(`⚠️ Error linking tasks to PRD: ${linkingError.message}`, 'warn');
+				report(
+					`⚠️ Error linking tasks to PRD: ${linkingError.message}`,
+					'warn'
+				);
 			}
-
 		} catch (metadataError) {
-			report(`⚠️ Error updating PRD file metadata: ${metadataError.message}`, 'warn');
+			report(
+				`⚠️ Error updating PRD file metadata: ${metadataError.message}`,
+				'warn'
+			);
 		}
 
 		// Handle auto-expansion if enabled

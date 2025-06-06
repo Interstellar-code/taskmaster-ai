@@ -131,7 +131,8 @@ const PROVIDER_FUNCTIONS = {
 	'google-vertex': {
 		generateText: (params) => providers['google-vertex'].generateText(params),
 		streamText: (params) => providers['google-vertex'].streamText(params),
-		generateObject: (params) => providers['google-vertex'].generateObject(params)
+		generateObject: (params) =>
+			providers['google-vertex'].generateObject(params)
 	}
 };
 
@@ -422,7 +423,10 @@ async function _unifiedServiceRunner(serviceType, params) {
 			}
 
 			// Check if API key is set for the current provider and role (excluding providers with alternative auth)
-			if (providerName?.toLowerCase() !== 'ollama' && providerName?.toLowerCase() !== 'bedrock') {
+			if (
+				providerName?.toLowerCase() !== 'ollama' &&
+				providerName?.toLowerCase() !== 'bedrock'
+			) {
 				if (!isApiKeySet(providerName, session, effectiveProjectRoot)) {
 					log(
 						'warn',

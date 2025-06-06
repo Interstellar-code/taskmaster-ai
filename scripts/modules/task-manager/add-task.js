@@ -18,13 +18,20 @@ import { getDefaultPriority } from '../config-manager.js';
 import generateTaskFiles from './generate-task-files.js';
 
 // Define Zod schema for PRD source metadata (optional for manually added tasks)
-const prdSourceSchema = z.object({
-	filePath: z.string().describe('Full path to the PRD file'),
-	fileName: z.string().describe('Name of the PRD file'),
-	parsedDate: z.string().describe('ISO timestamp when the PRD was parsed'),
-	fileHash: z.string().describe('SHA256 hash of the PRD file content'),
-	fileSize: z.number().int().positive().describe('Size of the PRD file in bytes')
-}).nullable().optional();
+const prdSourceSchema = z
+	.object({
+		filePath: z.string().describe('Full path to the PRD file'),
+		fileName: z.string().describe('Name of the PRD file'),
+		parsedDate: z.string().describe('ISO timestamp when the PRD was parsed'),
+		fileHash: z.string().describe('SHA256 hash of the PRD file content'),
+		fileSize: z
+			.number()
+			.int()
+			.positive()
+			.describe('Size of the PRD file in bytes')
+	})
+	.nullable()
+	.optional();
 
 // Define Zod schema for the expected AI output object
 const AiTaskDataSchema = z.object({
@@ -268,9 +275,7 @@ async function addTask(
 
 			// Validate description length
 			if (taskData.description.trim().length < 32) {
-				throw new Error(
-					'Task description must be at least 32 characters long'
-				);
+				throw new Error('Task description must be at least 32 characters long');
 			}
 		} else {
 			report('DEBUG: Taking AI task generation path.', 'debug');

@@ -38,7 +38,11 @@ async function selectAIEditors() {
 	}
 
 	console.log(chalk.cyan('\n🤖 AI Editor Integration Setup'));
-	console.log(chalk.gray('TaskHero can integrate with multiple AI-powered code editors.\n'));
+	console.log(
+		chalk.gray(
+			'TaskHero can integrate with multiple AI-powered code editors.\n'
+		)
+	);
 
 	const answers = await inquirer.prompt([
 		{
@@ -72,7 +76,7 @@ async function selectAIEditors() {
 					checked: false
 				}
 			],
-			validate: function(answer) {
+			validate: function (answer) {
 				if (answer.length < 1) {
 					return 'You must choose at least one option.';
 				}
@@ -86,12 +90,18 @@ async function selectAIEditors() {
 	]);
 
 	if (answers.editors.length > 0) {
-		const selectedNames = answers.editors.map(e => 
-			e === 'cursor' ? 'Cursor/Cline' : 
-			e === 'augment' ? 'Augment AI' :
-			e === 'roo' ? 'Roo Code' :
-			e === 'windsurf' ? 'Windsurf' :
-			e === 'none' ? 'None (TaskHero only)' : e
+		const selectedNames = answers.editors.map((e) =>
+			e === 'cursor'
+				? 'Cursor/Cline'
+				: e === 'augment'
+					? 'Augment AI'
+					: e === 'roo'
+						? 'Roo Code'
+						: e === 'windsurf'
+							? 'Windsurf'
+							: e === 'none'
+								? 'None (TaskHero only)'
+								: e
 		);
 		console.log(chalk.green(`\n✅ Selected: ${selectedNames.join(', ')}\n`));
 	}
@@ -104,16 +114,16 @@ function detectExistingProject(targetDir) {
 	const taskmasterDir = path.join(targetDir, '.taskmaster');
 	const tasksJsonPath = path.join(taskmasterDir, 'tasks', 'tasks.json');
 	const configPath = path.join(targetDir, '.taskmasterconfig');
-	
+
 	// Check for project indicators
 	const hasTaskmasterDir = fs.existsSync(taskmasterDir);
 	const hasTasksJson = fs.existsSync(tasksJsonPath);
 	const hasConfig = fs.existsSync(configPath);
-	
+
 	if (hasTaskmasterDir || hasTasksJson || hasConfig) {
 		// Try to get project name from config
 		let projectName = 'TaskHero Project';
-		
+
 		if (hasConfig) {
 			try {
 				const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
@@ -124,7 +134,7 @@ function detectExistingProject(targetDir) {
 				// Ignore config parsing errors
 			}
 		}
-		
+
 		// Count existing tasks if tasks.json exists
 		let taskCount = 0;
 		if (hasTasksJson) {
@@ -137,7 +147,7 @@ function detectExistingProject(targetDir) {
 				// Ignore tasks.json parsing errors
 			}
 		}
-		
+
 		return {
 			exists: true,
 			projectName,
@@ -147,7 +157,7 @@ function detectExistingProject(targetDir) {
 			hasConfig
 		};
 	}
-	
+
 	return { exists: false };
 }
 
@@ -183,9 +193,7 @@ function displayBanner() {
 	console.log(coolGradient(bannerText));
 
 	// Add creator credit line below the banner
-	console.log(
-		chalk.dim('by ') + chalk.cyan('interstellar-code')
-	);
+	console.log(chalk.dim('by ') + chalk.cyan('interstellar-code'));
 
 	console.log(
 		boxen(chalk.white(`${chalk.bold('Initializing')} your new project`), {
@@ -301,30 +309,42 @@ function clearProjectData(targetDir, dryRun = false) {
 	log('info', `${action} project data for fresh start...`);
 
 	const pathsToClear = [
-                // TaskMaster directory structure
-                { path: path.join(targetDir, '.taskmaster', 'tasks'), type: 'directory' },
-                { path: path.join(targetDir, '.taskmaster', 'reports'), type: 'directory' },
+		// TaskMaster directory structure
+		{ path: path.join(targetDir, '.taskmaster', 'tasks'), type: 'directory' },
+		{ path: path.join(targetDir, '.taskmaster', 'reports'), type: 'directory' },
 
-                // PRD status subdirectories (clear contents but keep structure)
-                { path: path.join(targetDir, '.taskmaster', 'prd', 'pending'), type: 'directory' },
-                { path: path.join(targetDir, '.taskmaster', 'prd', 'in-progress'), type: 'directory' },
-                { path: path.join(targetDir, '.taskmaster', 'prd', 'done'), type: 'directory' },
-                { path: path.join(targetDir, '.taskmaster', 'prd', 'archived'), type: 'directory' },
+		// PRD status subdirectories (clear contents but keep structure)
+		{
+			path: path.join(targetDir, '.taskmaster', 'prd', 'pending'),
+			type: 'directory'
+		},
+		{
+			path: path.join(targetDir, '.taskmaster', 'prd', 'in-progress'),
+			type: 'directory'
+		},
+		{
+			path: path.join(targetDir, '.taskmaster', 'prd', 'done'),
+			type: 'directory'
+		},
+		{
+			path: path.join(targetDir, '.taskmaster', 'prd', 'archived'),
+			type: 'directory'
+		},
 
-                // Legacy directory structure
-                { path: path.join(targetDir, 'tasks'), type: 'directory' },
+		// Legacy directory structure
+		{ path: path.join(targetDir, 'tasks'), type: 'directory' },
 
-                // Legacy PRD status subdirectories (clear contents but keep structure)
-                { path: path.join(targetDir, 'prd', 'pending'), type: 'directory' },
-                { path: path.join(targetDir, 'prd', 'in-progress'), type: 'directory' },
-                { path: path.join(targetDir, 'prd', 'done'), type: 'directory' },
-                { path: path.join(targetDir, 'prd', 'archived'), type: 'directory' },
+		// Legacy PRD status subdirectories (clear contents but keep structure)
+		{ path: path.join(targetDir, 'prd', 'pending'), type: 'directory' },
+		{ path: path.join(targetDir, 'prd', 'in-progress'), type: 'directory' },
+		{ path: path.join(targetDir, 'prd', 'done'), type: 'directory' },
+		{ path: path.join(targetDir, 'prd', 'archived'), type: 'directory' },
 
-                // Test files
-                { path: path.join(targetDir, 'tests', 'unit'), type: 'directory' },
-                { path: path.join(targetDir, 'tests', 'integration'), type: 'directory' },
-                { path: path.join(targetDir, 'tests', 'e2e'), type: 'directory' }
-        ];
+		// Test files
+		{ path: path.join(targetDir, 'tests', 'unit'), type: 'directory' },
+		{ path: path.join(targetDir, 'tests', 'integration'), type: 'directory' },
+		{ path: path.join(targetDir, 'tests', 'e2e'), type: 'directory' }
+	];
 
 	let clearedCount = 0;
 	let errorCount = 0;
@@ -382,7 +402,10 @@ function clearProjectData(targetDir, dryRun = false) {
 
 			for (const tasksJsonPath of tasksJsonPaths) {
 				if (fs.existsSync(path.dirname(tasksJsonPath))) {
-					fs.writeFileSync(tasksJsonPath, JSON.stringify(tasksJsonContent, null, 2));
+					fs.writeFileSync(
+						tasksJsonPath,
+						JSON.stringify(tasksJsonContent, null, 2)
+					);
 					log('info', `  Recreated: ${tasksJsonPath}`);
 				}
 			}
@@ -408,20 +431,22 @@ function clearProjectData(targetDir, dryRun = false) {
 
 			for (const prdsJsonPath of prdsJsonPaths) {
 				if (fs.existsSync(path.dirname(prdsJsonPath))) {
-					fs.writeFileSync(prdsJsonPath, JSON.stringify(prdsJsonContent, null, 2));
+					fs.writeFileSync(
+						prdsJsonPath,
+						JSON.stringify(prdsJsonContent, null, 2)
+					);
 					log('info', `  Recreated: ${prdsJsonPath}`);
 				}
 			}
-
 		} catch (error) {
 			log('error', `Failed to recreate essential files: ${error.message}`);
 			errorCount++;
 		}
 	}
 
-	const summary = dryRun ?
-		`Would clear ${clearedCount} items with ${errorCount} potential errors` :
-		`Cleared ${clearedCount} items with ${errorCount} errors`;
+	const summary = dryRun
+		? `Would clear ${clearedCount} items with ${errorCount} potential errors`
+		: `Cleared ${clearedCount} items with ${errorCount} errors`;
 
 	log(errorCount > 0 ? 'warn' : 'success', summary);
 
@@ -656,7 +681,10 @@ async function initializeProject(options = {}) {
 		if (resetProject) {
 			const resetResult = clearProjectData(process.cwd(), dryRun);
 			if (resetResult.errors > 0) {
-				log('warn', `Project reset completed with ${resetResult.errors} errors. Continuing with initialization...`);
+				log(
+					'warn',
+					`Project reset completed with ${resetResult.errors} errors. Continuing with initialization...`
+				);
 			} else {
 				log('success', 'Project data reset successfully');
 			}
@@ -669,10 +697,10 @@ async function initializeProject(options = {}) {
 	} else {
 		// Interactive logic
 		log('info', 'Required options not provided, proceeding with prompts.');
-		
+
 		// Detect existing project first
 		const existingProject = detectExistingProject(process.cwd());
-		
+
 		const rl = readline.createInterface({
 			input: process.stdin,
 			output: process.stdout
@@ -680,37 +708,46 @@ async function initializeProject(options = {}) {
 
 		try {
 			let resetProjectPrompted = false;
-			
+			let shouldContinueWithExisting = true;
+
 			// If existing project detected, ask about continuing vs resetting
 			if (existingProject.exists) {
-				console.log(chalk.cyan(`\n📁 Existing TaskHero project detected: ${existingProject.projectName}`));
-				console.log(chalk.gray(`   Tasks found: ${existingProject.taskCount}`));
-				
-				const continueProjectInput = await promptQuestion(
-					rl,
-					chalk.cyan('Do you want to continue with this existing project? (Y/n): ')
-				);
-				const shouldContinue = continueProjectInput.trim().toLowerCase() !== 'n';
-				
-				if (!shouldContinue) {
-					const resetConfirmInput = await promptQuestion(
-						rl,
-						chalk.yellow('⚠️  Reset project data? This will clear all tasks, PRDs, reports and tests for a fresh start (y/N): ')
-					);
-					resetProjectPrompted = resetConfirmInput.trim().toLowerCase() === 'y';
-				}
-			} else {
-				// New project - still ask about reset in case there are partial files
-				const resetProjectInput = await promptQuestion(
-					rl,
+				console.log(
 					chalk.cyan(
-						'Reset project data? This will clear all tasks, PRDs, reports and tests for a fresh start (y/N): '
+						`\n📁 Existing TaskHero project detected: ${existingProject.projectName}`
 					)
 				);
-				resetProjectPrompted = resetProjectInput.trim().toLowerCase() === 'y';
+				console.log(chalk.gray(`   Tasks found: ${existingProject.taskCount}`));
+
+				const continueProjectInput = await promptQuestion(
+					rl,
+					chalk.cyan(
+						'Do you want to continue with this existing project? (Y/n): '
+					)
+				);
+				shouldContinueWithExisting =
+					continueProjectInput.trim().toLowerCase() !== 'n';
+
+				if (!shouldContinueWithExisting) {
+					const resetConfirmInput = await promptQuestion(
+						rl,
+						chalk.yellow(
+							'⚠️  Reset project data? This will clear all tasks, PRDs, reports and tests for a fresh start (y/N): '
+						)
+					);
+					resetProjectPrompted = resetConfirmInput.trim().toLowerCase() === 'y';
+				} else {
+					// If continuing with existing project, skip the rest of setup
+					rl.close();
+					log(
+						'success',
+						'Continuing with existing TaskHero project. No changes made.'
+					);
+					return;
+				}
 			}
 
-			// Only prompt for shell aliases
+			// Only prompt for shell aliases for new projects or when resetting
 			const addAliasesInput = await promptQuestion(
 				rl,
 				chalk.cyan(
@@ -774,7 +811,10 @@ async function initializeProject(options = {}) {
 			if (resetProjectPrompted) {
 				const resetResult = clearProjectData(process.cwd(), dryRun);
 				if (resetResult.errors > 0) {
-					log('warn', `Project reset completed with ${resetResult.errors} errors. Continuing with initialization...`);
+					log(
+						'warn',
+						`Project reset completed with ${resetResult.errors} errors. Continuing with initialization...`
+					);
 				} else {
 					log('success', 'Project data reset successfully');
 				}
@@ -810,10 +850,14 @@ function manageProjectGitignore(targetDir) {
 	const projectGitignore = path.join(projectRoot, '.gitignore');
 
 	// Check if we're installing TaskMaster as a subdirectory in another project
-	const isSubdirectoryInstall = projectRoot !== targetDir && fs.existsSync(projectGitignore);
+	const isSubdirectoryInstall =
+		projectRoot !== targetDir && fs.existsSync(projectGitignore);
 
 	if (isSubdirectoryInstall) {
-		log('info', 'Detected installation in existing project, managing parent .gitignore...');
+		log(
+			'info',
+			'Detected installation in existing project, managing parent .gitignore...'
+		);
 
 		// Read existing gitignore
 		let gitignoreContent = '';
@@ -832,12 +876,22 @@ ${taskMasterDirName}/
 `;
 
 		// Check if TaskMaster rules already exist
-		if (!gitignoreContent.includes(`# TaskMaster AI - Ignore everything in ${taskMasterDirName}/`)) {
+		if (
+			!gitignoreContent.includes(
+				`# TaskMaster AI - Ignore everything in ${taskMasterDirName}/`
+			)
+		) {
 			// Append TaskMaster rules
 			const updatedContent = gitignoreContent.trim() + '\n' + taskMasterRules;
 			fs.writeFileSync(projectGitignore, updatedContent);
-			log('success', `Updated ${projectGitignore} with TaskMaster-specific rules`);
-			log('info', `TaskMaster directory will be ignored except for prd/ and tasks/ folders`);
+			log(
+				'success',
+				`Updated ${projectGitignore} with TaskMaster-specific rules`
+			);
+			log(
+				'info',
+				`TaskMaster directory will be ignored except for prd/ and tasks/ folders`
+			);
 		} else {
 			log('info', 'TaskMaster gitignore rules already exist in parent project');
 		}
@@ -850,7 +904,7 @@ function generateGettingStartedMessage(selectedEditors = []) {
 	let aiEditorName = 'your AI editor';
 	let mcpToolsInfo = '';
 	let workflowInfo = '';
-	
+
 	if (selectedEditors.includes('none')) {
 		aiEditorName = 'TaskHero CLI';
 		mcpToolsInfo = 'CLI: ';
@@ -876,19 +930,22 @@ function generateGettingStartedMessage(selectedEditors = []) {
 	// Build API keys instruction based on selected editors
 	let apiKeysInstruction = 'Add provider API keys to .env';
 	if (selectedEditors.includes('cursor')) {
-		apiKeysInstruction += ' (or inside the MCP config file i.e. .cursor/mcp.json)';
+		apiKeysInstruction +=
+			' (or inside the MCP config file i.e. .cursor/mcp.json)';
 	}
 
 	// Build step 3 based on whether MCP tools are available
 	let step3Content = '';
 	if (selectedEditors.includes('cursor')) {
-		step3Content = chalk.white('   â""â"€ ') +
+		step3Content =
+			chalk.white('   â""â"€ ') +
 			chalk.dim('MCP Tool: ') +
 			chalk.cyan('parse_prd') +
 			chalk.dim(' | CLI: ') +
 			chalk.cyan('task-hero parse-prd scripts/prd.txt');
 	} else {
-		step3Content = chalk.white('   â""â"€ ') +
+		step3Content =
+			chalk.white('   â""â"€ ') +
 			chalk.dim('CLI: ') +
 			chalk.cyan('task-hero parse-prd scripts/prd.txt');
 	}
@@ -896,13 +953,15 @@ function generateGettingStartedMessage(selectedEditors = []) {
 	// Build step 4 based on whether MCP tools are available
 	let step4Content = '';
 	if (selectedEditors.includes('cursor')) {
-		step4Content = chalk.white('   â""â"€ ') +
+		step4Content =
+			chalk.white('   â""â"€ ') +
 			chalk.dim('MCP Tool: ') +
 			chalk.cyan('analyze_project_complexity') +
 			chalk.dim(' | CLI: ') +
 			chalk.cyan('task-hero analyze-complexity');
 	} else {
-		step4Content = chalk.white('   â""â"€ ') +
+		step4Content =
+			chalk.white('   â""â"€ ') +
 			chalk.dim('CLI: ') +
 			chalk.cyan('task-hero analyze-complexity');
 	}
@@ -910,21 +969,34 @@ function generateGettingStartedMessage(selectedEditors = []) {
 	// Generate guidelines file reference based on selected editor
 	let guidelinesRef = '';
 	if (selectedEditors.includes('augment')) {
-		guidelinesRef = '\n' + chalk.dim('* Check .augment-guidelines for Augment AI integration workflow.');
+		guidelinesRef =
+			'\n' +
+			chalk.dim(
+				'* Check .augment-guidelines for Augment AI integration workflow.'
+			);
 	} else if (selectedEditors.includes('cursor')) {
-		guidelinesRef = '\n' + chalk.dim('* Review .cursor/rules/ files for Cursor integration guidelines.');
+		guidelinesRef =
+			'\n' +
+			chalk.dim(
+				'* Review .cursor/rules/ files for Cursor integration guidelines.'
+			);
 	} else if (selectedEditors.includes('windsurf')) {
-		guidelinesRef = '\n' + chalk.dim('* Check .windsurfrules for Windsurf integration guidelines.');
+		guidelinesRef =
+			'\n' +
+			chalk.dim('* Check .windsurfrules for Windsurf integration guidelines.');
 	} else if (selectedEditors.includes('roo')) {
-		guidelinesRef = '\n' + chalk.dim('* Review .roo/rules/ files for Roo Code integration guidelines.');
+		guidelinesRef =
+			'\n' +
+			chalk.dim(
+				'* Review .roo/rules/ files for Roo Code integration guidelines.'
+			);
 	}
 
-	return chalk.cyan.bold('Things you should do next:') +
+	return (
+		chalk.cyan.bold('Things you should do next:') +
 		'\n\n' +
 		chalk.white('1. ') +
-		chalk.yellow(
-			'Configure AI models (if needed) and add API keys to `.env`'
-		) +
+		chalk.yellow('Configure AI models (if needed) and add API keys to `.env`') +
 		'\n' +
 		chalk.white('   â"œâ"€ ') +
 		chalk.dim('Models: Use `task-hero models` commands') +
@@ -938,9 +1010,7 @@ function generateGettingStartedMessage(selectedEditors = []) {
 		) +
 		'\n' +
 		chalk.white('3. ') +
-		chalk.yellow(
-			`${workflowInfo} parse your PRD and generate initial tasks:`
-		) +
+		chalk.yellow(`${workflowInfo} parse your PRD and generate initial tasks:`) +
 		'\n' +
 		step3Content +
 		'\n' +
@@ -975,7 +1045,8 @@ function generateGettingStartedMessage(selectedEditors = []) {
 		chalk.dim(
 			`* Use the task-hero command without arguments to see all available commands.`
 		) +
-		guidelinesRef;
+		guidelinesRef
+	);
 }
 
 // Function to create the project structure
@@ -1014,7 +1085,9 @@ function createProjectStructure(addAliases, dryRun, selectedEditors = []) {
 	ensureDirectoryExists(path.join(targetDir, '.taskmaster', 'templates'));
 	ensureDirectoryExists(path.join(targetDir, '.taskmaster', 'prd'));
 	ensureDirectoryExists(path.join(targetDir, '.taskmaster', 'prd', 'pending'));
-	ensureDirectoryExists(path.join(targetDir, '.taskmaster', 'prd', 'in-progress'));
+	ensureDirectoryExists(
+		path.join(targetDir, '.taskmaster', 'prd', 'in-progress')
+	);
 	ensureDirectoryExists(path.join(targetDir, '.taskmaster', 'prd', 'done'));
 	ensureDirectoryExists(path.join(targetDir, '.taskmaster', 'prd', 'archived'));
 
@@ -1041,9 +1114,17 @@ function createProjectStructure(addAliases, dryRun, selectedEditors = []) {
 		}
 	};
 
-	const newTasksJsonPath = path.join(targetDir, '.taskmaster', 'tasks', 'tasks.json');
+	const newTasksJsonPath = path.join(
+		targetDir,
+		'.taskmaster',
+		'tasks',
+		'tasks.json'
+	);
 	if (!fs.existsSync(newTasksJsonPath)) {
-		fs.writeFileSync(newTasksJsonPath, JSON.stringify(tasksJsonContent, null, 2));
+		fs.writeFileSync(
+			newTasksJsonPath,
+			JSON.stringify(tasksJsonContent, null, 2)
+		);
 		log('success', `Created default tasks.json at ${newTasksJsonPath}`);
 	}
 
@@ -1061,7 +1142,12 @@ function createProjectStructure(addAliases, dryRun, selectedEditors = []) {
 		}
 	};
 
-	const newPrdsJsonPath = path.join(targetDir, '.taskmaster', 'prd', 'prds.json');
+	const newPrdsJsonPath = path.join(
+		targetDir,
+		'.taskmaster',
+		'prd',
+		'prds.json'
+	);
 	if (!fs.existsSync(newPrdsJsonPath)) {
 		fs.writeFileSync(newPrdsJsonPath, JSON.stringify(prdsJsonContent, null, 2));
 		log('success', `Created default prds.json at ${newPrdsJsonPath}`);
@@ -1069,11 +1155,11 @@ function createProjectStructure(addAliases, dryRun, selectedEditors = []) {
 
 	// Create default config.json in new structure
 	const configJsonContent = {
-		version: "1.0.0",
+		version: '1.0.0',
 		models: {
-			primary: "claude-3-5-sonnet-20241022",
-			research: "claude-3-5-sonnet-20241022",
-			fallback: "gpt-4o"
+			primary: 'claude-3-5-sonnet-20241022',
+			research: 'claude-3-5-sonnet-20241022',
+			fallback: 'gpt-4o'
 		},
 		settings: {
 			maxTokens: 4000,
@@ -1084,7 +1170,10 @@ function createProjectStructure(addAliases, dryRun, selectedEditors = []) {
 
 	const configJsonPath = path.join(targetDir, '.taskmaster', 'config.json');
 	if (!fs.existsSync(configJsonPath)) {
-		fs.writeFileSync(configJsonPath, JSON.stringify(configJsonContent, null, 2));
+		fs.writeFileSync(
+			configJsonPath,
+			JSON.stringify(configJsonContent, null, 2)
+		);
 		log('success', `Created default config.json at ${configJsonPath}`);
 	}
 
@@ -1117,7 +1206,7 @@ function createProjectStructure(addAliases, dryRun, selectedEditors = []) {
 		log('info', 'Skipping AI editor integration (None selected)');
 	} else if (selectedEditors.includes('cursor')) {
 		log('info', 'Setting up Cursor/Cline integration...');
-		
+
 		// Copy Cursor rule files
 		copyTemplateFile(
 			'dev_workflow.mdc',
@@ -1142,7 +1231,7 @@ function createProjectStructure(addAliases, dryRun, selectedEditors = []) {
 
 	if (selectedEditors.includes('roo')) {
 		log('info', 'Setting up Roo Code integration...');
-		
+
 		// Generate Roo rules from Cursor rules (if Cursor rules exist)
 		if (selectedEditors.includes('cursor')) {
 			convertAllCursorRulesToRooRules(targetDir);
@@ -1163,16 +1252,19 @@ function createProjectStructure(addAliases, dryRun, selectedEditors = []) {
 
 	if (selectedEditors.includes('windsurf')) {
 		log('info', 'Setting up Windsurf integration...');
-		
+
 		// Copy .windsurfrules
 		copyTemplateFile('windsurfrules', path.join(targetDir, '.windsurfrules'));
 	}
 
 	if (selectedEditors.includes('augment')) {
 		log('info', 'Setting up Augment AI integration...');
-		
+
 		// Copy Augment AI guidelines
-		copyTemplateFile('augment-guidelines', path.join(targetDir, '.augment-guidelines'));
+		copyTemplateFile(
+			'augment-guidelines',
+			path.join(targetDir, '.augment-guidelines')
+		);
 	}
 
 	// Copy example_prd.txt
@@ -1279,17 +1371,14 @@ function createProjectStructure(addAliases, dryRun, selectedEditors = []) {
 	// Display next steps in a nice box
 	if (!isSilentMode()) {
 		console.log(
-			boxen(
-				generateGettingStartedMessage(selectedEditors),
-				{
-					padding: 1,
-					margin: 1,
-					borderStyle: 'round',
-					borderColor: 'yellow',
-					title: 'Getting Started',
-					titleAlignment: 'center'
-				}
-			)
+			boxen(generateGettingStartedMessage(selectedEditors), {
+				padding: 1,
+				margin: 1,
+				borderStyle: 'round',
+				borderColor: 'yellow',
+				title: 'Getting Started',
+				titleAlignment: 'center'
+			})
 		);
 	}
 }

@@ -16,14 +16,16 @@ file_hash: null
 
 ## Context
 
-### Overview  
+### Overview
+
 Implement comprehensive CRUD (Create, Read, Update, Delete) operations for the TaskHero Enhanced Kanban Board web application. This will enable users to manage tasks directly through the web interface using modern UI components, eliminating the need to switch between CLI and web interfaces for task management.
 
 The current kanban board displays tasks beautifully with rich metadata, but lacks the ability to create, edit, or delete tasks. Users must use CLI commands for these operations, creating a fragmented user experience.
 
-### Core Features  
+### Core Features
 
 #### Task Creation Modal
+
 - Modern modal dialog using shadcn/ui components
 - Form fields for all task properties (title, description, priority, dependencies, etc.)
 - Real-time validation and error handling
@@ -31,6 +33,7 @@ The current kanban board displays tasks beautifully with rich metadata, but lack
 - Support for manual task creation and AI-assisted task generation
 
 #### Task Editing Interface
+
 - In-place editing capabilities for task cards
 - Full-featured edit modal for complex changes
 - Bulk editing operations for multiple tasks
@@ -38,31 +41,36 @@ The current kanban board displays tasks beautifully with rich metadata, but lack
 - Dependency management through visual interface
 
 #### Task Deletion System
+
 - Confirmation dialogs for safe deletion
 - Cascade deletion handling for tasks with subtasks
 - Dependency cleanup when tasks are removed
 - Undo functionality for accidental deletions
 
 #### Enhanced Task Display
+
 - Improved task cards with action buttons
 - Context menus for quick operations
 - Keyboard shortcuts for power users
 - Real-time updates across all connected clients
 
-### User Experience  
+### User Experience
 
 #### User Personas
+
 - **Project Managers**: Need quick task creation and bulk operations
-- **Developers**: Want keyboard shortcuts and efficient workflows  
+- **Developers**: Want keyboard shortcuts and efficient workflows
 - **Team Members**: Require intuitive interface for status updates
 
 #### Key User Flows
+
 1. **Quick Task Creation**: Click "+" button → Fill form → Save → Task appears in appropriate column
 2. **Task Editing**: Click task → Edit in modal → Save → Changes reflected immediately
 3. **Task Deletion**: Right-click task → Delete → Confirm → Task removed with dependency cleanup
 4. **Bulk Operations**: Select multiple tasks → Apply action → Confirm → Batch processing
 
 #### UI/UX Considerations
+
 - Consistent with existing TaskHero design language
 - Responsive design for mobile and desktop
 - Accessibility compliance (WCAG 2.1 AA)
@@ -70,19 +78,21 @@ The current kanban board displays tasks beautifully with rich metadata, but lack
 
 ## PRD
 
-### Technical Architecture  
+### Technical Architecture
 
 #### System Components
 
 ##### Frontend Components (React + shadcn/ui)
+
 - **TaskCreateModal**: Main task creation interface
-- **TaskEditModal**: Comprehensive task editing interface  
+- **TaskEditModal**: Comprehensive task editing interface
 - **TaskDeleteDialog**: Confirmation and cascade handling
 - **TaskActionMenu**: Context menu for task operations
 - **BulkOperationsToolbar**: Multi-select task management
 - **FormComponents**: Reusable form fields for task properties
 
 ##### Backend API Extensions
+
 - Enhanced REST endpoints for full CRUD operations
 - Validation middleware for task data integrity
 - Real-time WebSocket updates for live collaboration
@@ -90,28 +100,30 @@ The current kanban board displays tasks beautifully with rich metadata, but lack
 - File upload support for task attachments
 
 ##### Data Models
+
 ```typescript
 interface TaskFormData {
-  title: string;
-  description: string;
-  priority: 'low' | 'medium' | 'high';
-  status: TaskStatus;
-  dependencies: string[];
-  tags: string[];
-  estimatedHours?: number;
-  assignee?: string;
-  dueDate?: Date;
-  attachments?: File[];
+	title: string;
+	description: string;
+	priority: 'low' | 'medium' | 'high';
+	status: TaskStatus;
+	dependencies: string[];
+	tags: string[];
+	estimatedHours?: number;
+	assignee?: string;
+	dueDate?: Date;
+	attachments?: File[];
 }
 
 interface BulkOperation {
-  taskIds: string[];
-  operation: 'delete' | 'updateStatus' | 'updatePriority' | 'addDependency';
-  payload: any;
+	taskIds: string[];
+	operation: 'delete' | 'updateStatus' | 'updatePriority' | 'addDependency';
+	payload: any;
 }
 ```
 
 #### APIs and Integrations
+
 - Extend existing `/api/v1/tasks` endpoints
 - WebSocket integration for real-time updates
 - File upload service for task attachments
@@ -119,6 +131,7 @@ interface BulkOperation {
 - Validation using existing TaskHero business rules
 
 #### Infrastructure Requirements
+
 - Enhanced error handling and logging
 - Rate limiting for API endpoints
 - File storage for task attachments
@@ -132,14 +145,14 @@ graph TB
     subgraph "Task Creation Modal"
         A[Modal Header: 'Create New Task']
         B[Close Button X]
-        
+
         subgraph "Form Section 1: Basic Info"
             C[Title Input - Required]
             D[Description Textarea - Required]
             E[Priority Select: Low/Medium/High]
             F[Status Select: Pending/In-Progress/Done/Review/Blocked]
         end
-        
+
         subgraph "Form Section 2: Advanced"
             G[Dependencies Multi-Select with Search]
             H[Tags Input with Autocomplete]
@@ -147,31 +160,31 @@ graph TB
             J[Assignee Select/Input]
             K[Due Date Picker]
         end
-        
+
         subgraph "Form Section 3: AI Assistance"
             L[AI Generation Toggle]
             M[AI Prompt Textarea - when enabled]
             N[Research Mode Checkbox]
         end
-        
+
         subgraph "Form Section 4: Subtasks"
             O[Subtasks Checklist Component]
             P[Add Subtask Button]
             Q[Subtask Items with Delete]
         end
-        
+
         subgraph "Form Section 5: Attachments"
             R[File Upload Area]
             S[Uploaded Files List]
         end
-        
+
         subgraph "Modal Footer"
             T[Cancel Button]
             U[Save Draft Button]
             V[Create Task Button - Primary]
         end
     end
-    
+
     A --> C
     C --> D
     D --> E
@@ -201,7 +214,7 @@ graph LR
     subgraph "Subtasks Section"
         A[Subtasks Label]
         B[Add Subtask Button +]
-        
+
         subgraph "Checklist Component"
             C[Checkbox 1: Subtask Title 1]
             D[Edit Icon 1]
@@ -213,7 +226,7 @@ graph LR
             J[Edit Icon 3]
             K[Delete Icon 3]
         end
-        
+
         subgraph "Add Subtask Form"
             L[Subtask Title Input]
             M[Subtask Description Textarea]
@@ -221,7 +234,7 @@ graph LR
             O[Cancel Button]
         end
     end
-    
+
     A --> B
     B --> C
     C --> D
@@ -243,12 +256,14 @@ graph LR
 #### Phase 1: Foundation (MVP)
 
 ##### Task Creation Modal
+
 - Basic modal with essential fields (title, description, priority)
 - Form validation and error handling
 - Integration with existing API endpoints
 - Simple success/error notifications
 
 ##### Task Editing Interface
+
 - Click-to-edit functionality for task cards
 - Modal-based editing for complex properties
 - Real-time validation and save functionality
@@ -257,12 +272,14 @@ graph LR
 #### Phase 2: Enhanced Operations
 
 ##### Task Deletion System
+
 - Confirmation dialogs with dependency warnings
 - Cascade deletion for subtasks
 - Dependency cleanup automation
 - Undo functionality with time-limited recovery
 
 ##### Advanced Form Features
+
 - Dependency selection with visual picker
 - Tag management with autocomplete
 - Date picker for due dates
@@ -271,12 +288,14 @@ graph LR
 #### Phase 3: Bulk Operations & UX Polish
 
 ##### Bulk Operations
+
 - Multi-select functionality for task cards
 - Bulk status updates
 - Bulk deletion with confirmation
 - Bulk dependency management
 
 ##### Enhanced User Experience
+
 - Keyboard shortcuts for all operations
 - Context menus for quick actions
 - Drag-and-drop for dependency creation
@@ -285,12 +304,14 @@ graph LR
 #### Phase 4: Real-time & Collaboration
 
 ##### Real-time Updates
+
 - WebSocket integration for live updates
 - Conflict resolution for concurrent edits
 - Real-time notifications for team members
 - Optimistic UI updates with rollback
 
 ##### Advanced Features
+
 - Task templates for quick creation
 - Recurring task creation
 - Task history and audit trail
@@ -299,18 +320,21 @@ graph LR
 ### Logical Dependency Chain
 
 #### Foundation Dependencies
+
 1. **API Enhancement**: Extend existing REST endpoints for full CRUD support
 2. **Form Infrastructure**: Create reusable form components using shadcn/ui
 3. **Modal System**: Implement base modal components for task operations
 4. **Validation Layer**: Implement client-side and server-side validation
 
 #### Feature Dependencies
+
 1. **Task Creation** → **Task Editing** → **Task Deletion**
 2. **Basic Operations** → **Bulk Operations** → **Advanced Features**
 3. **Static UI** → **Real-time Updates** → **Collaboration Features**
 4. **Core Functionality** → **UX Enhancements** → **Advanced Workflows**
 
 #### Integration Dependencies
+
 1. **Frontend Components** → **API Integration** → **Real-time Updates**
 2. **Form Validation** → **Error Handling** → **User Feedback**
 3. **Basic CRUD** → **Dependency Management** → **Cascade Operations**
@@ -318,6 +342,7 @@ graph LR
 ### Risks and Mitigations
 
 #### Technical Challenges
+
 - **Risk**: Complex form validation for task dependencies
 - **Mitigation**: Implement progressive validation with clear error messages
 
@@ -328,6 +353,7 @@ graph LR
 - **Mitigation**: Implement pagination, virtual scrolling, and efficient state management
 
 #### MVP Scope Management
+
 - **Risk**: Feature creep leading to delayed delivery
 - **Mitigation**: Strict adherence to phase-based development with clear acceptance criteria
 
@@ -335,6 +361,7 @@ graph LR
 - **Mitigation**: Leverage existing MCP server architecture for consistent behavior
 
 #### Resource Constraints
+
 - **Risk**: UI/UX complexity requiring specialized design skills
 - **Mitigation**: Use proven shadcn/ui components and established design patterns
 
@@ -344,6 +371,7 @@ graph LR
 ### Appendix
 
 #### Research Findings
+
 - Current API endpoints support all required CRUD operations
 - shadcn/ui provides all necessary components for forms and modals
 - Existing drag-and-drop system can be extended for dependency management
@@ -352,18 +380,21 @@ graph LR
 #### Technical Specifications
 
 ##### Required shadcn/ui Components
+
 - Dialog, Form, Input, Textarea, Select, Button, Checkbox
 - Popover, Command, Badge, Alert, Toast
 - Calendar, DatePicker (for due dates)
 - DropdownMenu, ContextMenu (for actions)
 
 ##### API Endpoint Extensions
+
 - Enhanced validation for POST/PUT operations
 - Batch operation endpoints for bulk actions
 - File upload endpoints for attachments
 - WebSocket endpoints for real-time updates
 
 ##### Performance Requirements
+
 - Form submission response time < 500ms
 - Real-time update propagation < 100ms
 - Bulk operations support up to 100 tasks

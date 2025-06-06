@@ -25,6 +25,7 @@ node scripts/verify-installation.js
 ## 📦 Publish to npm as "task-hero-ai"
 
 ### Prerequisites
+
 - npm account at [npmjs.com](https://www.npmjs.com/)
 - npm CLI logged in: `npm login`
 
@@ -42,6 +43,7 @@ npm publish
 ```
 
 ### Automated Publishing (GitHub Actions)
+
 1. Add `NPM_TOKEN` to GitHub repository secrets
 2. Push to main branch
 3. GitHub Actions will automatically publish
@@ -65,11 +67,13 @@ node scripts/verify-installation.js
 ## 🛠️ Alternative Installation Methods
 
 ### From GitHub Repository
+
 ```bash
 npm install -g git+https://github.com/Interstellar-code/taskmaster-ai.git
 ```
 
 ### From Local Directory
+
 ```bash
 npm install -g /path/to/taskmaster-ai
 ```
@@ -83,11 +87,13 @@ npm install -g /path/to/taskmaster-ai
 ## 🆘 Troubleshooting
 
 ### Common Issues
+
 - **Permission errors**: Run PowerShell as Administrator (Windows)
 - **Command not found**: Check PATH or run `npm link`
 - **Package conflicts**: Use `npm unlink` then `npm link`
 
 ### Quick Fixes
+
 ```bash
 # Clear cache and reinstall
 npm cache clean --force

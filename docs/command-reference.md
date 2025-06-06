@@ -20,6 +20,7 @@ Here's a comprehensive reference of all available commands:
 ## Essential Commands
 
 ### Initialize Project
+
 ```bash
 # Initialize a new TaskMaster project
 task-hero init
@@ -28,6 +29,7 @@ task-master init
 ```
 
 ### Interactive Menu (Recommended)
+
 ```bash
 # Launch interactive menu system for better UX
 task-hero menu
@@ -36,6 +38,7 @@ task-master menu
 ```
 
 ### Parse PRD
+
 ```bash
 # Parse a PRD file and generate tasks
 task-hero parse-prd --input=<prd-file.txt>
@@ -50,6 +53,7 @@ task-hero parse-prd --input=<prd-file.txt> --append
 ```
 
 ### List Tasks
+
 ```bash
 # List all tasks
 task-hero list
@@ -74,12 +78,14 @@ task-hero list --prd=api-spec.md --status=pending --with-subtasks
 ```
 
 ### Find Next Task
+
 ```bash
 # Show the next task to work on based on dependencies and status
 task-hero next
 ```
 
 ### Set Task Status
+
 ```bash
 # Set status of a single task
 task-hero set-status --id=<id> --status=<status>
@@ -98,6 +104,7 @@ task-hero set-status --id=1.1,1.2 --status=<status>
 ## Task Management
 
 ### Add New Task
+
 ```bash
 # Add a new task using AI (main role)
 task-hero add-task --prompt="Description of the new task"
@@ -113,6 +120,7 @@ task-hero add-task --prompt="Description" --priority=high
 ```
 
 ### Update Tasks
+
 ```bash
 # Update tasks from a specific ID and provide context
 task-hero update --from=<id> --prompt="<prompt>"
@@ -128,6 +136,7 @@ task-hero update-task --id=<id> --prompt="<prompt>" --research
 ```
 
 ### Show Task Details
+
 ```bash
 # Show details of a specific task
 task-hero show <id>
@@ -139,6 +148,7 @@ task-hero show 1.2
 ```
 
 ### Move Tasks
+
 ```bash
 # Move a task or subtask to a new position
 task-hero move --from=<id> --to=<id>
@@ -164,6 +174,7 @@ task-hero move --from=10,11,12 --to=16,17,18
 ```
 
 ### Remove Tasks
+
 ```bash
 # Remove a task
 task-hero remove-task --id=<id>
@@ -174,6 +185,7 @@ task-hero remove-task --id=<id>
 ## PRD Lifecycle Management
 
 ### List and Filter PRDs
+
 ```bash
 # List PRDs with optional filtering
 task-hero prd
@@ -186,6 +198,7 @@ task-hero prd --priority=high
 ```
 
 ### PRD Information
+
 ```bash
 # Show detailed PRD information
 task-hero prd-show <prd-id>
@@ -195,6 +208,7 @@ task-hero prd-show <prd-id> --with-tasks
 ```
 
 ### PRD Status Management
+
 ```bash
 # Update PRD status
 task-hero prd-status <prd-id> <status>
@@ -206,6 +220,7 @@ task-hero prd-status prd_002 done
 ```
 
 ### PRD Synchronization
+
 ```bash
 # Synchronize PRD statuses with task completion
 task-hero prd-sync
@@ -215,6 +230,7 @@ task-hero prd-sync --prd=<prd-id>
 ```
 
 ### PRD Migration and Maintenance
+
 ```bash
 # Migrate legacy PRD files to new system
 task-hero prd-migrate
@@ -234,6 +250,7 @@ task-hero prd-integrity --fix
 ## PRD Source Tracking Commands
 
 ### List PRD Files
+
 ```bash
 # List all PRD files that have generated tasks
 task-hero list-prds
@@ -243,6 +260,7 @@ task-hero list-prds --format=json
 ```
 
 ### Query Tasks by PRD Source
+
 ```bash
 # Show all tasks from a specific PRD file
 task-hero tasks-from-prd --prd=requirements.txt
@@ -255,6 +273,7 @@ task-hero tasks-from-prd --prd=requirements.txt --format=json
 ```
 
 ### Show PRD Source Information
+
 ```bash
 # Display PRD source info for a specific task
 task-hero show-prd-source --id=5
@@ -264,6 +283,7 @@ task-hero show-prd-source --id=5 --format=json
 ```
 
 ### PRD Change Detection
+
 ```bash
 # Check if PRD files have been modified
 task-hero check-prd-changes
@@ -277,6 +297,7 @@ task-hero update-prd-metadata --prd=requirements.txt
 ## Subtask Management
 
 ### Expand Tasks into Subtasks
+
 ```bash
 # Expand a specific task with subtasks
 task-hero expand --id=<id>
@@ -304,6 +325,7 @@ task-hero expand --id=5.2 --num=3
 ```
 
 ### Context Passing Examples
+
 ```bash
 # PRD → Task context passing
 task-hero expand --id=5 --prompt="Based on PRD section 3.2: Implement OAuth authentication with Google and GitHub providers"
@@ -319,6 +341,7 @@ task-hero expand --id=7 --prompt="PRD section 4.1: Database schema design. Creat
 ```
 
 ### Update Subtasks
+
 ```bash
 # Append additional information to a specific subtask
 task-hero update-subtask --id=<parentId.subtaskId> --prompt="<prompt>"
@@ -331,6 +354,7 @@ task-hero update-subtask --id=<parentId.subtaskId> --prompt="<prompt>" --researc
 ```
 
 ### Context-Aware Subtask Updates
+
 ```bash
 # Include parent task context when updating subtasks
 task-hero update-subtask --id=5.2 --prompt="Parent context: User authentication system. Add PRD section 3.2.4 requirement: rate limiting of 100 requests/minute per user"
@@ -345,6 +369,7 @@ task-hero update-subtask --id=5.2.1 --prompt="Context: User auth → Session mgm
 **Note**: Unlike the `update-task` command which replaces task information, the `update-subtask` command _appends_ new information to the existing subtask details, marking it with a timestamp. This is useful for iteratively enhancing subtasks while preserving the original content.
 
 ### Clear Subtasks
+
 ```bash
 # Clear subtasks from a specific task
 task-hero clear-subtasks --id=<id>
@@ -361,6 +386,7 @@ task-hero clear-subtasks --all
 ## Task Dependencies
 
 ### Managing Dependencies
+
 ```bash
 # Add a dependency to a task
 task-hero add-dependency --id=<id> --depends-on=<id>
@@ -380,6 +406,7 @@ task-hero fix-dependencies
 ## Task Analysis & Complexity
 
 ### Analyze Task Complexity
+
 ```bash
 # Analyze complexity of all tasks
 task-hero analyze-complexity
@@ -401,6 +428,7 @@ task-hero analyze-complexity --research
 ```
 
 ### View Complexity Report
+
 ```bash
 # Display the task complexity analysis report
 task-hero complexity-report
@@ -414,6 +442,7 @@ task-hero complexity-report --file=my-report.json
 ## Interactive Features
 
 ### Interactive Menu System
+
 ```bash
 # Launch interactive menu system (recommended for better UX)
 task-hero menu
@@ -426,6 +455,7 @@ task-hero menu
 ```
 
 ### Kanban Boards
+
 ```bash
 # Launch interactive task Kanban board
 task-hero kanban
@@ -446,6 +476,7 @@ task-hero prd-kanban
 ## Configuration & Setup
 
 ### AI Model Configuration
+
 ```bash
 # View current AI model configuration and API key status
 task-hero models
@@ -476,12 +507,14 @@ task-hero models --setup
 ## Advanced Features
 
 ### Generate Task Files
+
 ```bash
 # Generate individual task files from tasks.json
 task-hero generate
 ```
 
 ### File Operations
+
 ```bash
 # Generate task files and markdown documentation
 task-hero generate
@@ -491,6 +524,7 @@ task-hero validate-dependencies
 ```
 
 ### Package Information
+
 - **NPM Package**: `task-hero-ai`
 - **Binary Commands**: `task-hero`, `task-hero-ai`, `task-hero-mcp`
 - **Installation**: `npm install -g task-hero-ai`
@@ -501,6 +535,7 @@ task-hero validate-dependencies
 ## Status Values Reference
 
 Available status values for tasks:
+
 - `pending` - Task is ready to be worked on
 - `in-progress` - Task is currently being worked on
 - `done` - Task has been completed
@@ -516,6 +551,7 @@ Available status values for tasks:
 ## Examples and Common Workflows
 
 ### Complete PRD-to-Execution Workflow
+
 ```bash
 # 1. Initialize project (if needed)
 task-hero init
@@ -540,6 +576,7 @@ task-hero prd-archive prd_001
 ```
 
 ### Working with Subtasks
+
 ```bash
 # Create nested subtask structure
 task-hero expand --id=5 --num=3           # Create 5.1, 5.2, 5.3
@@ -554,6 +591,7 @@ task-hero set-status --id=5.2.1 --status=done
 ```
 
 ### Managing Complex Projects
+
 ```bash
 # Analyze project complexity
 task-hero analyze-complexity --research
@@ -572,6 +610,7 @@ task-hero prd-kanban             # PRD lifecycle board
 ## Best Practices
 
 ### For Augment AI Integration
+
 1. **Use TaskMaster as tracking system** - Let Augment perform analysis, use TaskMaster for documentation
 2. **Follow the workflow** - init → parse-prd → expand → execute → sync
 3. **Leverage interactive tools** - Use `task-hero menu` and Kanban boards for better UX
@@ -582,6 +621,7 @@ task-hero prd-kanban             # PRD lifecycle board
 8. **Preserve context chain** - Each level should reference its parent context
 
 ### For Task Management
+
 1. **Use subtasks for complex tasks** - Break down tasks with complexity > 6
 2. **Maintain dependencies** - Ensure proper task execution order
 3. **Update status regularly** - Track progress through status transitions
@@ -589,6 +629,7 @@ task-hero prd-kanban             # PRD lifecycle board
 5. **Archive completed work** - Use PRD archiving for project milestones
 
 ### For Development Workflow
+
 1. **Start with PRD analysis** - Begin from requirements rather than initialization
 2. **Use research models** - Leverage research-backed analysis for complex tasks
 3. **Monitor progress** - Use `task-hero next` to find optimal next tasks
@@ -604,6 +645,7 @@ task-hero prd-kanban             # PRD lifecycle board
 TaskMaster supports rich context passing to maintain traceability from requirements to implementation:
 
 #### **Context Hierarchy**
+
 ```
 PRD Document
 ├── Task (references PRD sections)
@@ -617,18 +659,21 @@ PRD Document
 #### **Context Passing Examples**
 
 **Level 1: PRD → Task**
+
 ```bash
 # Include specific PRD sections when creating tasks
 task-hero add-task --prompt="Implement user authentication system as specified in PRD section 3.2: OAuth integration with Google and GitHub providers, session management with Redis, and rate limiting per section 3.2.4"
 ```
 
 **Level 2: Task → Subtask**
+
 ```bash
 # Pass parent task context when expanding
 task-hero expand --id=5 --prompt="Parent task: User authentication system (PRD 3.2). Create subtasks for: 1) OAuth provider setup (PRD 3.2.1), 2) Session management with Redis (PRD 3.2.2), 3) Rate limiting middleware (PRD 3.2.4)"
 ```
 
 **Level 3: Subtask → Nested Subtask**
+
 ```bash
 # Inherit full context chain for nested subtasks
 task-hero expand --id=5.2 --prompt="Context chain: User auth system (PRD 3.2) → Session management (5.2) → Create nested tasks for: session storage schema, session validation logic, session cleanup cron job"

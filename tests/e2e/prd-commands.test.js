@@ -22,7 +22,7 @@ describe('PRD Commands End-to-End Tests', () => {
 		// Set up mock file system for E2E tests
 		mockFs({
 			[testProjectRoot]: {
-				'tasks': {
+				tasks: {
 					'tasks.json': JSON.stringify({
 						tasks: [],
 						metadata: {
@@ -31,7 +31,7 @@ describe('PRD Commands End-to-End Tests', () => {
 						}
 					})
 				},
-				'docs': {
+				docs: {
 					'test-prd.txt': `# Test PRD Document
 
 ## Overview
@@ -71,7 +71,7 @@ This is a test Product Requirements Document for E2E testing.
 - PUT /data/:id
 - DELETE /data/:id`
 				},
-				'scripts': {
+				scripts: {
 					'dev.js': 'console.log("Mock dev script");'
 				}
 			}
@@ -167,7 +167,7 @@ This is a test Product Requirements Document for E2E testing.
 
 			// Verify tasks were generated correctly
 			const savedData = JSON.parse(fs.readFileSync(testTasksPath, 'utf8'));
-			
+
 			expect(savedData.tasks).toHaveLength(2);
 			expect(savedData.tasks[0].prdSource).toBeDefined();
 			expect(savedData.tasks[0].prdSource.fileName).toBe('test-prd.txt');
@@ -186,7 +186,10 @@ This is a test Product Requirements Document for E2E testing.
 				}
 			];
 
-			fs.writeFileSync(testTasksPath, JSON.stringify({ tasks: existingTasks }, null, 2));
+			fs.writeFileSync(
+				testTasksPath,
+				JSON.stringify({ tasks: existingTasks }, null, 2)
+			);
 
 			// Simulate parse-prd with --append flag
 			const newPRDTasks = [
@@ -207,12 +210,15 @@ This is a test Product Requirements Document for E2E testing.
 			// Simulate append operation
 			const existingData = JSON.parse(fs.readFileSync(testTasksPath, 'utf8'));
 			const combinedTasks = [...existingData.tasks, ...newPRDTasks];
-			
-			fs.writeFileSync(testTasksPath, JSON.stringify({ tasks: combinedTasks }, null, 2));
+
+			fs.writeFileSync(
+				testTasksPath,
+				JSON.stringify({ tasks: combinedTasks }, null, 2)
+			);
 
 			// Verify append worked correctly
 			const finalData = JSON.parse(fs.readFileSync(testTasksPath, 'utf8'));
-			
+
 			expect(finalData.tasks).toHaveLength(2);
 			expect(finalData.tasks[0].prdSource).toBeNull();
 			expect(finalData.tasks[1].prdSource).toBeDefined();
@@ -263,7 +269,10 @@ This is a test Product Requirements Document for E2E testing.
 				}
 			];
 
-			fs.writeFileSync(testTasksPath, JSON.stringify({ tasks: testTasks }, null, 2));
+			fs.writeFileSync(
+				testTasksPath,
+				JSON.stringify({ tasks: testTasks }, null, 2)
+			);
 		});
 
 		test('should list all unique PRD sources with task counts', () => {
@@ -271,7 +280,7 @@ This is a test Product Requirements Document for E2E testing.
 			const taskData = JSON.parse(fs.readFileSync(testTasksPath, 'utf8'));
 			const prdSources = new Map();
 
-			taskData.tasks.forEach(task => {
+			taskData.tasks.forEach((task) => {
 				if (task.prdSource && task.prdSource.fileName) {
 					const fileName = task.prdSource.fileName;
 					if (!prdSources.has(fileName)) {
@@ -288,7 +297,9 @@ This is a test Product Requirements Document for E2E testing.
 				}
 			});
 
-			const prdList = Array.from(prdSources.values()).sort((a, b) => b.taskCount - a.taskCount);
+			const prdList = Array.from(prdSources.values()).sort(
+				(a, b) => b.taskCount - a.taskCount
+			);
 
 			expect(prdList).toHaveLength(2);
 			expect(prdList[0].fileName).toBe('test-prd.txt');
@@ -304,21 +315,23 @@ This is a test Product Requirements Document for E2E testing.
 			const prdFilter = 'test-prd.txt';
 
 			// Simulate tasks-from-prd command
-			const filteredTasks = taskData.tasks.filter(task => {
+			const filteredTasks = taskData.tasks.filter((task) => {
 				return task.prdSource && task.prdSource.fileName === prdFilter;
 			});
 
 			expect(filteredTasks).toHaveLength(2);
-			expect(filteredTasks.map(t => t.id)).toEqual([1, 3]);
+			expect(filteredTasks.map((t) => t.id)).toEqual([1, 3]);
 		});
 
 		test('should handle case-insensitive filtering', () => {
 			const taskData = JSON.parse(fs.readFileSync(testTasksPath, 'utf8'));
 			const prdFilter = 'TEST-PRD.TXT';
 
-			const filteredTasks = taskData.tasks.filter(task => {
-				return task.prdSource && 
-					   task.prdSource.fileName.toLowerCase() === prdFilter.toLowerCase();
+			const filteredTasks = taskData.tasks.filter((task) => {
+				return (
+					task.prdSource &&
+					task.prdSource.fileName.toLowerCase() === prdFilter.toLowerCase()
+				);
 			});
 
 			expect(filteredTasks).toHaveLength(2);
@@ -350,10 +363,10 @@ This is a test Product Requirements Document for E2E testing.
 			const currentData = JSON.parse(fs.readFileSync(testTasksPath, 'utf8'));
 			const changes = [];
 
-			currentData.tasks.forEach(task => {
+			currentData.tasks.forEach((task) => {
 				if (task.prdSource && fs.existsSync(task.prdSource.filePath)) {
 					const currentStats = fs.statSync(task.prdSource.filePath);
-					
+
 					if (currentStats.size !== task.prdSource.fileSize) {
 						changes.push({
 							filePath: task.prdSource.filePath,
@@ -392,7 +405,7 @@ This is a test Product Requirements Document for E2E testing.
 			const currentData = JSON.parse(fs.readFileSync(testTasksPath, 'utf8'));
 			const missingFiles = [];
 
-			currentData.tasks.forEach(task => {
+			currentData.tasks.forEach((task) => {
 				if (task.prdSource && !fs.existsSync(task.prdSource.filePath)) {
 					missingFiles.push({
 						filePath: task.prdSource.filePath,
@@ -413,7 +426,7 @@ This is a test Product Requirements Document for E2E testing.
 			const taskId = 1;
 
 			// Simulate show-prd-source command
-			const task = taskData.tasks.find(t => t.id === taskId);
+			const task = taskData.tasks.find((t) => t.id === taskId);
 
 			expect(task).toBeDefined();
 			expect(task.prdSource).toBeDefined();
@@ -425,7 +438,7 @@ This is a test Product Requirements Document for E2E testing.
 			const taskData = JSON.parse(fs.readFileSync(testTasksPath, 'utf8'));
 			const taskId = 4; // Manual task
 
-			const task = taskData.tasks.find(t => t.id === taskId);
+			const task = taskData.tasks.find((t) => t.id === taskId);
 
 			expect(task).toBeDefined();
 			expect(task.prdSource).toBeNull();
@@ -435,18 +448,18 @@ This is a test Product Requirements Document for E2E testing.
 	describe('prd-traceability-report command E2E', () => {
 		test('should generate comprehensive traceability report', () => {
 			const taskData = JSON.parse(fs.readFileSync(testTasksPath, 'utf8'));
-			
+
 			// Simulate report generation
 			const report = {
 				generatedAt: new Date().toISOString(),
 				summary: {
 					totalTasks: taskData.tasks.length,
-					tasksFromPRDs: taskData.tasks.filter(t => t.prdSource).length,
-					manualTasks: taskData.tasks.filter(t => !t.prdSource).length,
+					tasksFromPRDs: taskData.tasks.filter((t) => t.prdSource).length,
+					manualTasks: taskData.tasks.filter((t) => !t.prdSource).length,
 					uniquePRDFiles: new Set(
 						taskData.tasks
-							.filter(t => t.prdSource)
-							.map(t => t.prdSource.fileName)
+							.filter((t) => t.prdSource)
+							.map((t) => t.prdSource.fileName)
 					).size
 				},
 				prdSources: [],
@@ -454,7 +467,7 @@ This is a test Product Requirements Document for E2E testing.
 			};
 
 			// Group tasks by PRD source
-			taskData.tasks.forEach(task => {
+			taskData.tasks.forEach((task) => {
 				if (task.prdSource) {
 					const fileName = task.prdSource.fileName;
 					if (!report.tasksByPRD.has(fileName)) {
@@ -475,7 +488,7 @@ This is a test Product Requirements Document for E2E testing.
 		test('should handle invalid PRD file paths gracefully', () => {
 			// Simulate command with invalid file path
 			const invalidPath = '/nonexistent/invalid.txt';
-			
+
 			expect(() => {
 				if (!fs.existsSync(invalidPath)) {
 					throw new Error(`PRD file not found: ${invalidPath}`);
@@ -495,7 +508,7 @@ This is a test Product Requirements Document for E2E testing.
 		test('should handle permission errors gracefully', () => {
 			// This would be tested with actual file permissions in real environment
 			const restrictedPath = '/restricted/file.txt';
-			
+
 			expect(() => {
 				if (!fs.existsSync(restrictedPath)) {
 					throw new Error('Permission denied or file not found');

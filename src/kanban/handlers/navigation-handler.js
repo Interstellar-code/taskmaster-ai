@@ -9,305 +9,305 @@ import chalk from 'chalk';
  * NavigationHandler class for managing board navigation
  */
 export class NavigationHandler {
-    constructor(boardLayout) {
-        this.boardLayout = boardLayout;
-        this.statusOrder = ['pending', 'in-progress', 'done'];
-        this.navigationHistory = [];
-        this.maxHistorySize = 10;
-    }
+	constructor(boardLayout) {
+		this.boardLayout = boardLayout;
+		this.statusOrder = ['pending', 'in-progress', 'done'];
+		this.navigationHistory = [];
+		this.maxHistorySize = 10;
+	}
 
-    /**
-     * Move to the next column (right arrow)
-     */
-    moveToNextColumn() {
-        // Use board layout's navigation
-        this.boardLayout.moveToNextColumn();
+	/**
+	 * Move to the next column (right arrow)
+	 */
+	moveToNextColumn() {
+		// Use board layout's navigation
+		this.boardLayout.moveToNextColumn();
 
-        this.addToHistory('column', this.boardLayout.currentColumnIndex);
+		this.addToHistory('column', this.boardLayout.currentColumnIndex);
 
-        return {
-            success: true,
-            currentColumn: this.statusOrder[this.boardLayout.currentColumnIndex]
-        };
-    }
+		return {
+			success: true,
+			currentColumn: this.statusOrder[this.boardLayout.currentColumnIndex]
+		};
+	}
 
-    /**
-     * Move to the previous column (left arrow)
-     */
-    moveToPreviousColumn() {
-        // Use board layout's navigation
-        this.boardLayout.moveToPreviousColumn();
+	/**
+	 * Move to the previous column (left arrow)
+	 */
+	moveToPreviousColumn() {
+		// Use board layout's navigation
+		this.boardLayout.moveToPreviousColumn();
 
-        this.addToHistory('column', this.boardLayout.currentColumnIndex);
+		this.addToHistory('column', this.boardLayout.currentColumnIndex);
 
-        return {
-            success: true,
-            currentColumn: this.statusOrder[this.boardLayout.currentColumnIndex]
-        };
-    }
+		return {
+			success: true,
+			currentColumn: this.statusOrder[this.boardLayout.currentColumnIndex]
+		};
+	}
 
-    /**
-     * Move selection up in current column (up arrow)
-     */
-    moveSelectionUp() {
-        const currentColumn = this.getCurrentColumn();
-        if (!currentColumn) return { success: false, reason: 'No current column' };
+	/**
+	 * Move selection up in current column (up arrow)
+	 */
+	moveSelectionUp() {
+		const currentColumn = this.getCurrentColumn();
+		if (!currentColumn) return { success: false, reason: 'No current column' };
 
-        const result = currentColumn.moveSelectionUp();
-        
-        if (result) {
-            this.addToHistory('task', {
-                column: this.currentColumnIndex,
-                task: currentColumn.selectedTaskIndex
-            });
-        }
+		const result = currentColumn.moveSelectionUp();
 
-        return {
-            success: result,
-            column: this.statusOrder[this.currentColumnIndex],
-            selectedTask: currentColumn.getSelectedTask()
-        };
-    }
+		if (result) {
+			this.addToHistory('task', {
+				column: this.currentColumnIndex,
+				task: currentColumn.selectedTaskIndex
+			});
+		}
 
-    /**
-     * Move selection down in current column (down arrow)
-     */
-    moveSelectionDown() {
-        const currentColumn = this.getCurrentColumn();
-        if (!currentColumn) return { success: false, reason: 'No current column' };
+		return {
+			success: result,
+			column: this.statusOrder[this.currentColumnIndex],
+			selectedTask: currentColumn.getSelectedTask()
+		};
+	}
 
-        const result = currentColumn.moveSelectionDown();
-        
-        if (result) {
-            this.addToHistory('task', {
-                column: this.currentColumnIndex,
-                task: currentColumn.selectedTaskIndex
-            });
-        }
+	/**
+	 * Move selection down in current column (down arrow)
+	 */
+	moveSelectionDown() {
+		const currentColumn = this.getCurrentColumn();
+		if (!currentColumn) return { success: false, reason: 'No current column' };
 
-        return {
-            success: result,
-            column: this.statusOrder[this.currentColumnIndex],
-            selectedTask: currentColumn.getSelectedTask()
-        };
-    }
+		const result = currentColumn.moveSelectionDown();
 
-    /**
-     * Jump to a specific column by status
-     * @param {string} status - Target status ('pending', 'in-progress', 'done')
-     */
-    jumpToColumn(status) {
-        const targetIndex = this.statusOrder.indexOf(status);
-        if (targetIndex === -1) {
-            return { success: false, reason: `Invalid status: ${status}` };
-        }
+		if (result) {
+			this.addToHistory('task', {
+				column: this.currentColumnIndex,
+				task: currentColumn.selectedTaskIndex
+			});
+		}
 
-        const oldColumn = this.getCurrentColumn();
-        if (oldColumn) {
-            oldColumn.clearSelection();
-            this.addToHistory('column', this.currentColumnIndex);
-        }
+		return {
+			success: result,
+			column: this.statusOrder[this.currentColumnIndex],
+			selectedTask: currentColumn.getSelectedTask()
+		};
+	}
 
-        this.currentColumnIndex = targetIndex;
-        
-        const newColumn = this.getCurrentColumn();
-        if (newColumn && newColumn.hasTasks()) {
-            newColumn.setSelectedTask(0);
-        }
+	/**
+	 * Jump to a specific column by status
+	 * @param {string} status - Target status ('pending', 'in-progress', 'done')
+	 */
+	jumpToColumn(status) {
+		const targetIndex = this.statusOrder.indexOf(status);
+		if (targetIndex === -1) {
+			return { success: false, reason: `Invalid status: ${status}` };
+		}
 
-        return {
-            success: true,
-            currentColumn: status,
-            hasSelection: newColumn && newColumn.hasTasks()
-        };
-    }
+		const oldColumn = this.getCurrentColumn();
+		if (oldColumn) {
+			oldColumn.clearSelection();
+			this.addToHistory('column', this.currentColumnIndex);
+		}
 
-    /**
-     * Jump to a specific task by ID
-     * @param {number} taskId - Target task ID
-     */
-    jumpToTask(taskId) {
-        // Search through all columns for the task
-        for (let colIndex = 0; colIndex < this.statusOrder.length; colIndex++) {
-            const status = this.statusOrder[colIndex];
-            const column = this.boardLayout.columns.get(status);
-            
-            if (column) {
-                const taskIndex = column.tasks.findIndex(task => task.id === taskId);
-                if (taskIndex !== -1) {
-                    // Found the task, navigate to it
-                    const oldColumn = this.getCurrentColumn();
-                    if (oldColumn) {
-                        oldColumn.clearSelection();
-                    }
+		this.currentColumnIndex = targetIndex;
 
-                    this.currentColumnIndex = colIndex;
-                    column.setSelectedTask(taskIndex);
+		const newColumn = this.getCurrentColumn();
+		if (newColumn && newColumn.hasTasks()) {
+			newColumn.setSelectedTask(0);
+		}
 
-                    this.addToHistory('task', {
-                        column: colIndex,
-                        task: taskIndex
-                    });
+		return {
+			success: true,
+			currentColumn: status,
+			hasSelection: newColumn && newColumn.hasTasks()
+		};
+	}
 
-                    return {
-                        success: true,
-                        column: status,
-                        task: column.tasks[taskIndex],
-                        taskIndex
-                    };
-                }
-            }
-        }
+	/**
+	 * Jump to a specific task by ID
+	 * @param {number} taskId - Target task ID
+	 */
+	jumpToTask(taskId) {
+		// Search through all columns for the task
+		for (let colIndex = 0; colIndex < this.statusOrder.length; colIndex++) {
+			const status = this.statusOrder[colIndex];
+			const column = this.boardLayout.columns.get(status);
 
-        return { success: false, reason: `Task #${taskId} not found` };
-    }
+			if (column) {
+				const taskIndex = column.tasks.findIndex((task) => task.id === taskId);
+				if (taskIndex !== -1) {
+					// Found the task, navigate to it
+					const oldColumn = this.getCurrentColumn();
+					if (oldColumn) {
+						oldColumn.clearSelection();
+					}
 
-    /**
-     * Get the current column
-     */
-    getCurrentColumn() {
-        return this.boardLayout.getCurrentColumn();
-    }
+					this.currentColumnIndex = colIndex;
+					column.setSelectedTask(taskIndex);
 
-    /**
-     * Get the current column status
-     */
-    getCurrentStatus() {
-        return this.boardLayout.getCurrentStatus();
-    }
+					this.addToHistory('task', {
+						column: colIndex,
+						task: taskIndex
+					});
 
-    /**
-     * Get the currently selected task
-     */
-    getSelectedTask() {
-        const currentColumn = this.getCurrentColumn();
-        return currentColumn ? currentColumn.getSelectedTask() : null;
-    }
+					return {
+						success: true,
+						column: status,
+						task: column.tasks[taskIndex],
+						taskIndex
+					};
+				}
+			}
+		}
 
-    /**
-     * Get navigation state
-     */
-    getNavigationState() {
-        const currentColumn = this.getCurrentColumn();
-        const selectedTask = this.getSelectedTask();
-        
-        return {
-            currentColumnIndex: this.currentColumnIndex,
-            currentStatus: this.getCurrentStatus(),
-            hasSelection: !!selectedTask,
-            selectedTask,
-            columnTaskCount: currentColumn ? currentColumn.getTaskCount() : 0,
-            selectedTaskIndex: currentColumn ? currentColumn.selectedTaskIndex : -1
-        };
-    }
+		return { success: false, reason: `Task #${taskId} not found` };
+	}
 
-    /**
-     * Add navigation action to history
-     * @param {string} type - Type of navigation ('column' or 'task')
-     * @param {*} data - Navigation data
-     */
-    addToHistory(type, data) {
-        this.navigationHistory.push({
-            type,
-            data,
-            timestamp: Date.now()
-        });
+	/**
+	 * Get the current column
+	 */
+	getCurrentColumn() {
+		return this.boardLayout.getCurrentColumn();
+	}
 
-        // Keep history size manageable
-        if (this.navigationHistory.length > this.maxHistorySize) {
-            this.navigationHistory.shift();
-        }
-    }
+	/**
+	 * Get the current column status
+	 */
+	getCurrentStatus() {
+		return this.boardLayout.getCurrentStatus();
+	}
 
-    /**
-     * Get navigation history
-     */
-    getHistory() {
-        return [...this.navigationHistory];
-    }
+	/**
+	 * Get the currently selected task
+	 */
+	getSelectedTask() {
+		const currentColumn = this.getCurrentColumn();
+		return currentColumn ? currentColumn.getSelectedTask() : null;
+	}
 
-    /**
-     * Clear navigation history
-     */
-    clearHistory() {
-        this.navigationHistory = [];
-    }
+	/**
+	 * Get navigation state
+	 */
+	getNavigationState() {
+		const currentColumn = this.getCurrentColumn();
+		const selectedTask = this.getSelectedTask();
 
-    /**
-     * Go back to previous navigation state (if possible)
-     */
-    goBack() {
-        if (this.navigationHistory.length === 0) {
-            return { success: false, reason: 'No navigation history' };
-        }
+		return {
+			currentColumnIndex: this.currentColumnIndex,
+			currentStatus: this.getCurrentStatus(),
+			hasSelection: !!selectedTask,
+			selectedTask,
+			columnTaskCount: currentColumn ? currentColumn.getTaskCount() : 0,
+			selectedTaskIndex: currentColumn ? currentColumn.selectedTaskIndex : -1
+		};
+	}
 
-        const lastAction = this.navigationHistory.pop();
-        
-        if (lastAction.type === 'column') {
-            const oldColumn = this.getCurrentColumn();
-            if (oldColumn) {
-                oldColumn.clearSelection();
-            }
+	/**
+	 * Add navigation action to history
+	 * @param {string} type - Type of navigation ('column' or 'task')
+	 * @param {*} data - Navigation data
+	 */
+	addToHistory(type, data) {
+		this.navigationHistory.push({
+			type,
+			data,
+			timestamp: Date.now()
+		});
 
-            this.currentColumnIndex = lastAction.data;
-            
-            const newColumn = this.getCurrentColumn();
-            if (newColumn && newColumn.hasTasks()) {
-                newColumn.setSelectedTask(0);
-            }
+		// Keep history size manageable
+		if (this.navigationHistory.length > this.maxHistorySize) {
+			this.navigationHistory.shift();
+		}
+	}
 
-            return {
-                success: true,
-                type: 'column',
-                currentColumn: this.statusOrder[this.currentColumnIndex]
-            };
-        } else if (lastAction.type === 'task') {
-            const { column, task } = lastAction.data;
-            this.currentColumnIndex = column;
-            
-            const currentColumn = this.getCurrentColumn();
-            if (currentColumn && task < currentColumn.tasks.length) {
-                currentColumn.setSelectedTask(task);
-            }
+	/**
+	 * Get navigation history
+	 */
+	getHistory() {
+		return [...this.navigationHistory];
+	}
 
-            return {
-                success: true,
-                type: 'task',
-                currentColumn: this.statusOrder[this.currentColumnIndex],
-                selectedTask: currentColumn ? currentColumn.getSelectedTask() : null
-            };
-        }
+	/**
+	 * Clear navigation history
+	 */
+	clearHistory() {
+		this.navigationHistory = [];
+	}
 
-        return { success: false, reason: 'Unknown navigation type' };
-    }
+	/**
+	 * Go back to previous navigation state (if possible)
+	 */
+	goBack() {
+		if (this.navigationHistory.length === 0) {
+			return { success: false, reason: 'No navigation history' };
+		}
 
-    /**
-     * Reset navigation to initial state
-     */
-    reset() {
-        const oldColumn = this.getCurrentColumn();
-        if (oldColumn) {
-            oldColumn.clearSelection();
-        }
+		const lastAction = this.navigationHistory.pop();
 
-        this.currentColumnIndex = 0;
-        this.clearHistory();
+		if (lastAction.type === 'column') {
+			const oldColumn = this.getCurrentColumn();
+			if (oldColumn) {
+				oldColumn.clearSelection();
+			}
 
-        const newColumn = this.getCurrentColumn();
-        if (newColumn && newColumn.hasTasks()) {
-            newColumn.setSelectedTask(0);
-        }
+			this.currentColumnIndex = lastAction.data;
 
-        return {
-            success: true,
-            currentColumn: this.statusOrder[0]
-        };
-    }
+			const newColumn = this.getCurrentColumn();
+			if (newColumn && newColumn.hasTasks()) {
+				newColumn.setSelectedTask(0);
+			}
+
+			return {
+				success: true,
+				type: 'column',
+				currentColumn: this.statusOrder[this.currentColumnIndex]
+			};
+		} else if (lastAction.type === 'task') {
+			const { column, task } = lastAction.data;
+			this.currentColumnIndex = column;
+
+			const currentColumn = this.getCurrentColumn();
+			if (currentColumn && task < currentColumn.tasks.length) {
+				currentColumn.setSelectedTask(task);
+			}
+
+			return {
+				success: true,
+				type: 'task',
+				currentColumn: this.statusOrder[this.currentColumnIndex],
+				selectedTask: currentColumn ? currentColumn.getSelectedTask() : null
+			};
+		}
+
+		return { success: false, reason: 'Unknown navigation type' };
+	}
+
+	/**
+	 * Reset navigation to initial state
+	 */
+	reset() {
+		const oldColumn = this.getCurrentColumn();
+		if (oldColumn) {
+			oldColumn.clearSelection();
+		}
+
+		this.currentColumnIndex = 0;
+		this.clearHistory();
+
+		const newColumn = this.getCurrentColumn();
+		if (newColumn && newColumn.hasTasks()) {
+			newColumn.setSelectedTask(0);
+		}
+
+		return {
+			success: true,
+			currentColumn: this.statusOrder[0]
+		};
+	}
 }
 
 /**
  * Create a navigation handler instance
  */
 export function createNavigationHandler(boardLayout) {
-    return new NavigationHandler(boardLayout);
+	return new NavigationHandler(boardLayout);
 }

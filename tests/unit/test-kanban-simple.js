@@ -11,16 +11,15 @@ console.log(chalk.blue('Testing full Kanban board...'));
 const board = new KanbanBoard();
 
 try {
-    // Load tasks
-    await board.loadTasks();
-    console.log(chalk.green('Tasks loaded successfully!'));
-    
-    // Test board rendering (just generate lines, don't start interactive mode)
-    board.boardLayout.render();
-    
-    console.log(chalk.green('Kanban board test completed!'));
-    
+	// Load tasks
+	await board.loadTasks();
+	console.log(chalk.green('Tasks loaded successfully!'));
+
+	// Test board rendering (just generate lines, don't start interactive mode)
+	board.boardLayout.render();
+
+	console.log(chalk.green('Kanban board test completed!'));
 } catch (error) {
-    console.error(chalk.red('Error testing Kanban board:'), error.message);
-    console.error(error.stack);
+	console.error(chalk.red('Error testing Kanban board:'), error.message);
+	console.error(error.stack);
 }

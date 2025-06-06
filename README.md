@@ -1,9 +1,7 @@
 # TaskHero AI - Personal Fork
 
-> **Note**: This is a personal fork of Taskmaster AI with custom modifications. 
-[![License: MIT with Commons Clause](https://img.shields.io/badge/license-MIT%20with%20Commons%20Clause-blue.svg)](LICENSE)
-
-
+> **Note**: This is a personal fork of Taskmaster AI with custom modifications.
+> [![License: MIT with Commons Clause](https://img.shields.io/badge/license-MIT%20with%20Commons%20Clause-blue.svg)](LICENSE)
 
 [![Twitter Follow](https://img.shields.io/twitter/follow/eyaltoledano?style=flat)](https://x.com/eyaltoledano)
 [![Twitter Follow](https://img.shields.io/twitter/follow/RalphEcom?style=flat)](https://x.com/RalphEcom)
@@ -241,6 +239,7 @@ task-hero -m
 ```
 
 The interactive menu provides:
+
 - 🎯 **Guided workflows** - No need to remember command syntax
 - 📊 **Real-time project info** - See task counts and status at a glance
 - 🧭 **Easy navigation** - Organized categories with breadcrumb navigation
@@ -323,7 +322,7 @@ npm link
   <img src="https://contrib.rocks/image?repo=Interstellar-code/taskmaster-ai" alt="TaskHero project contributors" />
 </a>
 
-*Original project contributors can be found at [eyaltoledano/claude-task-master](https://github.com/eyaltoledano/claude-task-master/graphs/contributors)*
+_Original project contributors can be found at [eyaltoledano/claude-task-master](https://github.com/eyaltoledano/claude-task-master/graphs/contributors)_
 
 ## Star History
 
@@ -344,6 +343,5 @@ TaskHero is licensed under the MIT License with Commons Clause. This means you c
 
 - Sell TaskHero itself
 - Offer TaskHero as a hosted service
-
 
 See the [LICENSE](LICENSE) file for the complete license text and [licensing details](docs/licensing.md) for more information.

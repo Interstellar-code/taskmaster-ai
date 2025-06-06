@@ -10,7 +10,15 @@ import {
   KANBAN_TO_TASKMASTER_STATUS
 } from './types';
 
-const API_BASE_URL = 'http://localhost:3003';
+// Determine API base URL based on environment
+const API_BASE_URL = (() => {
+  // In development (Vite dev server), API runs on port 3003
+  if (window.location.port === '5173') {
+    return 'http://localhost:3003';
+  }
+  // In production, API and web are on the same port
+  return window.location.origin;
+})();
 
 // Extended interfaces for comprehensive API support
 interface ManualTaskData {

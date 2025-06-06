@@ -7,8 +7,8 @@ import { launchKanbanBoard } from '../../src/kanban/kanban-board.js';
 console.log('Testing Kanban board...');
 
 try {
-    await launchKanbanBoard();
+	await launchKanbanBoard();
 } catch (error) {
-    console.error('Error:', error);
-    process.exit(1);
+	console.error('Error:', error);
+	process.exit(1);
 }

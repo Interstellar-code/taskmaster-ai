@@ -46,9 +46,7 @@ function displayBanner() {
 	console.log(coolGradient(bannerText));
 
 	// Add creator credit line below the banner
-	console.log(
-		chalk.dim('by ') + chalk.cyan('interstellar-code')
-	);
+	console.log(chalk.dim('by ') + chalk.cyan('interstellar-code'));
 
 	// Read version directly from package.json
 	const version = getTaskHeroVersion();
@@ -238,7 +236,9 @@ function getStatusWithColor(status, forTable = false) {
 		cancelled: { color: chalk.gray, icon: '❌', tableIcon: '✗' }
 	};
 
-	const config = statusConfig[typeof status === 'string' ? status.toLowerCase() : 'pending'] || {
+	const config = statusConfig[
+		typeof status === 'string' ? status.toLowerCase() : 'pending'
+	] || {
 		color: chalk.red,
 		icon: '❌',
 		tableIcon: '✗'
@@ -256,7 +256,10 @@ function getStatusWithColor(status, forTable = false) {
 			blocked: '!', // Using plain x character for better compatibility
 			review: '?' // Using circled dot symbol
 		};
-		const simpleIcon = simpleIcons[typeof status === 'string' ? status.toLowerCase() : 'pending'] || 'x';
+		const simpleIcon =
+			simpleIcons[
+				typeof status === 'string' ? status.toLowerCase() : 'pending'
+			] || 'x';
 		return config.color(`${simpleIcon} ${status}`);
 	}
 
@@ -312,9 +315,9 @@ function formatDependenciesWithStatus(
 
 			// Format with status
 			const status = subtask.status || 'pending';
-			const statusLower = typeof status === 'string' ? status.toLowerCase() : 'pending';
-			const isDone =
-				statusLower === 'done' || statusLower === 'completed';
+			const statusLower =
+				typeof status === 'string' ? status.toLowerCase() : 'pending';
+			const isDone = statusLower === 'done' || statusLower === 'completed';
 			const isInProgress = statusLower === 'in-progress';
 
 			if (forConsole) {
@@ -355,9 +358,9 @@ function formatDependenciesWithStatus(
 
 		// Format with status
 		const status = depTask.status || 'pending';
-		const statusLower = typeof status === 'string' ? status.toLowerCase() : 'pending';
-		const isDone =
-			statusLower === 'done' || statusLower === 'completed';
+		const statusLower =
+			typeof status === 'string' ? status.toLowerCase() : 'pending';
+		const isDone = statusLower === 'done' || statusLower === 'completed';
 		const isInProgress = statusLower === 'in-progress';
 
 		if (forConsole) {
@@ -834,7 +837,9 @@ async function displayNextTask(tasksPath, complexityReportPath = null) {
 	if (nextTask.prdSource) {
 		nextTaskPrdSourceInfo = `${chalk.blue(nextTask.prdSource.fileName || 'Unknown')}`;
 		if (nextTask.prdSource.parsedDate) {
-			const parsedDate = new Date(nextTask.prdSource.parsedDate).toLocaleDateString();
+			const parsedDate = new Date(
+				nextTask.prdSource.parsedDate
+			).toLocaleDateString();
 			nextTaskPrdSourceInfo += chalk.gray(` (${parsedDate})`);
 		}
 	}
@@ -1114,14 +1119,18 @@ async function displayTaskById(
 		if (task.prdSource) {
 			subtaskPrdSourceInfo = `${chalk.blue(task.prdSource.fileName || 'Unknown')}`;
 			if (task.prdSource.parsedDate) {
-				const parsedDate = new Date(task.prdSource.parsedDate).toLocaleDateString();
+				const parsedDate = new Date(
+					task.prdSource.parsedDate
+				).toLocaleDateString();
 				subtaskPrdSourceInfo += chalk.gray(` (${parsedDate})`);
 			}
 		} else if (task.parentTask && task.parentTask.prdSource) {
 			// Inherit from parent task
 			subtaskPrdSourceInfo = `${chalk.blue(task.parentTask.prdSource.fileName || 'Unknown')}`;
 			if (task.parentTask.prdSource.parsedDate) {
-				const parsedDate = new Date(task.parentTask.prdSource.parsedDate).toLocaleDateString();
+				const parsedDate = new Date(
+					task.parentTask.prdSource.parsedDate
+				).toLocaleDateString();
 				subtaskPrdSourceInfo += chalk.gray(` (${parsedDate})`);
 			}
 			subtaskPrdSourceInfo = chalk.dim(subtaskPrdSourceInfo + ' (inherited)');
@@ -1218,7 +1227,9 @@ async function displayTaskById(
 	if (task.prdSource) {
 		prdSourceInfo = `${chalk.blue(task.prdSource.fileName || 'Unknown')}`;
 		if (task.prdSource.parsedDate) {
-			const parsedDate = new Date(task.prdSource.parsedDate).toLocaleDateString();
+			const parsedDate = new Date(
+				task.prdSource.parsedDate
+			).toLocaleDateString();
 			prdSourceInfo += chalk.gray(` (${parsedDate})`);
 		}
 	}

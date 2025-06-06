@@ -28,13 +28,14 @@ describe('PRD Workflow Integration Tests', () => {
 		// Set up mock file system
 		mockFs({
 			[testProjectRoot]: {
-				'tasks': {
+				tasks: {
 					'tasks.json': JSON.stringify({
 						tasks: []
 					})
 				},
-				'docs': {
-					'requirements.txt': 'Sample PRD content for testing\n\nFeature 1: User Authentication\nFeature 2: Data Management'
+				docs: {
+					'requirements.txt':
+						'Sample PRD content for testing\n\nFeature 1: User Authentication\nFeature 2: Data Management'
 				}
 			}
 		});
@@ -97,7 +98,7 @@ describe('PRD Workflow Integration Tests', () => {
 
 			// Verify tasks were saved with PRD metadata
 			const savedData = JSON.parse(fs.readFileSync(testTasksPath, 'utf8'));
-			
+
 			expect(savedData.tasks).toHaveLength(2);
 			expect(savedData.tasks[0].prdSource).toBeDefined();
 			expect(savedData.tasks[0].prdSource.fileName).toBe('requirements.txt');
@@ -119,7 +120,10 @@ describe('PRD Workflow Integration Tests', () => {
 				}
 			];
 
-			fs.writeFileSync(testTasksPath, JSON.stringify({ tasks: existingTasks }, null, 2));
+			fs.writeFileSync(
+				testTasksPath,
+				JSON.stringify({ tasks: existingTasks }, null, 2)
+			);
 
 			// Simulate appending new PRD tasks
 			const newPRDTasks = [
@@ -143,12 +147,15 @@ describe('PRD Workflow Integration Tests', () => {
 			// Read existing data and append
 			const existingData = JSON.parse(fs.readFileSync(testTasksPath, 'utf8'));
 			const combinedTasks = [...existingData.tasks, ...newPRDTasks];
-			
-			fs.writeFileSync(testTasksPath, JSON.stringify({ tasks: combinedTasks }, null, 2));
+
+			fs.writeFileSync(
+				testTasksPath,
+				JSON.stringify({ tasks: combinedTasks }, null, 2)
+			);
 
 			// Verify both manual and PRD tasks exist
 			const finalData = JSON.parse(fs.readFileSync(testTasksPath, 'utf8'));
-			
+
 			expect(finalData.tasks).toHaveLength(2);
 			expect(finalData.tasks[0].prdSource).toBeNull(); // Manual task
 			expect(finalData.tasks[1].prdSource).toBeDefined(); // PRD task
@@ -186,14 +193,17 @@ describe('PRD Workflow Integration Tests', () => {
 				}
 			];
 
-			fs.writeFileSync(testTasksPath, JSON.stringify({ tasks: testTasks }, null, 2));
+			fs.writeFileSync(
+				testTasksPath,
+				JSON.stringify({ tasks: testTasks }, null, 2)
+			);
 		});
 
 		test('should list all unique PRD sources', () => {
 			const taskData = JSON.parse(fs.readFileSync(testTasksPath, 'utf8'));
 			const prdSources = new Map();
 
-			taskData.tasks.forEach(task => {
+			taskData.tasks.forEach((task) => {
 				if (task.prdSource && task.prdSource.fileName) {
 					const fileName = task.prdSource.fileName;
 					if (!prdSources.has(fileName)) {
@@ -210,17 +220,19 @@ describe('PRD Workflow Integration Tests', () => {
 			});
 
 			const prdList = Array.from(prdSources.values());
-			
+
 			expect(prdList).toHaveLength(2);
-			expect(prdList.find(p => p.fileName === 'requirements.txt')).toBeDefined();
-			expect(prdList.find(p => p.fileName === 'api-spec.md')).toBeDefined();
+			expect(
+				prdList.find((p) => p.fileName === 'requirements.txt')
+			).toBeDefined();
+			expect(prdList.find((p) => p.fileName === 'api-spec.md')).toBeDefined();
 		});
 
 		test('should filter tasks by PRD source', () => {
 			const taskData = JSON.parse(fs.readFileSync(testTasksPath, 'utf8'));
 			const prdFilter = 'requirements.txt';
 
-			const filteredTasks = taskData.tasks.filter(task => {
+			const filteredTasks = taskData.tasks.filter((task) => {
 				return task.prdSource && task.prdSource.fileName === prdFilter;
 			});
 
@@ -232,7 +244,7 @@ describe('PRD Workflow Integration Tests', () => {
 			const taskData = JSON.parse(fs.readFileSync(testTasksPath, 'utf8'));
 			const taskId = 2;
 
-			const task = taskData.tasks.find(t => t.id === taskId);
+			const task = taskData.tasks.find((t) => t.id === taskId);
 
 			expect(task).toBeDefined();
 			expect(task.prdSource).toBeDefined();
@@ -273,11 +285,14 @@ describe('PRD Workflow Integration Tests', () => {
 			const currentData = JSON.parse(fs.readFileSync(testTasksPath, 'utf8'));
 			const changes = [];
 
-			currentData.tasks.forEach(task => {
+			currentData.tasks.forEach((task) => {
 				if (task.prdSource && fs.existsSync(task.prdSource.filePath)) {
-					const currentContent = fs.readFileSync(task.prdSource.filePath, 'utf8');
+					const currentContent = fs.readFileSync(
+						task.prdSource.filePath,
+						'utf8'
+					);
 					const currentStats = fs.statSync(task.prdSource.filePath);
-					
+
 					// Simple hash comparison (in real implementation, use crypto)
 					const contentChanged = currentContent !== initialContent;
 					const sizeChanged = currentStats.size !== task.prdSource.fileSize;
@@ -321,7 +336,7 @@ describe('PRD Workflow Integration Tests', () => {
 			const currentData = JSON.parse(fs.readFileSync(testTasksPath, 'utf8'));
 			const missingFiles = [];
 
-			currentData.tasks.forEach(task => {
+			currentData.tasks.forEach((task) => {
 				if (task.prdSource && !fs.existsSync(task.prdSource.filePath)) {
 					missingFiles.push({
 						filePath: task.prdSource.filePath,
@@ -383,7 +398,7 @@ describe('PRD Workflow Integration Tests', () => {
 			const currentData = JSON.parse(fs.readFileSync(testTasksPath, 'utf8'));
 			let updatedCount = 0;
 
-			currentData.tasks.forEach(task => {
+			currentData.tasks.forEach((task) => {
 				if (task.prdSource && task.prdSource.filePath === testPRDPath) {
 					task.prdSource = newMetadata;
 					updatedCount++;
@@ -394,7 +409,7 @@ describe('PRD Workflow Integration Tests', () => {
 
 			// Verify updates
 			const updatedData = JSON.parse(fs.readFileSync(testTasksPath, 'utf8'));
-			
+
 			expect(updatedCount).toBe(2);
 			expect(updatedData.tasks[0].prdSource.fileHash).toBe('new-hash-456');
 			expect(updatedData.tasks[1].prdSource.fileHash).toBe('new-hash-456');
@@ -434,7 +449,7 @@ describe('PRD Workflow Integration Tests', () => {
 
 			// Verify PRD source is preserved
 			const updatedData = JSON.parse(fs.readFileSync(testTasksPath, 'utf8'));
-			
+
 			expect(updatedData.tasks[0].status).toBe('in-progress');
 			expect(updatedData.tasks[0].prdSource).toEqual(originalPRDSource);
 		});
@@ -458,8 +473,8 @@ describe('PRD Workflow Integration Tests', () => {
 
 			// Simulate backward compatibility processing
 			const currentData = JSON.parse(fs.readFileSync(testTasksPath, 'utf8'));
-			
-			currentData.tasks.forEach(task => {
+
+			currentData.tasks.forEach((task) => {
 				if (!task.hasOwnProperty('prdSource')) {
 					task.prdSource = null;
 				}
@@ -469,7 +484,7 @@ describe('PRD Workflow Integration Tests', () => {
 
 			// Verify backward compatibility
 			const processedData = JSON.parse(fs.readFileSync(testTasksPath, 'utf8'));
-			
+
 			expect(processedData.tasks[0]).toHaveProperty('prdSource');
 			expect(processedData.tasks[0].prdSource).toBeNull();
 		});

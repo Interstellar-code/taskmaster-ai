@@ -25,8 +25,8 @@ export async function listPRDs(tasksPath, format = 'table') {
 
 		// Extract unique PRD sources
 		const prdSources = new Map();
-		
-		data.tasks.forEach(task => {
+
+		data.tasks.forEach((task) => {
 			if (task.prdSource && task.prdSource.fileName) {
 				const fileName = task.prdSource.fileName;
 				if (!prdSources.has(fileName)) {
@@ -44,10 +44,14 @@ export async function listPRDs(tasksPath, format = 'table') {
 		});
 
 		// Convert to array and sort by task count (descending)
-		const prdList = Array.from(prdSources.values()).sort((a, b) => b.taskCount - a.taskCount);
+		const prdList = Array.from(prdSources.values()).sort(
+			(a, b) => b.taskCount - a.taskCount
+		);
 
 		if (prdList.length === 0) {
-			console.log(chalk.yellow('No PRD files found. All tasks were created manually.'));
+			console.log(
+				chalk.yellow('No PRD files found. All tasks were created manually.')
+			);
 			return;
 		}
 
@@ -77,10 +81,17 @@ export async function listPRDs(tasksPath, format = 'table') {
 			wordWrap: true
 		});
 
-		prdList.forEach(prd => {
-			const parsedDate = prd.parsedDate ? new Date(prd.parsedDate).toLocaleDateString() : 'Unknown';
-			const fileSize = prd.fileSize ? `${Math.round(prd.fileSize / 1024)}KB` : 'Unknown';
-			const shortHash = prd.fileHash && prd.fileHash !== 'unknown' ? prd.fileHash.substring(0, 8) : 'Unknown';
+		prdList.forEach((prd) => {
+			const parsedDate = prd.parsedDate
+				? new Date(prd.parsedDate).toLocaleDateString()
+				: 'Unknown';
+			const fileSize = prd.fileSize
+				? `${Math.round(prd.fileSize / 1024)}KB`
+				: 'Unknown';
+			const shortHash =
+				prd.fileHash && prd.fileHash !== 'unknown'
+					? prd.fileHash.substring(0, 8)
+					: 'Unknown';
 
 			table.push([
 				chalk.blue(prd.fileName),
@@ -93,7 +104,6 @@ export async function listPRDs(tasksPath, format = 'table') {
 
 		console.log(table.toString());
 		console.log(chalk.gray(`\nTotal: ${prdList.length} PRD file(s) found`));
-
 	} catch (error) {
 		console.error(chalk.red(`Error listing PRDs: ${error.message}`));
 		log('error', `listPRDs error: ${error.message}`);
@@ -107,7 +117,12 @@ export async function listPRDs(tasksPath, format = 'table') {
  * @param {string} format - Output format (table, json)
  * @param {string} statusFilter - Optional status filter
  */
-export async function tasksFromPRD(tasksPath, prdFilter, format = 'table', statusFilter = null) {
+export async function tasksFromPRD(
+	tasksPath,
+	prdFilter,
+	format = 'table',
+	statusFilter = null
+) {
 	try {
 		// Read tasks data
 		const data = readJSON(tasksPath);
@@ -117,7 +132,7 @@ export async function tasksFromPRD(tasksPath, prdFilter, format = 'table', statu
 		}
 
 		// Filter tasks by PRD source
-		const filteredTasks = data.tasks.filter(task => {
+		const filteredTasks = data.tasks.filter((task) => {
 			if (!task.prdSource || !task.prdSource.fileName) {
 				return false;
 			}
@@ -127,8 +142,11 @@ export async function tasksFromPRD(tasksPath, prdFilter, format = 'table', statu
 			const filePath = task.prdSource.filePath.toLowerCase();
 			const filter = prdFilter.toLowerCase();
 
-			const matchesPrd = fileName.includes(filter) || filePath.includes(filter) || 
-							  fileName === filter || filePath.endsWith(filter);
+			const matchesPrd =
+				fileName.includes(filter) ||
+				filePath.includes(filter) ||
+				fileName === filter ||
+				filePath.endsWith(filter);
 
 			// Apply status filter if provided
 			if (statusFilter && matchesPrd) {
@@ -153,7 +171,9 @@ export async function tasksFromPRD(tasksPath, prdFilter, format = 'table', statu
 
 		// Display as table
 		const prdInfo = filteredTasks[0].prdSource;
-		console.log(chalk.blue.bold(`\n📋 Tasks from PRD: ${chalk.white(prdInfo.fileName)}`));
+		console.log(
+			chalk.blue.bold(`\n📋 Tasks from PRD: ${chalk.white(prdInfo.fileName)}`)
+		);
 		if (statusFilter) {
 			console.log(chalk.gray(`Status filter: ${statusFilter}`));
 		}
@@ -176,12 +196,13 @@ export async function tasksFromPRD(tasksPath, prdFilter, format = 'table', statu
 			wordWrap: true
 		});
 
-		filteredTasks.forEach(task => {
+		filteredTasks.forEach((task) => {
 			const statusColor = getStatusColor(task.status);
 			const priorityColor = getPriorityColor(task.priority);
-			const deps = task.dependencies && task.dependencies.length > 0 
-				? task.dependencies.join(', ') 
-				: chalk.gray('None');
+			const deps =
+				task.dependencies && task.dependencies.length > 0
+					? task.dependencies.join(', ')
+					: chalk.gray('None');
 
 			table.push([
 				task.id.toString(),
@@ -198,12 +219,19 @@ export async function tasksFromPRD(tasksPath, prdFilter, format = 'table', statu
 		// Show PRD metadata
 		console.log(chalk.blue.bold('\n📄 PRD Metadata:'));
 		console.log(chalk.gray(`File Path: ${prdInfo.filePath}`));
-		console.log(chalk.gray(`Parsed Date: ${new Date(prdInfo.parsedDate).toLocaleString()}`));
-		console.log(chalk.gray(`File Size: ${Math.round(prdInfo.fileSize / 1024)}KB`));
+		console.log(
+			chalk.gray(
+				`Parsed Date: ${new Date(prdInfo.parsedDate).toLocaleString()}`
+			)
+		);
+		console.log(
+			chalk.gray(`File Size: ${Math.round(prdInfo.fileSize / 1024)}KB`)
+		);
 		console.log(chalk.gray(`File Hash: ${prdInfo.fileHash}`));
-
 	} catch (error) {
-		console.error(chalk.red(`Error filtering tasks from PRD: ${error.message}`));
+		console.error(
+			chalk.red(`Error filtering tasks from PRD: ${error.message}`)
+		);
 		log('error', `tasksFromPRD error: ${error.message}`);
 	}
 }
@@ -224,14 +252,16 @@ export async function showPRDSource(tasksPath, taskId, format = 'table') {
 		}
 
 		// Find the task
-		const task = data.tasks.find(t => t.id.toString() === taskId.toString());
+		const task = data.tasks.find((t) => t.id.toString() === taskId.toString());
 		if (!task) {
 			console.error(chalk.red(`Error: Task with ID ${taskId} not found`));
 			return;
 		}
 
 		if (!task.prdSource || !task.prdSource.fileName) {
-			console.log(chalk.yellow(`Task ${taskId} was created manually (no PRD source)`));
+			console.log(
+				chalk.yellow(`Task ${taskId} was created manually (no PRD source)`)
+			);
 			return;
 		}
 
@@ -241,7 +271,11 @@ export async function showPRDSource(tasksPath, taskId, format = 'table') {
 		}
 
 		// Display as formatted output
-		console.log(chalk.blue.bold(`\n📄 PRD Source for Task ${taskId}: ${chalk.white(task.title)}`));
+		console.log(
+			chalk.blue.bold(
+				`\n📄 PRD Source for Task ${taskId}: ${chalk.white(task.title)}`
+			)
+		);
 		console.log(chalk.gray('═'.repeat(80)));
 
 		const table = new Table({
@@ -257,8 +291,16 @@ export async function showPRDSource(tasksPath, taskId, format = 'table') {
 		table.push(
 			[chalk.cyan.bold('PRD File:'), chalk.white(task.prdSource.fileName)],
 			[chalk.cyan.bold('File Path:'), chalk.gray(task.prdSource.filePath)],
-			[chalk.cyan.bold('Parsed Date:'), chalk.gray(new Date(task.prdSource.parsedDate).toLocaleString())],
-			[chalk.cyan.bold('File Size:'), chalk.gray(`${Math.round(task.prdSource.fileSize / 1024)}KB (${task.prdSource.fileSize} bytes)`)],
+			[
+				chalk.cyan.bold('Parsed Date:'),
+				chalk.gray(new Date(task.prdSource.parsedDate).toLocaleString())
+			],
+			[
+				chalk.cyan.bold('File Size:'),
+				chalk.gray(
+					`${Math.round(task.prdSource.fileSize / 1024)}KB (${task.prdSource.fileSize} bytes)`
+				)
+			],
 			[chalk.cyan.bold('File Hash:'), chalk.gray(task.prdSource.fileHash)]
 		);
 
@@ -266,11 +308,14 @@ export async function showPRDSource(tasksPath, taskId, format = 'table') {
 
 		// Check if PRD file still exists
 		if (fs.existsSync(task.prdSource.filePath)) {
-			console.log(chalk.green('\n✓ PRD file still exists at the original location'));
+			console.log(
+				chalk.green('\n✓ PRD file still exists at the original location')
+			);
 		} else {
-			console.log(chalk.red('\n✗ PRD file no longer exists at the original location'));
+			console.log(
+				chalk.red('\n✗ PRD file no longer exists at the original location')
+			);
 		}
-
 	} catch (error) {
 		console.error(chalk.red(`Error showing PRD source: ${error.message}`));
 		log('error', `showPRDSource error: ${error.message}`);

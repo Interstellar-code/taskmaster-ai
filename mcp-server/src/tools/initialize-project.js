@@ -28,7 +28,9 @@ export function registerInitializeProjectTool(server) {
 				.boolean()
 				.optional()
 				.default(false)
-				.describe('Reset project data (clear all tasks, PRDs, reports, and tests) for a fresh start.'),
+				.describe(
+					'Reset project data (clear all tasks, PRDs, reports, and tests) for a fresh start.'
+				),
 			yes: z
 				.boolean()
 				.optional()

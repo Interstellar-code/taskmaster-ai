@@ -6,400 +6,411 @@
 import chalk from 'chalk';
 import { KanbanColumn } from './column.js';
 import {
-    getTerminalSize,
-    calculateColumnWidths,
-    clearScreen,
-    hideCursor,
-    showCursor,
-    moveCursor
+	getTerminalSize,
+	calculateColumnWidths,
+	clearScreen,
+	hideCursor,
+	showCursor,
+	moveCursor
 } from '../utils/terminal-utils.js';
 
 /**
  * Board Layout class for managing the Kanban board display
  */
 export class BoardLayout {
-    constructor() {
-        this.columns = new Map();
-        this.currentColumnIndex = 0;
-        this.statusOrder = ['pending', 'in-progress', 'done'];
-        this.terminalSize = getTerminalSize();
-        this.isInitialized = false;
-        
-        // Initialize columns
-        this.initializeColumns();
-        
-        // Listen for terminal resize
-        this.setupResizeHandler();
-    }
+	constructor() {
+		this.columns = new Map();
+		this.currentColumnIndex = 0;
+		this.statusOrder = ['pending', 'in-progress', 'done'];
+		this.terminalSize = getTerminalSize();
+		this.isInitialized = false;
 
-    /**
-     * Initialize the three status columns
-     */
-    initializeColumns() {
-        const { width, height } = this.terminalSize;
-        const { columnWidth } = calculateColumnWidths(width);
-        const columnHeight = height - 4; // Reserve space for header and status bar
+		// Initialize columns
+		this.initializeColumns();
 
-        this.statusOrder.forEach((status, index) => {
-            const column = new KanbanColumn(status, columnWidth, columnHeight);
-            // Set first column as active by default
-            if (index === this.currentColumnIndex) {
-                column.setActive(true);
-            }
-            this.columns.set(status, column);
-        });
+		// Listen for terminal resize
+		this.setupResizeHandler();
+	}
 
-        this.isInitialized = true;
-    }
+	/**
+	 * Initialize the three status columns
+	 */
+	initializeColumns() {
+		const { width, height } = this.terminalSize;
+		const { columnWidth } = calculateColumnWidths(width);
+		const columnHeight = height - 4; // Reserve space for header and status bar
 
-    /**
-     * Setup terminal resize handler
-     */
-    setupResizeHandler() {
-        process.stdout.on('resize', () => {
-            this.terminalSize = getTerminalSize();
-            this.updateColumnSizes();
-        });
-    }
+		this.statusOrder.forEach((status, index) => {
+			const column = new KanbanColumn(status, columnWidth, columnHeight);
+			// Set first column as active by default
+			if (index === this.currentColumnIndex) {
+				column.setActive(true);
+			}
+			this.columns.set(status, column);
+		});
 
-    /**
-     * Update column sizes after terminal resize
-     */
-    updateColumnSizes() {
-        const { width, height } = this.terminalSize;
-        const { columnWidth } = calculateColumnWidths(width);
-        const columnHeight = height - 4;
+		this.isInitialized = true;
+	}
 
-        this.columns.forEach(column => {
-            column.width = columnWidth;
-            column.height = columnHeight;
-        });
-    }
+	/**
+	 * Setup terminal resize handler
+	 */
+	setupResizeHandler() {
+		process.stdout.on('resize', () => {
+			this.terminalSize = getTerminalSize();
+			this.updateColumnSizes();
+		});
+	}
 
-    /**
-     * Load tasks into appropriate columns
-     * @param {Array} tasks - Array of all tasks
-     */
-    loadTasks(tasks) {
-        // Clear existing tasks
-        this.columns.forEach(column => column.setTasks([]));
+	/**
+	 * Update column sizes after terminal resize
+	 */
+	updateColumnSizes() {
+		const { width, height } = this.terminalSize;
+		const { columnWidth } = calculateColumnWidths(width);
+		const columnHeight = height - 4;
 
-        // Group tasks by status
-        const tasksByStatus = {
-            'pending': [],
-            'in-progress': [],
-            'done': []
-        };
+		this.columns.forEach((column) => {
+			column.width = columnWidth;
+			column.height = columnHeight;
+		});
+	}
 
-        tasks.forEach(task => {
-            const status = task.status || 'pending';
-            if (tasksByStatus[status]) {
-                tasksByStatus[status].push(task);
-            } else {
-                // Handle unknown statuses by putting them in pending
-                tasksByStatus['pending'].push(task);
-            }
-        });
+	/**
+	 * Load tasks into appropriate columns
+	 * @param {Array} tasks - Array of all tasks
+	 */
+	loadTasks(tasks) {
+		// Clear existing tasks
+		this.columns.forEach((column) => column.setTasks([]));
 
-        // Set tasks for each column
-        this.statusOrder.forEach(status => {
-            const column = this.columns.get(status);
-            if (column) {
-                column.setTasks(tasksByStatus[status]);
-            }
-        });
-    }
+		// Group tasks by status
+		const tasksByStatus = {
+			pending: [],
+			'in-progress': [],
+			done: []
+		};
 
-    /**
-     * Render the entire board
-     * @param {Object} statusBar - Optional status bar component
-     * @param {Object} taskDetailsPopup - Optional task details popup component
-     * @param {Object} helpPopup - Optional help popup component
-     */
-    render(statusBar = null, taskDetailsPopup = null, helpPopup = null) {
-        if (!this.isInitialized) {
-            this.initializeColumns();
-        }
+		tasks.forEach((task) => {
+			const status = task.status || 'pending';
+			if (tasksByStatus[status]) {
+				tasksByStatus[status].push(task);
+			} else {
+				// Handle unknown statuses by putting them in pending
+				tasksByStatus['pending'].push(task);
+			}
+		});
 
-        clearScreen();
-        hideCursor();
+		// Set tasks for each column
+		this.statusOrder.forEach((status) => {
+			const column = this.columns.get(status);
+			if (column) {
+				column.setTasks(tasksByStatus[status]);
+			}
+		});
+	}
 
-        try {
-            const lines = this.generateBoardLines();
+	/**
+	 * Render the entire board
+	 * @param {Object} statusBar - Optional status bar component
+	 * @param {Object} taskDetailsPopup - Optional task details popup component
+	 * @param {Object} helpPopup - Optional help popup component
+	 */
+	render(statusBar = null, taskDetailsPopup = null, helpPopup = null) {
+		if (!this.isInitialized) {
+			this.initializeColumns();
+		}
 
-            // Print each line
-            lines.forEach((line, index) => {
-                moveCursor(index + 1, 1);
-                process.stdout.write(line);
-            });
+		clearScreen();
+		hideCursor();
 
-            // Render status bar at bottom
-            this.renderStatusBar(statusBar);
+		try {
+			const lines = this.generateBoardLines();
 
-            // Render popups overlay if present (task details popup first, then help popup on top)
-            if (taskDetailsPopup && taskDetailsPopup.isOpen && taskDetailsPopup.isOpen()) {
-                this.renderPopupOverlay(taskDetailsPopup);
-            }
+			// Print each line
+			lines.forEach((line, index) => {
+				moveCursor(index + 1, 1);
+				process.stdout.write(line);
+			});
 
-            if (helpPopup && helpPopup.isPopupOpen && helpPopup.isPopupOpen()) {
-                this.renderHelpPopupOverlay(helpPopup);
-            }
+			// Render status bar at bottom
+			this.renderStatusBar(statusBar);
 
-        } catch (error) {
-            console.error('Error rendering board:', error);
-        }
-    }
+			// Render popups overlay if present (task details popup first, then help popup on top)
+			if (
+				taskDetailsPopup &&
+				taskDetailsPopup.isOpen &&
+				taskDetailsPopup.isOpen()
+			) {
+				this.renderPopupOverlay(taskDetailsPopup);
+			}
 
-    /**
-     * Render popup overlay on top of the board
-     * @param {Object} popup - Popup component to render
-     */
-    renderPopupOverlay(popup) {
-        const popupData = popup.render();
-        if (!popupData) return;
+			if (helpPopup && helpPopup.isPopupOpen && helpPopup.isPopupOpen()) {
+				this.renderHelpPopupOverlay(helpPopup);
+			}
+		} catch (error) {
+			console.error('Error rendering board:', error);
+		}
+	}
 
-        const { lines, startX, startY } = popupData;
+	/**
+	 * Render popup overlay on top of the board
+	 * @param {Object} popup - Popup component to render
+	 */
+	renderPopupOverlay(popup) {
+		const popupData = popup.render();
+		if (!popupData) return;
 
-        // Render each line of the popup at the calculated position
-        lines.forEach((line, index) => {
-            moveCursor(startY + index, startX);
-            process.stdout.write(line);
-        });
-    }
+		const { lines, startX, startY } = popupData;
 
-    /**
-     * Render help popup overlay on top of the board
-     * @param {Object} helpPopup - Help popup component to render
-     */
-    renderHelpPopupOverlay(helpPopup) {
-        const popupLines = helpPopup.render();
-        if (!popupLines || popupLines.length === 0) return;
+		// Render each line of the popup at the calculated position
+		lines.forEach((line, index) => {
+			moveCursor(startY + index, startX);
+			process.stdout.write(line);
+		});
+	}
 
-        const position = helpPopup.getPosition();
+	/**
+	 * Render help popup overlay on top of the board
+	 * @param {Object} helpPopup - Help popup component to render
+	 */
+	renderHelpPopupOverlay(helpPopup) {
+		const popupLines = helpPopup.render();
+		if (!popupLines || popupLines.length === 0) return;
 
-        // Render each line of the help popup at the calculated position
-        popupLines.forEach((line, index) => {
-            moveCursor(position.y + index, position.x);
-            process.stdout.write(line);
-        });
-    }
+		const position = helpPopup.getPosition();
 
-    /**
-     * Generate all lines for the board display
-     */
-    generateBoardLines() {
-        const { width } = this.terminalSize;
-        const { columnWidth } = calculateColumnWidths(width);
-        const padding = 2;
+		// Render each line of the help popup at the calculated position
+		popupLines.forEach((line, index) => {
+			moveCursor(position.y + index, position.x);
+			process.stdout.write(line);
+		});
+	}
 
-        // Get rendered columns
-        const renderedColumns = this.statusOrder.map(status => {
-            const column = this.columns.get(status);
-            return column ? column.render() : [];
-        });
+	/**
+	 * Generate all lines for the board display
+	 */
+	generateBoardLines() {
+		const { width } = this.terminalSize;
+		const { columnWidth } = calculateColumnWidths(width);
+		const padding = 2;
 
-        // Find the maximum height among all columns
-        const maxHeight = Math.max(...renderedColumns.map(col => col.length));
+		// Get rendered columns
+		const renderedColumns = this.statusOrder.map((status) => {
+			const column = this.columns.get(status);
+			return column ? column.render() : [];
+		});
 
-        // Combine columns side by side
-        const boardLines = [];
-        
-        for (let lineIndex = 0; lineIndex < maxHeight; lineIndex++) {
-            let line = '';
-            
-            for (let colIndex = 0; colIndex < this.statusOrder.length; colIndex++) {
-                const columnLines = renderedColumns[colIndex];
-                const columnLine = lineIndex < columnLines.length ? columnLines[lineIndex] : ' '.repeat(columnWidth);
-                
-                line += columnLine;
-                
-                // Add padding between columns (except after the last column)
-                if (colIndex < this.statusOrder.length - 1) {
-                    line += ' '.repeat(padding);
-                }
-            }
-            
-            boardLines.push(line);
-        }
+		// Find the maximum height among all columns
+		const maxHeight = Math.max(...renderedColumns.map((col) => col.length));
 
-        return boardLines;
-    }
+		// Combine columns side by side
+		const boardLines = [];
 
-    /**
-     * Render status bar at the bottom of the screen
-     * @param {Object} statusBar - Status bar component (optional)
-     */
-    renderStatusBar(statusBar = null) {
-        const { height, width } = this.terminalSize;
-        const statusBarRow = height - 1;
+		for (let lineIndex = 0; lineIndex < maxHeight; lineIndex++) {
+			let line = '';
 
-        let statusBarContent;
+			for (let colIndex = 0; colIndex < this.statusOrder.length; colIndex++) {
+				const columnLines = renderedColumns[colIndex];
+				const columnLine =
+					lineIndex < columnLines.length
+						? columnLines[lineIndex]
+						: ' '.repeat(columnWidth);
 
-        if (statusBar) {
-            // Use enhanced status bar component
-            const boardState = {
-                currentColumn: this.statusOrder[this.currentColumnIndex],
-                selectedTask: this.getSelectedTask(),
-                statusCounts: this.getStatistics().statusCounts
-            };
-            statusBarContent = statusBar.render(boardState);
-        } else {
-            // Fallback to simple status bar
-            const currentColumn = this.getCurrentColumn();
-            const currentStatus = this.statusOrder[this.currentColumnIndex];
-            const selectedTask = currentColumn ? currentColumn.getSelectedTask() : null;
+				line += columnLine;
 
-            let statusText = `Column: ${currentStatus.toUpperCase()}`;
+				// Add padding between columns (except after the last column)
+				if (colIndex < this.statusOrder.length - 1) {
+					line += ' '.repeat(padding);
+				}
+			}
 
-            if (selectedTask) {
-                statusText += ` | Task: #${selectedTask.id} - ${selectedTask.title}`;
-            }
+			boardLines.push(line);
+		}
 
-            statusText += ' | Navigation: ←→ Columns, ↑↓ Tasks, 1-3 Move, Q Quit';
+		return boardLines;
+	}
 
-            // Truncate if too long
-            if (statusText.length > width - 2) {
-                statusText = statusText.substring(0, width - 5) + '...';
-            }
+	/**
+	 * Render status bar at the bottom of the screen
+	 * @param {Object} statusBar - Status bar component (optional)
+	 */
+	renderStatusBar(statusBar = null) {
+		const { height, width } = this.terminalSize;
+		const statusBarRow = height - 1;
 
-            statusBarContent = chalk.bgBlue.white(' ' + statusText.padEnd(width - 2) + ' ');
-        }
+		let statusBarContent;
 
-        // Render status bar
-        moveCursor(statusBarRow, 1);
-        process.stdout.write(statusBarContent);
-    }
+		if (statusBar) {
+			// Use enhanced status bar component
+			const boardState = {
+				currentColumn: this.statusOrder[this.currentColumnIndex],
+				selectedTask: this.getSelectedTask(),
+				statusCounts: this.getStatistics().statusCounts
+			};
+			statusBarContent = statusBar.render(boardState);
+		} else {
+			// Fallback to simple status bar
+			const currentColumn = this.getCurrentColumn();
+			const currentStatus = this.statusOrder[this.currentColumnIndex];
+			const selectedTask = currentColumn
+				? currentColumn.getSelectedTask()
+				: null;
 
-    /**
-     * Get current column
-     */
-    getCurrentColumn() {
-        const status = this.statusOrder[this.currentColumnIndex];
-        return this.columns.get(status);
-    }
+			let statusText = `Column: ${currentStatus.toUpperCase()}`;
 
-    /**
-     * Move to next column
-     */
-    moveToNextColumn() {
-        // Clear current column selection and deactivate
-        const currentColumn = this.getCurrentColumn();
-        if (currentColumn) {
-            currentColumn.clearSelection();
-            currentColumn.setActive(false);
-        }
+			if (selectedTask) {
+				statusText += ` | Task: #${selectedTask.id} - ${selectedTask.title}`;
+			}
 
-        this.currentColumnIndex = (this.currentColumnIndex + 1) % this.statusOrder.length;
+			statusText += ' | Navigation: ←→ Columns, ↑↓ Tasks, 1-3 Move, Q Quit';
 
-        // Set selection to first task in new column and activate
-        const newColumn = this.getCurrentColumn();
-        if (newColumn) {
-            newColumn.setActive(true);
-            if (newColumn.hasTasks()) {
-                newColumn.setSelectedTask(0);
-            }
-        }
-    }
+			// Truncate if too long
+			if (statusText.length > width - 2) {
+				statusText = statusText.substring(0, width - 5) + '...';
+			}
 
-    /**
-     * Move to previous column
-     */
-    moveToPreviousColumn() {
-        // Clear current column selection and deactivate
-        const currentColumn = this.getCurrentColumn();
-        if (currentColumn) {
-            currentColumn.clearSelection();
-            currentColumn.setActive(false);
-        }
+			statusBarContent = chalk.bgBlue.white(
+				' ' + statusText.padEnd(width - 2) + ' '
+			);
+		}
 
-        this.currentColumnIndex = this.currentColumnIndex === 0
-            ? this.statusOrder.length - 1
-            : this.currentColumnIndex - 1;
+		// Render status bar
+		moveCursor(statusBarRow, 1);
+		process.stdout.write(statusBarContent);
+	}
 
-        // Set selection to first task in new column and activate
-        const newColumn = this.getCurrentColumn();
-        if (newColumn) {
-            newColumn.setActive(true);
-            if (newColumn.hasTasks()) {
-                newColumn.setSelectedTask(0);
-            }
-        }
-    }
+	/**
+	 * Get current column
+	 */
+	getCurrentColumn() {
+		const status = this.statusOrder[this.currentColumnIndex];
+		return this.columns.get(status);
+	}
 
-    /**
-     * Move selection up in current column
-     */
-    moveSelectionUp() {
-        const currentColumn = this.getCurrentColumn();
-        return currentColumn ? currentColumn.moveSelectionUp() : false;
-    }
+	/**
+	 * Move to next column
+	 */
+	moveToNextColumn() {
+		// Clear current column selection and deactivate
+		const currentColumn = this.getCurrentColumn();
+		if (currentColumn) {
+			currentColumn.clearSelection();
+			currentColumn.setActive(false);
+		}
 
-    /**
-     * Move selection down in current column
-     */
-    moveSelectionDown() {
-        const currentColumn = this.getCurrentColumn();
-        return currentColumn ? currentColumn.moveSelectionDown() : false;
-    }
+		this.currentColumnIndex =
+			(this.currentColumnIndex + 1) % this.statusOrder.length;
 
-    /**
-     * Get currently selected task
-     */
-    getSelectedTask() {
-        const currentColumn = this.getCurrentColumn();
-        return currentColumn ? currentColumn.getSelectedTask() : null;
-    }
+		// Set selection to first task in new column and activate
+		const newColumn = this.getCurrentColumn();
+		if (newColumn) {
+			newColumn.setActive(true);
+			if (newColumn.hasTasks()) {
+				newColumn.setSelectedTask(0);
+			}
+		}
+	}
 
-    /**
-     * Get current column status
-     */
-    getCurrentStatus() {
-        return this.statusOrder[this.currentColumnIndex];
-    }
+	/**
+	 * Move to previous column
+	 */
+	moveToPreviousColumn() {
+		// Clear current column selection and deactivate
+		const currentColumn = this.getCurrentColumn();
+		if (currentColumn) {
+			currentColumn.clearSelection();
+			currentColumn.setActive(false);
+		}
 
-    /**
-     * Get board statistics
-     */
-    getStatistics() {
-        let totalTasks = 0;
-        let completedTasks = 0;
-        const statusCounts = {};
+		this.currentColumnIndex =
+			this.currentColumnIndex === 0
+				? this.statusOrder.length - 1
+				: this.currentColumnIndex - 1;
 
-        this.statusOrder.forEach(status => {
-            const column = this.columns.get(status);
-            const count = column ? column.getTaskCount() : 0;
-            statusCounts[status] = count;
-            totalTasks += count;
-            
-            if (status === 'done') {
-                completedTasks = count;
-            }
-        });
+		// Set selection to first task in new column and activate
+		const newColumn = this.getCurrentColumn();
+		if (newColumn) {
+			newColumn.setActive(true);
+			if (newColumn.hasTasks()) {
+				newColumn.setSelectedTask(0);
+			}
+		}
+	}
 
-        const completionPercentage = totalTasks > 0 
-            ? Math.round((completedTasks / totalTasks) * 100) 
-            : 0;
+	/**
+	 * Move selection up in current column
+	 */
+	moveSelectionUp() {
+		const currentColumn = this.getCurrentColumn();
+		return currentColumn ? currentColumn.moveSelectionUp() : false;
+	}
 
-        return {
-            totalTasks,
-            completedTasks,
-            completionPercentage,
-            statusCounts
-        };
-    }
+	/**
+	 * Move selection down in current column
+	 */
+	moveSelectionDown() {
+		const currentColumn = this.getCurrentColumn();
+		return currentColumn ? currentColumn.moveSelectionDown() : false;
+	}
 
-    /**
-     * Cleanup resources
-     */
-    cleanup() {
-        showCursor();
-        clearScreen();
-    }
+	/**
+	 * Get currently selected task
+	 */
+	getSelectedTask() {
+		const currentColumn = this.getCurrentColumn();
+		return currentColumn ? currentColumn.getSelectedTask() : null;
+	}
 
-    /**
-     * Force refresh of the board
-     */
-    refresh() {
-        this.render();
-    }
+	/**
+	 * Get current column status
+	 */
+	getCurrentStatus() {
+		return this.statusOrder[this.currentColumnIndex];
+	}
+
+	/**
+	 * Get board statistics
+	 */
+	getStatistics() {
+		let totalTasks = 0;
+		let completedTasks = 0;
+		const statusCounts = {};
+
+		this.statusOrder.forEach((status) => {
+			const column = this.columns.get(status);
+			const count = column ? column.getTaskCount() : 0;
+			statusCounts[status] = count;
+			totalTasks += count;
+
+			if (status === 'done') {
+				completedTasks = count;
+			}
+		});
+
+		const completionPercentage =
+			totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+		return {
+			totalTasks,
+			completedTasks,
+			completionPercentage,
+			statusCounts
+		};
+	}
+
+	/**
+	 * Cleanup resources
+	 */
+	cleanup() {
+		showCursor();
+		clearScreen();
+	}
+
+	/**
+	 * Force refresh of the board
+	 */
+	refresh() {
+		this.render();
+	}
 }

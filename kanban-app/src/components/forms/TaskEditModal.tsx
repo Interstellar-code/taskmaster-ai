@@ -143,8 +143,8 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
         priority: (fullTask.priority as 'low' | 'medium' | 'high') || 'medium',
         status: (fullTask.status as TaskStatus) || 'pending',
         tags: [],
-        estimatedHours: undefined, // TaskMasterTask doesn't have estimatedHours
-        assignee: '', // TaskMasterTask doesn't have assignee
+        estimatedHours: (fullTask as any).estimatedHours || undefined, // Get from task if available
+        assignee: (fullTask as any).assignee || '', // Get from task if available
         dueDate: hasDateProperty(fullTask) && fullTask.dueDate ? new Date(fullTask.dueDate) : undefined, // Convert string to Date if exists
         details: fullTask.details || '',
         testStrategy: fullTask.testStrategy || '',
@@ -182,8 +182,9 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
   // Fetch available tasks and PRDs when modal opens
   const fetchAvailableData = async () => {
     try {
-      const [tasks] = await Promise.all([
+      const [tasks, prds] = await Promise.all([
         taskService.getAllTasks(),
+        fetchPRDs(),
       ]);
 
       // Filter out current task from dependencies
@@ -195,12 +196,31 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
         }));
 
       setAvailableTasks(filteredTasks);
-      // PRDs would need to be fetched from a separate endpoint
-      setAvailablePRDs([]);
+      setAvailablePRDs(prds);
     } catch (error) {
       console.error('Failed to fetch available data:', error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       showError("Load Error", `Failed to load form data: ${errorMessage}`);
+    }
+  };
+
+  const fetchPRDs = async (): Promise<Array<{id: string, title: string}>> => {
+    try {
+      const response = await fetch('/api/v1/prds');
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success && result.data) {
+          return result.data.map((prd: any) => ({
+            id: prd.id || prd.fileName,
+            title: prd.title || prd.fileName || `PRD ${prd.id}`
+          }));
+        }
+      }
+      // Fallback to empty array if API call fails
+      return [];
+    } catch (error) {
+      console.warn('Failed to fetch PRDs, using fallback:', error);
+      return [];
     }
   };
 
