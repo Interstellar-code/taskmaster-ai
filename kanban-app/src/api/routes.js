@@ -34,10 +34,9 @@ import {
   readPrdsMetadata,
   findPrdById,
   getAllPrds,
-  getPRDsJsonPath,
-  updatePrdStatus
+  getPRDsJsonPath
 } from '../../../scripts/modules/prd-manager/prd-utils.js';
-import { updatePrd } from '../../../scripts/modules/prd-manager/prd-write-operations.js';
+import { updatePrd, updatePrdStatus } from '../../../scripts/modules/prd-manager/prd-write-operations.js';
 import { createLogger } from './logger.js';
 import {
   validateCreateTask,
