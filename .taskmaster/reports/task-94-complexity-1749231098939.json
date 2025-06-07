@@ -1,0 +1,21 @@
+{
+  "meta": {
+    "generatedAt": "2025-06-06T17:31:41.846Z",
+    "tasksAnalyzed": 1,
+    "totalTasks": 14,
+    "analysisCount": 1,
+    "thresholdScore": 5,
+    "projectName": "Task Master",
+    "usedResearch": false
+  },
+  "complexityAnalysis": [
+    {
+      "taskId": 94,
+      "taskTitle": "PRD Upload Modal Component Development",
+      "complexityScore": 7,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Break down the 'PRD Upload Modal Component Development' task into detailed, actionable subtasks, focusing on the development of `PRDUploadModal.tsx`, `FormFileUpload.tsx` (including drag-and-drop, validation, and visual feedback), integration, upload progress UI, and modal actions. Ensure each subtask is specific enough to be assigned and tracked.",
+      "reasoning": "This task involves developing two interconnected React components with significant UI/UX considerations (drag-and-drop, visual feedback for multiple states, progress indicators) and client-side validation. It requires careful integration and attention to detail for a smooth user experience. The dependency on Task 93 (backend endpoint) also adds a layer of integration complexity. The testing strategy is also quite involved, indicating a higher complexity."
+    }
+  ]
+}

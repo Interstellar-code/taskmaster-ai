@@ -1,0 +1,21 @@
+{
+  "meta": {
+    "generatedAt": "2025-06-06T17:31:49.737Z",
+    "tasksAnalyzed": 1,
+    "totalTasks": 14,
+    "analysisCount": 1,
+    "thresholdScore": 5,
+    "projectName": "Task Master",
+    "usedResearch": false
+  },
+  "complexityAnalysis": [
+    {
+      "taskId": 96,
+      "taskTitle": "Comprehensive Testing and UI/UX Polish",
+      "complexityScore": 8,
+      "recommendedSubtasks": 6,
+      "expansionPrompt": "Break down 'Comprehensive Testing and UI/UX Polish' into detailed subtasks focusing on each testing category: File Upload, Validation, PRD Registration, UX, Error Handling, and Accessibility. For each, specify concrete test cases and expected outcomes.",
+      "reasoning": "This task is highly complex due to the breadth of testing required across multiple dimensions: functional, validation, data integrity, user experience, error handling, and accessibility. Each of these areas has numerous scenarios and edge cases to cover, requiring meticulous planning and execution. Browser compatibility and performance testing add further layers of complexity. It's not just about 'testing' but ensuring a robust and polished user experience."
+    }
+  ]
+}

@@ -652,6 +652,9 @@ async function initializeProject(options = {}) {
 			console.log('SKIPPING PROMPTS - Using defaults or provided values');
 		}
 
+		// Detect existing project FIRST, before creating any files
+		const existingProject = detectExistingProject(process.cwd());
+
 		// Use provided options or defaults
 		const projectName = options.name || 'task-master-project';
 		const projectDescription =
@@ -674,6 +677,17 @@ async function initializeProject(options = {}) {
 			}
 			return {
 				dryRun: true
+			};
+		}
+
+		// Handle existing project in non-interactive mode
+		if (existingProject.exists && !resetProject) {
+			log('info', `📁 Existing TaskHero project detected: ${existingProject.projectName}`);
+			log('info', `   Tasks found: ${existingProject.taskCount}`);
+			log('info', '✅ Project already initialized. Use --reset to start fresh.');
+			return {
+				skipped: true,
+				reason: 'Project already exists'
 			};
 		}
 

@@ -1,0 +1,116 @@
+# Task ID: 96
+# Title: Comprehensive Testing and UI/UX Polish
+# Status: pending
+# Dependencies: 95
+# Priority: medium
+# PRD Source: prd_006_kanban_prd_upload_feature.md
+# PRD Path: C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md
+# Parsed Date: 2025-06-06T17:29:40.779Z
+# File Hash: f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d
+# File Size: 9423 bytes
+# Description: Conduct comprehensive testing of the entire PRD upload feature, covering various scenarios, edge cases, and user experience aspects. This includes validating file handling, PRD registration, UI feedback, and accessibility.
+# Details:
+1. **File Upload Testing**: Test with a variety of MD/TXT files:
+   - Small, medium, and large files (up to 10MB).
+   - Files with special characters in their names.
+   - Files with different line endings.
+   - Empty files.
+   - Files with malformed content (if `createPrdFromFile` has content validation).
+2. **Validation Testing**: Verify both client-side and server-side validation for:
+   - Incorrect file types (e.g., `.pdf`, `.jpg`).
+   - Files exceeding the 10MB size limit.
+3. **PRD Registration Verification**: After successful uploads, manually verify:
+   - Files are correctly stored in the `.taskmaster/prd/` directory.
+   - `prds.json` is updated with accurate metadata (ID, title, etc.).
+   - The PRD is accessible and viewable within the system.
+4. **User Experience (UX) Testing**: 
+   - Test toast notifications for success and error states.
+   - Verify loading states during upload.
+   - Check modal close behavior after successful upload.
+   - Ensure the PRD filter dropdown immediately reflects new PRDs.
+5. **Error Handling Scenarios**: Simulate and test various error conditions:
+   - Network failures during upload.
+   - Backend server errors.
+   - Storage permission issues.
+   - Duplicate file names (how the system handles this).
+6. **Accessibility Testing**: Ensure the upload button and modal are keyboard navigable and have proper ARIA labels.
+
+# Test Strategy:
+1. **Manual Testing**: Follow a detailed test plan covering all scenarios outlined in the 'Implementation Details'.
+2. **Browser Compatibility**: Test the feature across different web browsers (Chrome, Firefox, Edge, Safari).
+3. **Performance Testing**: Observe upload times for large files and ensure the UI remains responsive.
+4. **Regression Testing**: Ensure existing Kanban board functionalities are not negatively impacted by the new feature.
+
+# Subtasks:
+## 1. Develop Test Plan for File Upload Scenarios [pending]
+### Dependencies: None
+### Description: Create a comprehensive test plan document outlining specific test cases for file upload scenarios, including various file sizes, special characters, line endings, and empty files. Define expected outcomes for each case.
+### Details:
+The test plan should detail test data generation (e.g., creating files of specific sizes, with special characters, etc.) and the steps to execute each test case. Focus on MD/TXT files up to 10MB.
+
+## 2. Implement Automated Tests for File Upload Scenarios [pending]
+### Dependencies: 96.1
+### Description: Write automated test scripts to cover the file upload scenarios defined in the test plan, including small, medium, large, special character, and empty files. Use a testing framework like Playwright or Cypress.
+### Details:
+Focus on programmatically uploading files and verifying the success of the upload operation. Do not yet focus on PRD registration or content validation.
+
+## 3. Develop Test Plan for Validation Scenarios [pending]
+### Dependencies: 96.1
+### Description: Create a detailed test plan for client-side and server-side validation, covering incorrect file types (e.g., .pdf, .jpg) and files exceeding the 10MB size limit. Define expected error messages and UI behavior.
+### Details:
+The plan should specify how to generate invalid files and large files, and the expected error messages or UI feedback for each validation failure.
+
+## 4. Implement Automated Tests for Validation Scenarios [pending]
+### Dependencies: 96.3
+### Description: Write automated test scripts to verify both client-side and server-side validation for incorrect file types and files exceeding the size limit. Assert that appropriate error messages are displayed and files are not uploaded.
+### Details:
+Use the testing framework to simulate invalid file uploads and assert on the presence of specific error messages or the absence of successful upload indicators.
+
+## 5. Manual Verification of PRD Registration and Storage [pending]
+### Dependencies: 96.2, 96.4
+### Description: Manually test and verify that after successful file uploads, PRDs are correctly stored in the `.taskmaster/prd/` directory, `prds.json` is updated with accurate metadata, and the PRD is accessible within the system.
+### Details:
+Perform uploads using the UI, then manually inspect the file system and the `prds.json` file. Verify the PRD ID, title, and other metadata. Navigate to the PRD within the application to confirm accessibility.
+
+## 6. Develop Test Plan for User Experience (UX) Scenarios [pending]
+### Dependencies: None
+### Description: Create a test plan for UX elements including toast notifications (success/error), loading states, modal close behavior, and immediate reflection of new PRDs in the filter dropdown.
+### Details:
+The plan should detail steps to trigger each UX state and the expected visual and functional behavior. Include scenarios for both successful and failed uploads.
+
+## 7. Manual Verification of User Experience (UX) Elements [pending]
+### Dependencies: 96.6
+### Description: Manually test and verify all defined UX scenarios, ensuring toast notifications are correct, loading states are visible, modal closes appropriately, and the PRD filter dropdown updates instantly.
+### Details:
+Perform uploads under various conditions (success, error, large file) and observe the UI behavior. Pay close attention to timing and visual feedback.
+
+## 8. Develop Test Plan for Error Handling Scenarios [pending]
+### Dependencies: None
+### Description: Create a test plan for simulating and testing various error conditions: network failures, backend server errors, storage permission issues, and duplicate file names. Define expected system responses.
+### Details:
+The plan should outline methods for simulating these errors (e.g., using network throttling, mock server responses, or file system permission changes) and the expected error messages or recovery mechanisms.
+
+## 9. Implement Manual Tests for Error Handling Scenarios [pending]
+### Dependencies: 96.8
+### Description: Manually execute tests for error handling scenarios, including network failures, backend errors, storage permission issues, and duplicate file names. Verify the system's graceful degradation and error reporting.
+### Details:
+Use developer tools to simulate network conditions. Coordinate with backend team to simulate server errors. Attempt to upload files with duplicate names to observe behavior.
+
+## 10. Develop Test Plan for Accessibility (A11y) Testing [pending]
+### Dependencies: None
+### Description: Create a test plan specifically for accessibility, focusing on keyboard navigation and ARIA labels for the upload button and modal. Define expected tab order, focus management, and screen reader announcements.
+### Details:
+The plan should include steps for using keyboard-only navigation and a screen reader (e.g., NVDA, VoiceOver) to interact with the upload components.
+
+## 11. Manual Verification of Accessibility (A11y) Features [pending]
+### Dependencies: 96.10
+### Description: Manually test the accessibility of the upload button and modal using keyboard navigation and a screen reader. Verify correct tab order, focus management, and appropriate ARIA labels and announcements.
+### Details:
+Navigate through the UI using only the keyboard (Tab, Shift+Tab, Enter, Space). Use a screen reader to listen to the announcements for interactive elements and form fields.
+
+## 12. Consolidate Test Results and Report Bugs [pending]
+### Dependencies: 96.5, 96.7, 96.9, 96.11
+### Description: Gather all test results from automated and manual testing, consolidate findings, and create a comprehensive bug report for any identified issues across all testing areas (file handling, validation, UX, error handling, accessibility).
+### Details:
+Prioritize bugs based on severity and impact. Ensure clear steps to reproduce, expected vs. actual results, and relevant logs/screenshots are included for each bug.
+

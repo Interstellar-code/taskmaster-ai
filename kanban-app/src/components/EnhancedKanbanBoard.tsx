@@ -24,6 +24,7 @@ import { coordinateGetter } from "./multipleContainersKeyboardPreset";
 import { taskService } from "../api/taskService";
 import type { EnhancedKanbanTask, ColumnId as ApiColumnId, TaskMasterTask } from "../api/types";
 import { TaskCreateModal } from "./forms/TaskCreateModal";
+import { PRDUploadModal } from "./forms/PRDUploadModal";
 import { Button } from "./ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { X, Filter } from "lucide-react";
@@ -324,7 +325,8 @@ export function EnhancedKanbanBoard() {
           </Button>
         )}
 
-        <div className="ml-auto">
+        <div className="ml-auto flex gap-2">
+          <PRDUploadModal onPRDUploaded={loadTasks} />
           <TaskCreateModal onTaskCreated={loadTasks} />
         </div>
       </div>

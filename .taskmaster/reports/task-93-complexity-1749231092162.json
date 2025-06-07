@@ -1,0 +1,21 @@
+{
+  "meta": {
+    "generatedAt": "2025-06-06T17:31:34.729Z",
+    "tasksAnalyzed": 1,
+    "totalTasks": 14,
+    "analysisCount": 1,
+    "thresholdScore": 5,
+    "projectName": "Task Master",
+    "usedResearch": false
+  },
+  "complexityAnalysis": [
+    {
+      "taskId": 93,
+      "taskTitle": "Backend API Enhancement for PRD Upload",
+      "complexityScore": 7,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Break down the 'Backend API Enhancement for PRD Upload' task into detailed subtasks, focusing on: 1. Multer setup and file handling (middleware, destination, filter, size limit). 2. API endpoint creation and integration. 3. PRD registration logic using `createPrdFromFile()`. 4. Comprehensive error handling. 5. Unit and integration testing.",
+      "reasoning": "This task involves multiple distinct technical areas: setting up a new dependency (Multer), configuring file upload middleware with specific constraints (type, size), creating a new API endpoint, integrating with an existing internal function (`createPrdFromFile`), and robust error handling. Each of these requires careful implementation and testing. The integration with `createPrdFromFile` and the file system adds complexity beyond a simple CRUD endpoint. The detailed test strategy also indicates a need for thorough validation."
+    }
+  ]
+}

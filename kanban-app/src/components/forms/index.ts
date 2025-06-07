@@ -37,6 +37,8 @@ export { FormDropdownMenu } from './FormDropdownMenu';
 export { TaskCreateModal } from './TaskCreateModal';
 export { TaskEditModal } from './TaskEditModal';
 export { TaskDeleteDialog } from './TaskDeleteDialog';
+export { PRDUploadModal } from './PRDUploadModal';
+export { FormFileUpload } from './FormFileUpload';
 export { FormDemo } from './FormDemo';
 
 // Validation schemas

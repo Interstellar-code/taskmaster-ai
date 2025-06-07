@@ -11,4 +11,18 @@ export default defineConfig(({ mode }) => ({
     },
   },
   base: "/",
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3003',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/health': {
+        target: 'http://localhost:3003',
+        changeOrigin: true,
+        secure: false,
+      }
+    }
+  }
 }));

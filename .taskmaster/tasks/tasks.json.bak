@@ -15,17 +15,23 @@
         {
           "id": "59.6",
           "title": "rohit",
-          "completed": false,
+          "description": "",
+          "details": "",
+          "status": "done",
+          "dependencies": [],
+          "parentTaskId": "59",
+          "testStrategy": "",
           "prdSource": null
         }
       ],
       "prdSource": null,
       "assignee": "rohit",
-      "dueDate": "2025-06-06",
-      "updatedAt": "2025-06-05T16:27:54.465Z",
-      "estimatedHours": 3,
+      "dueDate": "2025-06-06T00:00:00.000Z",
+      "updatedAt": "2025-06-06T15:28:07.761Z",
+      "estimatedHours": 1,
       "complexityScore": 9,
-      "complexityLevel": "high"
+      "complexityLevel": "high",
+      "tags": []
     },
     {
       "id": 84,
@@ -339,18 +345,700 @@
       "description": "Refactor the PRD Kanban folder structure to improve organization and maintainability. presently we have pending, in-progress and done folders for PRDs .. i would like to simplify this similar to tasks. the status of the PRD files can be managed in the prd.json file. for archiving we will have a the folder and instead of taking files from /prd/done folder it will take from /prd folder.",
       "details": "The current PRD Kanban folder structure needs simplification. This task involves reorganizing the folders and files related to PRDs within the Kanban system to enhance clarity, reduce redundancy, and streamline navigation. Consider grouping files by feature or module rather than by type, and ensure naming conventions are consistent. This might involve updating import paths in existing components that interact with PRD files. The goal is a more intuitive and scalable structure.",
       "testStrategy": "1. Verify that all existing PRD functionalities (creation, editing, viewing, deletion) still work correctly after the refactor. 2. Check for any broken file paths or import errors in the application. 3. Ensure that the new folder structure is logical and easy to navigate for new and existing developers. 4. Conduct a thorough code review to confirm adherence to new naming conventions and organizational principles.",
-      "status": "in-progress",
+      "status": "done",
       "dependencies": [],
       "priority": "medium",
-      "subtasks": [],
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Analyze Current PRD Folder Structure and Define New Schema",
+          "description": "Thoroughly analyze the existing 'pending', 'in-progress', and 'done' PRD folders. Document the current file organization, naming conventions, and any dependencies. Based on the requirement to manage status in `prd.json` and simplify to a single `/prd` folder with an `/archive` folder, define the new logical folder structure and the schema for `prd.json` to include PRD status and potentially other metadata.",
+          "dependencies": [],
+          "details": "1. Map out all files and their current locations within `/prd/pending`, `/prd/in-progress`, and `/prd/done`. 2. Identify how PRD status is currently inferred (e.g., by folder location). 3. Propose the new `/prd` and `/prd/archive` folder structure. 4. Design the `prd.json` schema to store PRD metadata, including a 'status' field (e.g., 'pending', 'in-progress', 'done') and a 'filePath' field relative to the new `/prd` root. 5. Consider any other relevant metadata for `prd.json` (e.g., title, description, last_updated).\n<info added on 2025-06-05T22:01:59.510Z>\nANALYSIS COMPLETE: Current PRD folder structure analyzed. Found: 1) Status-based directories: pending/, in-progress/, done/, archived/ 2) prds.json metadata with comprehensive schema 3) File movement system via prd-file-movement.js 4) Status management via CLI commands. Proposed new schema: Single /prd folder with status managed in prds.json, /archive for completed PRDs. Schema includes status field, filePath relative to /prd root, plus existing metadata (title, description, priority, complexity, linkedTasks, etc.). Ready to proceed with migration design.\n</info added on 2025-06-05T22:01:59.510Z>",
+          "status": "done",
+          "testStrategy": "Review the documented current state and proposed new schema with stakeholders to ensure all requirements are captured and the new design is logical and comprehensive.",
+          "prdSource": null
+        },
+        {
+          "id": 2,
+          "title": "Migrate PRD Files and Update prd.json",
+          "description": "Execute the physical migration of PRD files from the old 'pending', 'in-progress', and 'done' folders into the new unified `/prd` folder. Simultaneously, create or update the `prd.json` file to reflect the new file paths and assign initial statuses based on their previous folder location.",
+          "dependencies": [
+            1
+          ],
+          "details": "1. Create the new `/prd` and `/prd/archive` directories. 2. Move all files from `/prd/pending`, `/prd/in-progress`, and `/prd/done` into the new `/prd` directory. 3. For each moved file, create an entry in `prd.json` with its new relative path (e.g., `'/prd/my-prd.md'`) and assign its initial status (e.g., 'pending' if it came from `/prd/pending`). 4. Ensure `prd.json` is a valid JSON array of objects, each conforming to the schema defined in subtask 1. 5. Remove the old 'pending', 'in-progress', and 'done' folders after successful migration.\n<info added on 2025-06-05T22:07:59.863Z>\nMIGRATION COMPLETED: Successfully migrated PRD files from status-based folders to simplified structure. Moved 2 PRD files (prd_002_taskhero_ui_rebrand.md from done/, prd_kanban_crud_implementation.md from pending/) to /prd root. Updated prds.json to v2.0.0 with new schema including status metadata, filePath relative to /prd root, enhanced metadata fields. Created /archive directory. Removed old status directories (pending/, in-progress/, done/). Migration preserves existing archived/ folder. New structure: status managed in metadata, files in single directory, cleaner organization.\n</info added on 2025-06-05T22:07:59.863Z>\n<info added on 2025-06-05T22:08:18.308Z>\nMIGRATION COMPLETED: Successfully migrated PRD files from status-based folders to simplified structure. Moved 2 PRD files (prd_002_taskhero_ui_rebrand.md from done/, prd_kanban_crud_implementation.md from pending/) to /prd root. Updated prds.json to v2.0.0 with new schema including status metadata, filePath relative to /prd root, enhanced metadata fields. Created /archive directory. Removed old status directories (pending/, in-progress/, done/). Migration preserves existing archived/ folder. New structure: status managed in metadata, files in single directory, cleaner organization.\n</info added on 2025-06-05T22:08:18.308Z>",
+          "status": "done",
+          "testStrategy": "Verify that all PRD files are present in the new `/prd` folder. Validate the `prd.json` file for correct structure, accurate file paths, and appropriate initial statuses for all PRDs. Check that old folders are removed.",
+          "prdSource": null
+        },
+        {
+          "id": 3,
+          "title": "Update Code References to PRD Files and Status Logic",
+          "description": "Modify all application code that previously interacted with the old PRD folder structure (e.g., reading files from `/prd/done`) or inferred PRD status from folder location. Update these parts of the codebase to read PRD information and status directly from the `prd.json` file and access PRD files from the new unified `/prd` folder.",
+          "dependencies": [
+            2
+          ],
+          "details": "1. Identify all components, scripts, or modules that interact with PRD files or their status. 2. Update file paths to point to the new `/prd` directory. 3. Refactor logic that determined PRD status based on folder to instead read the 'status' field from the corresponding entry in `prd.json`. 4. Implement or update functions to read, parse, and query `prd.json` for PRD data. 5. Ensure any 'archive' functionality now moves files from `/prd` to `/prd/archive` and updates `prd.json` accordingly.\n<info added on 2025-06-05T22:17:47.073Z>\nCODE UPDATES COMPLETED: Updated all PRD code references for simplified structure. Modified getPRDStatusDirectory() to return main /prd for active PRDs, /prd/archive for archived. Updated file movement logic for metadata-only status changes. Fixed file path resolution in prd-commands.js. Updated archiving to use new structure. Tested successfully - PRD status changes work without file movement, files stay in single directory.\n</info added on 2025-06-05T22:17:47.073Z>",
+          "status": "done",
+          "testStrategy": "Perform unit tests on affected components to ensure they correctly read PRD data from `prd.json` and access files from the new `/prd` path. Verify that status updates are reflected correctly in `prd.json`.",
+          "prdSource": null
+        },
+        {
+          "id": 4,
+          "title": "Implement PRD Status Management UI/API",
+          "description": "Develop or update the user interface (UI) and/or API endpoints that allow users to change the status of a PRD. This involves updating the 'status' field in the `prd.json` file based on user actions.",
+          "dependencies": [
+            3
+          ],
+          "details": "1. Identify the UI components or API endpoints responsible for changing PRD status. 2. Modify these components/endpoints to interact with `prd.json`. 3. Implement logic to find the specific PRD entry in `prd.json` by its file path or ID, update its 'status' field, and then save the modified `prd.json` back to disk. 4. Ensure proper error handling and validation for status updates. 5. If applicable, update the UI to reflect the new status immediately after an update.\n<info added on 2025-06-05T22:20:57.692Z>\nPRD STATUS MANAGEMENT UI/API COMPLETED: 1) CLI commands working perfectly (tested prd-status command successfully) 2) PRD Kanban board has complete status management UI with drag-and-drop 3) Interactive menu has PRD status management functionality 4) Added new REST API endpoints: GET /api/v1/prds, GET /api/v1/prds/:id, PATCH /api/v1/prds/:id/status, PUT /api/v1/prds/:id 5) Updated API documentation. All UI/API interfaces for PRD status management are now implemented and functional.\n</info added on 2025-06-05T22:20:57.692Z>",
+          "status": "done",
+          "testStrategy": "Manually test the UI/API for changing PRD status. Verify that selecting a new status for a PRD correctly updates the 'status' field in `prd.json` and that the change is reflected in the application's display.",
+          "prdSource": null
+        },
+        {
+          "id": 5,
+          "title": "Comprehensive End-to-End Testing and Documentation Update",
+          "description": "Conduct comprehensive end-to-end testing of the entire PRD Kanban system to ensure all functionalities work as expected with the new folder structure and `prd.json` based status management. Update all relevant documentation, including developer guides and user manuals, to reflect the changes.",
+          "dependencies": [
+            4
+          ],
+          "details": "1. Test PRD creation, viewing, editing, and status changes. 2. Verify that archiving PRDs correctly moves files to `/prd/archive` and updates `prd.json`. 3. Check any search, filtering, or display functionalities related to PRDs. 4. Ensure performance is not negatively impacted. 5. Update READMEs, architectural diagrams, and any user-facing documentation to describe the new PRD folder structure and `prd.json` usage. 6. Conduct a final review of the entire codebase for any missed references to the old structure.\n<info added on 2025-06-05T22:34:30.635Z>\nCOMPREHENSIVE TESTING COMPLETED: ✅ All PRD functionality tested and working perfectly. 1) PRD listing/viewing works correctly 2) Status changes are metadata-only, no file movement 3) Files remain in /prd directory 4) Archive system verified with PRD+tasks+metadata in ZIP 5) Fixed archive folder to use existing 'archived/' not new 'archive/' 6) PRD integrity checking works 7) PRD sync functionality verified 8) API endpoints tested 9) Performance impact: positive (faster operations) 10) Updated comprehensive documentation. Migration is production-ready!\n</info added on 2025-06-05T22:34:30.635Z>\n<info added on 2025-06-05T22:34:44.838Z>\nTESTING COMPLETED: All PRD functionality verified working. Status changes metadata-only, files stay in /prd, archive system correct, performance improved. Production ready!\n</info added on 2025-06-05T22:34:44.838Z>",
+          "status": "done",
+          "testStrategy": "Execute a full suite of integration and system tests covering all PRD-related workflows. Perform user acceptance testing (UAT) with key stakeholders. Review all updated documentation for accuracy and completeness.",
+          "prdSource": null
+        }
+      ],
       "prdSource": null,
       "updatedAt": "2025-06-05T21:53:11.871Z",
       "complexityScore": 7,
       "complexityLevel": "medium",
       "tags": []
+    },
+    {
+      "id": 93,
+      "title": "Backend API Enhancement for PRD Upload",
+      "description": "Implement the backend API endpoint for PRD file upload, including Multer middleware for handling multipart/form-data, file validation (MD/TXT, max 10MB), and integration with the existing PRD management system to store files in `.taskmaster/prd/` and register them using `createPrdFromFile()`.",
+      "details": "1. **Add Dependencies**: Navigate to `kanban-app/` and run `npm install multer`.\n2. **Create Upload Endpoint**: In `kanban-app/src/api/routes.js`, add a new `POST /api/v1/prds/upload` endpoint.\n3. **File Upload Middleware**: Configure Multer to handle `prdFile` (single file upload).\n   - Set destination for temporary storage or directly to `.taskmaster/prd/`.\n   - Implement file filter to accept only `MD` and `TXT` file types.\n   - Set file size limit to `10MB`.\n4. **PRD Registration**: After successful file upload, use the `createPrdFromFile()` function from `scripts/modules/prd-manager/` to register the PRD. This function should handle auto-generating PRD ID, title, and updating `prds.json`.\n5. **Error Handling**: Implement robust error handling for invalid file types, oversized files, and issues during PRD registration. Return appropriate HTTP status codes and error messages.",
+      "testStrategy": "1. **Unit Tests**: Test the Multer configuration with valid and invalid file types/sizes.\n2. **API Tests**: Use tools like Postman or curl to send POST requests to `/api/v1/prds/upload` with:\n   - Valid MD/TXT files (within size limits).\n   - Invalid file types (e.g., PDF, JPG).\n   - Files exceeding 10MB.\n   - Empty file uploads.\n3. **Integration Tests**: Verify that uploaded files are correctly stored in `.taskmaster/prd/` and that `prds.json` is updated with the new PRD's metadata. Check for auto-generated PRD ID and title.",
+      "priority": "high",
+      "dependencies": [],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Install Multer Dependency",
+          "description": "Add Multer to the project dependencies to enable multipart/form-data handling for file uploads.",
+          "dependencies": [],
+          "details": "Navigate to the `kanban-app/` directory in the terminal and execute `npm install multer`. Verify `multer` is listed in `package.json`.",
+          "status": "pending",
+          "testStrategy": "Check `package.json` for `multer` entry and `node_modules` for `multer` directory.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+            "fileName": "prd_006_kanban_prd_upload_feature.md",
+            "parsedDate": "2025-06-06T17:29:40.779Z",
+            "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+            "fileSize": 9423
+          }
+        },
+        {
+          "id": 2,
+          "title": "Define PRD Upload Endpoint Structure",
+          "description": "Create the basic route structure for the new POST /api/v1/prds/upload endpoint in `kanban-app/src/api/routes.js`.",
+          "dependencies": [
+            1
+          ],
+          "details": "In `kanban-app/src/api/routes.js`, add a new `router.post('/v1/prds/upload', ...)` entry. Initially, it can just return a placeholder response.",
+          "status": "pending",
+          "testStrategy": "Use a tool like Postman or curl to send a POST request to `/api/v1/prds/upload` and verify a response (even a placeholder one) is received.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+            "fileName": "prd_006_kanban_prd_upload_feature.md",
+            "parsedDate": "2025-06-06T17:29:40.779Z",
+            "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+            "fileSize": 9423
+          }
+        },
+        {
+          "id": 3,
+          "title": "Configure Multer Storage and Filename",
+          "description": "Set up Multer's disk storage engine to specify the destination directory for uploaded files and define how filenames will be generated.",
+          "dependencies": [
+            2
+          ],
+          "details": "In `kanban-app/src/api/routes.js` (or a dedicated Multer config file), configure `multer.diskStorage` to save files to `.taskmaster/prd/`. Ensure filenames are unique, perhaps using a timestamp or UUID.",
+          "status": "pending",
+          "testStrategy": "Manually upload a dummy file via the endpoint (without validation yet) and verify it appears in `.taskmaster/prd/` with the expected filename format.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+            "fileName": "prd_006_kanban_prd_upload_feature.md",
+            "parsedDate": "2025-06-06T17:29:40.779Z",
+            "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+            "fileSize": 9423
+          }
+        },
+        {
+          "id": 4,
+          "title": "Implement Multer File Filter (Type Validation)",
+          "description": "Add a file filter to Multer to restrict uploads to only Markdown (.md) and Text (.txt) file types.",
+          "dependencies": [
+            3
+          ],
+          "details": "Within Multer's configuration, use the `fileFilter` option. Check `file.mimetype` or `file.originalname` to ensure only 'text/markdown' and 'text/plain' (or '.md' and '.txt' extensions) are allowed. Reject others with an appropriate error.",
+          "status": "pending",
+          "testStrategy": "Attempt to upload a `.pdf` or `.jpg` file and verify it's rejected with a specific error message. Upload a valid `.md` and `.txt` file to ensure they are accepted.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+            "fileName": "prd_006_kanban_prd_upload_feature.md",
+            "parsedDate": "2025-06-06T17:29:40.779Z",
+            "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+            "fileSize": 9423
+          }
+        },
+        {
+          "id": 5,
+          "title": "Implement Multer File Size Limit",
+          "description": "Configure Multer to enforce a maximum file size limit of 10MB for uploaded PRD files.",
+          "dependencies": [
+            4
+          ],
+          "details": "Use the `limits` option in Multer's configuration, specifically `fileSize`, setting it to `10 * 1024 * 1024` bytes.",
+          "status": "pending",
+          "testStrategy": "Upload a file slightly larger than 10MB and verify it's rejected with an appropriate error. Upload a file just under 10MB to ensure it's accepted.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+            "fileName": "prd_006_kanban_prd_upload_feature.md",
+            "parsedDate": "2025-06-06T17:29:40.779Z",
+            "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+            "fileSize": 9423
+          }
+        },
+        {
+          "id": 6,
+          "title": "Integrate Multer Middleware into Endpoint",
+          "description": "Apply the configured Multer middleware to the `/api/v1/prds/upload` endpoint to handle the incoming file.",
+          "dependencies": [
+            5
+          ],
+          "details": "In `kanban-app/src/api/routes.js`, use `multer().single('prdFile')` as middleware for the upload endpoint, ensuring the field name `prdFile` matches the expected input.",
+          "status": "pending",
+          "testStrategy": "Perform a successful file upload. Verify `req.file` contains the expected file information (filename, path, size, mimetype) in the route handler after Multer processes it.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+            "fileName": "prd_006_kanban_prd_upload_feature.md",
+            "parsedDate": "2025-06-06T17:29:40.779Z",
+            "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+            "fileSize": 9423
+          }
+        },
+        {
+          "id": 7,
+          "title": "Call `createPrdFromFile()` for PRD Registration",
+          "description": "After a successful file upload, invoke the `createPrdFromFile()` function to register the new PRD in the system.",
+          "dependencies": [
+            6
+          ],
+          "details": "Import `createPrdFromFile` from `scripts/modules/prd-manager/`. In the route handler, after Multer has processed the file, call `createPrdFromFile(req.file.path)` passing the path to the uploaded file. Handle its success or failure.",
+          "status": "pending",
+          "testStrategy": "Upload a valid PRD file. Verify that `prds.json` is updated with a new PRD entry, including an auto-generated ID and title derived from the file content (if applicable).",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+            "fileName": "prd_006_kanban_prd_upload_feature.md",
+            "parsedDate": "2025-06-06T17:29:40.779Z",
+            "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+            "fileSize": 9423
+          }
+        },
+        {
+          "id": 8,
+          "title": "Implement Error Handling for Multer Specific Errors",
+          "description": "Add specific error handling for Multer-related issues like invalid file type or file size exceeding limits.",
+          "dependencies": [
+            7
+          ],
+          "details": "Use a custom error handling middleware or a `try-catch` block around the Multer middleware. Check for `MulterError` instances and return appropriate HTTP status codes (e.g., 400 Bad Request) and user-friendly error messages.",
+          "status": "pending",
+          "testStrategy": "Trigger file type and size errors. Verify the API returns correct HTTP status codes (e.g., 400) and informative error messages for each scenario.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+            "fileName": "prd_006_kanban_prd_upload_feature.md",
+            "parsedDate": "2025-06-06T17:29:40.779Z",
+            "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+            "fileSize": 9423
+          }
+        },
+        {
+          "id": 9,
+          "title": "Implement Error Handling for `createPrdFromFile()`",
+          "description": "Add robust error handling for potential issues during the `createPrdFromFile()` execution.",
+          "dependencies": [
+            8
+          ],
+          "details": "Wrap the `createPrdFromFile()` call in a `try-catch` block. If `createPrdFromFile()` throws an error (e.g., file parsing issues, `prds.json` write errors), return an appropriate HTTP status code (e.g., 500 Internal Server Error) and a descriptive error message.",
+          "status": "pending",
+          "testStrategy": "Simulate a failure in `createPrdFromFile()` (e.g., by temporarily making `prds.json` unwritable or corrupting the input file to cause parsing errors). Verify the API returns a 500 status and an error message.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+            "fileName": "prd_006_kanban_prd_upload_feature.md",
+            "parsedDate": "2025-06-06T17:29:40.779Z",
+            "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+            "fileSize": 9423
+          }
+        },
+        {
+          "id": 10,
+          "title": "Refine API Response and Clean Up",
+          "description": "Finalize the API response for success and ensure temporary files are handled if necessary.",
+          "dependencies": [
+            9
+          ],
+          "details": "On successful PRD registration, return a 201 Created status code with a success message and potentially the new PRD's ID. Ensure that if Multer saves to a temporary location, the file is moved or deleted after `createPrdFromFile()` is done. If Multer saves directly to `.taskmaster/prd/`, no explicit cleanup is needed unless `createPrdFromFile` fails.",
+          "status": "pending",
+          "testStrategy": "Perform a successful end-to-end upload. Verify the API returns a 201 status and the expected success payload. Confirm the file is correctly stored and `prds.json` is updated. Test edge cases like empty file upload (if Multer allows) and ensure graceful handling.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+            "fileName": "prd_006_kanban_prd_upload_feature.md",
+            "parsedDate": "2025-06-06T17:29:40.779Z",
+            "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+            "fileSize": 9423
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+        "fileName": "prd_006_kanban_prd_upload_feature.md",
+        "parsedDate": "2025-06-06T17:29:40.779Z",
+        "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+        "fileSize": 9423
+      },
+      "complexityScore": 7,
+      "complexityLevel": "medium"
+    },
+    {
+      "id": 94,
+      "title": "PRD Upload Modal Component Development",
+      "description": "Develop the `PRDUploadModal` React component using `shadcn/ui Dialog` for the file upload interface. This includes implementing a reusable `FormFileUpload` component with drag-and-drop functionality, client-side validation, and visual feedback for upload progress.",
+      "details": "1. **Create `PRDUploadModal.tsx`**: In `kanban-app/src/components/forms/`, create `PRDUploadModal.tsx`. This component should utilize the `shadcn/ui Dialog` component.\n2. **Create `FormFileUpload.tsx`**: In the same directory, create `FormFileUpload.tsx`. This reusable component will handle:\n   - Drag-and-drop functionality for files.\n   - A file picker fallback.\n   - Client-side validation for file types (MD/TXT) and size (max 10MB).\n   - Visual feedback for different states: default, hover, drag-over, error, success.\n   - Displaying selected file name and size.\n3. **Integrate `FormFileUpload` into `PRDUploadModal`**: The modal should contain the `FormFileUpload` component.\n4. **Upload Progress and Status**: Implement UI elements within the modal to show upload progress (e.g., a progress bar) and status (loading, success, error messages).\n5. **Modal Actions**: Include 'Cancel' and 'Upload' buttons. The 'Upload' button should trigger the API call to the backend endpoint developed in Task 93.",
+      "testStrategy": "1. **Component Tests**: Test `PRDUploadModal` and `FormFileUpload` in isolation.\n   - Verify modal opens and closes correctly.\n   - Test drag-and-drop functionality with valid and invalid files.\n   - Test file picker functionality.\n   - Verify client-side validation messages for incorrect file types and sizes.\n   - Check visual feedback for different states (hover, drag-over, error, success).\n   - Simulate API responses (success/failure) to observe UI updates (progress, status messages).",
+      "priority": "high",
+      "dependencies": [
+        93
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Setup PRDUploadModal Component Structure",
+          "description": "Create the basic structure for the `PRDUploadModal` component using `shadcn/ui Dialog` in `kanban-app/src/components/forms/PRDUploadModal.tsx`. This subtask focuses on setting up the modal's shell without file upload logic.",
+          "dependencies": [],
+          "details": "Initialize `PRDUploadModal.tsx` with a `Dialog` component from `shadcn/ui`. Include `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogTitle`, and `DialogDescription`. Add placeholder content for now. Ensure it can be opened and closed.",
+          "status": "pending",
+          "testStrategy": "Manually open and close the modal to verify basic functionality and correct rendering of the `Dialog` components.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+            "fileName": "prd_006_kanban_prd_upload_feature.md",
+            "parsedDate": "2025-06-06T17:29:40.779Z",
+            "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+            "fileSize": 9423
+          }
+        },
+        {
+          "id": 2,
+          "title": "Develop FormFileUpload Basic Structure and File Input",
+          "description": "Create the `FormFileUpload` component in `kanban-app/src/components/forms/FormFileUpload.tsx`. Implement the basic file input mechanism, including a hidden input and a visible area for drag-and-drop or click-to-select.",
+          "dependencies": [],
+          "details": "Create `FormFileUpload.tsx`. Use a hidden `<input type='file'>` element. Design a visible area (e.g., a `div`) that triggers the hidden input's click event. Implement basic `onChange` to capture selected files and display their names (e.g., 'No file selected' or 'fileName.ext').",
+          "status": "pending",
+          "testStrategy": "Select a file using the click-to-select mechanism and verify that the file name is displayed correctly. Ensure the hidden input is triggered.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+            "fileName": "prd_006_kanban_prd_upload_feature.md",
+            "parsedDate": "2025-06-06T17:29:40.779Z",
+            "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+            "fileSize": 9423
+          }
+        },
+        {
+          "id": 3,
+          "title": "Implement Drag-and-Drop Functionality for FormFileUpload",
+          "description": "Add drag-and-drop capabilities to the `FormFileUpload` component, allowing users to drag files into the designated area to select them.",
+          "dependencies": [
+            2
+          ],
+          "details": "Implement `onDragOver`, `onDragLeave`, and `onDrop` event handlers for the `FormFileUpload` component's visible area. Prevent default browser behavior for drag events. On `onDrop`, capture the files from the event's `dataTransfer` object and update the component's state to reflect the selected file.",
+          "status": "pending",
+          "testStrategy": "Drag and drop various files (single, multiple) into the component. Verify that the file name of the dropped file(s) is displayed correctly. Test that dropping outside the area does not trigger selection.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+            "fileName": "prd_006_kanban_prd_upload_feature.md",
+            "parsedDate": "2025-06-06T17:29:40.779Z",
+            "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+            "fileSize": 9423
+          }
+        },
+        {
+          "id": 4,
+          "title": "Implement Client-Side File Validation in FormFileUpload",
+          "description": "Add client-side validation to `FormFileUpload` for file types (MD/TXT) and size (max 10MB). Provide visual feedback for validation errors.",
+          "dependencies": [
+            3
+          ],
+          "details": "Before updating the state with a selected file, perform checks for `file.type` (or `file.name` for extension check) and `file.size`. If validation fails, display an error message (e.g., 'Invalid file type' or 'File too large') within the component. Clear the error message on successful selection.",
+          "status": "pending",
+          "testStrategy": "Attempt to upload a `.pdf` file, a `.txt` file larger than 10MB, and a valid `.md` file. Verify that appropriate error messages are displayed for invalid files and no error for valid ones.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+            "fileName": "prd_006_kanban_prd_upload_feature.md",
+            "parsedDate": "2025-06-06T17:29:40.779Z",
+            "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+            "fileSize": 9423
+          }
+        },
+        {
+          "id": 5,
+          "title": "Add Visual Feedback for FormFileUpload States",
+          "description": "Enhance `FormFileUpload` with visual feedback for different states: default, hover, drag-over, error, and success.",
+          "dependencies": [
+            4
+          ],
+          "details": "Apply distinct CSS classes or inline styles based on component state (e.g., `isDragging`, `hasError`, `hasFile`). For `drag-over`, change border style or background. For `error`, use red borders/text. For `success` (file selected), show a checkmark or green border. Display selected file name and size.",
+          "status": "pending",
+          "testStrategy": "Observe the component's appearance during drag-over, when an invalid file is selected, and when a valid file is selected. Ensure visual cues are clear and correct for each state.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+            "fileName": "prd_006_kanban_prd_upload_feature.md",
+            "parsedDate": "2025-06-06T17:29:40.779Z",
+            "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+            "fileSize": 9423
+          }
+        },
+        {
+          "id": 6,
+          "title": "Integrate FormFileUpload into PRDUploadModal",
+          "description": "Embed the developed `FormFileUpload` component within the `PRDUploadModal` and ensure data flow for selected files.",
+          "dependencies": [
+            1,
+            5
+          ],
+          "details": "Import `FormFileUpload` into `PRDUploadModal.tsx`. Render it inside the `DialogContent`. Pass a callback prop to `FormFileUpload` to receive the selected file object in `PRDUploadModal`'s state. Display the selected file's name within the modal.",
+          "status": "pending",
+          "testStrategy": "Open the `PRDUploadModal`. Use `FormFileUpload` to select a file. Verify that the `PRDUploadModal` component correctly receives and displays the name of the selected file.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+            "fileName": "prd_006_kanban_prd_upload_feature.md",
+            "parsedDate": "2025-06-06T17:29:40.779Z",
+            "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+            "fileSize": 9423
+          }
+        },
+        {
+          "id": 7,
+          "title": "Implement Upload Progress and Status UI in PRDUploadModal",
+          "description": "Add UI elements to `PRDUploadModal` to display upload progress (e.g., a progress bar) and status messages (loading, success, error).",
+          "dependencies": [
+            6
+          ],
+          "details": "Utilize `shadcn/ui Progress` component or a custom progress bar. Implement state variables in `PRDUploadModal` for `uploadProgress` (0-100), `uploadStatus` ('idle', 'uploading', 'success', 'error'), and `statusMessage`. Display these elements conditionally based on `uploadStatus`.",
+          "status": "pending",
+          "testStrategy": "Simulate different upload states (e.g., by setting state variables manually or using a mock API call) to verify that the progress bar and status messages update correctly.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+            "fileName": "prd_006_kanban_prd_upload_feature.md",
+            "parsedDate": "2025-06-06T17:29:40.779Z",
+            "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+            "fileSize": 9423
+          }
+        },
+        {
+          "id": 8,
+          "title": "Add Cancel and Upload Buttons to PRDUploadModal",
+          "description": "Include 'Cancel' and 'Upload' buttons in the `PRDUploadModal` footer. Implement the 'Cancel' button's functionality.",
+          "dependencies": [
+            7
+          ],
+          "details": "Add `shadcn/ui Button` components for 'Cancel' and 'Upload' within `DialogFooter`. The 'Cancel' button should close the modal and reset its internal state. The 'Upload' button should be disabled if no file is selected or if an upload is in progress.",
+          "status": "pending",
+          "testStrategy": "Click the 'Cancel' button to ensure the modal closes and its state (e.g., selected file) is reset. Verify the 'Upload' button's disabled state changes based on file selection and simulated upload status.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+            "fileName": "prd_006_kanban_prd_upload_feature.md",
+            "parsedDate": "2025-06-06T17:29:40.779Z",
+            "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+            "fileSize": 9423
+          }
+        },
+        {
+          "id": 9,
+          "title": "Integrate API Call for File Upload in PRDUploadModal",
+          "description": "Connect the 'Upload' button to trigger the API call to the backend endpoint (from Task 93) for file submission. Handle loading, success, and error states.",
+          "dependencies": [
+            8
+          ],
+          "details": "On 'Upload' button click, initiate an asynchronous function to send the selected file to the backend (e.g., using `fetch` or `axios`). Update `uploadStatus` to 'uploading' and potentially `uploadProgress`. On success, set `uploadStatus` to 'success' and display a success message. On error, set `uploadStatus` to 'error' and display an error message. Ensure the modal closes on successful upload.",
+          "status": "pending",
+          "testStrategy": "Mock the API call to simulate success and failure scenarios. Verify that the progress bar, status messages, and button states update correctly throughout the upload lifecycle. Ensure the modal closes on successful upload.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+            "fileName": "prd_006_kanban_prd_upload_feature.md",
+            "parsedDate": "2025-06-06T17:29:40.779Z",
+            "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+            "fileSize": 9423
+          }
+        },
+        {
+          "id": 10,
+          "title": "Refinement and Accessibility Review",
+          "description": "Perform a final review of both `PRDUploadModal` and `FormFileUpload` for UI/UX consistency, responsiveness, and accessibility.",
+          "dependencies": [
+            9
+          ],
+          "details": "Check styling across different screen sizes. Ensure proper focus management for keyboard navigation within the modal. Add ARIA attributes where necessary for screen readers. Review error messages and visual feedback for clarity. Optimize performance if needed.",
+          "status": "pending",
+          "testStrategy": "Use browser developer tools to inspect responsiveness. Navigate the modal using only the keyboard. Use an accessibility checker tool (e.g., Lighthouse, Axe DevTools) to identify and fix any accessibility issues. Review the overall user experience.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+            "fileName": "prd_006_kanban_prd_upload_feature.md",
+            "parsedDate": "2025-06-06T17:29:40.779Z",
+            "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+            "fileSize": 9423
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+        "fileName": "prd_006_kanban_prd_upload_feature.md",
+        "parsedDate": "2025-06-06T17:29:40.779Z",
+        "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+        "fileSize": 9423
+      },
+      "complexityScore": 7,
+      "complexityLevel": "medium"
+    },
+    {
+      "id": 95,
+      "title": "Kanban Board Integration for PRD Upload",
+      "description": "Integrate the `PRDUploadModal` into the `EnhancedKanbanBoard.tsx` component. This involves adding a new 'Upload PRD' button, handling its click event to open the modal, and implementing callbacks for successful uploads to refresh the PRD list and display toast notifications.",
+      "details": "1. **Update `EnhancedKanbanBoard.tsx`**: Open `kanban-app/EnhancedKanbanBoard.tsx`.\n2. **Add Upload Button**: Place a new button next to the existing 'Create Task' button in the filter controls. This button should:\n   - Have an 'Upload' icon from `lucide-react`.\n   - Display the text 'Upload PRD'.\n   - Be styled consistently with existing buttons (secondary button style).\n3. **Import and Integrate `PRDUploadModal`**: Import the `PRDUploadModal` component and integrate it into `EnhancedKanbanBoard.tsx`.\n4. **Handle Button Click**: Implement an event handler for the 'Upload PRD' button to open the `PRDUploadModal`.\n5. **Success Callback**: Implement a callback function to be executed upon successful PRD upload from the modal. This callback should:\n   - Trigger a refresh of the PRD list displayed in the PRD filter dropdown.\n   - Display a success toast notification with relevant PRD details.\n6. **Error Callback**: Implement an error callback to display an error toast notification if the upload fails.",
+      "testStrategy": "1. **UI Integration Tests**: Verify the 'Upload PRD' button appears correctly next to 'Create Task'.\n2. **Workflow Tests**: Click the 'Upload PRD' button and ensure the `PRDUploadModal` opens.\n3. **End-to-End Tests**: Perform a full upload flow:\n   - Upload a valid MD/TXT file.\n   - Verify the success toast notification appears.\n   - Confirm the modal closes automatically.\n   - Check that the newly uploaded PRD immediately appears in the PRD filter dropdown.\n   - Test with an invalid file to ensure an error toast notification is displayed and the modal handles the error gracefully.",
+      "priority": "high",
+      "dependencies": [
+        94
+      ],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Prepare `EnhancedKanbanBoard.tsx` for PRD Upload Integration",
+          "description": "Set up the `EnhancedKanbanBoard.tsx` component by importing necessary components and hooks for modal management and state. This includes importing `PRDUploadModal` and potentially `useState` for modal visibility.",
+          "dependencies": [],
+          "details": "Locate `kanban-app/EnhancedKanbanBoard.tsx`. Add `import { PRDUploadModal } from './PRDUploadModal';` (adjust path as needed) and `import React, { useState } from 'react';` if not already present. Initialize a state variable for modal visibility, e.g., `const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);`.",
+          "status": "pending",
+          "testStrategy": "Verify no compilation errors after imports. No functional test at this stage.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+            "fileName": "prd_006_kanban_prd_upload_feature.md",
+            "parsedDate": "2025-06-06T17:29:40.779Z",
+            "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+            "fileSize": 9423
+          }
+        },
+        {
+          "id": 2,
+          "title": "Add 'Upload PRD' Button to Kanban Board",
+          "description": "Implement the 'Upload PRD' button in the `EnhancedKanbanBoard.tsx` component, placing it next to the existing 'Create Task' button within the filter controls section.",
+          "dependencies": [
+            1
+          ],
+          "details": "Find the section containing the 'Create Task' button. Add a new button component (e.g., `<Button>`) next to it. The button should have an 'Upload' icon from `lucide-react` (e.g., `<Upload className='mr-2 h-4 w-4' />`), display the text 'Upload PRD', and be styled consistently with existing buttons (e.g., `variant='secondary'`). Add an `onClick` handler that will open the modal.",
+          "status": "pending",
+          "testStrategy": "Visually inspect the Kanban board to ensure the 'Upload PRD' button is present, correctly positioned, and styled. Click the button to ensure no immediate errors (though it won't open the modal yet).",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+            "fileName": "prd_006_kanban_prd_upload_feature.md",
+            "parsedDate": "2025-06-06T17:29:40.779Z",
+            "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+            "fileSize": 9423
+          }
+        },
+        {
+          "id": 3,
+          "title": "Implement Modal Open/Close Logic",
+          "description": "Connect the 'Upload PRD' button's click event to open the `PRDUploadModal` and implement the logic to close the modal.",
+          "dependencies": [
+            2
+          ],
+          "details": "In the `onClick` handler for the 'Upload PRD' button, set `setIsUploadModalOpen(true);`. Render the `PRDUploadModal` component conditionally based on `isUploadModalOpen`. Pass a prop to the modal (e.g., `onClose={() => setIsUploadModalOpen(false)}`) to allow it to close itself.",
+          "status": "pending",
+          "testStrategy": "Click the 'Upload PRD' button to verify the modal appears. Click outside the modal or its close button to verify it closes correctly.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+            "fileName": "prd_006_kanban_prd_upload_feature.md",
+            "parsedDate": "2025-06-06T17:29:40.779Z",
+            "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+            "fileSize": 9423
+          }
+        },
+        {
+          "id": 4,
+          "title": "Define PRD Upload Success Callback",
+          "description": "Create a callback function within `EnhancedKanbanBoard.tsx` that will be executed upon a successful PRD upload from the `PRDUploadModal`. This function will handle toast notifications.",
+          "dependencies": [
+            3
+          ],
+          "details": "Define a function, e.g., `handleUploadSuccess = (prdDetails) => { ... };`. Inside this function, use a toast notification library (e.g., `react-hot-toast` or a custom `useToast` hook) to display a success message like 'PRD uploaded successfully: [PRD Name]'. Include relevant `prdDetails` in the toast.",
+          "status": "pending",
+          "testStrategy": "No direct test at this stage. This function will be tested when integrated with the modal.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+            "fileName": "prd_006_kanban_prd_upload_feature.md",
+            "parsedDate": "2025-06-06T17:29:40.779Z",
+            "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+            "fileSize": 9423
+          }
+        },
+        {
+          "id": 5,
+          "title": "Define PRD Upload Error Callback",
+          "description": "Create a callback function within `EnhancedKanbanBoard.tsx` that will be executed if a PRD upload fails in the `PRDUploadModal`. This function will handle error toast notifications.",
+          "dependencies": [
+            4
+          ],
+          "details": "Define a function, e.g., `handleUploadError = (error) => { ... };`. Inside this function, use the toast notification library to display an error message like 'PRD upload failed: [Error Message]'.",
+          "status": "pending",
+          "testStrategy": "No direct test at this stage. This function will be tested when integrated with the modal.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+            "fileName": "prd_006_kanban_prd_upload_feature.md",
+            "parsedDate": "2025-06-06T17:29:40.779Z",
+            "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+            "fileSize": 9423
+          }
+        },
+        {
+          "id": 6,
+          "title": "Integrate Callbacks with `PRDUploadModal`",
+          "description": "Pass the defined success and error callback functions to the `PRDUploadModal` component as props.",
+          "dependencies": [
+            5
+          ],
+          "details": "When rendering `PRDUploadModal`, add `onSuccess={handleUploadSuccess}` and `onError={handleUploadError}` props. Ensure `PRDUploadModal` is designed to accept and call these props internally upon completion of its upload logic.",
+          "status": "pending",
+          "testStrategy": "Open the modal, attempt a successful upload (if possible via mock or actual backend), and verify the success toast appears. Attempt a failed upload (e.g., by cancelling or simulating an error) and verify the error toast appears.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+            "fileName": "prd_006_kanban_prd_upload_feature.md",
+            "parsedDate": "2025-06-06T17:29:40.779Z",
+            "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+            "fileSize": 9423
+          }
+        },
+        {
+          "id": 7,
+          "title": "Implement PRD List Refresh Logic",
+          "description": "Add logic within the `handleUploadSuccess` callback to trigger a refresh of the PRD list displayed in the PRD filter dropdown.",
+          "dependencies": [
+            6
+          ],
+          "details": "Identify the mechanism used to fetch and display the PRD list in the filter dropdown. This might involve calling a data fetching function, invalidating a cache (e.g., using `react-query`'s `queryClient.invalidateQueries`), or updating a state variable that triggers a re-fetch. Implement this refresh logic inside `handleUploadSuccess`.",
+          "status": "pending",
+          "testStrategy": "Upload a new PRD. Verify that the PRD filter dropdown now includes the newly uploaded PRD without requiring a manual page refresh.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+            "fileName": "prd_006_kanban_prd_upload_feature.md",
+            "parsedDate": "2025-06-06T17:29:40.779Z",
+            "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+            "fileSize": 9423
+          }
+        },
+        {
+          "id": 8,
+          "title": "Refine UI/UX and Edge Cases",
+          "description": "Review the integration for any UI/UX inconsistencies, ensure proper loading states, and handle potential edge cases like network issues or empty PRD lists gracefully.",
+          "dependencies": [
+            7
+          ],
+          "details": "Check button disabled states during upload, modal loading indicators, and ensure toast messages are clear and informative. Consider what happens if the PRD list refresh fails. Ensure accessibility considerations are met.",
+          "status": "pending",
+          "testStrategy": "Perform multiple uploads (success and failure). Test with slow network conditions (if possible). Verify all UI elements behave as expected during different states of the upload process.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+            "fileName": "prd_006_kanban_prd_upload_feature.md",
+            "parsedDate": "2025-06-06T17:29:40.779Z",
+            "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+            "fileSize": 9423
+          }
+        },
+        {
+          "id": 9,
+          "title": "Code Review and Documentation",
+          "description": "Conduct a thorough code review of all changes, ensure code quality, and update any relevant documentation.",
+          "dependencies": [
+            8
+          ],
+          "details": "Review `EnhancedKanbanBoard.tsx` and any other modified files for adherence to coding standards, clarity, and maintainability. Add comments where necessary. Update any internal documentation or README files if the new feature impacts setup or usage.",
+          "status": "pending",
+          "testStrategy": "Peer code review. Verify documentation updates are accurate and complete.",
+          "prdSource": {
+            "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+            "fileName": "prd_006_kanban_prd_upload_feature.md",
+            "parsedDate": "2025-06-06T17:29:40.779Z",
+            "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+            "fileSize": 9423
+          }
+        }
+      ],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+        "fileName": "prd_006_kanban_prd_upload_feature.md",
+        "parsedDate": "2025-06-06T17:29:40.779Z",
+        "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+        "fileSize": 9423
+      },
+      "complexityScore": 6,
+      "complexityLevel": "medium"
+    },
+    {
+      "id": 96,
+      "title": "Comprehensive Testing and UI/UX Polish",
+      "description": "Conduct comprehensive testing of the entire PRD upload feature, covering various scenarios, edge cases, and user experience aspects. This includes validating file handling, PRD registration, UI feedback, and accessibility.",
+      "details": "1. **File Upload Testing**: Test with a variety of MD/TXT files:\n   - Small, medium, and large files (up to 10MB).\n   - Files with special characters in their names.\n   - Files with different line endings.\n   - Empty files.\n   - Files with malformed content (if `createPrdFromFile` has content validation).\n2. **Validation Testing**: Verify both client-side and server-side validation for:\n   - Incorrect file types (e.g., `.pdf`, `.jpg`).\n   - Files exceeding the 10MB size limit.\n3. **PRD Registration Verification**: After successful uploads, manually verify:\n   - Files are correctly stored in the `.taskmaster/prd/` directory.\n   - `prds.json` is updated with accurate metadata (ID, title, etc.).\n   - The PRD is accessible and viewable within the system.\n4. **User Experience (UX) Testing**: \n   - Test toast notifications for success and error states.\n   - Verify loading states during upload.\n   - Check modal close behavior after successful upload.\n   - Ensure the PRD filter dropdown immediately reflects new PRDs.\n5. **Error Handling Scenarios**: Simulate and test various error conditions:\n   - Network failures during upload.\n   - Backend server errors.\n   - Storage permission issues.\n   - Duplicate file names (how the system handles this).\n6. **Accessibility Testing**: Ensure the upload button and modal are keyboard navigable and have proper ARIA labels.",
+      "testStrategy": "1. **Manual Testing**: Follow a detailed test plan covering all scenarios outlined in the 'Implementation Details'.\n2. **Browser Compatibility**: Test the feature across different web browsers (Chrome, Firefox, Edge, Safari).\n3. **Performance Testing**: Observe upload times for large files and ensure the UI remains responsive.\n4. **Regression Testing**: Ensure existing Kanban board functionalities are not negatively impacted by the new feature.",
+      "priority": "medium",
+      "dependencies": [
+        95
+      ],
+      "status": "pending",
+      "subtasks": [],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+        "fileName": "prd_006_kanban_prd_upload_feature.md",
+        "parsedDate": "2025-06-06T17:29:40.779Z",
+        "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+        "fileSize": 9423
+      },
+      "complexityScore": 8,
+      "complexityLevel": "high"
+    },
+    {
+      "id": 97,
+      "title": "UI/UX Refinement and Accessibility Improvements",
+      "description": "Refine the user interface and user experience of the PRD upload feature based on testing feedback. This includes ensuring consistent styling, clear feedback, and addressing any identified usability issues.",
+      "details": "1. **Styling Consistency**: Ensure the 'Upload PRD' button and the `PRDUploadModal` adhere to the `shadcn/ui` design system and the overall TaskHero Kanban app's visual style.\n2. **Clear Feedback**: Review and enhance all user feedback mechanisms:\n   - Loading indicators during file processing.\n   - Success and error messages (toast notifications) are clear, concise, and actionable.\n   - Validation messages for file input are prominent and user-friendly.\n3. **Drag-and-Drop Area**: Refine the visual design of the drag-and-drop area for clarity and intuitiveness (e.g., dashed border, appropriate icons, state changes on hover/drag-over).\n4. **Accessibility**: Conduct a thorough accessibility review:\n   - Ensure all interactive elements are keyboard navigable.\n   - Add or refine ARIA labels for screen readers (e.g., for the upload button, modal title, file input).\n   - Check color contrast ratios for text and UI elements.\n5. **Responsiveness**: Verify the modal and button display correctly on various screen sizes (desktop, tablet, mobile).\n6. **Edge Case UI**: Ensure the UI gracefully handles edge cases like very long file names, multiple validation errors, or network disconnections.",
+      "testStrategy": "1. **User Acceptance Testing (UAT)**: Conduct UAT with a small group of target users to gather feedback on usability and identify any remaining pain points.\n2. **Visual Regression Testing**: Use tools to compare UI components against baseline images to catch unintended visual changes.\n3. **Accessibility Audit**: Utilize accessibility testing tools (e.g., Lighthouse, axe DevTools) to identify and fix WCAG compliance issues.\n4. **Cross-Browser/Device Testing**: Re-verify the UI/UX across different browsers and devices to ensure consistent experience.",
+      "priority": "low",
+      "dependencies": [
+        96
+      ],
+      "status": "pending",
+      "subtasks": [],
+      "prdSource": {
+        "filePath": "C:/laragon/www/taskmaster-ai/.taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
+        "fileName": "prd_006_kanban_prd_upload_feature.md",
+        "parsedDate": "2025-06-06T17:29:40.779Z",
+        "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
+        "fileSize": 9423
+      },
+      "complexityScore": 7,
+      "complexityLevel": "medium"
     }
-  ],
-  "meta": {
-    "updatedAt": "2025-06-05T15:36:12.141Z"
-  }
+  ]
 }

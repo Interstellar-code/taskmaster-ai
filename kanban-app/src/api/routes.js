@@ -6,6 +6,7 @@
 import express from 'express';
 import path from 'path';
 import fs from 'fs/promises';
+import fsSync from 'fs';
 import {
   addDependencyDirect,
   addSubtaskDirect,
@@ -34,9 +35,10 @@ import {
   readPrdsMetadata,
   findPrdById,
   getAllPrds,
-  getPRDsJsonPath
+  getPRDsJsonPath,
+  getPRDStatusDirectory
 } from '../../../scripts/modules/prd-manager/prd-utils.js';
-import { updatePrd, updatePrdStatus } from '../../../scripts/modules/prd-manager/prd-write-operations.js';
+import { updatePrd, updatePrdStatus, createPrdFromFile } from '../../../scripts/modules/prd-manager/prd-write-operations.js';
 import { createLogger } from './logger.js';
 import {
   validateCreateTask,
@@ -1383,6 +1385,152 @@ router.put('/prds/:id', async (req, res) => {
       success: false,
       error: 'Failed to update PRD',
       message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+/**
+ * POST /api/v1/prds/upload
+ * Upload a new PRD file
+ */
+router.post('/prds/upload', async (req, res) => {
+  try {
+    const { fileName, fileContent, fileType } = req.body;
+
+    // Validate required fields
+    if (!fileName || !fileContent || !fileType) {
+      return res.status(400).json({
+        success: false,
+        error: 'MISSING_FIELDS',
+        message: 'fileName, fileContent, and fileType are required',
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    // Validate file type - be more flexible with MIME types
+    const allowedExtensions = ['.md', '.txt'];
+    const fileExtension = path.extname(fileName).toLowerCase();
+
+    if (!allowedExtensions.includes(fileExtension)) {
+      return res.status(400).json({
+        success: false,
+        error: 'INVALID_FILE_TYPE',
+        message: 'Only .md and .txt files are supported',
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    // Validate MIME type if provided (be flexible as browsers may report different types)
+    if (fileType && !fileType.startsWith('text/') && fileType !== 'application/octet-stream' && fileType !== '') {
+      logger.warn(`Unexpected MIME type for ${fileName}: ${fileType}`);
+      // Don't reject, just log for debugging
+    }
+
+    // Validate file size (max 10MB)
+    const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+    const fileSize = Buffer.byteLength(fileContent, 'base64');
+
+    if (fileSize > maxSize) {
+      return res.status(400).json({
+        success: false,
+        error: 'FILE_TOO_LARGE',
+        message: 'File size must be less than 10MB',
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    // Decode base64 content
+    let decodedContent;
+    try {
+      decodedContent = Buffer.from(fileContent, 'base64').toString('utf-8');
+    } catch (error) {
+      return res.status(400).json({
+        success: false,
+        error: 'INVALID_FILE_CONTENT',
+        message: 'Invalid base64 file content',
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    // Get PRD directory path - use the correct project root
+    const projectRoot = path.resolve(process.cwd(), '..');
+    const prdDirectory = getPRDStatusDirectory('pending', projectRoot);
+
+    // Ensure PRD directory exists
+    if (!fsSync.existsSync(prdDirectory)) {
+      fsSync.mkdirSync(prdDirectory, { recursive: true });
+    }
+
+    // Create unique filename if file already exists
+    let finalFileName = fileName;
+    let counter = 1;
+    const baseName = path.basename(fileName, path.extname(fileName));
+    const extension = path.extname(fileName);
+
+    while (fsSync.existsSync(path.join(prdDirectory, finalFileName))) {
+      finalFileName = `${baseName}_${counter}${extension}`;
+      counter++;
+    }
+
+    // Write file to PRD directory
+    const filePath = path.join(prdDirectory, finalFileName);
+    fsSync.writeFileSync(filePath, decodedContent, 'utf-8');
+
+    // Register PRD in the tracking system
+    const prdData = {
+      title: baseName.replace(/[_-]/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+      description: `PRD uploaded via web interface on ${new Date().toLocaleDateString()}`,
+      priority: 'medium',
+      complexity: 'medium',
+      tags: ['web-upload', 'pending-review'],
+      estimatedEffort: '2-4 hours'
+    };
+
+    // Use the correct project root for PRD registration
+    const prdsJsonPath = path.join(projectRoot, '.taskmaster', 'prd', 'prds.json');
+    const registrationResult = createPrdFromFile(filePath, prdData, prdsJsonPath);
+
+    if (!registrationResult.success) {
+      // If registration fails, clean up the file
+      try {
+        fsSync.unlinkSync(filePath);
+      } catch (cleanupError) {
+        logger.warn(`Failed to cleanup file after registration failure: ${cleanupError.message}`);
+      }
+
+      return res.status(500).json({
+        success: false,
+        error: 'PRD_REGISTRATION_FAILED',
+        message: registrationResult.error || 'Failed to register PRD in tracking system',
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    logger.info(`Successfully uploaded and registered PRD: ${finalFileName}`);
+
+    res.json({
+      success: true,
+      data: {
+        prdId: registrationResult.data?.prdId,
+        fileName: finalFileName,
+        filePath: filePath,
+        fileSize: fileSize,
+        message: `PRD "${finalFileName}" uploaded and registered successfully`
+      },
+      metadata: {
+        function: 'uploadPrd',
+        timestamp: new Date().toISOString()
+      },
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    logger.error(`Failed to upload PRD:`, error.message);
+    res.status(500).json({
+      success: false,
+      error: 'INTERNAL_SERVER_ERROR',
+      message: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
       timestamp: new Date().toISOString()
     });
   }
