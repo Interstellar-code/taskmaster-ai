@@ -12,11 +12,16 @@ import {
 
 // Determine API base URL based on environment
 const API_BASE_URL = (() => {
-  // In development (Vite dev server), API runs on port 3003
-  if (window.location.port === '5173') {
-    return 'http://localhost:3003';
+  // Check if we're in development mode (Vite dev server)
+  if (import.meta.env.DEV || window.location.port === '5173' || window.location.port === '5174') {
+    // In development, try to detect API port dynamically
+    // First check if there's a custom API port in environment
+    const apiPort = import.meta.env.VITE_API_PORT || '3001';
+    return `http://localhost:${apiPort}`;
   }
-  // In production, API and web are on the same port
+
+  // In production, API and web are served from the same origin
+  // This handles multiple instances automatically
   return window.location.origin;
 })();
 
@@ -180,18 +185,18 @@ class TaskService {
     if (status) params.append('status', status);
     if (withSubtasks) params.append('withSubtasks', 'true');
 
-    const endpoint = `/api/v1/tasks${params.toString() ? `?${params.toString()}` : ''}`;
+    const endpoint = `/api/tasks${params.toString() ? `?${params.toString()}` : ''}`;
     const response = await this.fetchApi<TasksApiResponse>(endpoint);
 
-    // The API returns { data: { tasks: [...], summary: {...} } }
-    // We need to extract the tasks array from the nested structure
-    if (response.data && Array.isArray(response.data.tasks)) {
-      return response.data.tasks;
+    // The new unified API returns { success: true, data: [...], message: "...", meta: {...} }
+    // Extract tasks from the response data
+    if (response.data && Array.isArray(response.data)) {
+      return response.data;
     }
 
-    // Fallback: if response.data is already an array (for backward compatibility)
-    if (Array.isArray(response.data)) {
-      return response.data;
+    // If response.data has tasks property (paginated response)
+    if (response.data && response.data.tasks && Array.isArray(response.data.tasks)) {
+      return response.data.tasks;
     }
 
     // If neither, return empty array to prevent errors
@@ -204,14 +209,14 @@ class TaskService {
     const params = new URLSearchParams();
     if (status) params.append('status', status);
 
-    const endpoint = `/api/v1/tasks/${id}${params.toString() ? `?${params.toString()}` : ''}`;
+    const endpoint = `/api/tasks/${id}${params.toString() ? `?${params.toString()}` : ''}`;
     const response = await this.fetchApi<TaskMasterTask>(endpoint);
     return response.data;
   }
 
   // Create a new task
   async createTask(taskData: TaskCreateRequest): Promise<TaskMasterTask> {
-    const response = await this.fetchApi<TaskMasterTask>('/api/v1/tasks', {
+    const response = await this.fetchApi<TaskMasterTask>('/api/tasks', {
       method: 'POST',
       body: JSON.stringify(taskData),
     });
@@ -220,7 +225,7 @@ class TaskService {
 
   // Update task by ID
   async updateTask(id: string, updateData: TaskUpdateRequest): Promise<TaskMasterTask> {
-    const response = await this.fetchApi<TaskMasterTask>(`/api/v1/tasks/${id}`, {
+    const response = await this.fetchApi<TaskMasterTask>(`/api/tasks/${id}`, {
       method: 'PUT',
       body: JSON.stringify(updateData),
     });
@@ -229,10 +234,10 @@ class TaskService {
 
   // Update task status
   async updateTaskStatus(id: string, status: string): Promise<TaskMasterTask> {
-    console.log(`updateTaskStatus: Making API call to /api/v1/tasks/${id}/status with status: ${status}`);
+    console.log(`updateTaskStatus: Making API call to /api/tasks/${id}/status with status: ${status}`);
 
-    const response = await this.fetchApi<TaskMasterTask>(`/api/v1/tasks/${id}/status`, {
-      method: 'PATCH',
+    const response = await this.fetchApi<TaskMasterTask>(`/api/tasks/${id}/status`, {
+      method: 'PUT',
       body: JSON.stringify({ status }),
     });
 
@@ -242,14 +247,14 @@ class TaskService {
 
   // Delete a task
   async deleteTask(id: string): Promise<void> {
-    await this.fetchApi<void>(`/api/v1/tasks/${id}`, {
+    await this.fetchApi<void>(`/api/tasks/${id}`, {
       method: 'DELETE',
     });
   }
 
   // Move task to new position
   async moveTask(id: string, moveData: TaskMoveRequest): Promise<TaskMasterTask> {
-    const response = await this.fetchApi<TaskMasterTask>(`/api/v1/tasks/${id}/move`, {
+    const response = await this.fetchApi<TaskMasterTask>(`/api/tasks/${id}/move`, {
       method: 'POST',
       body: JSON.stringify(moveData),
     });
@@ -258,13 +263,13 @@ class TaskService {
 
   // Get next available task
   async getNextTask(): Promise<TaskMasterTask> {
-    const response = await this.fetchApi<TaskMasterTask>('/api/v1/tasks/next');
+    const response = await this.fetchApi<TaskMasterTask>('/api/tasks/next');
     return response.data;
   }
 
   // Get project information
   async getProjectInfo(): Promise<ProjectInfo> {
-    const response = await this.fetchApi<ProjectInfo>('/api/taskhero/info');
+    const response = await this.fetchApi<ProjectInfo>('/api/analytics/dashboard');
     return response.data;
   }
 
@@ -274,7 +279,7 @@ class TaskService {
 
   // Create a subtask
   async createSubtask(parentId: string, subtaskData: SubtaskCreateRequest): Promise<TaskMasterTask> {
-    const response = await this.fetchApi<TaskMasterTask>(`/api/v1/tasks/${parentId}/subtasks`, {
+    const response = await this.fetchApi<TaskMasterTask>(`/api/tasks/${parentId}/subtasks`, {
       method: 'POST',
       body: JSON.stringify(subtaskData),
     });
@@ -283,7 +288,7 @@ class TaskService {
 
   // Update subtask by ID
   async updateSubtask(parentId: string, subtaskId: string, updateData: TaskUpdateRequest): Promise<TaskMasterTask> {
-    const response = await this.fetchApi<TaskMasterTask>(`/api/v1/tasks/${parentId}/subtasks/${subtaskId}`, {
+    const response = await this.fetchApi<TaskMasterTask>(`/api/tasks/${parentId}/subtasks/${subtaskId}`, {
       method: 'PUT',
       body: JSON.stringify(updateData),
     });
@@ -294,8 +299,8 @@ class TaskService {
   async updateSubtaskStatus(parentId: string, subtaskId: string, status: string): Promise<TaskMasterTask> {
     console.log(`updateSubtaskStatus: Making API call to update subtask ${parentId}.${subtaskId} status to: ${status}`);
 
-    const response = await this.fetchApi<TaskMasterTask>(`/api/v1/tasks/${parentId}/subtasks/${subtaskId}/status`, {
-      method: 'PATCH',
+    const response = await this.fetchApi<TaskMasterTask>(`/api/tasks/${parentId}/subtasks/${subtaskId}/status`, {
+      method: 'PUT',
       body: JSON.stringify({ status }),
     });
 
@@ -305,21 +310,21 @@ class TaskService {
 
   // Delete a subtask
   async deleteSubtask(parentId: string, subtaskId: string): Promise<void> {
-    await this.fetchApi<void>(`/api/v1/tasks/${parentId}/subtasks/${subtaskId}`, {
+    await this.fetchApi<void>(`/api/tasks/${parentId}/subtasks/${subtaskId}`, {
       method: 'DELETE',
     });
   }
 
   // Clear all subtasks from a task
   async clearSubtasks(parentId: string): Promise<void> {
-    await this.fetchApi<void>(`/api/v1/tasks/${parentId}/subtasks`, {
+    await this.fetchApi<void>(`/api/tasks/${parentId}/subtasks`, {
       method: 'DELETE',
     });
   }
 
   // Expand task into subtasks
   async expandTask(id: string, expandData: ExpandTaskRequest): Promise<TaskMasterTask> {
-    const response = await this.fetchApi<TaskMasterTask>(`/api/v1/tasks/${id}/expand`, {
+    const response = await this.fetchApi<TaskMasterTask>(`/api/tasks/${id}/expand`, {
       method: 'POST',
       body: JSON.stringify(expandData),
       timeout: 300000, // 5 minutes timeout for AI operations
@@ -333,7 +338,7 @@ class TaskService {
 
   // Add dependency to a task
   async addDependency(id: string, dependencyData: DependencyRequest): Promise<TaskMasterTask> {
-    const response = await this.fetchApi<TaskMasterTask>(`/api/v1/tasks/${id}/dependencies`, {
+    const response = await this.fetchApi<TaskMasterTask>(`/api/tasks/${id}/dependencies`, {
       method: 'POST',
       body: JSON.stringify(dependencyData),
     });
@@ -342,7 +347,7 @@ class TaskService {
 
   // Remove dependency from a task
   async removeDependency(id: string, dependencyId: string): Promise<void> {
-    await this.fetchApi<void>(`/api/v1/tasks/${id}/dependencies/${dependencyId}`, {
+    await this.fetchApi<void>(`/api/tasks/${id}/dependencies/${dependencyId}`, {
       method: 'DELETE',
     });
   }
@@ -353,13 +358,13 @@ class TaskService {
 
   // Validate task dependencies
   async validateDependencies(): Promise<ValidationResult> {
-    const response = await this.fetchApi<ValidationResult>('/api/v1/tasks/validate-dependencies');
+    const response = await this.fetchApi<ValidationResult>('/api/tasks/validate-dependencies');
     return response.data;
   }
 
   // Fix broken dependencies
   async fixDependencies(): Promise<ValidationResult> {
-    const response = await this.fetchApi<ValidationResult>('/api/v1/tasks/fix-dependencies', {
+    const response = await this.fetchApi<ValidationResult>('/api/tasks/fix-dependencies', {
       method: 'POST',
     });
     return response.data;
@@ -367,7 +372,7 @@ class TaskService {
 
   // Generate task files from tasks.json
   async generateTaskFiles(): Promise<TaskGenerationResult> {
-    const response = await this.fetchApi<TaskGenerationResult>('/api/v1/tasks/generate-files', {
+    const response = await this.fetchApi<TaskGenerationResult>('/api/tasks/generate-files', {
       method: 'POST',
     });
     return response.data;
@@ -375,13 +380,13 @@ class TaskService {
 
   // Get complexity analysis report
   async getComplexityReport(): Promise<ComplexityReport> {
-    const response = await this.fetchApi<ComplexityReport>('/api/v1/reports/complexity');
+    const response = await this.fetchApi<ComplexityReport>('/api/analytics/complexity');
     return response.data;
   }
 
   // Analyze complexity of a specific task
   async analyzeTaskComplexity(id: string): Promise<TaskComplexityAnalysis> {
-    const response = await this.fetchApi<TaskComplexityAnalysis>(`/api/v1/tasks/${id}/analyze-complexity`, {
+    const response = await this.fetchApi<TaskComplexityAnalysis>(`/api/tasks/${id}/analyze-complexity`, {
       method: 'POST',
       timeout: 180000, // 3 minutes timeout for complexity analysis
     });
@@ -394,7 +399,7 @@ class TaskService {
 
   // Expand all tasks that need expansion
   async expandAllTasks(prompt?: string): Promise<BulkOperationResult> {
-    const response = await this.fetchApi<BulkOperationResult>('/api/v1/tasks/expand-all', {
+    const response = await this.fetchApi<BulkOperationResult>('/api/tasks/expand-all', {
       method: 'POST',
       body: JSON.stringify({ prompt }),
       timeout: 600000, // 10 minutes timeout for bulk operations
@@ -404,10 +409,72 @@ class TaskService {
 
   // Update all tasks with AI assistance
   async updateAllTasks(prompt: string): Promise<BulkOperationResult> {
-    const response = await this.fetchApi<BulkOperationResult>('/api/v1/tasks/update-all', {
+    const response = await this.fetchApi<BulkOperationResult>('/api/tasks/update-all', {
       method: 'PUT',
       body: JSON.stringify({ prompt }),
     });
+    return response.data;
+  }
+
+  // Copy/duplicate a task
+  async copyTask(id: string, options?: {
+    titleSuffix?: string;
+    copySubtasks?: boolean;
+    copyDependencies?: boolean;
+    resetStatus?: boolean;
+  }): Promise<TaskMasterTask> {
+    const response = await this.fetchApi<TaskMasterTask>(`/api/tasks/${id}/copy`, {
+      method: 'POST',
+      body: JSON.stringify(options || {}),
+    });
+    return response.data;
+  }
+
+  // Search tasks
+  async searchTasks(query: string, filters?: {
+    status?: string;
+    priority?: string;
+    limit?: number;
+  }): Promise<TaskMasterTask[]> {
+    const params = new URLSearchParams();
+    params.append('q', query);
+    if (filters?.status) params.append('status', filters.status);
+    if (filters?.priority) params.append('priority', filters.priority);
+    if (filters?.limit) params.append('limit', filters.limit.toString());
+
+    const response = await this.fetchApi<TaskMasterTask[]>(`/api/tasks/search?${params.toString()}`);
+    return response.data;
+  }
+
+  // Bulk update tasks
+  async bulkUpdateTasks(taskIds: number[], updateData: any): Promise<BulkOperationResult> {
+    const response = await this.fetchApi<BulkOperationResult>('/api/tasks/bulk-update', {
+      method: 'POST',
+      body: JSON.stringify({ taskIds, updateData }),
+    });
+    return response.data;
+  }
+
+  // Bulk update task status
+  async bulkUpdateStatus(taskIds: number[], status: string): Promise<BulkOperationResult> {
+    const response = await this.fetchApi<BulkOperationResult>('/api/tasks/bulk-status', {
+      method: 'POST',
+      body: JSON.stringify({ taskIds, status }),
+    });
+    return response.data;
+  }
+
+  // Get task statistics
+  async getTaskStats(filters?: {
+    prdId?: string;
+    status?: string;
+  }): Promise<any> {
+    const params = new URLSearchParams();
+    if (filters?.prdId) params.append('prdId', filters.prdId);
+    if (filters?.status) params.append('status', filters.status);
+
+    const endpoint = `/api/analytics/task-stats${params.toString() ? `?${params.toString()}` : ''}`;
+    const response = await this.fetchApi<any>(endpoint);
     return response.data;
   }
 

@@ -5,10 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:server": "node src/api/server.js",
+    "dev:server": "cd ../api && node start.js",
     "dev:full": "concurrently \"npm run dev\" \"npm run dev:server\"",
     "build": "tsc && vite build",
-    "start:server": "node src/api/server.js",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },

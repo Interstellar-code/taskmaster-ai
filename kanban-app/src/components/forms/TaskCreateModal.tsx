@@ -196,15 +196,26 @@ export function TaskCreateModal({
 
   const fetchPRDs = async (): Promise<Array<{id: string, title: string}>> => {
     try {
-      const response = await fetch('/api/v1/prds');
+      const response = await fetch('/api/prds');
       if (response.ok) {
         const result = await response.json();
+
+        // Handle unified API response format
+        let data;
         if (result.success && result.data) {
-          return result.data.map((prd: any) => ({
-            id: prd.id || prd.fileName,
-            title: prd.title || prd.fileName || `PRD ${prd.id}`
-          }));
+          data = result.data;
+        } else if (Array.isArray(result)) {
+          // Direct array response (fallback)
+          data = result;
+        } else {
+          console.warn('Unexpected PRD API response format:', result);
+          return [];
         }
+
+        return data.map((prd: any) => ({
+          id: prd.id || prd.fileName,
+          title: prd.title || prd.fileName || `PRD ${prd.id}`
+        }));
       }
       // Fallback to empty array if API call fails
       return [];

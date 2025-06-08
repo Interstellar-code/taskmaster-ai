@@ -1,0 +1,7 @@
+{
+  "fileName": "test-prd.md",
+  "fileContent": "# Test PRD for API Migration\n\n## Overview\nThis is a test PRD document to verify the API migration functionality.\n\n## Requirements\n1. User authentication system\n2. Task management interface\n3. Real-time notifications\n4. Data export functionality\n5. Mobile responsive design\n\n## Technical Specifications\n- Frontend: React with TypeScript\n- Backend: Node.js with Express\n- Database: SQLite\n- Real-time: WebSocket\n\n## Success Criteria\n- All features implemented\n- Tests passing\n- Performance optimized\n- Documentation complete",
+  "fileType": "markdown",
+  "append": false,
+  "numTasks": 8
+}

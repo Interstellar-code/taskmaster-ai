@@ -1,3 +1,24 @@
+// ============================================================================
+// LEGACY API SERVER - DISABLED
+// ============================================================================
+// This file contains the legacy API server that used MCP function calls.
+// It has been disabled as part of Phase 3 API migration.
+// The kanban app now uses the unified API server at /api/* endpoints.
+//
+// DO NOT USE THIS FILE - Use the unified API server instead:
+// - Location: /api/server.js
+// - Start command: cd ../api && node start.js
+// ============================================================================
+
+console.error('❌ LEGACY API SERVER DISABLED');
+console.error('This legacy server with MCP calls has been disabled.');
+console.error('Please use the unified API server instead:');
+console.error('  cd ../api && node start.js');
+console.error('Or run: npm run dev:server');
+process.exit(1);
+
+// Legacy imports (disabled)
+/*
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -17,6 +38,7 @@ import { findTasksJsonPath } from '../../../mcp-server/src/core/utils/path-utils
 import { createLogger } from './logger.js';
 import mcpApiRoutes from './routes.js';
 import { findAvailablePort } from '../../../src/utils/port-utils.js';
+*/
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

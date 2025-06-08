@@ -1,9 +1,47 @@
-/**
- * routes.js
- * REST API endpoints for all TaskMaster MCP direct functions
- */
+// ============================================================================
+// LEGACY API ROUTES - DISABLED
+// ============================================================================
+// This file contains legacy API routes that used MCP function calls.
+// It has been disabled as part of Phase 3 API migration.
+// The kanban app now uses the unified API server at /api/* endpoints.
+//
+// DO NOT USE THIS FILE - Use the unified API server instead:
+// - Location: /api/routes/
+// - Endpoints: /api/tasks, /api/prds, /api/analytics
+// ============================================================================
 
+console.error('❌ LEGACY API ROUTES DISABLED');
+console.error('These legacy routes with MCP calls have been disabled.');
+console.error('Please use the unified API endpoints instead:');
+console.error('  GET /api/tasks - List tasks');
+console.error('  POST /api/tasks - Create task');
+console.error('  PUT /api/tasks/:id - Update task');
+console.error('  GET /api/prds - List PRDs');
+console.error('  GET /api/analytics/dashboard - Project info');
+
+// Disabled - return empty router
 import express from 'express';
+const router = express.Router();
+
+// All routes disabled - return 410 Gone
+router.use('*', (req, res) => {
+  res.status(410).json({
+    success: false,
+    error: 'LEGACY_API_DISABLED',
+    message: 'This legacy API with MCP calls has been disabled. Please use the unified API server instead.',
+    unifiedApiEndpoints: {
+      tasks: '/api/tasks',
+      prds: '/api/prds',
+      analytics: '/api/analytics'
+    },
+    timestamp: new Date().toISOString()
+  });
+});
+
+export default router;
+
+// Legacy imports (disabled)
+/*
 import path from 'path';
 import fs from 'fs/promises';
 import fsSync from 'fs';
@@ -52,6 +90,7 @@ import {
   VALID_STATUSES,
   VALID_PRIORITIES
 } from './validation.js';
+*/
 
 const router = express.Router();
 const logger = createLogger('MCP-API');

@@ -14,12 +14,16 @@ export default defineConfig(({ mode }) => ({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:3003',
+        target: process.env.VITE_API_URL || 'http://localhost:3001',
         changeOrigin: true,
         secure: false,
+        configure: (proxy, options) => {
+          // Log proxy target for debugging
+          console.log(`🔗 API Proxy: ${options.target}`);
+        }
       },
       '/health': {
-        target: 'http://localhost:3003',
+        target: process.env.VITE_API_URL || 'http://localhost:3001',
         changeOrigin: true,
         secure: false,
       }

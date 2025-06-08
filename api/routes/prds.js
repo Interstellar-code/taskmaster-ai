@@ -45,6 +45,14 @@ const prdParamsSchema = z.object({
   id: z.string().regex(/^\d+$/).transform(Number)
 });
 
+const prdUploadSchema = z.object({
+  fileName: z.string().min(1).max(255),
+  fileContent: z.string().min(1), // Base64 encoded content
+  fileType: z.string().optional().default('text/markdown'),
+  append: z.boolean().optional().default(false),
+  numTasks: z.number().optional()
+});
+
 /**
  * @swagger
  * components:
@@ -276,7 +284,7 @@ router.post('/',
   asyncHandler(async (req, res) => {
     const prdDAO = PRDDAO;
     const prdData = req.validatedBody;
-    
+
     // Check if PRD identifier already exists
     const existingPrd = await prdDAO.findByIdentifier(prdData.prdIdentifier);
     if (existingPrd) {
@@ -287,11 +295,154 @@ router.post('/',
         { prdIdentifier: prdData.prdIdentifier }
       );
     }
-    
+
     // Create PRD
     const prd = await prdDAO.create(prdData);
-    
+
     res.status(201).json(createSuccessResponse(prd, 'PRD created successfully'));
+  })
+);
+
+/**
+ * @swagger
+ * /api/prds/upload:
+ *   post:
+ *     summary: Upload PRD file
+ *     description: Upload a PRD file with content and register it in the system
+ *     tags: [PRDs]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - fileName
+ *               - fileContent
+ *             properties:
+ *               fileName:
+ *                 type: string
+ *                 description: Name of the PRD file
+ *               fileContent:
+ *                 type: string
+ *                 description: Base64 encoded file content
+ *               fileType:
+ *                 type: string
+ *                 default: text/markdown
+ *                 description: MIME type of the file
+ *               append:
+ *                 type: boolean
+ *                 default: false
+ *                 description: Whether to append to existing tasks
+ *               numTasks:
+ *                 type: number
+ *                 description: Expected number of tasks to generate
+ *     responses:
+ *       201:
+ *         description: PRD uploaded and registered successfully
+ *       400:
+ *         description: Validation error
+ *       409:
+ *         description: File already exists
+ */
+router.post('/upload',
+  validateBody(prdUploadSchema),
+  asyncHandler(async (req, res) => {
+    const prdDAO = PRDDAO;
+    const { fileName, fileContent, fileType, append, numTasks } = req.validatedBody;
+
+    // Import required modules
+    const path = (await import('path')).default;
+    const fs = (await import('fs/promises')).default;
+    const crypto = (await import('crypto')).default;
+
+    try {
+      // Decode base64 content
+      const decodedContent = Buffer.from(fileContent, 'base64').toString('utf-8');
+
+      // Generate PRD identifier from filename
+      const prdIdentifier = fileName.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9-_]/g, '_');
+
+      // Check if PRD identifier already exists
+      const existingPrd = await prdDAO.findByIdentifier(prdIdentifier);
+      if (existingPrd && !append) {
+        throw new APIError(
+          'PRD with this name already exists',
+          409,
+          'PRD_EXISTS',
+          { prdIdentifier, fileName }
+        );
+      }
+
+      // Determine file path in project
+      const projectRoot = process.env.PROJECT_ROOT || process.cwd();
+      const prdDir = path.join(projectRoot, '.taskmaster', 'prd');
+      const filePath = path.join(prdDir, fileName);
+
+      // Ensure PRD directory exists
+      await fs.mkdir(prdDir, { recursive: true });
+
+      // Write file to disk
+      await fs.writeFile(filePath, decodedContent, 'utf-8');
+
+      // Calculate file hash and size
+      const fileHash = crypto.createHash('sha256').update(decodedContent).digest('hex');
+      const fileSize = Buffer.byteLength(decodedContent, 'utf-8');
+
+      // Create PRD entry in database
+      const prdData = {
+        prdIdentifier,
+        title: fileName.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' '),
+        fileName,
+        filePath: path.relative(projectRoot, filePath),
+        fileHash,
+        fileSize,
+        status: 'pending',
+        complexity: 'medium',
+        priority: 'medium',
+        description: `Uploaded PRD file: ${fileName}`,
+        tags: ['uploaded'],
+        metadata: {
+          uploadedAt: new Date().toISOString(),
+          fileType,
+          append,
+          numTasks
+        }
+      };
+
+      let prd;
+      if (existingPrd && append) {
+        // Update existing PRD
+        prd = await prdDAO.update(existingPrd.id, {
+          ...prdData,
+          lastModified: new Date().toISOString()
+        });
+      } else {
+        // Create new PRD
+        prd = await prdDAO.create(prdData);
+      }
+
+      res.status(201).json(createSuccessResponse(prd, 'PRD uploaded and registered successfully', {
+        filePath: prd.filePath,
+        fileSize,
+        fileHash
+      }));
+
+    } catch (error) {
+      if (error instanceof APIError) {
+        throw error;
+      }
+
+      throw new APIError(
+        'Failed to upload PRD file',
+        500,
+        'UPLOAD_FAILED',
+        {
+          fileName,
+          error: error.message
+        }
+      );
+    }
   })
 );
 

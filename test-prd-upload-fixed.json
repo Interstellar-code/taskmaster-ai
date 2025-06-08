@@ -1,0 +1,7 @@
+{
+  "fileName": "test-fixed-path.md",
+  "fileContent": "# Test PRD for Fixed Path\n\n## Overview\nThis PRD tests the fixed file path saving functionality.\n\n## Requirements\n1. Correct file path resolution\n2. Proper directory structure\n3. File saved in project root .taskmaster folder\n\n## Success Criteria\n- File saved to correct location\n- Database path matches file path\n- No duplicate database entries",
+  "fileType": "markdown",
+  "append": false,
+  "numTasks": 5
+}
