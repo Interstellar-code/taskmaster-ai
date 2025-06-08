@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 import { EnhancedKanbanBoard } from "./components/EnhancedKanbanBoard";
+import { PRDManagementPage } from "./components/PRDManagementPage";
 import { ThemeToggle } from "./components/ThemeToggle";
 import { ThemeProvider } from "./components/theme-provider";
 import { FormDemo } from "./components/forms/FormDemo";
@@ -8,7 +9,7 @@ import { Button } from "./components/ui/button";
 import { Toaster } from "./components/ui/toaster";
 
 function App() {
-  const [currentView, setCurrentView] = useState<'kanban' | 'forms'>('kanban');
+  const [currentView, setCurrentView] = useState<'kanban' | 'forms' | 'prds'>('kanban');
 
   return (
     <>
@@ -21,6 +22,12 @@ function App() {
                 onClick={() => setCurrentView('kanban')}
               >
                 Kanban Board
+              </Button>
+              <Button
+                variant={currentView === 'prds' ? 'default' : 'outline'}
+                onClick={() => setCurrentView('prds')}
+              >
+                PRD Management
               </Button>
               <Button
                 variant={currentView === 'forms' ? 'default' : 'outline'}
@@ -39,6 +46,8 @@ function App() {
                 </h1>
                 <EnhancedKanbanBoard />
               </>
+            ) : currentView === 'prds' ? (
+              <PRDManagementPage />
             ) : (
               <FormDemo />
             )}

@@ -39,6 +39,7 @@ import {
   getPRDStatusDirectory
 } from '../../../scripts/modules/prd-manager/prd-utils.js';
 import { updatePrd, updatePrdStatus, createPrdFromFile } from '../../../scripts/modules/prd-manager/prd-write-operations.js';
+import { updatePrdTaskStatistics } from '../../../scripts/modules/prd-manager/prd-integrity.js';
 import { createLogger } from './logger.js';
 import {
   validateCreateTask,
@@ -1218,21 +1219,47 @@ router.get('/tasks/:id/complexity-report', requireTaskMasterCore, async (req, re
 router.get('/prds', async (req, res) => {
   try {
     const { status, priority, complexity } = req.query;
-    const prdsPath = getPRDsJsonPath();
+    const projectRoot = process.env.TASK_MASTER_PROJECT_ROOT || path.resolve(process.cwd(), '..');
+    const prdsPath = getPRDsJsonPath(projectRoot);
 
     const filters = {};
     if (status) filters.status = status;
     if (priority) filters.priority = priority;
     if (complexity) filters.complexity = complexity;
 
-    const prds = getAllPrds(filters, prdsPath);
+    logger.info(`Using PRDs path: ${prdsPath}`);
+    logger.info(`PRDs path exists: ${fsSync.existsSync(prdsPath)}`);
+    if (fsSync.existsSync(prdsPath)) {
+      const fileContent = fsSync.readFileSync(prdsPath, 'utf-8');
+      logger.info(`PRDs file content length: ${fileContent.length}`);
+      logger.info(`PRDs file first 200 chars: ${fileContent.substring(0, 200)}`);
+    }
 
-    res.json({
-      success: true,
-      data: prds,
-      count: prds.length,
-      timestamp: new Date().toISOString()
-    });
+    const prds = getAllPrds(filters, prdsPath);
+    logger.info(`Retrieved ${prds.length} PRDs from getAllPrds`);
+    if (prds.length > 0) {
+      logger.info('Sample PRD structure:', JSON.stringify(prds[0], null, 2));
+    }
+
+    // Transform PRD data to match frontend interface
+    const transformedPrds = prds.map(prd => ({
+      id: prd.id,
+      title: prd.title || 'Untitled PRD',
+      status: prd.status || 'pending',
+      uploadDate: prd.createdDate || prd.lastModified || new Date().toISOString(),
+      analysisStatus: prd.analysisStatus || 'not-analyzed',
+      tasksStatus: prd.tasksStatus || 'no-tasks',
+      priority: prd.priority || 'medium',
+      complexity: prd.complexity || 'medium',
+      filePath: prd.filePath,
+      taskCount: prd.taskStats?.completedTasks || 0,
+      totalTasks: prd.taskStats?.totalTasks || 0,
+      fileSize: prd.fileSize,
+      estimatedEffort: prd.estimatedEffort,
+      tags: prd.tags || []
+    }));
+
+    res.json(transformedPrds);
   } catch (error) {
     logger.error('Failed to list PRDs:', error.message);
     res.status(500).json({
@@ -1264,9 +1291,27 @@ router.get('/prds/:id', async (req, res) => {
       });
     }
 
+    // Transform PRD data to match frontend interface (same as in /prds list endpoint)
+    const transformedPrd = {
+      id: prd.id,
+      title: prd.title || 'Untitled PRD',
+      status: prd.status || 'pending',
+      uploadDate: prd.createdDate || prd.lastModified || new Date().toISOString(),
+      analysisStatus: prd.analysisStatus || 'not-analyzed',
+      tasksStatus: prd.tasksStatus || 'no-tasks',
+      priority: prd.priority || 'medium',
+      complexity: prd.complexity || 'medium',
+      filePath: prd.filePath,
+      taskCount: prd.taskStats?.completedTasks || 0,
+      totalTasks: prd.taskStats?.totalTasks || 0,
+      fileSize: prd.fileSize,
+      estimatedEffort: prd.estimatedEffort,
+      tags: prd.tags || []
+    };
+
     res.json({
       success: true,
-      data: prd,
+      data: transformedPrd,
       timestamp: new Date().toISOString()
     });
   } catch (error) {
@@ -1531,6 +1576,969 @@ router.post('/prds/upload', async (req, res) => {
       success: false,
       error: 'INTERNAL_SERVER_ERROR',
       message: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+/**
+ * POST /api/v1/prds/:id/analyze
+ * Analyze PRD complexity and generate insights
+ */
+router.post('/prds/:id/analyze', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const projectRoot = process.env.TASK_MASTER_PROJECT_ROOT || path.resolve(process.cwd(), '..');
+    const prdsPath = getPRDsJsonPath(projectRoot);
+
+    const prd = findPrdById(id, prdsPath);
+    if (!prd) {
+      return res.status(404).json({
+        success: false,
+        error: 'PRD not found',
+        message: `PRD with ID ${id} not found`,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    // Update PRD status to indicate analysis is in progress
+    const updateResult = updatePrd(id, { analysisStatus: 'analyzing' }, prdsPath);
+    if (!updateResult.success) {
+      logger.warn(`Failed to update PRD ${id} analysis status:`, updateResult.error);
+    }
+
+    // Respond immediately that analysis has started
+    res.json({
+      success: true,
+      data: {
+        prdId: id,
+        status: 'analyzing',
+        message: `Analysis started for PRD ${id}`
+      },
+      timestamp: new Date().toISOString()
+    });
+
+    // Run analysis in background
+    setTimeout(async () => {
+      try {
+        // Read PRD file content for analysis
+        const prdDir = path.dirname(prdsPath);
+        const prdFilePath = path.join(prdDir, prd.fileName);
+
+        if (!fsSync.existsSync(prdFilePath)) {
+          throw new Error(`PRD file ${prd.fileName} not found`);
+        }
+
+        const prdContent = fsSync.readFileSync(prdFilePath, 'utf-8');
+
+        // Analyze PRD content
+        const wordCount = prdContent.split(/\s+/).length;
+        const lineCount = prdContent.split('\n').length;
+        const hasCodeBlocks = prdContent.includes('```');
+        const hasTables = prdContent.includes('|');
+        const hasImages = prdContent.includes('![');
+
+        // Determine complexity based on content analysis
+        let complexity = 'low';
+        let estimatedEffort = '1-2 days';
+
+        if (wordCount > 2000 || hasCodeBlocks || hasTables) {
+          complexity = 'medium';
+          estimatedEffort = '3-5 days';
+        }
+
+        if (wordCount > 5000 || (hasCodeBlocks && hasTables && hasImages)) {
+          complexity = 'high';
+          estimatedEffort = '1-2 weeks';
+        }
+
+        // Extract key components from content
+        const keyComponents = [];
+        if (prdContent.toLowerCase().includes('ui') || prdContent.toLowerCase().includes('interface')) {
+          keyComponents.push('UI Components');
+        }
+        if (prdContent.toLowerCase().includes('api') || prdContent.toLowerCase().includes('endpoint')) {
+          keyComponents.push('API Endpoints');
+        }
+        if (prdContent.toLowerCase().includes('database') || prdContent.toLowerCase().includes('data')) {
+          keyComponents.push('Data Models');
+        }
+        if (prdContent.toLowerCase().includes('auth') || prdContent.toLowerCase().includes('login')) {
+          keyComponents.push('Authentication');
+        }
+
+        // Update PRD with analysis results
+        const analysisResult = {
+          complexity,
+          estimatedEffort,
+          keyComponents: keyComponents.length > 0 ? keyComponents : ['General Implementation'],
+          dependencies: ['System Integration'],
+          analysisStatus: 'analyzed',
+          lastModified: new Date().toISOString()
+        };
+
+        updatePrd(id, analysisResult, prdsPath);
+
+        // Update task statistics if there are linked tasks
+        try {
+          const tasksPath = path.join(projectRoot, '.taskmaster', 'tasks', 'tasks.json');
+          if (fsSync.existsSync(tasksPath)) {
+            const statsResult = updatePrdTaskStatistics(id, tasksPath, prdsPath);
+            if (statsResult.success) {
+              logger.info(`Updated task statistics for PRD ${id}: ${statsResult.data.completionPercentage}% complete`);
+            }
+          }
+        } catch (statsError) {
+          logger.warn(`Error updating task statistics for PRD ${id}:`, statsError.message);
+        }
+
+        logger.info(`Completed analysis for PRD ${id}: ${complexity} complexity, ${estimatedEffort} effort`);
+      } catch (error) {
+        logger.error(`Failed to complete analysis for PRD ${id}:`, error.message);
+        // Update status to indicate failure
+        updatePrd(id, {
+          analysisStatus: 'not-analyzed',
+          lastModified: new Date().toISOString()
+        }, prdsPath);
+      }
+    }, 2000);
+
+  } catch (error) {
+    logger.error(`Failed to analyze PRD ${req.params.id}:`, error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to analyze PRD',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+/**
+ * POST /api/v1/prds/:id/generate-tasks
+ * Generate tasks from PRD content
+ */
+router.post('/prds/:id/generate-tasks', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { mode = 'append', expandSubtasks = true } = req.body;
+    const projectRoot = process.env.TASK_MASTER_PROJECT_ROOT || path.resolve(process.cwd(), '..');
+    const prdsPath = getPRDsJsonPath(projectRoot);
+
+    const prd = findPrdById(id, prdsPath);
+    if (!prd) {
+      return res.status(404).json({
+        success: false,
+        error: 'PRD not found',
+        message: `PRD with ID ${id} not found`,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    // Update PRD status to indicate task generation is in progress
+    const updateResult = updatePrd(id, { tasksStatus: 'generating' }, prdsPath);
+    if (!updateResult.success) {
+      logger.warn(`Failed to update PRD ${id} task status:`, updateResult.error);
+    }
+
+    // Respond immediately that task generation has started
+    res.json({
+      success: true,
+      data: {
+        prdId: id,
+        mode,
+        expandSubtasks,
+        status: 'generating',
+        message: `Task generation started for PRD ${id}`
+      },
+      timestamp: new Date().toISOString()
+    });
+
+    // Run task generation in background
+    setTimeout(async () => {
+      try {
+        // Read PRD file content
+        const prdDir = path.dirname(prdsPath);
+        const prdFilePath = path.join(prdDir, prd.fileName);
+
+        if (!fsSync.existsSync(prdFilePath)) {
+          throw new Error(`PRD file ${prd.fileName} not found`);
+        }
+
+        const prdContent = fsSync.readFileSync(prdFilePath, 'utf-8');
+
+        // Generate tasks based on PRD content
+        const tasks = generateTasksFromPRD(prdContent, prd.id, prd.title);
+
+        // Read existing tasks
+        const tasksPath = path.join(projectRoot, '.taskmaster', 'tasks', 'tasks.json');
+        let existingTasks = { tasks: [] };
+
+        if (fsSync.existsSync(tasksPath)) {
+          try {
+            existingTasks = JSON.parse(fsSync.readFileSync(tasksPath, 'utf-8'));
+          } catch (error) {
+            logger.warn(`Failed to read existing tasks: ${error.message}`);
+          }
+        }
+
+        // Add new tasks (append mode)
+        if (mode === 'append') {
+          existingTasks.tasks = existingTasks.tasks || [];
+          existingTasks.tasks.push(...tasks);
+        } else {
+          // Replace mode - filter out existing tasks from this PRD and add new ones
+          existingTasks.tasks = existingTasks.tasks.filter(task =>
+            !task.prdSource || task.prdSource !== prd.id
+          );
+          existingTasks.tasks.push(...tasks);
+        }
+
+        // Ensure tasks directory exists
+        const tasksDir = path.dirname(tasksPath);
+        if (!fsSync.existsSync(tasksDir)) {
+          fsSync.mkdirSync(tasksDir, { recursive: true });
+        }
+
+        // Write tasks back to file
+        fsSync.writeFileSync(tasksPath, JSON.stringify(existingTasks, null, 2));
+
+        // Update PRD with task generation results
+        const taskGenerationResult = {
+          tasksStatus: 'generated',
+          taskCount: tasks.length,
+          totalTasks: tasks.length,
+          linkedTaskIds: tasks.map(task => task.id),
+          lastModified: new Date().toISOString()
+        };
+
+        updatePrd(id, taskGenerationResult, prdsPath);
+
+        // Update task statistics for the PRD
+        try {
+          const statsResult = updatePrdTaskStatistics(id, tasksPath, prdsPath);
+          if (statsResult.success) {
+            logger.info(`Updated task statistics for PRD ${id}: ${statsResult.data.completionPercentage}% complete`);
+          } else {
+            logger.warn(`Failed to update task statistics for PRD ${id}:`, statsResult.error);
+          }
+        } catch (statsError) {
+          logger.warn(`Error updating task statistics for PRD ${id}:`, statsError.message);
+        }
+
+        logger.info(`Completed task generation for PRD ${id}: Generated ${tasks.length} tasks`);
+      } catch (error) {
+        logger.error(`Failed to complete task generation for PRD ${id}:`, error.message);
+        // Update status to indicate failure
+        updatePrd(id, {
+          tasksStatus: 'no-tasks',
+          lastModified: new Date().toISOString()
+        }, prdsPath);
+      }
+    }, 2000);
+
+  } catch (error) {
+    logger.error(`Failed to generate tasks for PRD ${req.params.id}:`, error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to generate tasks',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+/**
+ * GET /api/v1/prds/:id/download
+ * Download PRD file
+ */
+router.get('/prds/:id/download', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const prdsPath = getPRDsJsonPath();
+
+    const prd = findPrdById(id, prdsPath);
+    if (!prd) {
+      return res.status(404).json({
+        success: false,
+        error: 'PRD not found',
+        message: `PRD with ID ${id} not found`,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    // Construct file path from PRD directory and fileName
+    const prdDir = path.dirname(prdsPath);
+    const filePath = path.join(prdDir, prd.fileName);
+
+    if (!fsSync.existsSync(filePath)) {
+      return res.status(404).json({
+        success: false,
+        error: 'PRD file not found',
+        message: `PRD file ${prd.fileName} not found on disk`,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    const fileContent = fsSync.readFileSync(filePath, 'utf-8');
+    const fileName = prd.fileName;
+
+    res.setHeader('Content-Type', 'text/markdown');
+    res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+    res.send(fileContent);
+
+  } catch (error) {
+    logger.error(`Failed to download PRD ${req.params.id}:`, error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to download PRD',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+/**
+ * DELETE /api/v1/prds/:id
+ * Delete PRD (only if no tasks generated and not analyzed)
+ */
+router.delete('/prds/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const projectRoot = process.env.TASK_MASTER_PROJECT_ROOT || path.resolve(process.cwd(), '..');
+    const prdsPath = getPRDsJsonPath(projectRoot);
+
+    const prd = findPrdById(id, prdsPath);
+    if (!prd) {
+      return res.status(404).json({
+        success: false,
+        error: 'PRD not found',
+        message: `PRD with ID ${id} not found`,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    // Check if PRD can be deleted (no tasks generated and not analyzed)
+    if (prd.tasksStatus === 'generated' || prd.analysisStatus === 'analyzed') {
+      return res.status(400).json({
+        success: false,
+        error: 'Cannot delete PRD',
+        message: 'Cannot delete PRD that has been analyzed or has generated tasks',
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    // Read current PRDs
+    const prdsData = JSON.parse(fsSync.readFileSync(prdsPath, 'utf-8'));
+
+    // Remove PRD from array
+    prdsData.prds = prdsData.prds.filter(p => p.id !== id);
+
+    // Write back to file
+    fsSync.writeFileSync(prdsPath, JSON.stringify(prdsData, null, 2));
+
+    // Also delete the PRD file if it exists
+    const prdFilePath = path.join(path.dirname(prdsPath), prd.fileName);
+    if (fsSync.existsSync(prdFilePath)) {
+      fsSync.unlinkSync(prdFilePath);
+    }
+
+    logger.info(`PRD ${id} deleted successfully`);
+    res.json({
+      success: true,
+      message: 'PRD deleted successfully',
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    logger.error(`Failed to delete PRD ${req.params.id}:`, error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to delete PRD',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+/**
+ * POST /api/v1/prds/:id/archive
+ * Archive PRD (move to archived status)
+ */
+router.post('/prds/:id/archive', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const projectRoot = process.env.TASK_MASTER_PROJECT_ROOT || path.resolve(process.cwd(), '..');
+    const prdsPath = getPRDsJsonPath(projectRoot);
+
+    const prd = findPrdById(id, prdsPath);
+    if (!prd) {
+      return res.status(404).json({
+        success: false,
+        error: 'PRD not found',
+        message: `PRD with ID ${id} not found`,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    // Read current PRDs
+    const prdsData = JSON.parse(fsSync.readFileSync(prdsPath, 'utf-8'));
+
+    // Update PRD status to archived
+    const prdIndex = prdsData.prds.findIndex(p => p.id === id);
+    if (prdIndex !== -1) {
+      prdsData.prds[prdIndex].status = 'archived';
+      prdsData.prds[prdIndex].lastModified = new Date().toISOString();
+    }
+
+    // Write back to file
+    fsSync.writeFileSync(prdsPath, JSON.stringify(prdsData, null, 2));
+
+    logger.info(`PRD ${id} archived successfully`);
+    res.json({
+      success: true,
+      message: 'PRD archived successfully',
+      prd: prdsData.prds[prdIndex],
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    logger.error(`Failed to archive PRD ${req.params.id}:`, error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to archive PRD',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+// Helper function to generate tasks from PRD content
+function generateTasksFromPRD(prdContent, prdId, prdTitle) {
+  const tasks = [];
+  let taskIdCounter = Date.now(); // Use timestamp for unique IDs
+
+  // Generate tasks based on common PRD patterns
+  const taskTemplates = [
+    {
+      title: `Setup and Planning for ${prdTitle}`,
+      description: `Initial setup and planning phase for implementing ${prdTitle}. Review requirements, create technical specifications, and establish development timeline.`,
+      priority: 'high',
+      status: 'pending'
+    },
+    {
+      title: `Design and Architecture for ${prdTitle}`,
+      description: `Design system architecture and create technical design documents for ${prdTitle}. Define data models, API specifications, and component structure.`,
+      priority: 'high',
+      status: 'pending'
+    },
+    {
+      title: `Core Implementation of ${prdTitle}`,
+      description: `Implement the core functionality as specified in ${prdTitle}. This includes main features and business logic implementation.`,
+      priority: 'medium',
+      status: 'pending'
+    },
+    {
+      title: `User Interface Development for ${prdTitle}`,
+      description: `Develop user interface components and screens as specified in ${prdTitle}. Ensure responsive design and accessibility compliance.`,
+      priority: 'medium',
+      status: 'pending'
+    },
+    {
+      title: `Testing and Quality Assurance for ${prdTitle}`,
+      description: `Comprehensive testing of all features implemented for ${prdTitle}. Include unit tests, integration tests, and user acceptance testing.`,
+      priority: 'medium',
+      status: 'pending'
+    },
+    {
+      title: `Documentation and Deployment for ${prdTitle}`,
+      description: `Create user documentation, deployment guides, and finalize the implementation of ${prdTitle}. Prepare for production deployment.`,
+      priority: 'low',
+      status: 'pending'
+    }
+  ];
+
+  // Generate additional tasks based on content analysis
+  if (prdContent.toLowerCase().includes('api') || prdContent.toLowerCase().includes('endpoint')) {
+    taskTemplates.push({
+      title: `API Development for ${prdTitle}`,
+      description: `Develop and implement API endpoints as specified in ${prdTitle}. Include proper error handling, validation, and documentation.`,
+      priority: 'high',
+      status: 'pending'
+    });
+  }
+
+  if (prdContent.toLowerCase().includes('database') || prdContent.toLowerCase().includes('data')) {
+    taskTemplates.push({
+      title: `Database Implementation for ${prdTitle}`,
+      description: `Design and implement database schema and data access layer for ${prdTitle}. Include migrations and data validation.`,
+      priority: 'high',
+      status: 'pending'
+    });
+  }
+
+  // Create task objects
+  taskTemplates.forEach((template, index) => {
+    tasks.push({
+      id: `${taskIdCounter + index}`,
+      title: template.title,
+      description: template.description,
+      status: template.status,
+      priority: template.priority,
+      dependencies: index > 0 ? [`${taskIdCounter + index - 1}`] : [],
+      subtasks: [],
+      prdSource: prdId,
+      createdDate: new Date().toISOString(),
+      lastModified: new Date().toISOString()
+    });
+  });
+
+  return tasks;
+}
+
+// ============================================================================
+// PRD MANAGEMENT ENDPOINTS
+// ============================================================================
+
+/**
+ * GET /api/v1/prds
+ * List all PRDs with enhanced status fields for web interface
+ */
+router.get('/prds', async (req, res) => {
+  try {
+    const { status, priority, complexity } = req.query;
+    const projectRoot = process.env.TASK_MASTER_PROJECT_ROOT || path.resolve(process.cwd(), '..');
+    const prdsPath = getPRDsJsonPath(projectRoot);
+
+    // Build filters object
+    const filters = {};
+    if (status) filters.status = status;
+    if (priority) filters.priority = priority;
+    if (complexity) filters.complexity = complexity;
+
+    const prds = getAllPrds(filters, prdsPath);
+
+    // Debug: Log the raw PRD data to see what we're working with
+    logger.info('Raw PRD data before transformation:', JSON.stringify(prds[0], null, 2));
+
+    // Transform PRDs to match web interface expectations
+    const transformedPrds = prds.map(prd => {
+      // Use existing analysisStatus if present, otherwise determine from data
+      let analysisStatus = prd.analysisStatus || 'not-analyzed';
+      if (!prd.analysisStatus) {
+        if (prd.status === 'done' || prd.status === 'in-progress') {
+          analysisStatus = 'analyzed';
+        } else if (prd.status === 'analyzing') {
+          analysisStatus = 'analyzing';
+        }
+      }
+
+      // Use existing tasksStatus if present, otherwise determine from linked tasks
+      let tasksStatus = prd.tasksStatus || 'no-tasks';
+      if (!prd.tasksStatus) {
+        if (prd.linkedTaskIds && Array.isArray(prd.linkedTaskIds) && prd.linkedTaskIds.length > 0) {
+          tasksStatus = 'generated';
+        } else if (prd.taskStats && prd.taskStats.totalTasks && prd.taskStats.totalTasks > 0) {
+          tasksStatus = 'generated';
+        } else if (prd.totalTasks && prd.totalTasks > 0) {
+          tasksStatus = 'generated';
+        } else if (prd.status === 'generating-tasks') {
+          tasksStatus = 'generating';
+        }
+      }
+
+      // Debug logging for this specific PRD (commented out for production)
+      // logger.info(`PRD ${prd.id} transformation:`, {
+      //   hasLinkedTaskIds: !!(prd.linkedTaskIds && prd.linkedTaskIds.length > 0),
+      //   linkedTaskIdsLength: prd.linkedTaskIds ? prd.linkedTaskIds.length : 0,
+      //   hasTotalTasks: !!(prd.totalTasks && prd.totalTasks > 0),
+      //   totalTasks: prd.totalTasks,
+      //   hasTaskStats: !!(prd.taskStats && prd.taskStats.totalTasks > 0),
+      //   taskStatsTotal: prd.taskStats ? prd.taskStats.totalTasks : 0,
+      //   finalTasksStatus: tasksStatus
+      // });
+
+      return {
+        id: prd.id,
+        title: prd.title,
+        status: prd.status,
+        uploadDate: prd.createdDate || prd.uploadDate || new Date().toISOString(),
+        analysisStatus: analysisStatus,
+        tasksStatus: tasksStatus,
+        priority: prd.priority || 'medium',
+        complexity: prd.complexity || 'medium',
+        description: prd.description || '',
+        tags: prd.tags || [],
+        linkedTaskIds: prd.linkedTaskIds || [],
+        taskStats: prd.taskStats || {
+          totalTasks: 0,
+          completedTasks: 0,
+          pendingTasks: 0,
+          inProgressTasks: 0,
+          blockedTasks: 0,
+          deferredTasks: 0,
+          cancelledTasks: 0,
+          completionPercentage: 0
+        },
+        estimatedEffort: prd.estimatedEffort || 'Unknown',
+        fileSize: prd.fileSize || 0,
+        fileName: prd.fileName || '',
+        filePath: prd.filePath || ''
+      };
+    });
+
+    logger.info(`Retrieved ${transformedPrds.length} PRDs with filters:`, filters);
+    // Return flat array for web interface compatibility
+    res.json(transformedPrds);
+
+  } catch (error) {
+    logger.error('Failed to retrieve PRDs:', error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to retrieve PRDs',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+/**
+ * GET /api/v1/prds/:id
+ * Get specific PRD by ID
+ */
+router.get('/prds/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const projectRoot = process.env.TASK_MASTER_PROJECT_ROOT || path.resolve(process.cwd(), '..');
+    const prdsPath = getPRDsJsonPath(projectRoot);
+
+    const prd = findPrdById(id, prdsPath);
+    if (!prd) {
+      return res.status(404).json({
+        success: false,
+        error: 'PRD not found',
+        message: `PRD with ID ${id} not found`,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    // Transform PRD to match web interface expectations
+    const transformedPrd = {
+      ...prd,
+      analysisStatus: prd.analysisStatus || (prd.status === 'pending' ? 'not-analyzed' : 'analyzed'),
+      tasksStatus: prd.tasksStatus || (
+        (prd.linkedTaskIds && prd.linkedTaskIds.length > 0) || 
+        (prd.linkedTasks && prd.linkedTasks.length > 0) || 
+        (prd.taskStats && prd.taskStats.totalTasks > 0)
+          ? 'generated' 
+          : 'no-tasks'
+      ),
+      uploadDate: prd.createdDate
+    };
+
+    logger.info(`Retrieved PRD ${id}`);
+    res.json({
+      success: true,
+      data: transformedPrd,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    logger.error(`Failed to retrieve PRD ${req.params.id}:`, error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to retrieve PRD',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+/**
+ * POST /api/v1/prds
+ * Create a new PRD
+ */
+router.post('/prds', async (req, res) => {
+  try {
+    const { title, description, priority = 'medium', complexity = 'medium', tags = [], filePath } = req.body;
+    const projectRoot = process.env.TASK_MASTER_PROJECT_ROOT || path.resolve(process.cwd(), '..');
+
+    if (!title) {
+      return res.status(400).json({
+        success: false,
+        error: 'Validation error',
+        message: 'Title is required',
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    let result;
+    if (filePath) {
+      // Create PRD from existing file
+      result = createPrdFromFile(filePath, {
+        title,
+        description,
+        priority,
+        complexity,
+        tags
+      });
+    } else {
+      // Create new PRD file
+      const prdDir = path.join(projectRoot, '.taskmaster', 'prd');
+      if (!fsSync.existsSync(prdDir)) {
+        await fs.mkdir(prdDir, { recursive: true });
+      }
+
+      const fileName = `${title.toLowerCase().replace(/[^a-z0-9]/g, '_')}.md`;
+      const newFilePath = path.join(prdDir, fileName);
+      
+      const prdContent = `# ${title}\n\n${description || 'No description provided.'}\n\n## Requirements\n\n- Add your requirements here\n\n## Acceptance Criteria\n\n- Add acceptance criteria here\n`;
+      
+      await fs.writeFile(newFilePath, prdContent, 'utf8');
+
+      result = createPrdFromFile(newFilePath, {
+        title,
+        description,
+        priority,
+        complexity,
+        tags
+      });
+    }
+
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        error: result.error,
+        message: result.error,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    logger.info(`Created new PRD: ${result.data.id}`);
+    res.status(201).json({
+      success: true,
+      data: {
+        ...result.data,
+        analysisStatus: 'not-analyzed',
+        tasksStatus: 'no-tasks',
+        uploadDate: result.data.createdDate
+      },
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    logger.error('Failed to create PRD:', error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to create PRD',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+/**
+ * PUT /api/v1/prds/:id
+ * Update PRD
+ */
+router.put('/prds/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+    const projectRoot = process.env.TASK_MASTER_PROJECT_ROOT || path.resolve(process.cwd(), '..');
+    const prdsPath = getPRDsJsonPath(projectRoot);
+
+    const result = updatePrd(id, updateData, prdsPath);
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        error: result.error,
+        message: result.error,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    logger.info(`Updated PRD ${id}`);
+    res.json({
+      success: true,
+      data: {
+        ...result.data,
+        analysisStatus: result.data.analysisStatus || (result.data.status === 'pending' ? 'not-analyzed' : 'analyzed'),
+        tasksStatus: result.data.tasksStatus || (
+          (result.data.linkedTaskIds && result.data.linkedTaskIds.length > 0) || 
+          (result.data.linkedTasks && result.data.linkedTasks.length > 0) || 
+          (result.data.taskStats && result.data.taskStats.totalTasks > 0)
+            ? 'generated' 
+            : 'no-tasks'
+        ),
+        uploadDate: result.data.createdDate
+      },
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    logger.error(`Failed to update PRD ${req.params.id}:`, error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to update PRD',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+/**
+ * POST /api/v1/prds/:id/analyze
+ * Analyze PRD (set analysis status to analyzing/analyzed)
+ */
+router.post('/prds/:id/analyze', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const projectRoot = process.env.TASK_MASTER_PROJECT_ROOT || path.resolve(process.cwd(), '..');
+    const prdsPath = getPRDsJsonPath(projectRoot);
+
+    const prd = findPrdById(id, prdsPath);
+    if (!prd) {
+      return res.status(404).json({
+        success: false,
+        error: 'PRD not found',
+        message: `PRD with ID ${id} not found`,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    // Update analysis status to analyzing first
+    let result = updatePrd(id, { analysisStatus: 'analyzing' }, prdsPath);
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        error: result.error,
+        message: result.error,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    // Simulate analysis process (in real implementation, this would call AI analysis)
+    setTimeout(async () => {
+      try {
+        updatePrd(id, { 
+          analysisStatus: 'analyzed',
+          lastModified: new Date().toISOString()
+        }, prdsPath);
+        logger.info(`PRD ${id} analysis completed`);
+      } catch (error) {
+        logger.error(`Failed to complete analysis for PRD ${id}:`, error.message);
+      }
+    }, 2000);
+
+    logger.info(`Started analysis for PRD ${id}`);
+    res.json({
+      success: true,
+      message: 'PRD analysis started',
+      data: {
+        ...result.data,
+        analysisStatus: 'analyzing'
+      },
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    logger.error(`Failed to analyze PRD ${req.params.id}:`, error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to analyze PRD',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+/**
+ * POST /api/v1/prds/:id/generate-tasks
+ * Generate tasks from PRD
+ */
+router.post('/prds/:id/generate-tasks', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const projectRoot = process.env.TASK_MASTER_PROJECT_ROOT || path.resolve(process.cwd(), '..');
+    const prdsPath = getPRDsJsonPath(projectRoot);
+
+    const prd = findPrdById(id, prdsPath);
+    if (!prd) {
+      return res.status(404).json({
+        success: false,
+        error: 'PRD not found',
+        message: `PRD with ID ${id} not found`,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    // Update tasks status to generating first
+    let result = updatePrd(id, { tasksStatus: 'generating' }, prdsPath);
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        error: result.error,
+        message: result.error,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    // Read PRD content for task generation
+    let prdContent = '';
+    try {
+      prdContent = fsSync.readFileSync(prd.filePath, 'utf8');
+    } catch (error) {
+      logger.warn(`Could not read PRD file ${prd.filePath}, using title for task generation`);
+      prdContent = prd.title;
+    }
+
+    // Generate tasks from PRD content
+    const generatedTasks = generateTasksFromPRD(prdContent, id, prd.title);
+    
+    // Simulate task generation process (in real implementation, this would call AI task generation)
+    setTimeout(async () => {
+      try {
+        const taskIds = generatedTasks.map(task => task.id);
+        updatePrd(id, { 
+          tasksStatus: 'generated',
+          linkedTaskIds: taskIds,
+          taskStats: {
+            totalTasks: generatedTasks.length,
+            completedTasks: 0,
+            pendingTasks: generatedTasks.length,
+            inProgressTasks: 0,
+            blockedTasks: 0,
+            deferredTasks: 0,
+            cancelledTasks: 0,
+            completionPercentage: 0
+          },
+          lastModified: new Date().toISOString()
+        }, prdsPath);
+        logger.info(`Generated ${generatedTasks.length} tasks for PRD ${id}`);
+      } catch (error) {
+        logger.error(`Failed to complete task generation for PRD ${id}:`, error.message);
+      }
+    }, 3000);
+
+    logger.info(`Started task generation for PRD ${id}`);
+    res.json({
+      success: true,
+      message: 'Task generation started',
+      data: {
+        ...result.data,
+        tasksStatus: 'generating',
+        estimatedTasks: generatedTasks.length
+      },
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    logger.error(`Failed to generate tasks for PRD ${req.params.id}:`, error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to generate tasks',
+      message: error.message,
       timestamp: new Date().toISOString()
     });
   }

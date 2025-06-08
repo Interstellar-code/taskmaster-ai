@@ -3,7 +3,9 @@
     "allow": [
       "Bash(grep:*)",
       "Bash(find:*)",
-      "Bash(rg:*)"
+      "Bash(rg:*)",
+      "Bash(npm run format-check:*)",
+      "Bash(npm run lint)"
     ],
     "deny": []
   }

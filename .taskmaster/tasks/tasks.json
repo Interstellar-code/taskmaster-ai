@@ -345,7 +345,7 @@
       "description": "Refactor the PRD Kanban folder structure to improve organization and maintainability. presently we have pending, in-progress and done folders for PRDs .. i would like to simplify this similar to tasks. the status of the PRD files can be managed in the prd.json file. for archiving we will have a the folder and instead of taking files from /prd/done folder it will take from /prd folder.",
       "details": "The current PRD Kanban folder structure needs simplification. This task involves reorganizing the folders and files related to PRDs within the Kanban system to enhance clarity, reduce redundancy, and streamline navigation. Consider grouping files by feature or module rather than by type, and ensure naming conventions are consistent. This might involve updating import paths in existing components that interact with PRD files. The goal is a more intuitive and scalable structure.",
       "testStrategy": "1. Verify that all existing PRD functionalities (creation, editing, viewing, deletion) still work correctly after the refactor. 2. Check for any broken file paths or import errors in the application. 3. Ensure that the new folder structure is logical and easy to navigate for new and existing developers. 4. Conduct a thorough code review to confirm adherence to new naming conventions and organizational principles.",
-      "status": "in-progress",
+      "status": "done",
       "dependencies": [],
       "priority": "medium",
       "subtasks": [
@@ -427,7 +427,7 @@
       "testStrategy": "1. **Unit Tests**: Test the Multer configuration with valid and invalid file types/sizes.\n2. **API Tests**: Use tools like Postman or curl to send POST requests to `/api/v1/prds/upload` with:\n   - Valid MD/TXT files (within size limits).\n   - Invalid file types (e.g., PDF, JPG).\n   - Files exceeding 10MB.\n   - Empty file uploads.\n3. **Integration Tests**: Verify that uploaded files are correctly stored in `.taskmaster/prd/` and that `prds.json` is updated with the new PRD's metadata. Check for auto-generated PRD ID and title.",
       "priority": "high",
       "dependencies": [],
-      "status": "pending",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
@@ -628,7 +628,7 @@
       "dependencies": [
         93
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
@@ -828,7 +828,7 @@
       "dependencies": [
         94
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
@@ -1011,7 +1011,7 @@
       "dependencies": [
         95
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
@@ -1246,7 +1246,7 @@
       "dependencies": [
         "96"
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": [
         {
           "id": "97.1",
@@ -1271,6 +1271,407 @@
       "complexityLevel": "medium",
       "tags": [],
       "updatedAt": "2025-06-06T17:36:32.623Z"
+    },
+    {
+      "id": "1749317945525",
+      "title": "Setup and Planning for Prd 002 Taskhero Ui Rebrand",
+      "description": "Initial setup and planning phase for implementing Prd 002 Taskhero Ui Rebrand. Review requirements, create technical specifications, and establish development timeline.",
+      "status": "pending",
+      "priority": "high",
+      "dependencies": [],
+      "subtasks": [],
+      "prdSource": "prd_001",
+      "createdDate": "2025-06-07T17:39:05.526Z",
+      "lastModified": "2025-06-07T17:39:05.526Z"
+    },
+    {
+      "id": "1749317945526",
+      "title": "Design and Architecture for Prd 002 Taskhero Ui Rebrand",
+      "description": "Design system architecture and create technical design documents for Prd 002 Taskhero Ui Rebrand. Define data models, API specifications, and component structure.",
+      "status": "pending",
+      "priority": "high",
+      "dependencies": [
+        "1749317945525"
+      ],
+      "subtasks": [],
+      "prdSource": "prd_001",
+      "createdDate": "2025-06-07T17:39:05.526Z",
+      "lastModified": "2025-06-07T17:39:05.526Z"
+    },
+    {
+      "id": "1749317945527",
+      "title": "Core Implementation of Prd 002 Taskhero Ui Rebrand",
+      "description": "Implement the core functionality as specified in Prd 002 Taskhero Ui Rebrand. This includes main features and business logic implementation.",
+      "status": "pending",
+      "priority": "medium",
+      "dependencies": [
+        "1749317945526"
+      ],
+      "subtasks": [],
+      "prdSource": "prd_001",
+      "createdDate": "2025-06-07T17:39:05.526Z",
+      "lastModified": "2025-06-07T17:39:05.526Z"
+    },
+    {
+      "id": "1749317945528",
+      "title": "User Interface Development for Prd 002 Taskhero Ui Rebrand",
+      "description": "Develop user interface components and screens as specified in Prd 002 Taskhero Ui Rebrand. Ensure responsive design and accessibility compliance.",
+      "status": "pending",
+      "priority": "medium",
+      "dependencies": [
+        "1749317945527"
+      ],
+      "subtasks": [],
+      "prdSource": "prd_001",
+      "createdDate": "2025-06-07T17:39:05.526Z",
+      "lastModified": "2025-06-07T17:39:05.526Z"
+    },
+    {
+      "id": "1749317945529",
+      "title": "Testing and Quality Assurance for Prd 002 Taskhero Ui Rebrand",
+      "description": "Comprehensive testing of all features implemented for Prd 002 Taskhero Ui Rebrand. Include unit tests, integration tests, and user acceptance testing.",
+      "status": "pending",
+      "priority": "medium",
+      "dependencies": [
+        "1749317945528"
+      ],
+      "subtasks": [],
+      "prdSource": "prd_001",
+      "createdDate": "2025-06-07T17:39:05.526Z",
+      "lastModified": "2025-06-07T17:39:05.526Z"
+    },
+    {
+      "id": "1749317945530",
+      "title": "Documentation and Deployment for Prd 002 Taskhero Ui Rebrand",
+      "description": "Create user documentation, deployment guides, and finalize the implementation of Prd 002 Taskhero Ui Rebrand. Prepare for production deployment.",
+      "status": "pending",
+      "priority": "low",
+      "dependencies": [
+        "1749317945529"
+      ],
+      "subtasks": [],
+      "prdSource": "prd_001",
+      "createdDate": "2025-06-07T17:39:05.526Z",
+      "lastModified": "2025-06-07T17:39:05.526Z"
+    },
+    {
+      "id": "1749317945531",
+      "title": "API Development for Prd 002 Taskhero Ui Rebrand",
+      "description": "Develop and implement API endpoints as specified in Prd 002 Taskhero Ui Rebrand. Include proper error handling, validation, and documentation.",
+      "status": "pending",
+      "priority": "high",
+      "dependencies": [
+        "1749317945530"
+      ],
+      "subtasks": [],
+      "prdSource": "prd_001",
+      "createdDate": "2025-06-07T17:39:05.526Z",
+      "lastModified": "2025-06-07T17:39:05.526Z"
+    },
+    {
+      "id": "1749319116634",
+      "title": "Setup and Planning for Prd 002 Taskhero Ui Rebrand",
+      "description": "Initial setup and planning phase for implementing Prd 002 Taskhero Ui Rebrand. Review requirements, create technical specifications, and establish development timeline.",
+      "status": "pending",
+      "priority": "high",
+      "dependencies": [],
+      "subtasks": [],
+      "prdSource": "prd_001",
+      "createdDate": "2025-06-07T17:58:36.635Z",
+      "lastModified": "2025-06-07T17:58:36.635Z"
+    },
+    {
+      "id": "1749319116635",
+      "title": "Design and Architecture for Prd 002 Taskhero Ui Rebrand",
+      "description": "Design system architecture and create technical design documents for Prd 002 Taskhero Ui Rebrand. Define data models, API specifications, and component structure.",
+      "status": "pending",
+      "priority": "high",
+      "dependencies": [
+        "1749319116634"
+      ],
+      "subtasks": [],
+      "prdSource": "prd_001",
+      "createdDate": "2025-06-07T17:58:36.635Z",
+      "lastModified": "2025-06-07T17:58:36.635Z"
+    },
+    {
+      "id": "1749319116636",
+      "title": "Core Implementation of Prd 002 Taskhero Ui Rebrand",
+      "description": "Implement the core functionality as specified in Prd 002 Taskhero Ui Rebrand. This includes main features and business logic implementation.",
+      "status": "pending",
+      "priority": "medium",
+      "dependencies": [
+        "1749319116635"
+      ],
+      "subtasks": [],
+      "prdSource": "prd_001",
+      "createdDate": "2025-06-07T17:58:36.635Z",
+      "lastModified": "2025-06-07T17:58:36.635Z"
+    },
+    {
+      "id": "1749319116637",
+      "title": "User Interface Development for Prd 002 Taskhero Ui Rebrand",
+      "description": "Develop user interface components and screens as specified in Prd 002 Taskhero Ui Rebrand. Ensure responsive design and accessibility compliance.",
+      "status": "pending",
+      "priority": "medium",
+      "dependencies": [
+        "1749319116636"
+      ],
+      "subtasks": [],
+      "prdSource": "prd_001",
+      "createdDate": "2025-06-07T17:58:36.635Z",
+      "lastModified": "2025-06-07T17:58:36.635Z"
+    },
+    {
+      "id": "1749319116638",
+      "title": "Testing and Quality Assurance for Prd 002 Taskhero Ui Rebrand",
+      "description": "Comprehensive testing of all features implemented for Prd 002 Taskhero Ui Rebrand. Include unit tests, integration tests, and user acceptance testing.",
+      "status": "pending",
+      "priority": "medium",
+      "dependencies": [
+        "1749319116637"
+      ],
+      "subtasks": [],
+      "prdSource": "prd_001",
+      "createdDate": "2025-06-07T17:58:36.635Z",
+      "lastModified": "2025-06-07T17:58:36.635Z"
+    },
+    {
+      "id": "1749319116639",
+      "title": "Documentation and Deployment for Prd 002 Taskhero Ui Rebrand",
+      "description": "Create user documentation, deployment guides, and finalize the implementation of Prd 002 Taskhero Ui Rebrand. Prepare for production deployment.",
+      "status": "pending",
+      "priority": "low",
+      "dependencies": [
+        "1749319116638"
+      ],
+      "subtasks": [],
+      "prdSource": "prd_001",
+      "createdDate": "2025-06-07T17:58:36.635Z",
+      "lastModified": "2025-06-07T17:58:36.635Z"
+    },
+    {
+      "id": "1749319116640",
+      "title": "API Development for Prd 002 Taskhero Ui Rebrand",
+      "description": "Develop and implement API endpoints as specified in Prd 002 Taskhero Ui Rebrand. Include proper error handling, validation, and documentation.",
+      "status": "pending",
+      "priority": "high",
+      "dependencies": [
+        "1749319116639"
+      ],
+      "subtasks": [],
+      "prdSource": "prd_001",
+      "createdDate": "2025-06-07T17:58:36.635Z",
+      "lastModified": "2025-06-07T17:58:36.635Z"
+    },
+    {
+      "id": "1749322291543",
+      "title": "Setup and Planning for Prd 002 Taskhero Ui Rebrand",
+      "description": "Initial setup and planning phase for implementing Prd 002 Taskhero Ui Rebrand. Review requirements, create technical specifications, and establish development timeline.",
+      "status": "pending",
+      "priority": "high",
+      "dependencies": [],
+      "subtasks": [],
+      "prdSource": "prd_001",
+      "createdDate": "2025-06-07T18:51:31.544Z",
+      "lastModified": "2025-06-07T18:51:31.544Z"
+    },
+    {
+      "id": "1749322291544",
+      "title": "Design and Architecture for Prd 002 Taskhero Ui Rebrand",
+      "description": "Design system architecture and create technical design documents for Prd 002 Taskhero Ui Rebrand. Define data models, API specifications, and component structure.",
+      "status": "pending",
+      "priority": "high",
+      "dependencies": [
+        "1749322291543"
+      ],
+      "subtasks": [],
+      "prdSource": "prd_001",
+      "createdDate": "2025-06-07T18:51:31.544Z",
+      "lastModified": "2025-06-07T18:51:31.544Z"
+    },
+    {
+      "id": "1749322291545",
+      "title": "Core Implementation of Prd 002 Taskhero Ui Rebrand",
+      "description": "Implement the core functionality as specified in Prd 002 Taskhero Ui Rebrand. This includes main features and business logic implementation.",
+      "status": "pending",
+      "priority": "medium",
+      "dependencies": [
+        "1749322291544"
+      ],
+      "subtasks": [],
+      "prdSource": "prd_001",
+      "createdDate": "2025-06-07T18:51:31.544Z",
+      "lastModified": "2025-06-07T18:51:31.544Z"
+    },
+    {
+      "id": "1749322291546",
+      "title": "User Interface Development for Prd 002 Taskhero Ui Rebrand",
+      "description": "Develop user interface components and screens as specified in Prd 002 Taskhero Ui Rebrand. Ensure responsive design and accessibility compliance.",
+      "status": "pending",
+      "priority": "medium",
+      "dependencies": [
+        "1749322291545"
+      ],
+      "subtasks": [],
+      "prdSource": "prd_001",
+      "createdDate": "2025-06-07T18:51:31.544Z",
+      "lastModified": "2025-06-07T18:51:31.544Z"
+    },
+    {
+      "id": "1749322291547",
+      "title": "Testing and Quality Assurance for Prd 002 Taskhero Ui Rebrand",
+      "description": "Comprehensive testing of all features implemented for Prd 002 Taskhero Ui Rebrand. Include unit tests, integration tests, and user acceptance testing.",
+      "status": "pending",
+      "priority": "medium",
+      "dependencies": [
+        "1749322291546"
+      ],
+      "subtasks": [],
+      "prdSource": "prd_001",
+      "createdDate": "2025-06-07T18:51:31.544Z",
+      "lastModified": "2025-06-07T18:51:31.544Z"
+    },
+    {
+      "id": "1749322291548",
+      "title": "Documentation and Deployment for Prd 002 Taskhero Ui Rebrand",
+      "description": "Create user documentation, deployment guides, and finalize the implementation of Prd 002 Taskhero Ui Rebrand. Prepare for production deployment.",
+      "status": "pending",
+      "priority": "low",
+      "dependencies": [
+        "1749322291547"
+      ],
+      "subtasks": [],
+      "prdSource": "prd_001",
+      "createdDate": "2025-06-07T18:51:31.544Z",
+      "lastModified": "2025-06-07T18:51:31.544Z"
+    },
+    {
+      "id": "1749322291549",
+      "title": "API Development for Prd 002 Taskhero Ui Rebrand",
+      "description": "Develop and implement API endpoints as specified in Prd 002 Taskhero Ui Rebrand. Include proper error handling, validation, and documentation.",
+      "status": "pending",
+      "priority": "high",
+      "dependencies": [
+        "1749322291548"
+      ],
+      "subtasks": [],
+      "prdSource": "prd_001",
+      "createdDate": "2025-06-07T18:51:31.544Z",
+      "lastModified": "2025-06-07T18:51:31.544Z"
+    },
+    {
+      "id": "1749322664832",
+      "title": "Setup and Planning for Prd Kanban Crud Implementation",
+      "description": "Initial setup and planning phase for implementing Prd Kanban Crud Implementation. Review requirements, create technical specifications, and establish development timeline.",
+      "status": "pending",
+      "priority": "high",
+      "dependencies": [],
+      "subtasks": [],
+      "prdSource": "prd_002",
+      "createdDate": "2025-06-07T18:57:44.832Z",
+      "lastModified": "2025-06-07T18:57:44.832Z"
+    },
+    {
+      "id": "1749322664833",
+      "title": "Design and Architecture for Prd Kanban Crud Implementation",
+      "description": "Design system architecture and create technical design documents for Prd Kanban Crud Implementation. Define data models, API specifications, and component structure.",
+      "status": "pending",
+      "priority": "high",
+      "dependencies": [
+        "1749322664832"
+      ],
+      "subtasks": [],
+      "prdSource": "prd_002",
+      "createdDate": "2025-06-07T18:57:44.832Z",
+      "lastModified": "2025-06-07T18:57:44.832Z"
+    },
+    {
+      "id": "1749322664834",
+      "title": "Core Implementation of Prd Kanban Crud Implementation",
+      "description": "Implement the core functionality as specified in Prd Kanban Crud Implementation. This includes main features and business logic implementation.",
+      "status": "pending",
+      "priority": "medium",
+      "dependencies": [
+        "1749322664833"
+      ],
+      "subtasks": [],
+      "prdSource": "prd_002",
+      "createdDate": "2025-06-07T18:57:44.832Z",
+      "lastModified": "2025-06-07T18:57:44.832Z"
+    },
+    {
+      "id": "1749322664835",
+      "title": "User Interface Development for Prd Kanban Crud Implementation",
+      "description": "Develop user interface components and screens as specified in Prd Kanban Crud Implementation. Ensure responsive design and accessibility compliance.",
+      "status": "pending",
+      "priority": "medium",
+      "dependencies": [
+        "1749322664834"
+      ],
+      "subtasks": [],
+      "prdSource": "prd_002",
+      "createdDate": "2025-06-07T18:57:44.832Z",
+      "lastModified": "2025-06-07T18:57:44.832Z"
+    },
+    {
+      "id": "1749322664836",
+      "title": "Testing and Quality Assurance for Prd Kanban Crud Implementation",
+      "description": "Comprehensive testing of all features implemented for Prd Kanban Crud Implementation. Include unit tests, integration tests, and user acceptance testing.",
+      "status": "pending",
+      "priority": "medium",
+      "dependencies": [
+        "1749322664835"
+      ],
+      "subtasks": [],
+      "prdSource": "prd_002",
+      "createdDate": "2025-06-07T18:57:44.832Z",
+      "lastModified": "2025-06-07T18:57:44.832Z"
+    },
+    {
+      "id": "1749322664837",
+      "title": "Documentation and Deployment for Prd Kanban Crud Implementation",
+      "description": "Create user documentation, deployment guides, and finalize the implementation of Prd Kanban Crud Implementation. Prepare for production deployment.",
+      "status": "pending",
+      "priority": "low",
+      "dependencies": [
+        "1749322664836"
+      ],
+      "subtasks": [],
+      "prdSource": "prd_002",
+      "createdDate": "2025-06-07T18:57:44.832Z",
+      "lastModified": "2025-06-07T18:57:44.832Z"
+    },
+    {
+      "id": "1749322664838",
+      "title": "API Development for Prd Kanban Crud Implementation",
+      "description": "Develop and implement API endpoints as specified in Prd Kanban Crud Implementation. Include proper error handling, validation, and documentation.",
+      "status": "pending",
+      "priority": "high",
+      "dependencies": [
+        "1749322664837"
+      ],
+      "subtasks": [],
+      "prdSource": "prd_002",
+      "createdDate": "2025-06-07T18:57:44.832Z",
+      "lastModified": "2025-06-07T18:57:44.832Z"
+    },
+    {
+      "id": "1749322664839",
+      "title": "Database Implementation for Prd Kanban Crud Implementation",
+      "description": "Design and implement database schema and data access layer for Prd Kanban Crud Implementation. Include migrations and data validation.",
+      "status": "pending",
+      "priority": "high",
+      "dependencies": [
+        "1749322664838"
+      ],
+      "subtasks": [],
+      "prdSource": "prd_002",
+      "createdDate": "2025-06-07T18:57:44.832Z",
+      "lastModified": "2025-06-07T18:57:44.832Z"
     }
-  ]
+  ],
+  "meta": {
+    "updatedAt": "2025-06-07T18:54:07.167Z"
+  }
 }

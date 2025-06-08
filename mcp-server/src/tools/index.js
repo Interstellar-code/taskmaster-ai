@@ -29,6 +29,7 @@ import { registerRemoveTaskTool } from './remove-task.js';
 import { registerInitializeProjectTool } from './initialize-project.js';
 import { registerModelsTool } from './models.js';
 import { registerMoveTaskTool } from './move-task.js';
+import { registerGetPrdsTool } from './get-prds.js';
 
 /**
  * Register all TaskHero tools with the MCP server
@@ -42,6 +43,9 @@ export function registerTaskHeroTools(server) {
 		registerInitializeProjectTool(server);
 		registerModelsTool(server);
 		registerParsePRDTool(server);
+
+		// Group 1.5: PRD Management
+		registerGetPrdsTool(server);
 
 		// Group 2: Task Listing & Viewing
 		registerListTasksTool(server);

@@ -97,7 +97,10 @@ const prdMetadataSchema = z.object({
 	completedTasks: z.number().int().min(0).optional(),
 	completion: z.number().min(0).max(100).optional(),
 	estimatedEffort: z.string().optional(),
-	priority: z.enum(['low', 'medium', 'high']).default('medium')
+	priority: z.enum(['low', 'medium', 'high']).default('medium'),
+	// Web interface status fields
+	analysisStatus: z.enum(['not-analyzed', 'analyzing', 'analyzed']).optional(),
+	tasksStatus: z.enum(['no-tasks', 'generating', 'generated']).optional()
 });
 
 // Define Zod schema for the complete PRDs metadata structure
@@ -107,6 +110,7 @@ const prdsMetadataSchema = z.object({
 		version: z.string().default('1.0.0'),
 		lastUpdated: z.string().describe('ISO 8601 timestamp'),
 		totalPrds: z.number().int().min(0).default(0),
+		lastPrdNumber: z.number().int().min(0).default(0).describe('Highest PRD number used for ID generation'),
 		schema: z
 			.object({
 				version: z.string().default('1.0.0'),
@@ -173,8 +177,10 @@ function generatePrdId(prdsPath = null) {
 		const resolvedPath = prdsPath || getPRDsJsonPath();
 		const prdsData = readPrdsMetadata(resolvedPath);
 
-		// Find the highest existing PRD number
-		let maxNumber = 0;
+		// Use lastPrdNumber from metadata if available, otherwise find the highest existing PRD number
+		let maxNumber = prdsData.metadata.lastPrdNumber || 0;
+		
+		// Also check existing PRDs to ensure we don't have conflicts (in case metadata is out of sync)
 		for (const prd of prdsData.prds) {
 			const match = prd.id.match(/^prd_(\d+)$/);
 			if (match) {
@@ -219,7 +225,8 @@ function readPrdsMetadata(prdsPath = null) {
 				metadata: {
 					version: '1.0.0',
 					lastUpdated: new Date().toISOString(),
-					totalPrds: 0
+					totalPrds: 0,
+					lastPrdNumber: 0
 				}
 			};
 		}
@@ -270,13 +277,26 @@ function writePrdsMetadata(prdsData, prdsPath = null) {
 			);
 		}
 
+		// Calculate the highest PRD number for tracking
+		let highestPrdNumber = validationResult.data.metadata.lastPrdNumber || 0;
+		for (const prd of validationResult.data.prds) {
+			const match = prd.id.match(/^prd_(\d+)$/);
+			if (match) {
+				const number = parseInt(match[1], 10);
+				if (number > highestPrdNumber) {
+					highestPrdNumber = number;
+				}
+			}
+		}
+
 		// Update metadata
 		const dataToWrite = {
 			...validationResult.data,
 			metadata: {
 				...validationResult.data.metadata,
 				lastUpdated: new Date().toISOString(),
-				totalPrds: validationResult.data.prds.length
+				totalPrds: validationResult.data.prds.length,
+				lastPrdNumber: highestPrdNumber
 			}
 		};
 
@@ -354,6 +374,7 @@ function initializePrdsMetadata(prdsPath = null) {
 			version: '1.0.0',
 			lastUpdated: new Date().toISOString(),
 			totalPrds: 0,
+			lastPrdNumber: 0,
 			schema: {
 				version: '1.0.0',
 				description: 'TaskMaster AI PRD Lifecycle Tracking Schema',

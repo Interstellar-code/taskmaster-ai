@@ -1,137 +1,94 @@
 {
   "prds": [
     {
-      "id": "prd_005",
-      "title": "TaskHero SQLite3 Database Migration",
-      "fileName": "prd_005_sqlite3_database_migration.md",
-      "status": "pending",
-      "complexity": "high",
-      "createdDate": "2025-01-15T00:00:00.000Z",
-      "lastModified": "2025-01-15T00:00:00.000Z",
-      "filePath": "prd_005_sqlite3_database_migration.md",
-      "fileHash": "sqlite3_migration_hash_placeholder_123456789abcdef",
-      "fileSize": 15000,
-      "description": "Migrate TaskHero AI from JSON file-based storage to SQLite3 database storage while maintaining 100% compatibility with existing interfaces",
-      "tags": [
-        "database",
-        "migration",
-        "sqlite3",
-        "architecture",
-        "performance"
-      ],
-      "linkedTaskIds": [],
-      "taskStats": {
-        "totalTasks": 0,
-        "completedTasks": 0,
-        "pendingTasks": 0,
-        "inProgressTasks": 0,
-        "blockedTasks": 0,
-        "deferredTasks": 0,
-        "cancelledTasks": 0,
-        "completionPercentage": 0
-      },
-      "linkedTasks": [],
-      "estimatedEffort": "4-6 weeks",
-      "priority": "high"
-    },
-    {
-      "id": "prd_006",
-      "title": "TaskHero Kanban PRD Upload Feature",
-      "fileName": "prd_006_kanban_prd_upload_feature.md",
-      "status": "in-progress",
-      "complexity": "medium",
-      "createdDate": "2025-06-06T17:23:03.113Z",
-      "lastModified": "2025-06-07T06:58:25.147Z",
-      "filePath": ".taskmaster/prd/prd_006_kanban_prd_upload_feature.md",
-      "fileHash": "f50102d225784d3ea83a49676ceb0452ec9ccbdcd4b27b1dfa632b1fb370050d",
-      "fileSize": 9423,
-      "description": "Implement PRD upload feature in TaskHero Kanban Board with modal dialog, file validation, and automatic registration",
-      "tags": [
-        "kanban",
-        "prd-upload",
-        "file-upload",
-        "ui-enhancement",
-        "modal"
-      ],
-      "linkedTaskIds": [],
-      "taskStats": {
-        "totalTasks": 0,
-        "completedTasks": 0,
-        "pendingTasks": 0,
-        "inProgressTasks": 0,
-        "blockedTasks": 0,
-        "deferredTasks": 0,
-        "cancelledTasks": 0,
-        "completionPercentage": 0
-      },
-      "estimatedEffort": "1-2 days",
-      "priority": "high"
-    },
-    {
-      "id": "prd_007",
-      "title": "prd_006_kanban_prd_upload_feature",
-      "fileName": "prd_006_kanban_prd_upload_feature.md",
-      "status": "in-progress",
-      "complexity": "medium",
-      "createdDate": "2025-06-06T17:30:09.985Z",
-      "lastModified": "2025-06-07T06:58:14.298Z",
-      "filePath": ".taskmaster\\prd\\prd_006_kanban_prd_upload_feature.md",
-      "fileHash": "784069f9498b8d2babdb33fd0b57726470bc6b53aaff479765d4f4117c71d69b",
-      "fileSize": 9767,
-      "description": "PRD parsed and registered automatically during task generation",
-      "tags": [
-        "auto-generated",
-        "parsed"
-      ],
-      "linkedTaskIds": [],
-      "taskStats": {
-        "totalTasks": 0,
-        "completedTasks": 0,
-        "pendingTasks": 0,
-        "inProgressTasks": 0,
-        "blockedTasks": 0,
-        "deferredTasks": 0,
-        "cancelledTasks": 0,
-        "completionPercentage": 0
-      },
-      "estimatedEffort": "2-4 hours",
-      "priority": "medium"
-    },
-    {
-      "id": "prd_009",
-      "title": "Prd 005 Sqlite3 Database Migration",
-      "fileName": "prd_005_sqlite3_database_migration_1.md",
+      "id": "prd_001",
+      "title": "Prd 002 Taskhero Ui Rebrand",
+      "fileName": "prd_002_taskhero_ui_rebrand_1.md",
       "status": "pending",
       "complexity": "medium",
-      "createdDate": "2025-06-06T21:05:03.402Z",
-      "lastModified": "2025-06-06T21:05:03.402Z",
-      "filePath": "C:\\laragon\\www\\taskmaster-ai\\.taskmaster\\prd\\prd_005_sqlite3_database_migration_1.md",
-      "fileHash": "827ccfa2e43f0621d47e0819ab856bb65c10e690540c820579577307cc32a6a5",
-      "fileSize": 17827,
-      "description": "PRD uploaded via web interface on 6/6/2025",
+      "createdDate": "2025-06-07T17:34:47.386Z",
+      "lastModified": "2025-06-07T18:56:47.446Z",
+      "filePath": "C:\\laragon\\www\\taskmaster-ai\\.taskmaster\\prd\\prd_002_taskhero_ui_rebrand_1.md",
+      "fileHash": "2dcb2f0e0d06f7371d81d878c16628b82f8b5efc0340fc9ad74b39fb3e758bf7",
+      "fileSize": 9493,
+      "description": "PRD uploaded via web interface on 7/6/2025",
       "tags": [
         "web-upload",
         "pending-review"
       ],
-      "linkedTaskIds": [],
+      "linkedTaskIds": [
+        "1749322291543",
+        "1749322291544",
+        "1749322291545",
+        "1749322291546",
+        "1749322291547",
+        "1749322291548",
+        "1749322291549"
+      ],
       "taskStats": {
-        "totalTasks": 0,
+        "totalTasks": 7,
         "completedTasks": 0,
-        "pendingTasks": 0,
+        "pendingTasks": 7,
         "inProgressTasks": 0,
         "blockedTasks": 0,
         "deferredTasks": 0,
         "cancelledTasks": 0,
         "completionPercentage": 0
       },
-      "estimatedEffort": "2-4 hours",
-      "priority": "medium"
+      "totalTasks": 7,
+      "estimatedEffort": "3-5 days",
+      "priority": "medium",
+      "analysisStatus": "analyzed",
+      "tasksStatus": "generated"
+    },
+    {
+      "id": "prd_002",
+      "title": "Prd Kanban Crud Implementation",
+      "fileName": "prd_kanban_crud_implementation_1.md",
+      "status": "pending",
+      "complexity": "medium",
+      "createdDate": "2025-06-07T18:57:19.766Z",
+      "lastModified": "2025-06-08T07:38:58.814Z",
+      "filePath": "C:\\laragon\\www\\taskmaster-ai\\.taskmaster\\prd\\prd_kanban_crud_implementation_1.md",
+      "fileHash": "35ced86a50eace17908f825d213b0b51fd0abb585d8fb708dff61a8e33eed02e",
+      "fileSize": 13859,
+      "description": "PRD uploaded via web interface on 7/6/2025",
+      "tags": [
+        "web-upload",
+        "pending-review"
+      ],
+      "linkedTaskIds": [
+        "1749322664832",
+        "1749322664833",
+        "1749322664834",
+        "1749322664835",
+        "1749322664836",
+        "1749322664837",
+        "1749322664838",
+        "1749322664839"
+      ],
+      "taskStats": {
+        "totalTasks": 8,
+        "completedTasks": 0,
+        "pendingTasks": 8,
+        "inProgressTasks": 0,
+        "blockedTasks": 0,
+        "deferredTasks": 0,
+        "cancelledTasks": 0,
+        "completionPercentage": 0
+      },
+      "totalTasks": 8,
+      "estimatedEffort": "3-5 days",
+      "priority": "medium",
+      "analysisStatus": "analyzed",
+      "tasksStatus": "generated"
     }
   ],
   "metadata": {
     "version": "2.0.0",
-    "lastUpdated": "2025-06-07T06:58:44.425Z",
-    "totalPrds": 4,
+    "lastUpdated": "2025-06-08T07:38:58.814Z",
+    "totalPrds": 2,
+    "lastPrdNumber": 2,
     "schema": {
       "version": "2.0.0",
       "description": "TaskHero AI PRD Simplified Structure Schema"

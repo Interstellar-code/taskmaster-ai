@@ -310,6 +310,9 @@ function createPrdFromFile(filePath, additionalData = {}, prdsPath = null) {
 			estimatedEffort: additionalData.estimatedEffort || '',
 			priority: additionalData.priority || 'medium',
 			complexity: additionalData.complexity || 'medium',
+			// Web interface status fields
+			analysisStatus: additionalData.analysisStatus || 'not-analyzed',
+			tasksStatus: additionalData.tasksStatus || 'no-tasks',
 			...additionalData
 		};
 
