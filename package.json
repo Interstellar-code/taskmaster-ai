@@ -25,6 +25,11 @@
 		"release": "changeset publish",
 		"inspector": "npx @modelcontextprotocol/inspector node mcp-server/server.js",
 		"mcp-server": "node mcp-server/server.js",
+		"api": "node api/start.js",
+		"api:dev": "node api/start.js --port 3001",
+		"api:test": "node api/test-api.js",
+		"api:test-perf": "node api/test-api.js --performance",
+		"dev:full": "concurrently \"npm run api:dev\" \"npm run web:dev\"",
 		"format-check": "prettier --check .",
 		"format": "prettier --write ."
 	},
@@ -85,8 +90,12 @@
 		"ora": "^8.2.0",
 		"react": "^19.1.0",
 		"react-dom": "^19.1.0",
+		"sqlite3": "^5.1.7",
+		"swagger-jsdoc": "^6.2.8",
+		"swagger-ui-express": "^5.0.1",
 		"tailwind-merge": "^3.3.0",
 		"uuid": "^11.1.0",
+		"winston": "^3.17.0",
 		"yauzl": "^3.2.0",
 		"zod": "^3.23.8"
 	},
@@ -110,7 +119,8 @@
 		"bin/**",
 		"mcp-server/**",
 		"src/**",
-		"kanban-app/**"
+		"kanban-app/**",
+		"api/**"
 	],
 	"overrides": {
 		"node-fetch": "^2.6.12",

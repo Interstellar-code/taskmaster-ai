@@ -1,0 +1,17 @@
+{
+  "filename": "taskhero-comprehensive-test-2025-06-08T12-43-17-995Z.db",
+  "path": "C:\\laragon\\www\\taskmaster-ai\\test-comprehensive\\.taskmaster\\backups\\taskhero-comprehensive-test-2025-06-08T12-43-17-995Z.db",
+  "size": 4096,
+  "created_at": "2025-06-08T12:43:17.998Z",
+  "type": "comprehensive-test",
+  "project_root": "C:\\laragon\\www\\taskmaster-ai\\test-comprehensive",
+  "database_stats": {
+    "projects": 1,
+    "prds": 1,
+    "tasks": 4,
+    "task_dependencies": 0,
+    "configurations": 14,
+    "ai_operations": 0,
+    "database_size": 118784
+  }
+}
