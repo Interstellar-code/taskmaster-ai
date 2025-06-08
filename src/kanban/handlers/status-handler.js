@@ -139,23 +139,26 @@ export class StatusHandler {
 	}
 
 	/**
-	 * Save tasks back to tasks.json
+	 * Save tasks to database (migrated from JSON)
 	 */
 	async saveTasks() {
 		try {
-			const data = readJSON(this.tasksPath);
-			data.tasks = this.kanbanBoard.tasks;
+			// Import database module
+			const { default: cliDatabase } = await import('../../../scripts/modules/database/cli-database.js');
+			await cliDatabase.initialize();
 
-			// Update metadata
-			data.meta = data.meta || {};
-			data.meta.updatedAt = new Date().toISOString();
-
-			// Write back to file
-			fs.writeFileSync(this.tasksPath, JSON.stringify(data, null, 2));
+			// Update each task in the database
+			for (const task of this.kanbanBoard.tasks) {
+				// Use task_identifier instead of id for database lookup
+				const taskId = task.id || task.task_identifier;
+				await cliDatabase.updateTaskStatus(taskId, task.status);
+			}
 
 			return { success: true };
 		} catch (error) {
-			throw new Error(`Failed to save tasks: ${error.message}`);
+			// Log the database error but don't fall back to JSON anymore
+			console.error(chalk.red('❌ Database update failed:'), error.message);
+			throw new Error(`Failed to save tasks to database: ${error.message}`);
 		}
 	}
 

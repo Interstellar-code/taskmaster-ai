@@ -1,91 +1,11 @@
 {
-  "tasks": [
-    {
-      "id": 1,
-      "title": "Setup and Planning for Test Prd",
-      "description": "Initial setup and planning phase for implementing Test Prd. Review requirements, create technical specifications, and establish development timeline.",
-      "status": "pending",
-      "priority": "high",
-      "dependencies": [],
-      "subtasks": [],
-      "prdSource": "prd_001",
-      "createdDate": "2025-06-08T09:19:26.329Z",
-      "lastModified": "2025-06-08T09:19:26.329Z"
-    },
-    {
-      "id": 2,
-      "title": "Design and Architecture for Test Prd",
-      "description": "Design system architecture and create technical design documents for Test Prd. Define data models, API specifications, and component structure.",
-      "status": "pending",
-      "priority": "high",
-      "dependencies": [
-        1
-      ],
-      "subtasks": [],
-      "prdSource": "prd_001",
-      "createdDate": "2025-06-08T09:19:26.329Z",
-      "lastModified": "2025-06-08T09:19:26.329Z"
-    },
-    {
-      "id": 3,
-      "title": "Core Implementation of Test Prd",
-      "description": "Implement the core functionality as specified in Test Prd. This includes main features and business logic implementation.",
-      "status": "pending",
-      "priority": "medium",
-      "dependencies": [
-        2
-      ],
-      "subtasks": [],
-      "prdSource": "prd_001",
-      "createdDate": "2025-06-08T09:19:26.329Z",
-      "lastModified": "2025-06-08T09:19:26.329Z"
-    },
-    {
-      "id": 4,
-      "title": "User Interface Development for Test Prd",
-      "description": "Develop user interface components and screens as specified in Test Prd. Ensure responsive design and accessibility compliance.",
-      "status": "pending",
-      "priority": "medium",
-      "dependencies": [
-        3
-      ],
-      "subtasks": [],
-      "prdSource": "prd_001",
-      "createdDate": "2025-06-08T09:19:26.329Z",
-      "lastModified": "2025-06-08T09:19:26.329Z"
-    },
-    {
-      "id": 5,
-      "title": "Testing and Quality Assurance for Test Prd",
-      "description": "Comprehensive testing of all features implemented for Test Prd. Include unit tests, integration tests, and user acceptance testing.",
-      "status": "pending",
-      "priority": "medium",
-      "dependencies": [
-        4
-      ],
-      "subtasks": [],
-      "prdSource": "prd_001",
-      "createdDate": "2025-06-08T09:19:26.329Z",
-      "lastModified": "2025-06-08T09:19:26.329Z"
-    },
-    {
-      "id": 6,
-      "title": "Documentation and Deployment for Test Prd",
-      "description": "Create user documentation, deployment guides, and finalize the implementation of Test Prd. Prepare for production deployment.",
-      "status": "pending",
-      "priority": "low",
-      "dependencies": [
-        5
-      ],
-      "subtasks": [],
-      "prdSource": "prd_001",
-      "createdDate": "2025-06-08T09:19:26.329Z",
-      "lastModified": "2025-06-08T09:19:26.329Z"
-    }
-  ],
+  "tasks": [],
   "metadata": {
     "version": "1.0.0",
     "lastUpdated": "2025-06-08T09:17:05.515Z",
     "totalTasks": 0
+  },
+  "meta": {
+    "updatedAt": "2025-06-08T17:39:09.542Z"
   }
 }

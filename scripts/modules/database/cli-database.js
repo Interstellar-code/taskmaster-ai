@@ -311,10 +311,21 @@ class CLIDatabase {
 
     try {
       const projectId = await this.getCurrentProjectId();
-      const result = await this.db.runAsync(
-        'UPDATE tasks SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE project_id = ? AND task_identifier = ?',
-        [status, projectId, String(taskId)]
-      );
+
+      // Use a Promise wrapper to get the proper result
+      const result = await new Promise((resolve, reject) => {
+        this.db.run(
+          'UPDATE tasks SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE project_id = ? AND task_identifier = ?',
+          [status, projectId, String(taskId)],
+          function(err) {
+            if (err) {
+              reject(err);
+            } else {
+              resolve({ changes: this.changes });
+            }
+          }
+        );
+      });
 
       return result.changes > 0;
     } catch (error) {
@@ -441,6 +452,117 @@ class CLIDatabase {
   }
 
   /**
+   * Get subtasks for a parent task
+   * @param {string|number} parentTaskId - Parent task ID
+   * @returns {Promise<Array>}
+   */
+  async getSubtasks(parentTaskId) {
+    if (!this.isInitialized) {
+      throw new Error('Database not initialized');
+    }
+
+    try {
+      const projectId = await this.getCurrentProjectId();
+      const subtasks = await this.db.allAsync(
+        `SELECT
+          t.*,
+          p.prd_identifier,
+          p.file_name as prd_file_name,
+          p.file_path as prd_file_path
+        FROM tasks t
+        LEFT JOIN prds p ON t.prd_id = p.id
+        WHERE t.project_id = ? AND t.task_identifier LIKE ?
+        ORDER BY t.task_identifier`,
+        [projectId, `${parentTaskId}.%`]
+      );
+
+      return subtasks.map(task => this.transformTaskFromDB(task));
+    } catch (error) {
+      console.error('Failed to get subtasks:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get task dependencies (tasks this task depends on)
+   * @param {string|number} taskId - Task ID
+   * @returns {Promise<Array>}
+   */
+  async getTaskDependencies(taskId) {
+    if (!this.isInitialized) {
+      throw new Error('Database not initialized');
+    }
+
+    try {
+      const task = await this.getTask(taskId);
+      if (!task || !task.dependencies || task.dependencies.length === 0) {
+        return [];
+      }
+
+      const projectId = await this.getCurrentProjectId();
+      const placeholders = task.dependencies.map(() => '?').join(',');
+
+      const dependencies = await this.db.allAsync(
+        `SELECT
+          task_identifier as depends_on_identifier,
+          title as depends_on_title,
+          status as depends_on_status
+        FROM tasks
+        WHERE project_id = ? AND task_identifier IN (${placeholders})`,
+        [projectId, ...task.dependencies]
+      );
+
+      return dependencies;
+    } catch (error) {
+      console.error('Failed to get task dependencies:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get tasks that depend on this task
+   * @param {string|number} taskId - Task ID
+   * @returns {Promise<Array>}
+   */
+  async getTaskDependents(taskId) {
+    if (!this.isInitialized) {
+      throw new Error('Database not initialized');
+    }
+
+    try {
+      const projectId = await this.getCurrentProjectId();
+      const allTasks = await this.db.allAsync(
+        'SELECT task_identifier, title, status, metadata FROM tasks WHERE project_id = ?',
+        [projectId]
+      );
+
+      const dependents = [];
+      for (const task of allTasks) {
+        try {
+          const metadata = JSON.parse(task.metadata || '{}');
+          const dependencies = metadata.dependencies || [];
+
+          if (dependencies.includes(String(taskId))) {
+            dependents.push({
+              task_identifier: task.task_identifier,
+              title: task.title,
+              status: task.status
+            });
+          }
+        } catch (e) {
+          // Skip tasks with invalid metadata
+          continue;
+        }
+      }
+
+      return dependents;
+    } catch (error) {
+      console.error('Failed to get task dependents:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Update a task
    * @param {string|number} taskId - Task ID
    * @param {Object} updates - Updates to apply
@@ -545,6 +667,37 @@ class CLIDatabase {
       return result.changes > 0;
     } catch (error) {
       console.error('Failed to delete task:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get all tasks for the current project
+   * @returns {Promise<Array>}
+   */
+  async getAllTasks() {
+    if (!this.isInitialized) {
+      throw new Error('Database not initialized');
+    }
+
+    try {
+      const projectId = await this.getCurrentProjectId();
+      const tasks = await this.db.allAsync(
+        `SELECT
+          t.*,
+          p.prd_identifier,
+          p.file_name as prd_file_name,
+          p.file_path as prd_file_path
+        FROM tasks t
+        LEFT JOIN prds p ON t.prd_id = p.id
+        WHERE t.project_id = ?
+        ORDER BY t.task_identifier`,
+        [projectId]
+      );
+
+      return tasks.map(task => this.transformTaskFromDB(task));
+    } catch (error) {
+      console.error('Failed to get all tasks:', error);
       throw error;
     }
   }

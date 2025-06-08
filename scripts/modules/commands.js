@@ -1313,7 +1313,6 @@ function registerCommands(programInstance) {
 			'.taskmaster/tasks/tasks.json'
 		)
 		.action(async (options) => {
-			const tasksPath = options.file;
 			const taskId = options.id;
 			const status = options.status;
 
@@ -1328,15 +1327,22 @@ function registerCommands(programInstance) {
 						`Error: Invalid status value: ${status}. Use one of: ${TASK_STATUS_OPTIONS.join(', ')}`
 					)
 				);
-
 				process.exit(1);
 			}
 
-			console.log(
-				chalk.blue(`Setting status of task(s) ${taskId} to: ${status}`)
-			);
+			// Handle multiple task IDs (comma-separated)
+			const taskIds = taskId.split(',').map(id => id.trim());
 
-			await setTaskStatus(tasksPath, taskId, status);
+			if (taskIds.length > 1) {
+				// Batch update multiple tasks
+				const { batchUpdateTaskStatuses } = await import('./task-manager/set-status-db.js');
+				const updates = taskIds.map(id => ({ taskId: id, status }));
+				await batchUpdateTaskStatuses(updates);
+			} else {
+				// Single task update
+				const setTaskStatusDB = (await import('./task-manager/set-status-db.js')).default;
+				await setTaskStatusDB(taskIds[0], status);
+			}
 		});
 
 	// list command
@@ -1626,71 +1632,38 @@ function registerCommands(programInstance) {
 				process.exit(1);
 			}
 
-			const tasksPath =
-				options.file ||
-				path.join(
-					findProjectRoot() || '.',
-					'.taskmaster',
-					'tasks',
-					'tasks.json'
-				) || // Ensure tasksPath is also relative to a found root or current dir
-				'.taskmaster/tasks/tasks.json';
-
-			// Correctly determine projectRoot
-			const projectRoot = findProjectRoot();
-
-			let manualTaskData = null;
-			if (isManualCreation) {
-				manualTaskData = {
-					title: options.title,
-					description: options.description,
-					details: options.details || '',
-					testStrategy: options.testStrategy || ''
-				};
-				// Restore specific logging for manual creation
-				console.log(
-					chalk.blue(`Creating task manually with title: "${options.title}"`)
-				);
-			} else {
-				// Restore specific logging for AI creation
-				console.log(
-					chalk.blue(`Creating task with AI using prompt: "${options.prompt}"`)
-				);
-			}
-
-			// Log dependencies and priority if provided (restored)
+			// Parse dependencies
 			const dependenciesArray = options.dependencies
 				? options.dependencies.split(',').map((id) => id.trim())
 				: [];
-			if (dependenciesArray.length > 0) {
-				console.log(
-					chalk.blue(`Dependencies: [${dependenciesArray.join(', ')}]`)
-				);
-			}
-			if (options.priority) {
-				console.log(chalk.blue(`Priority: ${options.priority}`));
-			}
-
-			const context = {
-				projectRoot,
-				commandName: 'add-task',
-				outputType: 'cli'
-			};
 
 			try {
-				const { newTaskId, telemetryData } = await addTask(
-					tasksPath,
-					options.prompt,
-					dependenciesArray,
-					options.priority,
-					context,
-					'text',
-					manualTaskData,
-					options.research
-				);
+				if (isManualCreation) {
+					// Manual task creation using database
+					const addTaskDB = (await import('./task-manager/add-task-db.js')).default;
 
-				// addTask handles detailed CLI success logging AND telemetry display when outputFormat is 'text'
-				// No need to call displayAiUsageSummary here anymore.
+					const taskData = {
+						title: options.title,
+						description: options.description,
+						details: options.details || '',
+						dependencies: dependenciesArray,
+						priority: options.priority || 'medium',
+						status: 'pending'
+					};
+
+					await addTaskDB(taskData);
+				} else {
+					// AI-powered task creation using database
+					const { createTaskFromAI } = await import('./task-manager/add-task-db.js');
+
+					await createTaskFromAI(
+						options.prompt,
+						dependenciesArray,
+						options.priority || 'medium',
+						options.research || false
+					);
+				}
+
 			} catch (error) {
 				console.error(chalk.red(`Error adding task: ${error.message}`));
 				if (error.details) {
@@ -1760,10 +1733,9 @@ function registerCommands(programInstance) {
 				process.exit(1);
 			}
 
-			const tasksPath = options.file;
-			const reportPath = options.report;
-			// PASS statusFilter to the display function
-			await displayTaskById(tasksPath, idArg, reportPath, statusFilter);
+			// Use database-aware show task function
+			const showTaskDB = (await import('./task-manager/show-task-db.js')).default;
+			await showTaskDB(idArg, statusFilter);
 		});
 
 	// add-dependency command
@@ -2498,10 +2470,10 @@ function registerCommands(programInstance) {
 			}
 		});
 
-	// init command (Directly calls the implementation from init.js)
+	// init command (Uses new SQLite database initialization)
 	programInstance
 		.command('init')
-		.description('Initialize a new project with TaskHero structure')
+		.description('Initialize a new project with TaskHero structure and SQLite database')
 		.option('-y, --yes', 'Skip prompts and use default values')
 		.option('-n, --name <name>', 'Project name')
 		.option('-d, --description <description>', 'Project description')
@@ -2517,18 +2489,44 @@ function registerCommands(programInstance) {
 		.action(async (cmdOptions) => {
 			// cmdOptions contains parsed arguments
 			try {
-				console.log('DEBUG: Running init command action in commands.js');
-				console.log(
-					'DEBUG: Options received by action:',
-					JSON.stringify(cmdOptions)
-				);
-				// Directly call the initializeProject function, passing the parsed options
-				await initializeProject(cmdOptions);
-				// initializeProject handles its own flow, including potential process.exit()
+				console.log(chalk.blue('🚀 Initializing TaskHero with SQLite database...'));
+
+				// Use new database-based initialization
+				const { initializeTaskHero } = await import('../../api/index.js');
+				const projectRoot = process.cwd();
+
+				// Prepare project data from command options
+				const projectData = {
+					name: cmdOptions.name || 'TaskHero Project',
+					description: cmdOptions.description || 'A TaskHero AI project',
+					version: cmdOptions.version || '0.1.0',
+					author: cmdOptions.author || 'TaskHero User',
+					skipInstall: cmdOptions.skipInstall || false,
+					dryRun: cmdOptions.dryRun || false,
+					addAliases: cmdOptions.aliases || false,
+					reset: cmdOptions.reset || false,
+					skipPrompts: cmdOptions.yes || false
+				};
+
+				const result = await initializeTaskHero(projectRoot, projectData);
+
+				if (result.success) {
+					console.log(chalk.green('✅ TaskHero project initialized successfully with SQLite database!'));
+					console.log(chalk.blue(`📁 Project: ${result.project.name}`));
+					console.log(chalk.blue(`🗄️  Database: ${result.project.root_path}/.taskmaster/taskhero.db`));
+
+					if (!result.isNew) {
+						console.log(chalk.yellow('ℹ️  Project already existed, database updated.'));
+					}
+				} else {
+					throw new Error(result.error || 'Initialization failed');
+				}
+
 			} catch (error) {
 				console.error(
-					chalk.red(`Error during initialization: ${error.message}`)
+					chalk.red(`❌ Error during initialization: ${error.message}`)
 				);
+				console.error(chalk.gray(error.stack));
 				process.exit(1);
 			}
 		});

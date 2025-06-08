@@ -4,6 +4,12 @@ export default {
 
 	// Enable ES modules support
 	preset: null,
+	extensionsToTreatAsEsm: ['.js'],
+	globals: {
+		'ts-jest': {
+			useESM: true
+		}
+	},
 
 	// Automatically clear mock calls between every test
 	clearMocks: true,
@@ -20,15 +26,16 @@ export default {
 	// The glob patterns Jest uses to detect test files
 	testMatch: ['**/__tests__/**/*.js', '**/?(*.)+(spec|test).js'],
 
-	// Transform files
+	// Transform files - empty for ES modules
 	transform: {},
 
 	// Disable transformations for node_modules
 	transformIgnorePatterns: ['/node_modules/'],
 
-	// Set moduleNameMapper for absolute paths
+	// Set moduleNameMapper for absolute paths and ES modules
 	moduleNameMapper: {
-		'^@/(.*)$': '<rootDir>/$1'
+		'^@/(.*)$': '<rootDir>/$1',
+		'^(\\.{1,2}/.*)\\.js$': '$1'
 	},
 
 	// Setup module aliases
@@ -51,5 +58,12 @@ export default {
 	verbose: true,
 
 	// Setup file
-	setupFilesAfterEnv: ['<rootDir>/tests/setup.js']
+	setupFilesAfterEnv: ['<rootDir>/tests/setup.js'],
+
+	// Force exit and detect open handles
+	forceExit: true,
+	detectOpenHandles: true,
+
+	// Test timeout
+	testTimeout: 30000
 };

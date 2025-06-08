@@ -1,50 +1,9 @@
 {
-  "prds": [
-    {
-      "id": "prd_001",
-      "title": "Test Prd",
-      "fileName": "test_prd.md",
-      "status": "done",
-      "complexity": "low",
-      "createdDate": "2025-06-08T09:19:13.407Z",
-      "lastModified": "2025-06-08T09:22:09.263Z",
-      "filePath": "C:\\laragon\\www\\taskmaster-ai\\.taskmaster\\prd\\test_prd.md",
-      "fileHash": "f6254622c5c92c5226079fe504aa21b34e233df0ec89302e65c21f84e46e4413",
-      "fileSize": 931,
-      "description": "PRD uploaded via web interface on 8/6/2025",
-      "tags": [
-        "web-upload",
-        "pending-review"
-      ],
-      "linkedTaskIds": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6
-      ],
-      "taskStats": {
-        "totalTasks": 6,
-        "completedTasks": 0,
-        "pendingTasks": 6,
-        "inProgressTasks": 0,
-        "blockedTasks": 0,
-        "deferredTasks": 0,
-        "cancelledTasks": 0,
-        "completionPercentage": 0
-      },
-      "totalTasks": 6,
-      "estimatedEffort": "1-2 days",
-      "priority": "medium",
-      "analysisStatus": "analyzed",
-      "tasksStatus": "generated"
-    }
-  ],
+  "prds": [],
   "metadata": {
     "version": "1.0.0",
-    "lastUpdated": "2025-06-08T09:22:09.264Z",
-    "totalPrds": 1,
+    "lastUpdated": "2025-06-08T17:40:13.929Z",
+    "totalPrds": 0,
     "lastPrdNumber": 1,
     "schema": {
       "version": "1.0.0",

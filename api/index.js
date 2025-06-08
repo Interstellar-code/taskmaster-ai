@@ -25,7 +25,7 @@ export { DATABASE_SCHEMA, SCHEMA_VALIDATION, INITIALIZATION_ORDER } from './mode
  * @returns {Promise<Object>} Initialization result
  */
 export async function initializeTaskHero(projectRoot, projectData = {}) {
-  const { databaseInitializer } = await import('./utils/initialization.js');
+  const { default: databaseInitializer } = await import('./utils/initialization.js');
   return await databaseInitializer.initializeProject(projectRoot, projectData);
 }
 

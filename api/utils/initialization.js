@@ -143,10 +143,7 @@ export class DatabaseInitializer {
       '.taskmaster',
       '.taskmaster/tasks',
       '.taskmaster/prd',
-      '.taskmaster/prd/pending',
-      '.taskmaster/prd/in-progress', 
-      '.taskmaster/prd/done',
-      '.taskmaster/prd/archived',
+      '.taskmaster/prd/archived',  // Only archived folder needed
       '.taskmaster/reports',
       '.taskmaster/templates',
       '.taskmaster/backups'

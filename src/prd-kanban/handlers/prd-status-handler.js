@@ -109,61 +109,46 @@ export class PRDStatusHandler {
 	}
 
 	/**
-	 * Mark all linked tasks as done when PRD is marked as done
+	 * Mark all linked tasks as done when PRD is marked as done (using database)
 	 */
 	async markLinkedTasksAsDone(prdId) {
 		try {
-			// Get the tasks.json path
-			const tasksJsonPath = path.join(this.projectRoot, '.taskmaster', 'tasks', 'tasks.json');
-			
-			// Check if tasks.json exists
-			if (!fs.existsSync(tasksJsonPath)) {
-				console.log(chalk.yellow(`No tasks.json found at ${tasksJsonPath}`));
-				return 0;
-			}
+			// Import database module
+			const { default: cliDatabase } = await import('../../../scripts/modules/database/cli-database.js');
+			await cliDatabase.initialize();
 
-			const tasksData = await readJSON(tasksJsonPath);
-			if (!tasksData || !tasksData.tasks) {
+			// Get all tasks from database
+			const allTasks = await cliDatabase.getAllTasks();
+
+			if (!allTasks || allTasks.length === 0) {
+				console.log(chalk.yellow(`No tasks found in database`));
 				return 0;
 			}
 
 			let updatedCount = 0;
-			const currentTime = new Date().toISOString();
 
 			// Find and update tasks linked to this PRD
-			tasksData.tasks = tasksData.tasks.map(task => {
+			for (const task of allTasks) {
 				// Check if task is linked to this PRD
 				const isLinked = (task.prdSource && task.prdSource === prdId) ||
-					(task.prdSource && typeof task.prdSource === 'object' && task.prdSource.prdId === prdId);
+					(task.prdSource && typeof task.prdSource === 'object' && task.prdSource.prdId === prdId) ||
+					(task.prd_id && task.prd_id.toString() === prdId.toString());
 
 				if (isLinked && task.status !== 'done') {
-					task.status = 'done';
-					task.lastModified = currentTime;
+					// Update task status in database
+					await cliDatabase.updateTaskStatus(task.task_identifier || task.id, 'done');
 					updatedCount++;
 
 					// Also mark subtasks as done
-					if (task.subtasks && Array.isArray(task.subtasks)) {
-						task.subtasks = task.subtasks.map(subtask => {
-							if (subtask.status !== 'done') {
-								subtask.status = 'done';
-								subtask.lastModified = currentTime;
-								updatedCount++;
-							}
-							return subtask;
-						});
+					const subtasks = await cliDatabase.getSubtasks(task.task_identifier || task.id);
+					for (const subtask of subtasks) {
+						if (subtask.status !== 'done') {
+							await cliDatabase.updateTaskStatus(subtask.task_identifier || subtask.id, 'done');
+							updatedCount++;
+						}
 					}
 				}
-
-				return task;
-			});
-
-			// Update metadata
-			if (tasksData.metadata) {
-				tasksData.metadata.lastUpdated = currentTime;
 			}
-
-			// Write back to file
-			await writeJSON(tasksJsonPath, tasksData);
 
 			if (updatedCount > 0) {
 				console.log(chalk.green(`✅ Marked ${updatedCount} tasks as done for PRD ${prdId}`));
