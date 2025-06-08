@@ -7,6 +7,7 @@ import express from 'express';
 import path from 'path';
 import fs from 'fs/promises';
 import fsSync from 'fs';
+import process from 'process';
 import {
   addDependencyDirect,
   addSubtaskDirect,
@@ -1968,6 +1969,7 @@ router.delete('/prds/:id', async (req, res) => {
 router.post('/prds/:id/archive', async (req, res) => {
   try {
     const { id } = req.params;
+    const { force = false } = req.body;
     const projectRoot = process.env.TASK_MASTER_PROJECT_ROOT || path.resolve(process.cwd(), '..');
     const prdsPath = getPRDsJsonPath(projectRoot);
 
@@ -1981,26 +1983,33 @@ router.post('/prds/:id/archive', async (req, res) => {
       });
     }
 
-    // Read current PRDs
-    const prdsData = JSON.parse(fsSync.readFileSync(prdsPath, 'utf-8'));
+    // Import the proper archive function
+    const { archivePrd } = await import('../../../scripts/modules/prd-manager/prd-archiving.js');
 
-    // Update PRD status to archived
-    const prdIndex = prdsData.prds.findIndex(p => p.id === id);
-    if (prdIndex !== -1) {
-      prdsData.prds[prdIndex].status = 'archived';
-      prdsData.prds[prdIndex].lastModified = new Date().toISOString();
-    }
-
-    // Write back to file
-    fsSync.writeFileSync(prdsPath, JSON.stringify(prdsData, null, 2));
-
-    logger.info(`PRD ${id} archived successfully`);
-    res.json({
-      success: true,
-      message: 'PRD archived successfully',
-      prd: prdsData.prds[prdIndex],
-      timestamp: new Date().toISOString()
+    // Call the proper archive function
+    const archiveResult = await archivePrd(id, {
+      prdsPath: prdsPath,
+      force: force
     });
+
+    if (archiveResult.success) {
+      logger.info(`PRD ${id} archived successfully`);
+      res.json({
+        success: true,
+        message: 'PRD archived successfully',
+        data: archiveResult.data,
+        timestamp: new Date().toISOString()
+      });
+    } else {
+      logger.warn(`Failed to archive PRD ${id}: ${archiveResult.error}`);
+      res.status(400).json({
+        success: false,
+        error: 'Archive failed',
+        message: archiveResult.error,
+        data: archiveResult.data,
+        timestamp: new Date().toISOString()
+      });
+    }
 
   } catch (error) {
     logger.error(`Failed to archive PRD ${req.params.id}:`, error.message);
@@ -2016,7 +2025,38 @@ router.post('/prds/:id/archive', async (req, res) => {
 // Helper function to generate tasks from PRD content
 function generateTasksFromPRD(prdContent, prdId, prdTitle) {
   const tasks = [];
-  let taskIdCounter = Date.now(); // Use timestamp for unique IDs
+  
+  // Read existing tasks to determine next sequential ID
+  const projectRoot = process.env.TASK_MASTER_PROJECT_ROOT || path.resolve(process.cwd(), '..');
+  const tasksJsonPath = path.join(projectRoot, '.taskmaster', 'tasks', 'tasks.json');
+  
+  logger.info(`generateTasksFromPRD: projectRoot=${projectRoot}, tasksJsonPath=${tasksJsonPath}`);
+  
+  let nextId = 1;
+  try {
+    logger.info(`Checking if tasks file exists: ${tasksJsonPath}`);
+    if (fsSync.existsSync(tasksJsonPath)) {
+      logger.info('Tasks file exists, reading...');
+      const tasksData = JSON.parse(fsSync.readFileSync(tasksJsonPath, 'utf8'));
+      if (tasksData.tasks && Array.isArray(tasksData.tasks) && tasksData.tasks.length > 0) {
+        logger.info(`Found ${tasksData.tasks.length} existing tasks`);
+        // Find the highest existing ID (handle both string and number IDs)
+        const existingIds = tasksData.tasks.map(task => {
+          const id = typeof task.id === 'string' ? parseInt(task.id, 10) : task.id;
+          return isNaN(id) ? 0 : id;
+        });
+        const highestId = Math.max(...existingIds);
+        nextId = highestId + 1;
+        logger.info(`Highest existing ID: ${highestId}, next ID will be: ${nextId}`);
+      } else {
+        logger.info('No tasks found in file, starting with ID 1');
+      }
+    } else {
+      logger.warn(`Tasks file does not exist: ${tasksJsonPath}`);
+    }
+  } catch (error) {
+    logger.warn('Failed to read existing tasks for ID generation, using default starting ID:', error.message);
+  }
 
   // Generate tasks based on common PRD patterns
   const taskTemplates = [
@@ -2031,7 +2071,30 @@ function generateTasksFromPRD(prdContent, prdId, prdTitle) {
       description: `Design system architecture and create technical design documents for ${prdTitle}. Define data models, API specifications, and component structure.`,
       priority: 'high',
       status: 'pending'
-    },
+    }
+  ];
+
+  // Insert API and Database tasks in logical order (after design, before core implementation)
+  if (prdContent.toLowerCase().includes('database') || prdContent.toLowerCase().includes('data')) {
+    taskTemplates.push({
+      title: `Database Implementation for ${prdTitle}`,
+      description: `Design and implement database schema and data access layer for ${prdTitle}. Include migrations and data validation.`,
+      priority: 'high',
+      status: 'pending'
+    });
+  }
+
+  if (prdContent.toLowerCase().includes('api') || prdContent.toLowerCase().includes('endpoint')) {
+    taskTemplates.push({
+      title: `API Development for ${prdTitle}`,
+      description: `Develop and implement API endpoints as specified in ${prdTitle}. Include proper error handling, validation, and documentation.`,
+      priority: 'high',
+      status: 'pending'
+    });
+  }
+
+  // Continue with core implementation tasks
+  taskTemplates.push(
     {
       title: `Core Implementation of ${prdTitle}`,
       description: `Implement the core functionality as specified in ${prdTitle}. This includes main features and business logic implementation.`,
@@ -2056,38 +2119,23 @@ function generateTasksFromPRD(prdContent, prdId, prdTitle) {
       priority: 'low',
       status: 'pending'
     }
-  ];
+  );
 
-  // Generate additional tasks based on content analysis
-  if (prdContent.toLowerCase().includes('api') || prdContent.toLowerCase().includes('endpoint')) {
-    taskTemplates.push({
-      title: `API Development for ${prdTitle}`,
-      description: `Develop and implement API endpoints as specified in ${prdTitle}. Include proper error handling, validation, and documentation.`,
-      priority: 'high',
-      status: 'pending'
-    });
-  }
+  // Get PRD details for proper format (removed hybrid approach as requested)
+  // Note: Using simple string format as per CLI behavior
 
-  if (prdContent.toLowerCase().includes('database') || prdContent.toLowerCase().includes('data')) {
-    taskTemplates.push({
-      title: `Database Implementation for ${prdTitle}`,
-      description: `Design and implement database schema and data access layer for ${prdTitle}. Include migrations and data validation.`,
-      priority: 'high',
-      status: 'pending'
-    });
-  }
-
-  // Create task objects
+  // Create task objects with sequential IDs (same as CLI behavior)
   taskTemplates.forEach((template, index) => {
+    const taskId = nextId + index;
     tasks.push({
-      id: `${taskIdCounter + index}`,
+      id: taskId,
       title: template.title,
       description: template.description,
       status: template.status,
       priority: template.priority,
-      dependencies: index > 0 ? [`${taskIdCounter + index - 1}`] : [],
+      dependencies: index > 0 ? [taskId - 1] : [],
       subtasks: [],
-      prdSource: prdId,
+      prdSource: prdId, // Simple string format like CLI
       createdDate: new Date().toISOString(),
       lastModified: new Date().toISOString()
     });

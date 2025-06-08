@@ -112,16 +112,12 @@ export class KanbanBoard {
 			// Apply PRD filter if specified
 			if (prdFilter) {
 				this.tasks = allTasks.filter((task) => {
-					// Check main task
-					if (task.prdSource && task.prdSource.fileName === prdFilter)
-						return true;
+					// Check main task - simple string comparison
+					if (task.prdSource === prdFilter) return true;
 
 					// Check subtasks
 					if (task.subtasks && Array.isArray(task.subtasks)) {
-						return task.subtasks.some(
-							(subtask) =>
-								subtask.prdSource && subtask.prdSource.fileName === prdFilter
-						);
+						return task.subtasks.some(subtask => subtask.prdSource === prdFilter);
 					}
 
 					return false;
@@ -387,21 +383,21 @@ export function getUniquePRDReferences(tasksPath) {
 		const tasks = data.tasks || [];
 		const prdReferences = new Set();
 
-		tasks.forEach((task) => {
-			// Check main task
-			if (task.prdSource && task.prdSource.fileName) {
-				prdReferences.add(task.prdSource.fileName);
-			}
+			tasks.forEach((task) => {
+		// Check main task - simple string extraction
+		if (task.prdSource) {
+			prdReferences.add(task.prdSource);
+		}
 
-			// Check subtasks
-			if (task.subtasks && Array.isArray(task.subtasks)) {
-				task.subtasks.forEach((subtask) => {
-					if (subtask.prdSource && subtask.prdSource.fileName) {
-						prdReferences.add(subtask.prdSource.fileName);
-					}
-				});
-			}
-		});
+		// Check subtasks
+		if (task.subtasks && Array.isArray(task.subtasks)) {
+			task.subtasks.forEach((subtask) => {
+				if (subtask.prdSource) {
+					prdReferences.add(subtask.prdSource);
+				}
+			});
+		}
+	});
 
 		return Array.from(prdReferences).sort();
 	} catch (error) {

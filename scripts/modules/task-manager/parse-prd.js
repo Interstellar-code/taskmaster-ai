@@ -25,7 +25,8 @@ import { updatePrdFileOnParse } from '../prd-manager/prd-file-metadata.js';
 import {
 	findPrdById,
 	readPrdsMetadata,
-	generatePrdId
+	generatePrdId,
+	getPRDsJsonPath
 } from '../prd-manager/prd-utils.js';
 import { createPrdFromFile } from '../prd-manager/prd-write-operations.js';
 
@@ -880,6 +881,9 @@ async function parsePRD(prdPath, tasksPath, numTasks, options = {}) {
 		// Extract PRD metadata for task source tracking
 		report('Extracting PRD metadata for source tracking...', 'info');
 		const prdMetadata = extractPrdMetadata(prdPath, prdContent);
+		
+		// Generate PRD ID before creating tasks so it can be used as prdSource
+		const prdId = prdMetadata.prdId || generatePrdId();
 
 		// Research-specific enhancements to the system prompt
 		const researchPromptAddition = research
@@ -1022,7 +1026,7 @@ Guidelines:
 				priority: task.priority || 'medium',
 				dependencies: Array.isArray(task.dependencies) ? task.dependencies : [],
 				subtasks: [],
-				prdSource: prdMetadata // Add PRD source metadata to each task
+				prdSource: prdId // Add PRD ID as source reference
 			};
 		});
 
@@ -1056,7 +1060,7 @@ Guidelines:
 
 		// Update PRD file metadata and register in tracking system after successful parsing
 		try {
-			const prdId = prdMetadata.prdId || generatePrdId(); // Use existing or generate new PRD ID
+			// prdId was already generated above before task creation
 			const parseInfo = {
 				id: prdId,
 				status: 'pending', // Default status after parsing
@@ -1074,7 +1078,7 @@ Guidelines:
 
 			// Register PRD in tracking system if not already registered
 			try {
-				const existingPrd = findPrdById(prdId, 'prd/prds.json');
+				const existingPrd = findPrdById(prdId, getPRDsJsonPath(projectRoot));
 				if (!existingPrd) {
 					const registrationResult = createPrdFromFile(prdPath, {
 						title:
@@ -1117,7 +1121,7 @@ Guidelines:
 				let linkedCount = 0;
 
 				for (const taskId of newTaskIds) {
-					const linkResult = addTaskToPrd(prdId, taskId, 'prd/prds.json');
+					const linkResult = addTaskToPrd(prdId, taskId, getPRDsJsonPath(projectRoot));
 					if (linkResult.success) {
 						linkedCount++;
 					} else {

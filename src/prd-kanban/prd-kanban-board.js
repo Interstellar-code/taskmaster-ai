@@ -59,7 +59,9 @@ export class PRDKanbanBoard {
 	constructor() {
 		this.boardLayout = new PRDBoardLayout();
 		this.prds = [];
-		this.projectRoot = findProjectRoot();
+		// Fix project root detection for kanban-app
+		// When running from kanban-app, we need to go up one level to find .taskmaster
+		this.projectRoot = this.findCorrectProjectRoot();
 		this.prdsPath = getPRDsJsonPath(this.projectRoot);
 		this.isRunning = false;
 		this.onQuitCallback = null;
@@ -75,6 +77,24 @@ export class PRDKanbanBoard {
 		this.prdDetailsPopup = createPRDDetailsPopup();
 		this.helpPopup = createPRDHelpPopup();
 		this.confirmationPopup = createPRDConfirmationPopup();
+	}
+
+	/**
+	 * Find the correct project root, accounting for kanban-app subdirectory
+	 */
+	findCorrectProjectRoot() {
+		// First try the standard findProjectRoot
+		let projectRoot = findProjectRoot();
+		
+		// If we're in kanban-app and don't find .taskmaster, go up one level
+		if (projectRoot && !fs.existsSync(path.join(projectRoot, '.taskmaster'))) {
+			const parentDir = path.dirname(projectRoot);
+			if (fs.existsSync(path.join(parentDir, '.taskmaster'))) {
+				projectRoot = parentDir;
+			}
+		}
+		
+		return projectRoot;
 	}
 
 	/**

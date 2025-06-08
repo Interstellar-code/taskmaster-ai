@@ -110,7 +110,12 @@ const prdsMetadataSchema = z.object({
 		version: z.string().default('1.0.0'),
 		lastUpdated: z.string().describe('ISO 8601 timestamp'),
 		totalPrds: z.number().int().min(0).default(0),
-		lastPrdNumber: z.number().int().min(0).default(0).describe('Highest PRD number used for ID generation'),
+		lastPrdNumber: z
+			.number()
+			.int()
+			.min(0)
+			.default(0)
+			.describe('Highest PRD number used for ID generation'),
 		schema: z
 			.object({
 				version: z.string().default('1.0.0'),
@@ -179,7 +184,7 @@ function generatePrdId(prdsPath = null) {
 
 		// Use lastPrdNumber from metadata if available, otherwise find the highest existing PRD number
 		let maxNumber = prdsData.metadata.lastPrdNumber || 0;
-		
+
 		// Also check existing PRDs to ensure we don't have conflicts (in case metadata is out of sync)
 		for (const prd of prdsData.prds) {
 			const match = prd.id.match(/^prd_(\d+)$/);

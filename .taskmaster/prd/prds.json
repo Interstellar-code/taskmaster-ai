@@ -2,96 +2,53 @@
   "prds": [
     {
       "id": "prd_001",
-      "title": "Prd 002 Taskhero Ui Rebrand",
-      "fileName": "prd_002_taskhero_ui_rebrand_1.md",
-      "status": "pending",
-      "complexity": "medium",
-      "createdDate": "2025-06-07T17:34:47.386Z",
-      "lastModified": "2025-06-07T18:56:47.446Z",
-      "filePath": "C:\\laragon\\www\\taskmaster-ai\\.taskmaster\\prd\\prd_002_taskhero_ui_rebrand_1.md",
-      "fileHash": "2dcb2f0e0d06f7371d81d878c16628b82f8b5efc0340fc9ad74b39fb3e758bf7",
-      "fileSize": 9493,
-      "description": "PRD uploaded via web interface on 7/6/2025",
+      "title": "Test Prd",
+      "fileName": "test_prd.md",
+      "status": "done",
+      "complexity": "low",
+      "createdDate": "2025-06-08T09:19:13.407Z",
+      "lastModified": "2025-06-08T09:22:09.263Z",
+      "filePath": "C:\\laragon\\www\\taskmaster-ai\\.taskmaster\\prd\\test_prd.md",
+      "fileHash": "f6254622c5c92c5226079fe504aa21b34e233df0ec89302e65c21f84e46e4413",
+      "fileSize": 931,
+      "description": "PRD uploaded via web interface on 8/6/2025",
       "tags": [
         "web-upload",
         "pending-review"
       ],
       "linkedTaskIds": [
-        "1749322291543",
-        "1749322291544",
-        "1749322291545",
-        "1749322291546",
-        "1749322291547",
-        "1749322291548",
-        "1749322291549"
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
       ],
       "taskStats": {
-        "totalTasks": 7,
+        "totalTasks": 6,
         "completedTasks": 0,
-        "pendingTasks": 7,
+        "pendingTasks": 6,
         "inProgressTasks": 0,
         "blockedTasks": 0,
         "deferredTasks": 0,
         "cancelledTasks": 0,
         "completionPercentage": 0
       },
-      "totalTasks": 7,
-      "estimatedEffort": "3-5 days",
-      "priority": "medium",
-      "analysisStatus": "analyzed",
-      "tasksStatus": "generated"
-    },
-    {
-      "id": "prd_002",
-      "title": "Prd Kanban Crud Implementation",
-      "fileName": "prd_kanban_crud_implementation_1.md",
-      "status": "pending",
-      "complexity": "medium",
-      "createdDate": "2025-06-07T18:57:19.766Z",
-      "lastModified": "2025-06-08T07:38:58.814Z",
-      "filePath": "C:\\laragon\\www\\taskmaster-ai\\.taskmaster\\prd\\prd_kanban_crud_implementation_1.md",
-      "fileHash": "35ced86a50eace17908f825d213b0b51fd0abb585d8fb708dff61a8e33eed02e",
-      "fileSize": 13859,
-      "description": "PRD uploaded via web interface on 7/6/2025",
-      "tags": [
-        "web-upload",
-        "pending-review"
-      ],
-      "linkedTaskIds": [
-        "1749322664832",
-        "1749322664833",
-        "1749322664834",
-        "1749322664835",
-        "1749322664836",
-        "1749322664837",
-        "1749322664838",
-        "1749322664839"
-      ],
-      "taskStats": {
-        "totalTasks": 8,
-        "completedTasks": 0,
-        "pendingTasks": 8,
-        "inProgressTasks": 0,
-        "blockedTasks": 0,
-        "deferredTasks": 0,
-        "cancelledTasks": 0,
-        "completionPercentage": 0
-      },
-      "totalTasks": 8,
-      "estimatedEffort": "3-5 days",
+      "totalTasks": 6,
+      "estimatedEffort": "1-2 days",
       "priority": "medium",
       "analysisStatus": "analyzed",
       "tasksStatus": "generated"
     }
   ],
   "metadata": {
-    "version": "2.0.0",
-    "lastUpdated": "2025-06-08T07:38:58.814Z",
-    "totalPrds": 2,
-    "lastPrdNumber": 2,
+    "version": "1.0.0",
+    "lastUpdated": "2025-06-08T09:22:09.264Z",
+    "totalPrds": 1,
+    "lastPrdNumber": 1,
     "schema": {
-      "version": "2.0.0",
-      "description": "TaskHero AI PRD Simplified Structure Schema"
+      "version": "1.0.0",
+      "description": "TaskMaster AI PRD Lifecycle Tracking Schema"
     }
   }
 }

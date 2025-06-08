@@ -139,7 +139,7 @@ async function startProductionMode(options) {
 	try {
 		// Mount API routes with port configuration
 		const apiMiddleware = await createApiMiddleware(options);
-		
+
 		// Mount the entire kanban-app API server at root, since it already has /api routes
 		app.use('/', apiMiddleware);
 
@@ -150,7 +150,11 @@ async function startProductionMode(options) {
 
 		console.log(chalk.green('✅ Using TaskHero API server'));
 		console.log(chalk.green('✅ API routes mounted'));
-		console.log(chalk.green(`✅ TaskMaster integration: ${app.locals.taskMasterInitialized ? 'Active' : 'Fallback'}`));
+		console.log(
+			chalk.green(
+				`✅ TaskMaster integration: ${app.locals.taskMasterInitialized ? 'Active' : 'Fallback'}`
+			)
+		);
 	} catch (error) {
 		console.error(chalk.red('❌ Error loading API routes:'), error.message);
 		console.error(
@@ -328,12 +332,14 @@ async function createApiMiddleware(options = {}) {
 		// If the module exports an Express app, use its routes
 		if (apiModule.default && typeof apiModule.default.use === 'function') {
 			const apiApp = apiModule.default;
-			
+
 			// Since we're in integrated mode, we need to manually trigger the initialization
 			// that would normally happen during server startup
 			try {
-				console.log(chalk.blue('🔧 Initializing TaskMaster core for integrated mode...'));
-				
+				console.log(
+					chalk.blue('🔧 Initializing TaskMaster core for integrated mode...')
+				);
+
 				// Call the initialization function directly from the kanban-app server
 				// We need to simulate what happens in the startServer function
 				const {
@@ -343,47 +349,64 @@ async function createApiMiddleware(options = {}) {
 					nextTaskDirect,
 					setTaskStatusDirect
 				} = await import('../../mcp-server/src/core/task-master-core.js');
-				const { findTasksJsonPath } = await import('../../mcp-server/src/core/utils/path-utils.js');
-				
+				const { findTasksJsonPath } = await import(
+					'../../mcp-server/src/core/utils/path-utils.js'
+				);
+
 				// Create a simple logger for the initialization
 				const logger = {
 					info: (msg) => console.log(chalk.gray(`   ${msg}`)),
 					warn: (msg) => console.log(chalk.yellow(`   ${msg}`)),
 					error: (msg) => console.log(chalk.red(`   ${msg}`))
 				};
-				
+
 				// Resolve project root (similar to what the kanban-app server does)
 				const projectRoot = process.cwd();
 				const tasksJsonPath = findTasksJsonPath({ projectRoot }, logger);
-				
+
 				// Test core functionality by listing tasks
 				const testResult = await listTasksDirect({ tasksJsonPath }, logger);
-				
+
 				if (testResult.success) {
 					// Set the app.locals properly
 					apiApp.locals.taskMasterInitialized = true;
 					apiApp.locals.projectRoot = projectRoot;
 					apiApp.locals.tasksJsonPath = tasksJsonPath;
-					
-					console.log(chalk.green('✅ TaskMaster core initialized for integrated mode'));
+
+					console.log(
+						chalk.green('✅ TaskMaster core initialized for integrated mode')
+					);
 					console.log(chalk.gray(`   Project root: ${projectRoot}`));
 					console.log(chalk.gray(`   Tasks file: ${tasksJsonPath}`));
 				} else {
-					throw new Error(`Core function test failed: ${testResult.error?.message}`);
+					throw new Error(
+						`Core function test failed: ${testResult.error?.message}`
+					);
 				}
 			} catch (initError) {
-				console.log(chalk.yellow('⚠️  TaskMaster core initialization failed, using fallback mode'));
+				console.log(
+					chalk.yellow(
+						'⚠️  TaskMaster core initialization failed, using fallback mode'
+					)
+				);
 				console.log(chalk.gray(`   Error: ${initError.message}`));
-				
+
 				// Set fallback state
 				apiApp.locals.taskMasterInitialized = false;
 				apiApp.locals.projectRoot = process.cwd();
-				apiApp.locals.tasksJsonPath = path.join(process.cwd(), '.taskmaster/tasks/tasks.json');
+				apiApp.locals.tasksJsonPath = path.join(
+					process.cwd(),
+					'.taskmaster/tasks/tasks.json'
+				);
 			}
-			
+
 			console.log(chalk.green('✅ Using integrated TaskHero API server'));
-			console.log(chalk.gray(`   TaskMaster initialized: ${apiApp.locals?.taskMasterInitialized || false}`));
-			
+			console.log(
+				chalk.gray(
+					`   TaskMaster initialized: ${apiApp.locals?.taskMasterInitialized || false}`
+				)
+			);
+
 			return apiApp;
 		}
 
@@ -395,7 +418,10 @@ async function createApiMiddleware(options = {}) {
 		);
 		return createTaskHeroApiRoutes();
 	} catch (error) {
-		console.error(chalk.yellow('⚠️  Using fallback API implementation:'), error.message);
+		console.error(
+			chalk.yellow('⚠️  Using fallback API implementation:'),
+			error.message
+		);
 		return createTaskHeroApiRoutes();
 	}
 }

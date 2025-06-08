@@ -682,9 +682,15 @@ async function initializeProject(options = {}) {
 
 		// Handle existing project in non-interactive mode
 		if (existingProject.exists && !resetProject) {
-			log('info', `📁 Existing TaskHero project detected: ${existingProject.projectName}`);
+			log(
+				'info',
+				`📁 Existing TaskHero project detected: ${existingProject.projectName}`
+			);
 			log('info', `   Tasks found: ${existingProject.taskCount}`);
-			log('info', '✅ Project already initialized. Use --reset to start fresh.');
+			log(
+				'info',
+				'✅ Project already initialized. Use --reset to start fresh.'
+			);
 			return {
 				skipped: true,
 				reason: 'Project already exists'

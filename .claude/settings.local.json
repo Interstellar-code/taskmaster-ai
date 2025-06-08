@@ -1,12 +1,13 @@
 {
-  "permissions": {
-    "allow": [
-      "Bash(grep:*)",
-      "Bash(find:*)",
-      "Bash(rg:*)",
-      "Bash(npm run format-check:*)",
-      "Bash(npm run lint)"
-    ],
-    "deny": []
-  }
+	"permissions": {
+		"allow": [
+			"Bash(grep:*)",
+			"Bash(find:*)",
+			"Bash(rg:*)",
+			"Bash(npm run format-check:*)",
+			"Bash(npm run lint)",
+			"Bash(npm run format:*)"
+		],
+		"deny": []
+	}
 }

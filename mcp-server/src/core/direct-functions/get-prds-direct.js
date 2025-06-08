@@ -41,17 +41,19 @@ export async function getPrdsDirect(args, log, context = {}) {
 		const prds = getAllPrds(filters, prdsPath);
 
 		// Transform PRDs to match web interface expectations
-		const transformedPrds = prds.map(prd => ({
+		const transformedPrds = prds.map((prd) => ({
 			...prd,
 			// Map existing fields to expected web interface fields
-			analysisStatus: prd.analysisStatus || (prd.status === 'pending' ? 'not-analyzed' : 'analyzed'),
-			tasksStatus: prd.tasksStatus || (
-				(prd.linkedTaskIds && prd.linkedTaskIds.length > 0) || 
-				(prd.linkedTasks && prd.linkedTasks.length > 0) || 
+			analysisStatus:
+				prd.analysisStatus ||
+				(prd.status === 'pending' ? 'not-analyzed' : 'analyzed'),
+			tasksStatus:
+				prd.tasksStatus ||
+				((prd.linkedTaskIds && prd.linkedTaskIds.length > 0) ||
+				(prd.linkedTasks && prd.linkedTasks.length > 0) ||
 				(prd.taskStats && prd.taskStats.totalTasks > 0)
-					? 'generated' 
-					: 'no-tasks'
-			),
+					? 'generated'
+					: 'no-tasks'),
 			uploadDate: prd.createdDate,
 			// Ensure all required fields exist
 			id: prd.id,
@@ -74,7 +76,9 @@ export async function getPrdsDirect(args, log, context = {}) {
 			}
 		}));
 
-		mcpLog.info(`Retrieved ${transformedPrds.length} PRDs with filters: ${JSON.stringify(filters)}`);
+		mcpLog.info(
+			`Retrieved ${transformedPrds.length} PRDs with filters: ${JSON.stringify(filters)}`
+		);
 
 		return {
 			success: true,
@@ -87,7 +91,6 @@ export async function getPrdsDirect(args, log, context = {}) {
 				}
 			}
 		};
-
 	} catch (error) {
 		mcpLog.error(`Error retrieving PRDs: ${error.message}`);
 		return {
@@ -98,4 +101,4 @@ export async function getPrdsDirect(args, log, context = {}) {
 			}
 		};
 	}
-} 
+}

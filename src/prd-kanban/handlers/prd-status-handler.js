@@ -6,6 +6,7 @@
 import chalk from 'chalk';
 import { writeJSON, readJSON } from '../../../scripts/modules/utils.js';
 import path from 'path';
+import fs from 'fs';
 
 /**
  * PRD Status Handler class
@@ -43,6 +44,12 @@ export class PRDStatusHandler {
 			selectedPRD.status = targetStatus;
 			selectedPRD.lastModified = new Date().toISOString();
 
+			// If moving to "done" status, also mark all linked tasks as done
+			let tasksUpdated = 0;
+			if (targetStatus === 'done') {
+				tasksUpdated = await this.markLinkedTasksAsDone(selectedPRD.id);
+			}
+
 			// Update PRD in the JSON file
 			await this.updatePRDInFile(selectedPRD);
 
@@ -52,12 +59,17 @@ export class PRDStatusHandler {
 			// Navigate to the moved PRD in its new column
 			this.board.navigationHandler.navigateToPRD(selectedPRD.id);
 
+			const message = tasksUpdated > 0 
+				? `Moved PRD ${selectedPRD.id} from ${oldStatus} to ${targetStatus} and marked ${tasksUpdated} linked tasks as done`
+				: `Moved PRD ${selectedPRD.id} from ${oldStatus} to ${targetStatus}`;
+
 			return {
 				success: true,
-				message: `Moved PRD ${selectedPRD.id} from ${oldStatus} to ${targetStatus}`,
+				message,
 				oldStatus,
 				newStatus: targetStatus,
-				prd: selectedPRD
+				prd: selectedPRD,
+				tasksUpdated
 			};
 		} catch (error) {
 			return {
@@ -93,6 +105,74 @@ export class PRDStatusHandler {
 		} catch (error) {
 			console.error(chalk.red('Error updating PRD in file:'), error.message);
 			throw error;
+		}
+	}
+
+	/**
+	 * Mark all linked tasks as done when PRD is marked as done
+	 */
+	async markLinkedTasksAsDone(prdId) {
+		try {
+			// Get the tasks.json path
+			const tasksJsonPath = path.join(this.projectRoot, '.taskmaster', 'tasks', 'tasks.json');
+			
+			// Check if tasks.json exists
+			if (!fs.existsSync(tasksJsonPath)) {
+				console.log(chalk.yellow(`No tasks.json found at ${tasksJsonPath}`));
+				return 0;
+			}
+
+			const tasksData = await readJSON(tasksJsonPath);
+			if (!tasksData || !tasksData.tasks) {
+				return 0;
+			}
+
+			let updatedCount = 0;
+			const currentTime = new Date().toISOString();
+
+			// Find and update tasks linked to this PRD
+			tasksData.tasks = tasksData.tasks.map(task => {
+				// Check if task is linked to this PRD
+				const isLinked = (task.prdSource && task.prdSource === prdId) ||
+					(task.prdSource && typeof task.prdSource === 'object' && task.prdSource.prdId === prdId);
+
+				if (isLinked && task.status !== 'done') {
+					task.status = 'done';
+					task.lastModified = currentTime;
+					updatedCount++;
+
+					// Also mark subtasks as done
+					if (task.subtasks && Array.isArray(task.subtasks)) {
+						task.subtasks = task.subtasks.map(subtask => {
+							if (subtask.status !== 'done') {
+								subtask.status = 'done';
+								subtask.lastModified = currentTime;
+								updatedCount++;
+							}
+							return subtask;
+						});
+					}
+				}
+
+				return task;
+			});
+
+			// Update metadata
+			if (tasksData.metadata) {
+				tasksData.metadata.lastUpdated = currentTime;
+			}
+
+			// Write back to file
+			await writeJSON(tasksJsonPath, tasksData);
+
+			if (updatedCount > 0) {
+				console.log(chalk.green(`✅ Marked ${updatedCount} tasks as done for PRD ${prdId}`));
+			}
+
+			return updatedCount;
+		} catch (error) {
+			console.error(chalk.red('Error marking linked tasks as done:'), error.message);
+			return 0;
 		}
 	}
 

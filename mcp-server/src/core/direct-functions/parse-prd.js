@@ -143,10 +143,8 @@ export async function parsePRDDirect(args, log, context = {}) {
 				force,
 				append,
 				research,
-				commandName: 'parse-prd',
-				outputType: 'mcp'
-			},
-			'json'
+				reportProgress: false // MCP doesn't need progress reporting
+			}
 		);
 
 		// Adjust check for the new return structure
