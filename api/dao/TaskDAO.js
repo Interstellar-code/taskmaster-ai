@@ -250,16 +250,19 @@ export class TaskDAO extends BaseDAO {
    */
   prepareData(data) {
     const prepared = super.prepareData(data);
-    
+
+    // Remove dependencies field - it's handled separately
+    delete prepared.dependencies;
+
     // Ensure required fields have defaults
     if (!prepared.status) {
       prepared.status = 'pending';
     }
-    
+
     if (!prepared.priority) {
       prepared.priority = 'medium';
     }
-    
+
     if (!prepared.complexity_score) {
       prepared.complexity_score = 0.0;
     }

@@ -11,7 +11,7 @@
 
 ## 1. Executive Summary
 
-Transform TaskHero MCP (Model Context Protocol) server from direct function calls to unified API proxy, ensuring consistent data access and enabling advanced features like real-time updates and centralized logging.
+Transform TaskHero MCP (Model Context Protocol) server from direct function calls to unified API proxy, ensuring consistent data access and enabling advanced features like real-time updates and centralized logging. **This PRD focuses exclusively on API layer integration for MCP server - CLI commands will use direct database access as per Phase 3.2 architectural decisions.**
 
 ## 2. Problem Statement
 
@@ -24,9 +24,12 @@ Transform TaskHero MCP (Model Context Protocol) server from direct function call
 
 ### Target State
 - MCP server proxies all requests through unified API
-- Consistent data validation and business logic
-- Real-time updates via WebSocket integration
-- Centralized logging and monitoring
+- **API layer serves MCP server and web interface exclusively**
+- **CLI commands use direct database access (no API dependencies)**
+- Consistent data validation and business logic for API operations
+- Real-time updates via WebSocket integration for MCP tools
+- Centralized logging and monitoring for API operations
+- **No fallback mechanisms to CLI layer - API operates independently**
 - Simplified maintenance and feature development
 
 ## 3. Current MCP Tools Analysis
@@ -237,7 +240,9 @@ Transform TaskHero MCP (Model Context Protocol) server from direct function call
 
 ### 11.2 Process Dependencies
 - Phase 2 (Unified API) must be complete
-- CLI integration (Task 3.1) should be in progress
+- **Phase 3.2 (CLI Architecture Refinement) establishes CLI independence**
+- **No fallback mechanisms to CLI layer - MCP uses API exclusively**
+- Kanban API integration should be in progress
 - Comprehensive testing environment setup
 
 ---

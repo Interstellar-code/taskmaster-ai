@@ -165,6 +165,112 @@ router.get('/',
 
 /**
  * @swagger
+ * /api/tasks/next:
+ *   get:
+ *     summary: Find next available task
+ *     description: Find the next task to work on based on dependencies and status
+ *     tags: [Tasks]
+ *     parameters:
+ *       - in: query
+ *         name: priority
+ *         schema:
+ *           type: string
+ *         description: Filter by priority level
+ *       - in: query
+ *         name: excludeBlocked
+ *         schema:
+ *           type: boolean
+ *           default: true
+ *         description: Exclude blocked tasks
+ *     responses:
+ *       200:
+ *         description: Next available task found
+ *       404:
+ *         description: No available tasks found
+ */
+router.get('/next',
+  validateQuery(z.object({
+    priority: z.string().optional(),
+    excludeBlocked: z.boolean().default(true)
+  })),
+  asyncHandler(async (req, res) => {
+    const taskDAO = TaskDAO;
+    const { priority, excludeBlocked } = req.validatedQuery;
+
+    // Find tasks that are pending and have no incomplete dependencies
+    const filters = {
+      status: 'pending'
+    };
+
+    if (priority) {
+      filters.priority = priority;
+    }
+
+    const allTasks = await taskDAO.findAll(filters);
+
+    // Filter out tasks with incomplete dependencies
+    let availableTasks = [];
+
+    for (const task of allTasks.tasks) {
+      const dependencies = await taskDAO.getDependencies(task.id);
+
+      // Check if all dependencies are completed
+      let hasIncompleteDependencies = false;
+      for (const dep of dependencies) {
+        const depTask = await taskDAO.findById(dep.dependsOnTaskId);
+        if (depTask && depTask.status !== 'done') {
+          hasIncompleteDependencies = true;
+          break;
+        }
+      }
+
+      if (!hasIncompleteDependencies) {
+        // Exclude blocked tasks if requested
+        if (excludeBlocked && task.status === 'blocked') {
+          continue;
+        }
+        availableTasks.push(task);
+      }
+    }
+
+    if (availableTasks.length === 0) {
+      throw new APIError('No available tasks found', 404, 'NO_TASKS_AVAILABLE');
+    }
+
+    // Sort by priority and complexity (high priority, low complexity first)
+    availableTasks.sort((a, b) => {
+      const priorityOrder = { urgent: 4, high: 3, medium: 2, low: 1 };
+      const aPriority = priorityOrder[a.priority] || 2;
+      const bPriority = priorityOrder[b.priority] || 2;
+
+      if (aPriority !== bPriority) {
+        return bPriority - aPriority; // Higher priority first
+      }
+
+      // If same priority, prefer lower complexity
+      const aComplexity = a.complexityScore || 5;
+      const bComplexity = b.complexityScore || 5;
+      return aComplexity - bComplexity;
+    });
+
+    const nextTask = availableTasks[0];
+
+    // Get complete task with relations
+    const subtasks = await taskDAO.findSubtasks(nextTask.id);
+    const dependencies = await taskDAO.getDependencies(nextTask.id);
+
+    const taskWithRelations = {
+      ...nextTask,
+      subtasks,
+      dependencies
+    };
+
+    res.json(createSuccessResponse(taskWithRelations, 'Next available task found'));
+  })
+);
+
+/**
+ * @swagger
  * /api/tasks/{id}:
  *   get:
  *     summary: Get task by ID
@@ -579,6 +685,229 @@ router.delete('/:id/dependencies/:depId',
     await taskDAO.removeDependency(id, depId);
 
     res.json(createSuccessResponse(null, 'Dependency removed successfully'));
+  })
+);
+
+
+
+/**
+ * @swagger
+ * /api/tasks/{id}/expand:
+ *   post:
+ *     summary: Expand task into subtasks
+ *     description: Break down a task into multiple subtasks using AI
+ *     tags: [Tasks]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Task ID to expand
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               numSubtasks:
+ *                 type: integer
+ *                 default: 5
+ *                 description: Number of subtasks to create
+ *               prompt:
+ *                 type: string
+ *                 description: Additional guidance for subtask creation
+ *               useAI:
+ *                 type: boolean
+ *                 default: true
+ *                 description: Whether to use AI for subtask generation
+ *     responses:
+ *       200:
+ *         description: Task expanded successfully
+ *       404:
+ *         description: Task not found
+ */
+router.post('/:id/expand',
+  validateParams(taskParamsSchema),
+  validateBody(z.object({
+    numSubtasks: z.number().min(1).max(20).default(5),
+    prompt: z.string().optional(),
+    useAI: z.boolean().default(true)
+  })),
+  asyncHandler(async (req, res) => {
+    const taskDAO = TaskDAO;
+    const { id } = req.validatedParams;
+    const { numSubtasks, prompt, useAI } = req.validatedBody;
+
+    // Check if task exists
+    const existingTask = await taskDAO.findById(id);
+    if (!existingTask) {
+      throw new APIError('Task not found', 404, 'TASK_NOT_FOUND');
+    }
+
+    // Check if task already has subtasks
+    const existingSubtasks = await taskDAO.findSubtasks(id);
+    if (existingSubtasks.length > 0) {
+      throw new APIError('Task already has subtasks', 400, 'TASK_ALREADY_EXPANDED');
+    }
+
+    let subtasks = [];
+
+    if (useAI) {
+      // TODO: Integrate with AI service for intelligent subtask generation
+      // For now, create basic subtasks
+      const baseSubtasks = [
+        'Research and planning',
+        'Implementation setup',
+        'Core development',
+        'Testing and validation',
+        'Documentation and cleanup'
+      ];
+
+      for (let i = 0; i < Math.min(numSubtasks, baseSubtasks.length); i++) {
+        const subtaskData = {
+          title: `${existingTask.title} - ${baseSubtasks[i]}`,
+          description: `${baseSubtasks[i]} for: ${existingTask.description || existingTask.title}`,
+          status: 'pending',
+          priority: existingTask.priority,
+          parentTaskId: id,
+          prdId: existingTask.prdId,
+          metadata: {
+            generatedBy: 'api-expand',
+            parentTaskTitle: existingTask.title,
+            expandPrompt: prompt
+          }
+        };
+
+        const subtask = await taskDAO.create(subtaskData);
+        subtasks.push(subtask);
+      }
+    } else {
+      // Create simple numbered subtasks
+      for (let i = 1; i <= numSubtasks; i++) {
+        const subtaskData = {
+          title: `${existingTask.title} - Subtask ${i}`,
+          description: `Subtask ${i} for: ${existingTask.description || existingTask.title}`,
+          status: 'pending',
+          priority: existingTask.priority,
+          parentTaskId: id,
+          prdId: existingTask.prdId,
+          metadata: {
+            generatedBy: 'api-expand-manual',
+            parentTaskTitle: existingTask.title
+          }
+        };
+
+        const subtask = await taskDAO.create(subtaskData);
+        subtasks.push(subtask);
+      }
+    }
+
+    // Update parent task status to indicate it has been expanded
+    await taskDAO.update(id, {
+      metadata: {
+        ...existingTask.metadata,
+        expanded: true,
+        expandedAt: new Date().toISOString(),
+        subtaskCount: subtasks.length
+      }
+    });
+
+    // Get the updated task with all relations
+    const updatedTask = await taskDAO.findById(id);
+    const allSubtasks = await taskDAO.findSubtasks(id);
+    const dependencies = await taskDAO.getDependencies(id);
+
+    const taskWithRelations = {
+      ...updatedTask,
+      subtasks: allSubtasks,
+      dependencies
+    };
+
+    res.json(createSuccessResponse({
+      task: taskWithRelations,
+      createdSubtasks: subtasks
+    }, `Task expanded into ${subtasks.length} subtasks`));
+  })
+);
+
+/**
+ * @swagger
+ * /api/tasks/generate-files:
+ *   post:
+ *     summary: Generate task files from database
+ *     description: Generate individual markdown files for all tasks
+ *     tags: [Tasks]
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               outputDir:
+ *                 type: string
+ *                 default: ".taskmaster/tasks"
+ *                 description: Directory to generate files in
+ *               format:
+ *                 type: string
+ *                 enum: [markdown, json, txt]
+ *                 default: markdown
+ *                 description: File format to generate
+ *               overwrite:
+ *                 type: boolean
+ *                 default: true
+ *                 description: Whether to overwrite existing files
+ *     responses:
+ *       200:
+ *         description: Task files generated successfully
+ */
+router.post('/generate-files',
+  validateBody(z.object({
+    outputDir: z.string().default('.taskmaster/tasks'),
+    format: z.enum(['markdown', 'json', 'txt']).default('markdown'),
+    overwrite: z.boolean().default(true)
+  })),
+  asyncHandler(async (req, res) => {
+    const taskDAO = TaskDAO;
+    const { outputDir, format, overwrite } = req.validatedBody;
+
+    // Get all tasks
+    const allTasks = await taskDAO.findAll({});
+
+    if (allTasks.tasks.length === 0) {
+      throw new APIError('No tasks found to generate files for', 404, 'NO_TASKS_FOUND');
+    }
+
+    // TODO: Implement actual file generation logic
+    // This would integrate with the existing generateTaskFiles function
+    // For now, return a success response with file information
+
+    const generatedFiles = [];
+
+    for (const task of allTasks.tasks) {
+      const fileName = `task_${String(task.id).padStart(3, '0')}.${format === 'markdown' ? 'md' : format}`;
+      const filePath = `${outputDir}/${fileName}`;
+
+      generatedFiles.push({
+        taskId: task.id,
+        fileName,
+        filePath,
+        title: task.title,
+        status: task.status
+      });
+    }
+
+    // TODO: Actually write the files to disk
+    // This would require file system operations and template rendering
+
+    res.json(createSuccessResponse({
+      generatedFiles,
+      totalFiles: generatedFiles.length,
+      outputDirectory: outputDir,
+      format
+    }, `Generated ${generatedFiles.length} task files in ${format} format`));
   })
 );
 

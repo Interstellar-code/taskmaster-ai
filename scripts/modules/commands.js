@@ -69,6 +69,11 @@ import {
 	displayAiUsageSummary
 } from './ui.js';
 
+// Database-aware task functions
+import listTasksDB from './task-manager/list-tasks-db.js';
+import displayNextTaskDB from './task-manager/display-next-task-db.js';
+import { migrateJsonToDatabase } from './database/migrate-json-to-db.js';
+
 import { initializeProject } from '../init.js';
 import {
 	getModelConfiguration,
@@ -1353,6 +1358,8 @@ function registerCommands(programInstance) {
 		.option('--prd <prd>', 'Filter by PRD source file (name or path)')
 		.option('--manual-only', 'Show only manually created tasks (no PRD source)')
 		.option('--prd-only', 'Show only tasks generated from PRD files')
+		.option('--priority <priority>', 'Filter by priority level')
+		.option('--search <term>', 'Search tasks by title or description')
 		.action(async (options) => {
 			const tasksPath = options.file;
 			const reportPath = options.report;
@@ -1361,28 +1368,16 @@ function registerCommands(programInstance) {
 			const prdFilter = options.prd;
 			const manualOnly = options.manualOnly || false;
 			const prdOnly = options.prdOnly || false;
+			const priorityFilter = options.priority;
+			const searchTerm = options.search;
 
-			console.log(chalk.blue(`Listing tasks from: ${tasksPath}`));
-			if (statusFilter) {
-				console.log(chalk.blue(`Filtering by status: ${statusFilter}`));
-			}
-			if (prdFilter) {
-				console.log(chalk.blue(`Filtering by PRD source: ${prdFilter}`));
-			}
-			if (manualOnly) {
-				console.log(chalk.blue('Showing only manually created tasks'));
-			}
-			if (prdOnly) {
-				console.log(chalk.blue('Showing only tasks from PRD files'));
-			}
-			if (withSubtasks) {
-				console.log(chalk.blue('Including subtasks in listing'));
-			}
-
-			await listTasks(tasksPath, statusFilter, reportPath, withSubtasks, {
+			// Use database-aware list function
+			await listTasksDB(tasksPath, statusFilter, reportPath, withSubtasks, {
 				prdFilter,
 				manualOnly,
-				prdOnly
+				prdOnly,
+				priority: priorityFilter,
+				search: searchTerm
 			});
 		});
 
@@ -1721,10 +1716,20 @@ function registerCommands(programInstance) {
 			'Path to the complexity report file',
 			'.taskmaster/reports/task-complexity-report.json'
 		)
+		.option(
+			'--priority <priority>',
+			'Filter by priority level (urgent, high, medium, low)'
+		)
+		.option(
+			'--exclude-blocked',
+			'Exclude blocked tasks',
+			true
+		)
 		.action(async (options) => {
 			const tasksPath = options.file;
 			const reportPath = options.report;
-			await displayNextTask(tasksPath, reportPath);
+			// Use database-aware next task function
+			await displayNextTaskDB(tasksPath, reportPath);
 		});
 
 	// show command
@@ -1857,6 +1862,25 @@ function registerCommands(programInstance) {
 		)
 		.action(async (options) => {
 			await fixDependenciesCommand(options.file);
+		});
+
+	// migrate command
+	programInstance
+		.command('migrate')
+		.description('Migrate tasks from JSON file to database')
+		.option(
+			'--force',
+			'Force migration even if database already has tasks'
+		)
+		.action(async (options) => {
+			const projectRoot = findProjectRoot() || process.cwd();
+			console.log(chalk.blue('🔄 Starting migration from JSON to database...'));
+			try {
+				await migrateJsonToDatabase(projectRoot);
+			} catch (error) {
+				console.error(chalk.red('❌ Migration failed:'), error.message);
+				process.exit(1);
+			}
 		});
 
 	// complexity-report command

@@ -11,7 +11,7 @@
 
 ## 1. Executive Summary
 
-Migrate TaskHero Kanban web interface from legacy API endpoints to unified API integration, enabling real-time collaboration, improved performance, and consistent data access patterns across all interfaces.
+Migrate TaskHero Kanban web interface from legacy API endpoints to unified API integration, enabling real-time collaboration, improved performance, and consistent data access patterns. **This PRD focuses exclusively on API layer integration for web interface - CLI commands will use direct database access as per Phase 3.2 architectural decisions.**
 
 ## 2. Problem Statement
 
@@ -24,10 +24,11 @@ Migrate TaskHero Kanban web interface from legacy API endpoints to unified API i
 
 ### Target State
 - Kanban interface uses unified API endpoints (`/api/tasks`, `/api/prds`, etc.)
-- Consistent data formats across all interfaces
-- Real-time updates via WebSocket integration
-- Single API server for all operations
-- Centralized logging and monitoring
+- **API layer serves web interface and MCP server exclusively**
+- **CLI commands use direct database access (no API dependencies)**
+- Real-time updates via WebSocket integration for web interface
+- Single API server for web/MCP operations only
+- Centralized logging and monitoring for API operations
 
 ## 3. Current Kanban API Analysis
 
@@ -296,7 +297,9 @@ ws.on('task:status_changed', (data) => {
 
 ### 12.2 Process Dependencies
 - Phase 2 (Unified API) must be complete
-- CLI and MCP integration should be in progress
+- **Phase 3.2 (CLI Architecture Refinement) establishes CLI independence**
+- MCP API integration should be in progress
+- **No fallback mechanisms to CLI layer - API operates independently**
 - Comprehensive testing environment setup
 
 ---
