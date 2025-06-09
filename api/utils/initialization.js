@@ -8,6 +8,8 @@ import path from 'path';
 import databaseManager from './database.js';
 import ProjectDAO from '../dao/ProjectDAO.js';
 import ConfigurationDAO from '../dao/ConfigurationDAO.js';
+import { runDatabaseMigrations } from './database-migration.js';
+import { autoMigrateConfig } from './config-migration.js';
 
 export class DatabaseInitializer {
   constructor() {
@@ -23,14 +25,22 @@ export class DatabaseInitializer {
   async initializeProject(projectRoot, projectData = {}) {
     try {
       console.log('Initializing TaskHero database...');
-      
+
       // Initialize database connection and schema
       await databaseManager.initialize(projectRoot);
-      
+
+      // Run database migrations first
+      console.log('Running database migrations...');
+      await runDatabaseMigrations(projectRoot);
+
       // Check if project already exists
       const existingProject = await ProjectDAO.findByRootPath(projectRoot);
       if (existingProject) {
         console.log('Project already exists in database');
+
+        // Auto-migrate configuration from file to database
+        await autoMigrateConfig(projectRoot);
+
         return {
           success: true,
           project: existingProject,
@@ -40,21 +50,24 @@ export class DatabaseInitializer {
 
       // Create new project record
       const project = await this.createProject(projectRoot, projectData);
-      
-      // Initialize default configurations
-      await this.initializeDefaultConfigurations(project.id);
-      
+
+      // Initialize default configurations (now without project_id)
+      await this.initializeDefaultConfigurations();
+
+      // Auto-migrate configuration from file to database
+      await autoMigrateConfig(projectRoot);
+
       // Create directory structure
       await this.createDirectoryStructure(projectRoot);
-      
+
       console.log('Database initialization completed successfully');
-      
+
       return {
         success: true,
         project: project,
         isNew: true
       };
-      
+
     } catch (error) {
       console.error('Database initialization failed:', error);
       throw error;
@@ -88,45 +101,56 @@ export class DatabaseInitializer {
   }
 
   /**
-   * Initialize default configurations for a project
-   * @param {number} projectId - Project ID
+   * Initialize default configurations (global, no project_id)
    * @returns {Promise<void>}
    */
-  async initializeDefaultConfigurations(projectId) {
+  async initializeDefaultConfigurations() {
     console.log('Setting up default configurations...');
-    
+
     // Default AI model configurations
     const defaultAIModels = {
-      default_model: 'claude-3-5-sonnet-20241022',
-      research_model: 'claude-3-5-sonnet-20241022',
-      fast_model: 'claude-3-haiku-20240307',
-      providers: {
-        anthropic: {
-          enabled: true,
-          models: ['claude-3-5-sonnet-20241022', 'claude-3-haiku-20240307']
-        },
-        openai: {
-          enabled: false,
-          models: ['gpt-4', 'gpt-3.5-turbo']
-        }
+      main: {
+        provider: 'anthropic',
+        modelId: 'claude-3-7-sonnet-20250219',
+        maxTokens: 64000,
+        temperature: 0.2,
+        baseUrl: 'https://api.anthropic.com/v1'
+      },
+      research: {
+        provider: 'perplexity',
+        modelId: 'sonar-pro',
+        maxTokens: 8700,
+        temperature: 0.1,
+        baseUrl: 'https://api.perplexity.ai/v1'
+      },
+      fallback: {
+        provider: 'anthropic',
+        modelId: 'claude-3-5-sonnet',
+        maxTokens: 64000,
+        temperature: 0.2,
+        baseUrl: 'https://api.anthropic.com/v1'
       }
     };
 
-    await ConfigurationDAO.bulkSet(projectId, 'ai_models', defaultAIModels);
+    // Store each AI model configuration
+    for (const [role, config] of Object.entries(defaultAIModels)) {
+      await ConfigurationDAO.setValue('ai_models', role, config);
+    }
 
-    // Default project settings
-    const defaultProjectSettings = {
-      auto_backup: true,
-      backup_frequency: 'daily',
-      max_backups: 7,
-      enable_websocket: true,
-      websocket_port: 3002,
-      api_port: 3001,
-      enable_logging: true,
-      log_level: 'info'
+    // Default global settings
+    const defaultGlobalSettings = {
+      logLevel: 'info',
+      debug: false,
+      defaultSubtasks: 5,
+      defaultPriority: 'medium',
+      projectName: 'TaskHero',
+      ollamaBaseUrl: 'http://localhost:11434/api'
     };
 
-    await ConfigurationDAO.bulkSet(projectId, 'project_settings', defaultProjectSettings);
+    // Store each global setting
+    for (const [key, value] of Object.entries(defaultGlobalSettings)) {
+      await ConfigurationDAO.setValue('global_settings', key, value);
+    }
 
     console.log('Default configurations initialized');
   }

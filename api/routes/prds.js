@@ -12,6 +12,131 @@ import ProjectDAO from '../dao/ProjectDAO.js';
 
 const router = express.Router();
 
+/**
+ * Extract meaningful metadata from PRD content
+ * @param {string} content - PRD file content
+ * @param {string} fileName - Original file name
+ * @returns {Object} Extracted metadata
+ */
+function extractPrdMetadata(content, fileName) {
+  try {
+    // Extract title from content (look for main heading or title field)
+    let title = fileName.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' '); // Default to filename
+
+    // Try to find title in various formats
+    const titlePatterns = [
+      /^#\s+(.+)$/m,                    // # Main Title
+      /^Title:\s*(.+)$/im,              // Title: Something
+      /^##?\s*Title:\s*(.+)$/im,        // ## Title: Something
+      /^Project:\s*(.+)$/im,            // Project: Something
+      /^PRD:\s*(.+)$/im                 // PRD: Something
+    ];
+
+    for (const pattern of titlePatterns) {
+      const match = content.match(pattern);
+      if (match && match[1].trim()) {
+        title = match[1].trim();
+        break;
+      }
+    }
+
+    // Extract description/summary
+    let description = `PRD: ${title}`;
+    const descPatterns = [
+      /(?:Description|Summary|Overview|Executive Summary):\s*(.+?)(?:\n\n|\n#|$)/is,
+      /(?:## Description|## Summary|## Overview)\s*\n(.+?)(?:\n\n|\n#|$)/is,
+      /(?:## Executive Summary)\s*\n(.+?)(?:\n\n|\n#|$)/is
+    ];
+
+    for (const pattern of descPatterns) {
+      const match = content.match(pattern);
+      if (match && match[1].trim()) {
+        description = match[1].trim().substring(0, 200).replace(/\n/g, ' ');
+        if (description.length === 200) description += '...';
+        break;
+      }
+    }
+
+    // Determine complexity based on content analysis
+    const wordCount = content.split(/\s+/).length;
+    let complexity = 'medium';
+
+    const complexityKeywords = {
+      high: ['architecture', 'integration', 'api', 'database', 'security', 'performance', 'scalability', 'microservices', 'distributed'],
+      low: ['simple', 'basic', 'straightforward', 'minimal', 'quick', 'easy']
+    };
+
+    const contentLower = content.toLowerCase();
+    const highComplexityCount = complexityKeywords.high.filter(keyword => contentLower.includes(keyword)).length;
+    const lowComplexityCount = complexityKeywords.low.filter(keyword => contentLower.includes(keyword)).length;
+
+    if (wordCount > 2000 || highComplexityCount >= 3) {
+      complexity = 'high';
+    } else if (wordCount < 500 || lowComplexityCount >= 2) {
+      complexity = 'low';
+    }
+
+    // Determine priority
+    let priority = 'medium';
+    const priorityKeywords = {
+      high: ['urgent', 'critical', 'asap', 'priority', 'important', 'deadline'],
+      low: ['nice to have', 'optional', 'future', 'enhancement', 'improvement']
+    };
+
+    const highPriorityCount = priorityKeywords.high.filter(keyword => contentLower.includes(keyword)).length;
+    const lowPriorityCount = priorityKeywords.low.filter(keyword => contentLower.includes(keyword)).length;
+
+    if (highPriorityCount >= 2) {
+      priority = 'high';
+    } else if (lowPriorityCount >= 2) {
+      priority = 'low';
+    }
+
+    // Extract tags
+    const tags = [];
+    const tagPatterns = [
+      /tags?:\s*([^\n]+)/i,
+      /categories?:\s*([^\n]+)/i,
+      /keywords?:\s*([^\n]+)/i
+    ];
+
+    for (const pattern of tagPatterns) {
+      const match = content.match(pattern);
+      if (match) {
+        const extractedTags = match[1]
+          .split(/[,;]/)
+          .map(tag => tag.trim())
+          .filter(tag => tag);
+        tags.push(...extractedTags);
+        break;
+      }
+    }
+
+    return {
+      title,
+      description,
+      complexity,
+      priority,
+      tags: [...new Set(tags)], // Remove duplicates
+      wordCount,
+      hasComplexKeywords: highComplexityCount > 0
+    };
+
+  } catch (error) {
+    console.error('Error extracting PRD metadata:', error);
+    // Return fallback metadata
+    return {
+      title: fileName.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' '),
+      description: `Uploaded PRD file: ${fileName}`,
+      complexity: 'medium',
+      priority: 'medium',
+      tags: [],
+      wordCount: content.split(/\s+/).length,
+      hasComplexKeywords: false
+    };
+  }
+}
+
 // Validation schemas
 const prdCreateSchema = z.object({
   prd_identifier: z.string().min(1).max(50),
@@ -167,8 +292,8 @@ router.get('/',
       sortOrder: query.sortOrder
     };
     
-    const result = await prdDAO.findAll(filters, pagination);
-    
+    const result = await prdDAO.findAllWithStats(filters, pagination);
+
     res.json(createSuccessResponse(result.prds, 'PRDs retrieved successfully', {
       pagination: {
         page: result.page,
@@ -207,31 +332,18 @@ router.get('/:id',
     const taskDAO = TaskDAO;
     const { id } = req.validatedParams;
     
-    const prd = await prdDAO.findById(id);
-    
+    const prd = await prdDAO.findByIdWithStats(id);
+
     if (!prd) {
       throw new APIError('PRD not found', 404, 'PRD_NOT_FOUND');
     }
-    
+
     // Get linked tasks
-    const linkedTasks = await taskDAO.findByPrdId(id);
-    
-    // Calculate task statistics
-    const taskStats = {
-      total: linkedTasks.length,
-      pending: linkedTasks.filter(t => t.status === 'pending').length,
-      inProgress: linkedTasks.filter(t => t.status === 'in-progress').length,
-      done: linkedTasks.filter(t => t.status === 'done').length,
-      review: linkedTasks.filter(t => t.status === 'review').length,
-      blocked: linkedTasks.filter(t => t.status === 'blocked').length,
-      deferred: linkedTasks.filter(t => t.status === 'deferred').length,
-      cancelled: linkedTasks.filter(t => t.status === 'cancelled').length
-    };
-    
+    const linkedTasks = await taskDAO.findAll({ prdId: id });
+
     const prdWithTasks = {
       ...prd,
-      linkedTasks,
-      taskStats
+      linkedTasks: linkedTasks.tasks
     };
     
     res.json(createSuccessResponse(prdWithTasks, 'PRD retrieved successfully'));
@@ -398,24 +510,29 @@ router.post('/upload',
       const fileHash = crypto.createHash('sha256').update(decodedContent).digest('hex');
       const fileSize = Buffer.byteLength(decodedContent, 'utf-8');
 
+      // Extract meaningful title and description from PRD content
+      const prdMetadata = extractPrdMetadata(decodedContent, fileName);
+
       // Create PRD entry in database
       const prdData = {
         prd_identifier: prdIdentifier,
-        title: fileName.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' '),
+        title: prdMetadata.title,
         file_name: fileName,
         file_path: path.relative(projectRoot, filePath),
         file_hash: fileHash,
         file_size: fileSize,
         status: 'pending',
-        complexity: 'medium',
-        priority: 'medium',
-        description: `Uploaded PRD file: ${fileName}`,
-        tags: ['uploaded'],
+        complexity: prdMetadata.complexity,
+        priority: prdMetadata.priority,
+        description: prdMetadata.description,
+        tags: [...prdMetadata.tags, 'uploaded'],
         metadata: {
           uploaded_at: new Date().toISOString(),
           file_type: fileType,
           append,
-          num_tasks: numTasks
+          num_tasks: numTasks,
+          word_count: prdMetadata.wordCount,
+          has_complex_keywords: prdMetadata.hasComplexKeywords
         }
       };
 
@@ -734,6 +851,582 @@ router.post('/:id/parse',
 
 /**
  * @swagger
+ * /api/prds/{id}/generate-tasks:
+ *   post:
+ *     summary: Generate tasks from PRD
+ *     description: Parse a PRD file and generate tasks using AI, creating them via unified API
+ *     tags: [PRDs]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: PRD ID
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               append:
+ *                 type: boolean
+ *                 default: false
+ *                 description: Whether to append to existing tasks or replace
+ *               aiModel:
+ *                 type: string
+ *                 description: AI model to use for task generation
+ *               numTasks:
+ *                 type: number
+ *                 default: 12
+ *                 description: Number of tasks to generate
+ *               expandSubtasks:
+ *                 type: boolean
+ *                 default: false
+ *                 description: Whether to expand tasks into subtasks
+ *     responses:
+ *       200:
+ *         description: Tasks generated successfully
+ *       404:
+ *         description: PRD not found
+ *       500:
+ *         description: Task generation failed
+ */
+router.post('/:id/generate-tasks',
+  validateParams(prdParamsSchema),
+  validateBody(z.object({
+    append: z.boolean().default(false),
+    aiModel: z.string().optional(),
+    numTasks: z.number().min(1).max(50).default(12),
+    expandSubtasks: z.boolean().default(false)
+  })),
+  asyncHandler(async (req, res) => {
+    const prdDAO = PRDDAO;
+    const taskDAO = TaskDAO;
+    const { id } = req.validatedParams;
+    const { append, aiModel, numTasks, expandSubtasks } = req.validatedBody;
+
+    // Check if PRD exists
+    const prd = await prdDAO.findById(id);
+    if (!prd) {
+      throw new APIError('PRD not found', 404, 'PRD_NOT_FOUND');
+    }
+
+    try {
+      // Check if PRD has been analyzed
+      if (prd.analysis_status !== 'analyzed') {
+        throw new APIError(
+          'PRD must be analyzed before generating tasks',
+          400,
+          'PRD_NOT_ANALYZED',
+          { prdId: id, analysisStatus: prd.analysis_status }
+        );
+      }
+
+      // Update PRD status to generating
+      await prdDAO.update(id, { tasks_status: 'generating' });
+
+      // Get project root first
+      const projectDAO = ProjectDAO;
+      let projectRoot;
+      try {
+        projectRoot = await projectDAO.getCurrentProjectRoot();
+      } catch (error) {
+        projectRoot = process.env.PROJECT_ROOT || process.cwd();
+      }
+
+      // Ensure projectRoot is defined
+      if (!projectRoot) {
+        throw new Error('projectRoot is not defined');
+      }
+
+      console.log(`Using project root for task generation: ${projectRoot}`);
+
+      // Get analysis data to determine task count
+      let analysisData = {};
+      let recommendedTaskCount = numTasks;
+
+      try {
+        if (prd.analysis_data) {
+          analysisData = JSON.parse(prd.analysis_data);
+          recommendedTaskCount = analysisData.recommendedTaskCount || numTasks;
+        }
+      } catch (parseError) {
+        console.warn('Could not parse analysis data, using default task count');
+      }
+
+      // Generate tasks using AI directly
+      const path = await import('path');
+      const fs = await import('fs');
+
+      // Read PRD content
+      const absolutePrdPath = path.resolve(projectRoot, prd.filePath);
+      console.log(`Reading PRD file for task generation: ${absolutePrdPath}`);
+
+      let prdContent = '';
+      try {
+        prdContent = fs.readFileSync(absolutePrdPath, 'utf8');
+      } catch (error) {
+        throw new Error(`Could not read PRD file: ${error.message}`);
+      }
+
+      // Use AI to generate tasks
+      let generatedTasks = [];
+
+      try {
+        // Import AI service
+        const possibleAiPaths = [
+          path.resolve(projectRoot, 'scripts', 'modules', 'ai-services-unified.js'),
+          path.resolve(process.cwd(), 'scripts', 'modules', 'ai-services-unified.js')
+        ];
+
+        let aiServicePath = null;
+        for (const testPath of possibleAiPaths) {
+          if (fs.existsSync(testPath)) {
+            aiServicePath = testPath;
+            break;
+          }
+        }
+
+        if (!aiServicePath) {
+          throw new Error(`AI service not found. Tried paths: ${possibleAiPaths.join(', ')}`);
+        }
+
+        console.log(`Using AI service from: ${aiServicePath}`);
+        // Convert Windows path to file:// URL for dynamic import
+        const aiServiceUrl = process.platform === 'win32'
+          ? `file:///${aiServicePath.replace(/\\/g, '/')}`
+          : aiServicePath;
+        console.log(`Importing AI service from URL: ${aiServiceUrl}`);
+        const { generateObjectService } = await import(aiServiceUrl);
+
+        // Create AI prompt for task generation
+        const taskPrompt = `Analyze the following PRD and generate exactly ${recommendedTaskCount} implementation tasks.
+
+PRD Content:
+${prdContent}
+
+Generate tasks that:
+1. Break down the PRD into logical implementation phases
+2. Are specific and actionable
+3. Include proper dependencies between tasks
+4. Have realistic complexity estimates
+5. Cover all aspects of the PRD requirements
+
+Respond with a JSON object containing an array of tasks.`;
+
+        const systemPrompt = 'You are an expert software architect creating implementation tasks from PRD requirements. Focus on practical, actionable tasks that developers can execute.';
+
+        // Define Zod schema for AI task generation (compatible with AI SDK)
+        const taskItemSchema = z.object({
+          title: z.string().min(1).describe('Clear, concise task title'),
+          description: z.string().min(1).describe('Detailed task description'),
+          details: z.string().optional().default('').describe('Implementation details and guidance'),
+          priority: z.enum(['low', 'medium', 'high']).default('medium').describe('Task priority level'),
+          complexity_score: z.number().min(1).max(10).describe('Complexity rating from 1-10'),
+          estimated_hours: z.number().min(1).describe('Estimated hours to complete'),
+          dependencies: z.array(z.number()).default([]).describe('Array of task IDs this depends on'),
+          test_strategy: z.string().optional().default('').describe('Testing and validation approach')
+        });
+
+        const taskSchema = z.object({
+          tasks: z.array(taskItemSchema).describe('Array of generated tasks')
+        });
+
+        const aiResponse = await generateObjectService({
+          prompt: taskPrompt,
+          systemPrompt,
+          schema: taskSchema,
+          objectName: 'TaskList',
+          role: 'main',
+          session: null,
+          projectRoot,
+          commandName: 'generate-tasks',
+          outputType: 'api'
+        });
+
+        // Create tasks in database
+        const generatedTasks = [];
+        const aiTasks = aiResponse.object.tasks || [];
+
+        for (let i = 0; i < aiTasks.length; i++) {
+          const aiTask = aiTasks[i];
+
+          const taskData = {
+            title: aiTask.title,
+            description: aiTask.description,
+            details: aiTask.details || '',
+            status: 'pending',
+            priority: aiTask.priority || 'medium',
+            complexity_score: aiTask.complexity_score || 5.0,
+            estimated_hours: aiTask.estimated_hours || 4,
+            prd_id: id,
+            test_strategy: aiTask.test_strategy || '',
+            metadata: JSON.stringify({
+              generated_from_prd: true,
+              prd_title: prd.title,
+              generation_date: new Date().toISOString(),
+              ai_generated: true,
+              recommended_task_count: recommendedTaskCount
+            })
+          };
+
+          const createdTask = await taskDAO.create(taskData);
+          generatedTasks.push(createdTask);
+        }
+
+        console.log(`Generated ${generatedTasks.length} tasks from PRD using AI`);
+
+      } catch (aiError) {
+        console.warn('AI task generation failed, using fallback:', aiError.message);
+
+        // Fallback: Create basic tasks
+        const generatedTasks = [];
+        const taskCount = Math.min(recommendedTaskCount, 8);
+
+        for (let i = 1; i <= taskCount; i++) {
+          const taskData = {
+            title: `Implementation Phase ${i}`,
+            description: `Implement phase ${i} of the PRD requirements based on analysis`,
+            details: `Detailed implementation steps for phase ${i} will be defined during development`,
+            status: 'pending',
+            priority: 'medium',
+            complexity_score: 5.0,
+            estimated_hours: 4,
+            prd_id: id,
+            test_strategy: `Testing approach for phase ${i}`,
+            metadata: JSON.stringify({
+              generated_from_prd: true,
+              prd_title: prd.title,
+              generation_date: new Date().toISOString(),
+              fallback_generated: true,
+              recommended_task_count: recommendedTaskCount
+            })
+          };
+
+          const createdTask = await taskDAO.create(taskData);
+          generatedTasks.push(createdTask);
+        }
+      }
+
+      // Update PRD status to generated
+      await prdDAO.update(id, { tasks_status: 'generated' });
+
+      res.json(createSuccessResponse({
+        tasksGenerated: generatedTasks.length,
+        tasks: generatedTasks,
+        prdId: id,
+        append,
+        recommendedTaskCount,
+        analysisData
+      }, 'Tasks generated successfully from PRD using AI analysis'));
+
+    } catch (error) {
+      // Update PRD status back to no-tasks on failure
+      await prdDAO.update(id, { tasks_status: 'no-tasks' });
+
+      throw new APIError(
+        `Failed to generate tasks from PRD: ${error.message}`,
+        500,
+        'TASK_GENERATION_FAILED',
+        { prdId: id, error: error.message }
+      );
+    }
+  })
+);
+
+/**
+ * @swagger
+ * /api/prds/{id}/analyze:
+ *   post:
+ *     summary: Analyze PRD complexity
+ *     description: Perform complexity analysis on a PRD and store results
+ *     tags: [PRDs]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: PRD ID
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               aiModel:
+ *                 type: string
+ *                 description: AI model to use for analysis
+ *               includeComplexity:
+ *                 type: boolean
+ *                 default: true
+ *                 description: Whether to include complexity scoring
+ *               includeEffortEstimate:
+ *                 type: boolean
+ *                 default: true
+ *                 description: Whether to include effort estimation
+ *     responses:
+ *       200:
+ *         description: PRD analyzed successfully
+ *       404:
+ *         description: PRD not found
+ *       500:
+ *         description: Analysis failed
+ */
+router.post('/:id/analyze',
+  validateParams(prdParamsSchema),
+  validateBody(z.object({
+    aiModel: z.string().optional(),
+    includeComplexity: z.boolean().default(true),
+    includeEffortEstimate: z.boolean().default(true)
+  })),
+  asyncHandler(async (req, res) => {
+    const prdDAO = PRDDAO;
+    const { id } = req.validatedParams;
+    const { includeComplexity, includeEffortEstimate } = req.validatedBody;
+
+    // Check if PRD exists
+    const prd = await prdDAO.findById(id);
+    if (!prd) {
+      throw new APIError('PRD not found', 404, 'PRD_NOT_FOUND');
+    }
+
+    try {
+      // Update PRD status to analyzing
+      await prdDAO.update(id, { analysis_status: 'analyzing' });
+
+      // Import required modules
+      const fs = await import('fs');
+      const path = await import('path');
+
+      // Get project root first
+      const projectDAO = ProjectDAO;
+      let projectRoot;
+      try {
+        projectRoot = await projectDAO.getCurrentProjectRoot();
+      } catch (error) {
+        projectRoot = process.env.PROJECT_ROOT || process.cwd();
+      }
+
+      // Ensure projectRoot is defined
+      if (!projectRoot) {
+        throw new Error('projectRoot is not defined');
+      }
+
+      console.log(`Using project root: ${projectRoot}`);
+
+      // Read PRD content for AI analysis
+      let prdContent = '';
+      try {
+        // Resolve the file path relative to project root
+        const absoluteFilePath = path.resolve(projectRoot, prd.filePath);
+        console.log(`Reading PRD file from: ${absoluteFilePath}`);
+        prdContent = fs.readFileSync(absoluteFilePath, 'utf8');
+      } catch (error) {
+        console.warn('Could not read PRD file for analysis:', error.message);
+        console.warn('PRD file path:', prd.filePath);
+        console.warn('Project root:', projectRoot);
+        prdContent = prd.description || '';
+      }
+
+      // Use AI to analyze PRD content and determine complexity + recommended tasks
+      let analysisResult;
+      let complexityScore = 5; // Default medium complexity
+      let recommendedTaskCount = 8; // Default task count
+
+      try {
+        // Import AI service for PRD analysis
+        const path = await import('path');
+        const fs = await import('fs');
+
+        // Try multiple possible paths for the AI service
+        const possiblePaths = [
+          path.resolve(projectRoot, 'scripts', 'modules', 'ai-services-unified.js'),
+          path.resolve(process.cwd(), 'scripts', 'modules', 'ai-services-unified.js')
+        ];
+
+        let aiServicePath = null;
+        for (const testPath of possiblePaths) {
+          if (fs.existsSync(testPath)) {
+            aiServicePath = testPath;
+            break;
+          }
+        }
+
+        if (!aiServicePath) {
+          throw new Error(`AI service not found. Tried paths: ${possiblePaths.join(', ')}`);
+        }
+
+        console.log(`Using AI service from: ${aiServicePath}`);
+        // Convert Windows path to file:// URL for dynamic import
+        const aiServiceUrl = process.platform === 'win32'
+          ? `file:///${aiServicePath.replace(/\\/g, '/')}`
+          : aiServicePath;
+        console.log(`Importing AI service from URL: ${aiServiceUrl}`);
+        const { generateTextService } = await import(aiServiceUrl);
+
+        // Create AI prompt for PRD analysis
+        const analysisPrompt = `Analyze the following PRD (Product Requirements Document) and provide:
+1. Complexity score (1-10 scale where 1=very simple, 10=extremely complex)
+2. Recommended number of tasks to break this PRD into (typically 6-15 tasks)
+3. Brief reasoning for the complexity assessment
+
+PRD Content:
+${prdContent}
+
+Respond ONLY with a valid JSON object matching this schema:
+{
+  "complexityScore": <number 1-10>,
+  "recommendedTaskCount": <number 6-15>,
+  "reasoning": "<string explaining the complexity assessment>",
+  "keyComplexityFactors": ["<factor1>", "<factor2>", "..."]
+}`;
+
+        const systemPrompt = 'You are an expert software architect and project manager analyzing PRD complexity. Focus on technical complexity, scope, integration requirements, and implementation challenges.';
+
+        const aiResponse = await generateTextService({
+          prompt: analysisPrompt,
+          systemPrompt,
+          role: 'main',
+          session: null,
+          projectRoot,
+          commandName: 'analyze-prd',
+          outputType: 'api'
+        });
+
+        // Parse AI response
+        let cleanedResponse = aiResponse.mainResult.trim();
+
+        // Remove code block markers if present
+        const codeBlockMatch = cleanedResponse.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+        if (codeBlockMatch) {
+          cleanedResponse = codeBlockMatch[1].trim();
+        }
+
+        const aiAnalysis = JSON.parse(cleanedResponse);
+        complexityScore = Math.max(1, Math.min(10, aiAnalysis.complexityScore || 5));
+        recommendedTaskCount = Math.max(6, Math.min(15, aiAnalysis.recommendedTaskCount || 8));
+
+        console.log(`AI Analysis: Complexity ${complexityScore}/10, Recommended ${recommendedTaskCount} tasks`);
+
+      } catch (aiError) {
+        console.error('AI analysis failed, using content-based fallback:', {
+          error: aiError.message,
+          projectRoot,
+          prdContentLength: prdContent.length
+        });
+        console.log('AI Error Details:', aiError.stack);
+
+        // Fallback to content-based analysis
+        const wordCount = prdContent.split(/\s+/).length;
+        const lineCount = prdContent.split('\n').length;
+        const hasTechnicalTerms = /\b(API|database|authentication|integration|architecture|deployment|testing|performance|security|scalability)\b/gi.test(prdContent);
+        const hasCodeBlocks = prdContent.includes('```');
+
+        // Determine complexity based on content analysis
+        if (wordCount > 3000 || lineCount > 150 || (hasCodeBlocks && hasTechnicalTerms)) {
+          complexityScore = 8;
+          recommendedTaskCount = 12;
+        } else if (wordCount > 1500 || lineCount > 75 || hasTechnicalTerms) {
+          complexityScore = 6;
+          recommendedTaskCount = 10;
+        } else if (wordCount < 500 || lineCount < 25) {
+          complexityScore = 3;
+          recommendedTaskCount = 6;
+        } else {
+          complexityScore = 5;
+          recommendedTaskCount = 8;
+        }
+
+        // Update analysis method to indicate fallback was used
+        analysisResult = {
+          complexity: complexityScore >= 8 ? 'high' : complexityScore >= 5 ? 'medium' : 'low',
+          effortEstimate: complexityScore >= 8 ? '1-2 weeks' : complexityScore >= 5 ? '4-8 hours' : '2-4 hours',
+          recommendedTaskCount,
+          analysisData: {
+            taskComplexity: complexityScore,
+            recommendedTaskCount,
+            estimatedHours: complexityScore >= 8 ? 40 : complexityScore >= 5 ? 8 : 4,
+            analysisMethod: 'content-based-fallback'
+          }
+        };
+      }
+
+      // Only create analysis result if AI succeeded (fallback creates its own)
+      if (!analysisResult) {
+        // Determine complexity level and effort estimate based on score
+        let complexity, effortEstimate, estimatedHours;
+        if (complexityScore >= 8) {
+          complexity = 'high';
+          effortEstimate = '1-2 weeks';
+          estimatedHours = 40;
+        } else if (complexityScore >= 5) {
+          complexity = 'medium';
+          effortEstimate = '4-8 hours';
+          estimatedHours = 8;
+        } else {
+          complexity = 'low';
+          effortEstimate = '2-4 hours';
+          estimatedHours = 4;
+        }
+
+        analysisResult = {
+          complexity,
+          effortEstimate,
+          recommendedTaskCount,
+          analysisData: {
+            taskComplexity: complexityScore,
+            recommendedTaskCount,
+            estimatedHours,
+            analysisMethod: 'ai-analysis'
+          },
+          recommendations: [
+            `Complexity level: ${complexity} (score: ${complexityScore}/10)`,
+            `Estimated effort: ${effortEstimate}`,
+            `Recommended ${recommendedTaskCount} tasks for implementation`
+          ]
+        };
+      }
+
+      // Store analysis results in PRD
+      const analysisData = {
+        complexity: analysisResult.complexity || 'medium',
+        effortEstimate: analysisResult.effortEstimate || '2-4 hours',
+        recommendedTaskCount: analysisResult.recommendedTaskCount || 8,
+        analysisData: analysisResult.analysisData || {},
+        recommendations: analysisResult.recommendations || [],
+        analyzedAt: new Date().toISOString()
+      };
+
+      // Update PRD with analysis results
+      await prdDAO.update(id, {
+        analysis_status: 'analyzed',
+        complexity: analysisData.complexity,
+        estimated_effort: analysisData.effortEstimate,
+        analysis_data: JSON.stringify(analysisData)
+      });
+
+      res.json(createSuccessResponse(analysisData, 'PRD analyzed successfully'));
+
+    } catch (error) {
+      // Update PRD status back to not-analyzed on failure
+      await prdDAO.update(id, { analysis_status: 'not-analyzed' });
+
+      throw new APIError(
+        `Failed to analyze PRD: ${error.message}`,
+        500,
+        'PRD_ANALYSIS_FAILED',
+        { prdId: id, error: error.message }
+      );
+    }
+  })
+);
+
+/**
+ * @swagger
  * /api/prds/statistics:
  *   get:
  *     summary: Get PRD statistics
@@ -785,6 +1478,174 @@ router.get('/statistics',
     };
 
     res.json(createSuccessResponse(stats, 'PRD statistics retrieved successfully'));
+  })
+);
+
+/**
+ * @swagger
+ * /api/prds/{id}/download:
+ *   get:
+ *     summary: Download PRD file
+ *     description: Download the original PRD file
+ *     tags: [PRDs]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: PRD ID
+ *     responses:
+ *       200:
+ *         description: PRD file downloaded successfully
+ *         content:
+ *           application/octet-stream:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       404:
+ *         description: PRD not found
+ *       500:
+ *         description: Download failed
+ */
+router.get('/:id/download',
+  validateParams(prdParamsSchema),
+  asyncHandler(async (req, res) => {
+    const prdDAO = PRDDAO;
+    const { id } = req.validatedParams;
+
+    // Check if PRD exists
+    const prd = await prdDAO.findById(id);
+    if (!prd) {
+      throw new APIError('PRD not found', 404, 'PRD_NOT_FOUND');
+    }
+
+    // Import fs module
+    const fs = await import('fs');
+    const path = await import('path');
+
+    // Check if file exists
+    if (!fs.existsSync(prd.filePath)) {
+      throw new APIError('PRD file not found on disk', 404, 'FILE_NOT_FOUND');
+    }
+
+    // Get file info
+    const fileName = path.basename(prd.filePath);
+    const fileStats = fs.statSync(prd.filePath);
+
+    // Set headers for file download
+    res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+    res.setHeader('Content-Type', 'application/octet-stream');
+    res.setHeader('Content-Length', fileStats.size);
+
+    // Stream the file
+    const fileStream = fs.createReadStream(prd.filePath);
+    fileStream.pipe(res);
+  })
+);
+
+/**
+ * @swagger
+ * /api/prds/{id}/archive:
+ *   post:
+ *     summary: Archive PRD with task validation
+ *     description: Archive a PRD after validating all linked tasks are completed
+ *     tags: [PRDs]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: PRD ID
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               force:
+ *                 type: boolean
+ *                 default: false
+ *                 description: Force archive even with incomplete tasks
+ *               validateTasks:
+ *                 type: boolean
+ *                 default: true
+ *                 description: Whether to validate task completion
+ *     responses:
+ *       200:
+ *         description: PRD archived successfully
+ *       400:
+ *         description: Cannot archive PRD with incomplete tasks
+ *       404:
+ *         description: PRD not found
+ */
+router.post('/:id/archive',
+  validateParams(prdParamsSchema),
+  validateBody(z.object({
+    force: z.boolean().default(false),
+    validateTasks: z.boolean().default(true)
+  })),
+  asyncHandler(async (req, res) => {
+    const prdDAO = PRDDAO;
+    const taskDAO = TaskDAO;
+    const { id } = req.validatedParams;
+    const { force, validateTasks } = req.validatedBody;
+    
+    // Check if PRD exists
+    const existingPrd = await prdDAO.findById(id);
+    if (!existingPrd) {
+      throw new APIError('PRD not found', 404, 'PRD_NOT_FOUND');
+    }
+    
+    // Check if PRD is already archived
+    if (existingPrd.status === 'archived') {
+      throw new APIError('PRD is already archived', 400, 'PRD_ALREADY_ARCHIVED');
+    }
+    
+    // Validate task completion if required
+    if (validateTasks && !force) {
+      const incompleteTasks = await taskDAO.findAll({ prd_id: id });
+      const pendingTasks = incompleteTasks.tasks.filter(task => 
+        !['done', 'cancelled'].includes(task.status)
+      );
+      
+      if (pendingTasks.length > 0) {
+        throw new APIError(
+          `Cannot archive PRD with ${pendingTasks.length} incomplete tasks`,
+          400,
+          'INCOMPLETE_TASKS',
+          {
+            incompleteTaskCount: pendingTasks.length,
+            incompleteTasks: pendingTasks.map(t => ({
+              id: t.id,
+              title: t.title,
+              status: t.status
+            }))
+          }
+        );
+      }
+    }
+    
+    // Archive the PRD
+    const archivedPrd = await prdDAO.update(id, { 
+      status: 'archived',
+      last_modified: new Date().toISOString()
+    });
+    
+    // Calculate task statistics for response
+    const allTasks = await taskDAO.findAll({ prd_id: id });
+    const taskStats = {
+      total: allTasks.tasks.length,
+      completed: allTasks.tasks.filter(t => t.status === 'done').length,
+      cancelled: allTasks.tasks.filter(t => t.status === 'cancelled').length
+    };
+    
+    res.json(createSuccessResponse({
+      prd: archivedPrd,
+      taskStats
+    }, 'PRD archived successfully'));
   })
 );
 

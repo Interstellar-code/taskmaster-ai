@@ -85,18 +85,18 @@ export const DATABASE_SCHEMA = {
       )
     `,
 
-    // Configurations table - stores project and global settings
+    // Configurations table - stores global settings and preferences
     configurations: `
       CREATE TABLE IF NOT EXISTS configurations (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        project_id INTEGER,
-        config_type TEXT NOT NULL, -- 'ai_models', 'project_settings', 'global'
+        config_type TEXT NOT NULL, -- 'ai_models', 'global_settings', 'user_preferences'
         key TEXT NOT NULL,
         value TEXT NOT NULL, -- JSON value
+        description TEXT, -- Human readable description
+        is_default BOOLEAN DEFAULT 0, -- Whether this is a default configuration
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
-        UNIQUE(project_id, config_type, key)
+        UNIQUE(config_type, key)
       )
     `,
 
@@ -138,7 +138,7 @@ export const DATABASE_SCHEMA = {
     idx_deps_depends_on: 'CREATE INDEX IF NOT EXISTS idx_deps_depends_on ON task_dependencies(depends_on_task_id)',
     
     // Configuration indexes
-    idx_config_project_type: 'CREATE INDEX IF NOT EXISTS idx_config_project_type ON configurations(project_id, config_type)',
+    idx_config_type_key: 'CREATE INDEX IF NOT EXISTS idx_config_type_key ON configurations(config_type, key)',
     
     // AI operations indexes
     idx_ai_ops_project_id: 'CREATE INDEX IF NOT EXISTS idx_ai_ops_project_id ON ai_operations(project_id)',

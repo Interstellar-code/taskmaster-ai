@@ -160,22 +160,14 @@ export class ConfigurationDAO extends BaseDAO {
 
   /**
    * Get configuration value by key
-   * @param {number} projectId - Project ID (null for global)
    * @param {string} configType - Configuration type
    * @param {string} key - Configuration key
    * @returns {Promise<any>} Configuration value or null
    */
-  async getValue(projectId, configType, key) {
-    let sql, params;
-    
-    if (projectId) {
-      sql = `SELECT value FROM ${this.tableName} WHERE project_id = ? AND config_type = ? AND key = ?`;
-      params = [projectId, configType, key];
-    } else {
-      sql = `SELECT value FROM ${this.tableName} WHERE project_id IS NULL AND config_type = ? AND key = ?`;
-      params = [configType, key];
-    }
-    
+  async getValue(configType, key) {
+    const sql = `SELECT value FROM ${this.tableName} WHERE config_type = ? AND key = ?`;
+    const params = [configType, key];
+
     const result = await this.db.getQuery(sql, params);
     if (result && result.value) {
       try {
@@ -189,17 +181,15 @@ export class ConfigurationDAO extends BaseDAO {
 
   /**
    * Set configuration value
-   * @param {number} projectId - Project ID (null for global)
    * @param {string} configType - Configuration type
    * @param {string} key - Configuration key
    * @param {any} value - Configuration value
    * @returns {Promise<Object>} Configuration record
    */
-  async setValue(projectId, configType, key, value) {
-    const existingConfig = await this.findByKey(projectId, configType, key);
-    
+  async setValue(configType, key, value) {
+    const existingConfig = await this.findByKey(configType, key);
+
     const configData = {
-      project_id: projectId,
       config_type: configType,
       key: key,
       value: typeof value === 'object' ? JSON.stringify(value) : value
@@ -213,23 +203,45 @@ export class ConfigurationDAO extends BaseDAO {
   }
 
   /**
+   * Upsert configuration value (insert or update)
+   * @param {string} configType - Configuration type
+   * @param {string} key - Configuration key
+   * @param {any} value - Configuration value
+   * @param {string} description - Optional description
+   * @returns {Promise<Object>} Configuration record
+   */
+  async upsert(configType, key, value, description = null) {
+    const existingConfig = await this.findByKey(configType, key);
+
+    const configData = {
+      config_type: configType,
+      key: key,
+      value: typeof value === 'object' ? JSON.stringify(value) : String(value),
+      description: description || `Configuration for ${configType}.${key}`,
+      is_default: false
+    };
+
+    if (existingConfig) {
+      return await this.update(existingConfig.id, {
+        value: configData.value,
+        description: configData.description,
+        updated_at: new Date().toISOString()
+      });
+    } else {
+      return await this.create(configData);
+    }
+  }
+
+  /**
    * Find configuration by key
-   * @param {number} projectId - Project ID
    * @param {string} configType - Configuration type
    * @param {string} key - Configuration key
    * @returns {Promise<Object|null>} Configuration or null
    */
-  async findByKey(projectId, configType, key) {
-    let sql, params;
-    
-    if (projectId) {
-      sql = `SELECT * FROM ${this.tableName} WHERE project_id = ? AND config_type = ? AND key = ?`;
-      params = [projectId, configType, key];
-    } else {
-      sql = `SELECT * FROM ${this.tableName} WHERE project_id IS NULL AND config_type = ? AND key = ?`;
-      params = [configType, key];
-    }
-    
+  async findByKey(configType, key) {
+    const sql = `SELECT * FROM ${this.tableName} WHERE config_type = ? AND key = ?`;
+    const params = [configType, key];
+
     const result = await this.db.getQuery(sql, params);
     return this.parseRecord(result);
   }
@@ -377,7 +389,7 @@ export class ConfigurationDAO extends BaseDAO {
     }
 
     if (data.config_type) {
-      const validTypes = ['ai_models', 'project_settings', 'global', 'user_preferences', 'test_config'];
+      const validTypes = ['ai_models', 'global_settings', 'user_preferences', 'test_config'];
       if (!validTypes.includes(data.config_type)) {
         errors.push(`Invalid config_type: ${data.config_type}`);
       }

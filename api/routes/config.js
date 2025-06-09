@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { asyncHandler, createSuccessResponse, APIError } from '../middleware/errorHandler.js';
 import { validateBody, validateQuery, validateParams } from '../middleware/validateProject.js';
 import ConfigurationDAO from '../dao/ConfigurationDAO.js';
+import { autoMigrateConfig } from '../utils/config-migration.js';
 
 const router = express.Router();
 
@@ -363,6 +364,10 @@ router.delete('/:id',
 router.get('/models',
   asyncHandler(async (req, res) => {
     const configDAO = ConfigurationDAO;
+
+    // Auto-migrate configuration if needed
+    const projectRoot = req.projectRoot || process.cwd();
+    await autoMigrateConfig(projectRoot);
 
     const modelConfigs = await configDAO.findByType('ai_models');
 

@@ -111,6 +111,111 @@ export class PRDDAO extends BaseDAO {
   }
 
   /**
+   * Find PRD by ID with task statistics
+   * @param {number} id - PRD ID
+   * @returns {Promise<Object|null>} PRD with task stats or null
+   */
+  async findByIdWithStats(id) {
+    const sql = `
+      SELECT
+        p.*,
+        COALESCE(pts.total_tasks, 0) as taskCount,
+        COALESCE(pts.total_tasks, 0) as totalTasks,
+        COALESCE(pts.completed_tasks, 0) as completedTasks,
+        COALESCE(pts.completion_percentage, 0) as completionPercentage,
+        COALESCE(pts.pending_tasks, 0) as pendingTasks,
+        COALESCE(pts.in_progress_tasks, 0) as inProgressTasks,
+        COALESCE(pts.blocked_tasks, 0) as blockedTasks
+      FROM prds p
+      LEFT JOIN prd_task_stats pts ON p.id = pts.prd_id
+      WHERE p.id = ?
+    `;
+
+    const record = await this.db.getQuery(sql, [id]);
+    return record ? this.parseRecord(record) : null;
+  }
+
+  /**
+   * Find all PRDs with task statistics
+   * @param {Object} filters - Filter criteria
+   * @param {Object} pagination - Pagination options
+   * @returns {Promise<Object>} Paginated PRDs with task stats
+   */
+  async findAllWithStats(filters = {}, pagination = {}) {
+    const {
+      page = 1,
+      limit = 10,
+      sortBy = 'created_date',
+      sortOrder = 'DESC'
+    } = pagination;
+
+    // Build base query with task stats
+    let sql = `
+      SELECT
+        p.*,
+        COALESCE(pts.total_tasks, 0) as taskCount,
+        COALESCE(pts.total_tasks, 0) as totalTasks,
+        COALESCE(pts.completed_tasks, 0) as completedTasks,
+        COALESCE(pts.completion_percentage, 0) as completionPercentage,
+        COALESCE(pts.pending_tasks, 0) as pendingTasks,
+        COALESCE(pts.in_progress_tasks, 0) as inProgressTasks,
+        COALESCE(pts.blocked_tasks, 0) as blockedTasks
+      FROM prds p
+      LEFT JOIN prd_task_stats pts ON p.id = pts.prd_id
+    `;
+
+    let countSql = `SELECT COUNT(*) as total FROM prds p`;
+    const conditions = [];
+    const params = [];
+
+    // Apply filters
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && key !== 'search' && key !== 'tags') {
+        conditions.push(`p.${key} = ?`);
+        params.push(value);
+      }
+    });
+
+    // Handle search separately
+    if (filters.search) {
+      conditions.push(`(p.title LIKE ? OR p.description LIKE ?)`);
+      params.push(`%${filters.search}%`, `%${filters.search}%`);
+    }
+
+    // Add WHERE clause if we have conditions
+    if (conditions.length > 0) {
+      const whereClause = ` WHERE ${conditions.join(' AND ')}`;
+      sql += whereClause;
+      countSql += whereClause;
+    }
+
+    // Add ORDER BY
+    sql += ` ORDER BY p.${sortBy} ${sortOrder.toUpperCase()}`;
+
+    // Add LIMIT and OFFSET
+    const offset = (page - 1) * limit;
+    sql += ` LIMIT ? OFFSET ?`;
+    params.push(limit, offset);
+
+    // Execute queries
+    const [prds, countResult] = await Promise.all([
+      this.db.getAllQuery(sql, params),
+      this.db.getQuery(countSql, params.slice(0, -2)) // Remove limit and offset for count
+    ]);
+
+    const total = countResult ? countResult.total : 0;
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      prds: prds.map(record => this.parseRecord(record)),
+      page,
+      limit,
+      total,
+      totalPages
+    };
+  }
+
+  /**
    * Get PRD with linked tasks
    * @param {number} prdId - PRD ID
    * @returns {Promise<Object|null>} PRD with tasks
@@ -242,9 +347,9 @@ export class PRDDAO extends BaseDAO {
    */
   parseRecord(record) {
     if (!record) return null;
-    
+
     const parsed = super.parseRecord(record);
-    
+
     // Parse PRD-specific JSON fields
     if (parsed.tags && typeof parsed.tags === 'string') {
       try {
@@ -260,6 +365,30 @@ export class PRDDAO extends BaseDAO {
       } catch (e) {
         parsed.task_stats = {};
       }
+    }
+
+    // Transform database field names to frontend field names
+    if (parsed.analysis_status) {
+      parsed.analysisStatus = parsed.analysis_status;
+    } else {
+      parsed.analysisStatus = 'not-analyzed';
+    }
+
+    if (parsed.tasks_status) {
+      parsed.tasksStatus = parsed.tasks_status;
+    } else {
+      // Determine tasks status based on task count
+      parsed.tasksStatus = (parsed.taskCount && parsed.taskCount > 0) ? 'generated' : 'no-tasks';
+    }
+
+    // Add upload date mapping
+    if (parsed.created_date) {
+      parsed.uploadDate = parsed.created_date;
+    }
+
+    // Ensure file path is mapped correctly
+    if (parsed.file_path) {
+      parsed.filePath = parsed.file_path;
     }
 
     return parsed;

@@ -23,67 +23,72 @@ import { autoMigrateIfNeeded } from '../database/migrate-json-to-db.js';
 async function addTaskDB(taskData) {
   try {
     console.log(chalk.blue(`📝 Creating new task: "${taskData.title}"...`));
-    
-    // Auto-migrate if needed
-    await autoMigrateIfNeeded();
-    
-    // Initialize database
-    const { default: cliDatabase } = await import('../database/cli-database.js');
-    await cliDatabase.initialize();
-    
+
+    // Initialize unified database
+    const { default: databaseManager } = await import('../../../api/utils/database.js');
+    await databaseManager.initialize(process.cwd());
+
+    // Import TaskDAO for unified database operations
+    const { default: TaskDAO } = await import('../../../api/dao/TaskDAO.js');
+
     // Validate required fields
     if (!taskData.title || !taskData.description) {
       throw new Error('Task title and description are required');
     }
-    
+
     // Validate priority
-    const validPriorities = ['low', 'medium', 'high', 'urgent'];
+    const validPriorities = ['low', 'medium', 'high', 'critical'];
     if (taskData.priority && !validPriorities.includes(taskData.priority)) {
       throw new Error(`Invalid priority: ${taskData.priority}. Valid options: ${validPriorities.join(', ')}`);
     }
-    
+
     // Validate status
     const validStatuses = ['pending', 'in-progress', 'done', 'review', 'blocked', 'deferred', 'cancelled'];
     if (taskData.status && !validStatuses.includes(taskData.status)) {
       throw new Error(`Invalid status: ${taskData.status}. Valid options: ${validStatuses.join(', ')}`);
     }
-    
+
     // Validate dependencies exist
     if (taskData.dependencies && taskData.dependencies.length > 0) {
       for (const depId of taskData.dependencies) {
-        const depTask = await cliDatabase.getTask(depId);
+        const depTask = await TaskDAO.findById(depId);
         if (!depTask) {
           throw new Error(`Dependency task with ID "${depId}" not found`);
         }
       }
     }
-    
-    // Create task in database
-    const newTask = await cliDatabase.createTask({
+
+    // Create task in unified database
+    const taskCreateData = {
       title: taskData.title,
       description: taskData.description,
       details: taskData.details || '',
-      dependencies: taskData.dependencies || [],
-      priority: taskData.priority || 'medium',
+      test_strategy: taskData.testStrategy || '',
       status: taskData.status || 'pending',
-      complexityScore: taskData.complexityScore || 0,
-      metadata: taskData.metadata || {}
-    });
-    
+      priority: taskData.priority || 'medium',
+      complexity_score: taskData.complexityScore || 0,
+      metadata: JSON.stringify({
+        dependencies: taskData.dependencies || [],
+        ...taskData.metadata
+      })
+    };
+
+    const newTask = await TaskDAO.create(taskCreateData);
+
     if (newTask) {
       console.log(chalk.green(`✅ Task created successfully with ID: ${newTask.id}`));
-      
+
       // Display task creation summary
       displayTaskCreationSuccess(newTask);
-      
+
       // Show next steps
       showNextSteps(newTask);
-      
+
       return newTask;
     } else {
       throw new Error('Failed to create task');
     }
-    
+
   } catch (error) {
     console.error(chalk.red('❌ Error creating task:'), error.message);
     throw error;
@@ -204,7 +209,7 @@ export async function batchAddTasks(tasksData) {
 }
 
 /**
- * Create task from AI prompt (wrapper for existing AI functionality)
+ * Create task from AI prompt using unified API database
  * @param {string} prompt - AI prompt for task creation
  * @param {Array} dependencies - Task dependencies
  * @param {string} priority - Task priority
@@ -214,29 +219,120 @@ export async function batchAddTasks(tasksData) {
 export async function createTaskFromAI(prompt, dependencies = [], priority = 'medium', useResearch = false) {
   try {
     console.log(chalk.blue(`🤖 Creating task from AI prompt: "${prompt}"...`));
-    
-    // Import the existing AI task creation functionality
-    const { addTask } = await import('../task-operations.js');
-    
-    // Use the existing addTask function but ensure it uses database
-    const context = {
+
+    // Initialize unified database
+    const { default: databaseManager } = await import('../../../api/utils/database.js');
+    await databaseManager.initialize(process.cwd());
+
+    // Import TaskDAO for unified database operations
+    const { default: TaskDAO } = await import('../../../api/dao/TaskDAO.js');
+
+    // Import AI service
+    const { generateObjectService } = await import('../ai-services-unified.js');
+
+    // Import Zod for schema definition
+    const { z } = await import('zod');
+
+    // Define schema for AI task generation
+    const AiTaskDataSchema = z.object({
+      title: z.string().describe('Clear, concise title for the task'),
+      description: z.string().describe('A one or two sentence description of the task'),
+      details: z.string().describe('In-depth implementation details, considerations, and guidance'),
+      testStrategy: z.string().describe('Detailed approach for verifying task completion'),
+      dependencies: z.array(z.number()).optional().describe('Array of task IDs that this task depends on (must be completed before this task can start)')
+    });
+
+    // Create AI prompts
+    const systemPrompt = `You are an expert software architect and project manager. Create a detailed, actionable task based on the user's prompt. Focus on:
+1. Clear, specific implementation steps
+2. Technical considerations and best practices
+3. Comprehensive testing strategy
+4. Realistic scope and dependencies
+
+Provide practical, executable guidance that a developer can follow immediately.`;
+
+    const userPrompt = `Create a detailed task for: ${prompt}
+
+Priority: ${priority}
+${dependencies.length > 0 ? `Dependencies: ${dependencies.join(', ')}` : 'No dependencies'}
+
+Generate a comprehensive task with implementation details and testing strategy.`;
+
+    // Generate task data using AI
+    console.log(chalk.yellow('🔄 Generating task details with AI...'));
+
+    const aiResponse = await generateObjectService({
+      role: useResearch ? 'research' : 'main',
+      session: null,
       projectRoot: process.cwd(),
+      schema: AiTaskDataSchema,
+      objectName: 'newTaskData',
+      systemPrompt: systemPrompt,
+      prompt: userPrompt,
       commandName: 'add-task-db',
       outputType: 'cli'
+    });
+
+    if (!aiResponse || !aiResponse.mainResult) {
+      throw new Error('AI service did not return the expected object structure.');
+    }
+
+    // Extract task data from AI response
+    let taskData;
+    if (aiResponse.mainResult.title && aiResponse.mainResult.description) {
+      taskData = aiResponse.mainResult;
+    } else if (aiResponse.mainResult.object && aiResponse.mainResult.object.title) {
+      taskData = aiResponse.mainResult.object;
+    } else {
+      throw new Error('AI service did not return a valid task object.');
+    }
+
+    console.log(chalk.green('✅ AI task generation completed'));
+
+    // Validate dependencies exist in database
+    if (dependencies && dependencies.length > 0) {
+      for (const depId of dependencies) {
+        const depTask = await TaskDAO.findById(depId);
+        if (!depTask) {
+          throw new Error(`Dependency task with ID "${depId}" not found`);
+        }
+      }
+    }
+
+    // Create task in unified database
+    const taskCreateData = {
+      title: taskData.title,
+      description: taskData.description,
+      details: taskData.details || '',
+      test_strategy: taskData.testStrategy || '',
+      status: 'pending',
+      priority: priority,
+      complexity_score: 0,
+      metadata: JSON.stringify({
+        ai_generated: true,
+        generation_date: new Date().toISOString(),
+        prompt: prompt,
+        research_mode: useResearch,
+        dependencies: dependencies || []
+      })
     };
-    
-    const result = await addTask(
-      null, // tasksPath - not needed for database
-      prompt,
-      dependencies,
-      priority,
-      context,
-      'text', // outputFormat
-      null, // manualTaskData
-      useResearch
-    );
-    
-    return result;
+
+    const newTask = await TaskDAO.create(taskCreateData);
+
+    if (newTask) {
+      console.log(chalk.green(`✅ Task created successfully with ID: ${newTask.id}`));
+
+      // Display task creation summary
+      displayTaskCreationSuccess(newTask);
+
+      // Show next steps
+      showNextSteps(newTask);
+
+      return newTask;
+    } else {
+      throw new Error('Failed to create task in database');
+    }
+
   } catch (error) {
     console.error(chalk.red('❌ Error creating task from AI:'), error.message);
     throw error;
