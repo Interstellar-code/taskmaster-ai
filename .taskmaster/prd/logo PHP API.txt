@@ -1,4 +1,4 @@
-To help you create an app similar to logo.dev for retrieving company logos, here’s a step-by-step outline and a basic implementation guide. This guide assumes you're familiar with PHP, APIs, and web development. Since I can't provide the entire files package without direct coding, I'll outline the key components you need to put together for your app.
+To help you create an app similar to logo.dev for retrieving company logos, here's a step-by-step outline and a basic implementation guide. This guide assumes you're familiar with PHP, APIs, and web development. Since I can't provide the entire files package without direct coding, I'll outline the key components you need to put together for your app.
 
 Requirements:
 API Access: You need access to an image search API, like the Google Custom Search JSON API or a similar API offered by Brave.

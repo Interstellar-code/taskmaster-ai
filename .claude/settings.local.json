@@ -10,7 +10,10 @@
       "Bash(sqlite3:*)",
       "WebFetch(domain:localhost)",
       "Bash(npm run dev:full:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(git add:*)",
+      "Bash(git push:*)",
+      "Bash(git reset:*)"
     ],
     "deny": []
   }
