@@ -168,6 +168,8 @@ async function startServer(port = 3001, projectRoot = null) {
   try {
     // Initialize database if project root is provided
     if (projectRoot) {
+      // Set PROJECT_ROOT environment variable for runtime use
+      process.env.PROJECT_ROOT = projectRoot;
       await databaseManager.initialize(projectRoot);
       logger.info(`Database initialized for project: ${projectRoot}`);
     }

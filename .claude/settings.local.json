@@ -1,13 +1,17 @@
 {
-	"permissions": {
-		"allow": [
-			"Bash(grep:*)",
-			"Bash(find:*)",
-			"Bash(rg:*)",
-			"Bash(npm run format-check:*)",
-			"Bash(npm run lint)",
-			"Bash(npm run format:*)"
-		],
-		"deny": []
-	}
+  "permissions": {
+    "allow": [
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(rg:*)",
+      "Bash(npm run format-check:*)",
+      "Bash(npm run lint)",
+      "Bash(npm run format:*)",
+      "Bash(sqlite3:*)",
+      "WebFetch(domain:localhost)",
+      "Bash(npm run dev:full:*)",
+      "Bash(npx tsc:*)"
+    ],
+    "deny": []
+  }
 }

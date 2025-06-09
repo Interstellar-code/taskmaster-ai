@@ -120,8 +120,8 @@ export function EnhancedKanbanBoard() {
       // Extract unique PRDs for filtering
       const prds = new Set<string>();
       sortedTasks.forEach(task => {
-        if (task.prdSource?.fileName) {
-          prds.add(task.prdSource.fileName);
+        if (task.prd_source?.fileName) {
+          prds.add(task.prd_source.fileName);
         }
       });
 
@@ -166,7 +166,7 @@ export function EnhancedKanbanBoard() {
 
     // Filter tasks by PRD source
     const filteredTaskIds = allTasks
-      .filter(task => task.prdSource?.fileName === selectedPRD)
+      .filter(task => task.prd_source?.fileName === selectedPRD)
       .map(task => String(task.id));
 
     return tasks.filter(task => filteredTaskIds.includes(String(task.id)));
@@ -362,8 +362,8 @@ export function EnhancedKanbanBoard() {
                     // Refresh the board data
                     loadTasks();
                   }}
-                  onTaskCreated={(newTask) => {
-                    console.log('Task created:', newTask);
+                  onTaskCreated={() => {
+                    console.log('Task created');
                     // Refresh the board data
                     loadTasks();
                   }}

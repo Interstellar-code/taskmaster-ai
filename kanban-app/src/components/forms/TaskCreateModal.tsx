@@ -10,6 +10,23 @@ import { ChevronDown } from 'lucide-react';
 import { taskService } from '@/api/taskService';
 import { Plus, Loader2, X } from 'lucide-react';
 
+// Type conversion utilities for Phase 4 field mapping fixes
+const convertToIntegerIds = (ids: (string | number)[]): number[] => {
+  return ids.map(id => typeof id === 'string' ? parseInt(id, 10) : id).filter(id => !isNaN(id));
+};
+
+const convertToStringIds = (ids: number[]): string[] => {
+  return ids.map(id => id.toString());
+};
+
+// Enhanced type for form options that can handle both string and number values
+interface EnhancedSelectOption {
+  value: string; // Always string for form component compatibility
+  label: string;
+  numericValue?: number; // Store the original numeric value
+  disabled?: boolean;
+}
+
 // Export the schema and types for reuse in TaskEditModal
 export { TaskCreateSchema, type TaskCreateFormData };
 
@@ -30,35 +47,44 @@ const TaskCreateSchema = z.object({
 
   // Required fields with default empty arrays (following TaskEditSchema pattern)
   tags: z.array(z.string()).default([]),
-  dependencies: z.array(z.string()).default([]),
+  dependencies: z.array(z.union([z.string(), z.number()])).default([]).transform((deps) => convertToIntegerIds(deps)),
   subtasks: z.array(z.object({
-    id: z.union([z.string(), z.number()]),
+    id: z.number(),
     title: z.string().min(3, 'Subtask title must be at least 3 characters'),
     description: z.string().optional(),
     details: z.string().optional(),
     status: z.enum(['pending', 'in-progress', 'done', 'review', 'blocked', 'deferred', 'cancelled']).default('pending'),
-    dependencies: z.array(z.union([z.string(), z.number()])).default([]),
-    parentTaskId: z.union([z.string(), z.number()]).optional(),
-    testStrategy: z.string().optional(),
-    prdSource: z.any().optional(),
+    dependencies: z.array(z.union([z.string(), z.number()])).default([]).transform((deps) => convertToIntegerIds(deps)),
+    parent_task_id: z.number().optional(),
+    test_strategy: z.string().optional(),
+    prd_source: z.object({
+      filePath: z.string(),
+      fileName: z.string(),
+      parsedDate: z.string(),
+      fileHash: z.string(),
+      fileSize: z.number()
+    }).nullable().optional(),
   })).default([]),
 
   // Optional enhanced fields
-  estimatedHours: z.number()
+  estimated_hours: z.number()
     .min(0.5, 'Minimum 0.5 hours')
     .max(200, 'Maximum 200 hours')
     .optional(),
   assignee: z.string()
     .max(50, 'Assignee name must be less than 50 characters')
     .optional(),
-  dueDate: z.date().optional(), // Date object from date picker
+  due_date: z.date().optional(), // Date object from date picker
   details: z.string()
     .max(2000, 'Details must be less than 2000 characters')
     .optional(),
-  testStrategy: z.string()
+  test_strategy: z.string()
     .max(1000, 'Test strategy must be less than 1000 characters')
     .optional(),
-  prdSource: z.string().optional(),
+  prd_id: z.union([z.string(), z.number()]).optional().transform((val) => {
+    if (val === undefined || val === null || val === '') return undefined;
+    return typeof val === 'string' ? parseInt(val, 10) : val;
+  }),
 });
 
 type TaskCreateFormData = z.infer<typeof TaskCreateSchema>;
@@ -98,8 +124,8 @@ export function TaskCreateModal({
   const [internalOpen, setInternalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [availableTasks, setAvailableTasks] = useState<Array<{id: string, title: string}>>([]);
-  const [availablePRDs, setAvailablePRDs] = useState<Array<{id: string, title: string}>>([]);
+  const [availableTasks, setAvailableTasks] = useState<EnhancedSelectOption[]>([]);
+  const [availablePRDs, setAvailablePRDs] = useState<EnhancedSelectOption[]>([]);
   const { showSuccess, showError, showWarning } = useFormToast();
 
   // Use controlled or internal open state
@@ -113,13 +139,13 @@ export function TaskCreateModal({
       description: initialData?.description || '',
       priority: initialData?.priority || 'medium',
       tags: initialData?.tags || [],
-      estimatedHours: initialData?.estimatedHours || undefined,
+      estimated_hours: initialData?.estimated_hours || undefined,
       assignee: initialData?.assignee || '',
-      dueDate: initialData?.dueDate ? new Date(initialData.dueDate) : undefined,
+      due_date: initialData?.due_date ? new Date(initialData.due_date) : undefined,
       details: initialData?.details || '',
-      testStrategy: initialData?.testStrategy || '',
-      dependencies: initialData?.dependencies || [],
-      prdSource: initialData?.prdSource || '',
+      test_strategy: initialData?.test_strategy || '',
+      dependencies: initialData?.dependencies ? convertToStringIds(initialData.dependencies) : [],
+      prd_id: initialData?.prd_id || undefined,
       subtasks: initialData?.subtasks || [],
     },
   });
@@ -136,15 +162,15 @@ export function TaskCreateModal({
     if (initialData) {
       // Convert subtasks to proper TaskMaster format
       const formSubtasks = initialData.subtasks ? initialData.subtasks.map((subtask) => ({
-        id: subtask.id || `subtask_${Date.now()}_${Math.random()}`,
+        id: typeof subtask.id === 'number' ? subtask.id : parseInt(`${Date.now()}${Math.floor(Math.random() * 1000)}`),
         title: subtask.title || '',
         description: subtask.description || '',
         details: subtask.details || '',
         status: subtask.status || 'pending',
-        dependencies: subtask.dependencies || [],
-        parentTaskId: subtask.parentTaskId,
-        testStrategy: subtask.testStrategy || '',
-        prdSource: subtask.prdSource || null,
+        dependencies: subtask.dependencies ? convertToStringIds(subtask.dependencies) : [],
+        parent_task_id: subtask.parent_task_id,
+        test_strategy: subtask.test_strategy || '',
+        prd_source: subtask.prd_source || null,
       })) : [];
 
       form.reset({
@@ -152,13 +178,13 @@ export function TaskCreateModal({
         description: initialData.description || '',
         priority: initialData.priority || 'medium',
         tags: initialData.tags || [],
-        estimatedHours: initialData.estimatedHours || undefined,
+        estimated_hours: initialData.estimated_hours || undefined,
         assignee: initialData.assignee || '',
-        dueDate: initialData?.dueDate ? (typeof initialData.dueDate === 'string' ? new Date(initialData.dueDate) : initialData.dueDate) : undefined,
+        due_date: initialData?.due_date ? (typeof initialData.due_date === 'string' ? new Date(initialData.due_date) : initialData.due_date) : undefined,
         details: initialData.details || '',
-        testStrategy: initialData.testStrategy || '',
-        dependencies: initialData.dependencies || [],
-        prdSource: initialData.prdSource || '',
+        test_strategy: initialData.test_strategy || '',
+        dependencies: initialData.dependencies ? convertToStringIds(initialData.dependencies) : [],
+        prd_id: initialData.prd_id || undefined,
         subtasks: formSubtasks,
       });
     }
@@ -174,10 +200,14 @@ export function TaskCreateModal({
         task && task.id && task.title && task.title.trim()
       ) : [];
 
-      const tasks = validTasks.map((task) => ({
-        id: task.id.toString(),
-        title: task.title.trim()
-      }));
+      const tasks: EnhancedSelectOption[] = validTasks.map((task) => {
+        const numericId = typeof task.id === 'string' ? parseInt(task.id, 10) : task.id;
+        return {
+          value: numericId.toString(),
+          label: `#${numericId} - ${task.title.trim()}`,
+          numericValue: numericId
+        };
+      });
       setAvailableTasks(tasks);
 
       // Fetch real PRD data from API
@@ -194,7 +224,7 @@ export function TaskCreateModal({
     }
   };
 
-  const fetchPRDs = async (): Promise<Array<{id: string, title: string}>> => {
+  const fetchPRDs = async (): Promise<EnhancedSelectOption[]> => {
     try {
       const response = await fetch('/api/prds');
       if (response.ok) {
@@ -212,10 +242,14 @@ export function TaskCreateModal({
           return [];
         }
 
-        return data.map((prd: any) => ({
-          id: prd.id || prd.fileName,
-          title: prd.title || prd.fileName || `PRD ${prd.id}`
-        }));
+        return data.map((prd: { id: string | number; title?: string; fileName?: string }): EnhancedSelectOption => {
+          const numericId = typeof prd.id === 'string' ? parseInt(prd.id, 10) : prd.id;
+          return {
+            value: numericId.toString(),
+            label: prd.title || prd.fileName || `PRD ${numericId}`,
+            numericValue: numericId
+          };
+        });
       }
       // Fallback to empty array if API call fails
       return [];
@@ -243,14 +277,14 @@ export function TaskCreateModal({
         status: 'pending', // Default status for new tasks
         // Enhanced fields (only include if they have values)
         ...(data.tags && data.tags.length > 0 && { tags: data.tags }),
-        ...(data.estimatedHours && { estimatedHours: data.estimatedHours }),
+        ...(data.estimated_hours && { estimated_hours: data.estimated_hours }),
         ...(data.assignee && data.assignee.trim() && { assignee: data.assignee.trim() }),
-        ...(data.dueDate && { dueDate: data.dueDate.toISOString() }),
+        ...(data.due_date && { due_date: data.due_date.toISOString() }),
         ...(data.details && data.details.trim() && { details: data.details.trim() }),
-        ...(data.testStrategy && data.testStrategy.trim() && { testStrategy: data.testStrategy.trim() }),
-        // New comprehensive fields
+        ...(data.test_strategy && data.test_strategy.trim() && { test_strategy: data.test_strategy.trim() }),
+        // New comprehensive fields (dependencies already converted by schema transform)
         ...(data.dependencies && data.dependencies.length > 0 && { dependencies: data.dependencies }),
-        ...(data.prdSource && data.prdSource.trim() && { prdSource: data.prdSource.trim() }),
+        ...(data.prd_id && { prd_id: data.prd_id }),
         ...(data.subtasks && data.subtasks.length > 0 && { subtasks: data.subtasks }),
       };
 
@@ -346,18 +380,13 @@ export function TaskCreateModal({
               />
 
               <FormCombobox
-                name="prdSource"
+                name="prd_id"
                 control={form.control}
                 label="PRD Source"
                 placeholder="Select related PRD"
                 searchPlaceholder="Search PRDs..."
                 emptyText="No PRDs found"
                 options={availablePRDs
-                  .filter(prd => prd.id && prd.id.trim() && prd.title && prd.title.trim())
-                  .map(prd => ({
-                    value: prd.id.trim(),
-                    label: prd.title.trim()
-                  }))
                 }
               />
             </div>
@@ -398,13 +427,7 @@ export function TaskCreateModal({
                         placeholder="Select dependencies..."
                         searchPlaceholder="Search tasks..."
                         emptyMessage="No tasks found"
-                        options={availableTasks
-                          .filter(task => task.id && task.id.trim() && task.title && task.title.trim())
-                          .map(task => ({
-                            value: task.id.trim(),
-                            label: `#${task.id.trim()} - ${task.title.trim()}`
-                          }))
-                        }
+                        options={availableTasks}
                         maxSelections={10}
                         showSelectedCount={true}
                       />
@@ -421,7 +444,7 @@ export function TaskCreateModal({
 
                     <div className="md:col-span-1">
                       <FormInput
-                        name="estimatedHours"
+                        name="estimated_hours"
                         control={form.control}
                         label="Estimated Hours"
                         type="number"
@@ -434,7 +457,7 @@ export function TaskCreateModal({
 
                     <div className="md:col-span-1">
                       <FormDatePicker
-                        name="dueDate"
+                        name="due_date"
                         control={form.control}
                         label="Due Date"
                         placeholder="Select due date"
@@ -455,7 +478,7 @@ export function TaskCreateModal({
                     />
 
                     <FormTextarea
-                      name="testStrategy"
+                      name="test_strategy"
                       control={form.control}
                       label="Test Strategy"
                       placeholder="How will this task be tested or validated..."
@@ -487,8 +510,11 @@ TaskCreateModal.displayName = 'TaskCreateModal';
  * Manages dynamic subtask creation with checkboxes
  */
 interface SubtaskManagerProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  form: any;
+  form: {
+    watch: (name: 'subtasks') => TaskCreateFormData['subtasks'];
+    getValues: (name: 'subtasks') => TaskCreateFormData['subtasks'];
+    setValue: (name: 'subtasks', value: TaskCreateFormData['subtasks']) => void;
+  };
 }
 
 function SubtaskManager({ form }: SubtaskManagerProps) {
@@ -498,14 +524,15 @@ function SubtaskManager({ form }: SubtaskManagerProps) {
   const addSubtask = () => {
     if (newSubtaskTitle.trim()) {
       const newSubtask = {
-        id: `subtask_${Date.now()}`,
+        id: parseInt(`${Date.now()}${Math.floor(Math.random() * 1000)}`),
         title: newSubtaskTitle.trim(),
         description: '',
         details: '',
         status: 'pending' as const,
         dependencies: [],
-        testStrategy: '',
-        prdSource: null,
+        parent_task_id: undefined,
+        test_strategy: '',
+        prd_source: null,
       };
 
       const currentSubtasks = form.getValues('subtasks') || [];
@@ -522,8 +549,8 @@ function SubtaskManager({ form }: SubtaskManagerProps) {
 
   const toggleSubtask = (subtaskId: string) => {
     const currentSubtasks = form.getValues('subtasks') || [];
-    const updatedSubtasks = currentSubtasks.map((st: { id: string | number; status: string }) =>
-      st.id === subtaskId ? { ...st, status: st.status === 'done' ? 'pending' : 'done' } : st
+    const updatedSubtasks = currentSubtasks.map((st) =>
+      st.id.toString() === subtaskId ? { ...st, status: (st.status === 'done' ? 'pending' : 'done') as 'pending' | 'done' } : st
     );
     form.setValue('subtasks', updatedSubtasks);
   };

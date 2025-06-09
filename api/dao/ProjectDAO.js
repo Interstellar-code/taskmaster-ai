@@ -4,6 +4,7 @@
  */
 
 import { BaseDAO } from './BaseDAO.js';
+import path from 'path';
 
 export class ProjectDAO extends BaseDAO {
   constructor() {
@@ -45,6 +46,29 @@ export class ProjectDAO extends BaseDAO {
       orderBy: 'updated_at', 
       orderDirection: 'DESC' 
     });
+  }
+
+  /**
+   * Get the current/primary project's root path
+   * @returns {Promise<string>} Project root path
+   */
+  async getCurrentProjectRoot() {
+    // Try to find an active project first
+    const activeProjects = await this.findActive();
+    if (activeProjects.length > 0) {
+      return activeProjects[0].root_path;
+    }
+    
+    // Fallback to any project
+    const allProjects = await this.findAll();
+    if (allProjects.length > 0) {
+      return allProjects[0].root_path;
+    }
+    
+    // If no projects exist, return parent of API directory
+    // This assumes API is in a subdirectory of the project
+    const apiDir = process.cwd();
+    return path.dirname(apiDir);
   }
 
   /**

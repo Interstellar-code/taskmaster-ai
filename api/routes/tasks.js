@@ -15,12 +15,12 @@ const taskCreateSchema = z.object({
   title: z.string().min(1).max(255),
   description: z.string().optional(),
   details: z.string().optional(),
-  testStrategy: z.string().optional(),
+  test_strategy: z.string().optional(),
   status: z.enum(['pending', 'in-progress', 'done', 'review', 'blocked', 'deferred', 'cancelled']).default('pending'),
-  priority: z.enum(['low', 'medium', 'high', 'urgent']).default('medium'),
-  complexityScore: z.number().min(0).max(10).optional(),
-  prdId: z.number().optional(),
-  parentTaskId: z.number().optional(),
+  priority: z.enum(['low', 'medium', 'high', 'critical']).default('medium'),
+  complexity_score: z.number().min(0).max(10).optional(),
+  prd_id: z.number().optional(),
+  parent_task_id: z.number().optional(),
   dependencies: z.array(z.number()).default([]),
   metadata: z.record(z.any()).default({})
 });
@@ -30,8 +30,8 @@ const taskUpdateSchema = taskCreateSchema.partial();
 const taskQuerySchema = z.object({
   status: z.string().optional(),
   priority: z.string().optional(),
-  prdId: z.string().optional(),
-  parentTaskId: z.string().optional(),
+  prd_id: z.string().optional(),
+  parent_task_id: z.string().optional(),
   search: z.string().optional(),
   page: z.string().default('1'),
   limit: z.string().default('50'),
@@ -60,19 +60,19 @@ const taskParamsSchema = z.object({
  *           type: string
  *         details:
  *           type: string
- *         testStrategy:
+ *         test_strategy:
  *           type: string
  *         status:
  *           type: string
  *           enum: [pending, in-progress, done, review, blocked, deferred, cancelled]
  *         priority:
  *           type: string
- *           enum: [low, medium, high, urgent]
- *         complexityScore:
+ *           enum: [low, medium, high, critical]
+ *         complexity_score:
  *           type: number
- *         prdId:
+ *         prd_id:
  *           type: integer
- *         parentTaskId:
+ *         parent_task_id:
  *           type: integer
  *         createdAt:
  *           type: string
@@ -103,7 +103,7 @@ const taskParamsSchema = z.object({
  *           type: string
  *         description: Filter by task priority
  *       - in: query
- *         name: prdId
+ *         name: prd_id
  *         schema:
  *           type: string
  *         description: Filter by PRD ID
@@ -138,8 +138,8 @@ router.get('/',
     const filters = {
       status: query.status,
       priority: query.priority,
-      prdId: query.prdId ? parseInt(query.prdId) : undefined,
-      parentTaskId: query.parentTaskId ? parseInt(query.parentTaskId) : undefined,
+      prd_id: query.prd_id ? parseInt(query.prd_id) : undefined,
+      parent_task_id: query.parent_task_id ? parseInt(query.parent_task_id) : undefined,
       search: query.search
     };
     
@@ -217,8 +217,7 @@ router.get('/next',
       // Check if all dependencies are completed
       let hasIncompleteDependencies = false;
       for (const dep of dependencies) {
-        const depTask = await taskDAO.findById(dep.dependsOnTaskId);
-        if (depTask && depTask.status !== 'done') {
+        if (dep && dep.status !== 'done') {
           hasIncompleteDependencies = true;
           break;
         }
@@ -239,7 +238,7 @@ router.get('/next',
 
     // Sort by priority and complexity (high priority, low complexity first)
     availableTasks.sort((a, b) => {
-      const priorityOrder = { urgent: 4, high: 3, medium: 2, low: 1 };
+      const priorityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
       const aPriority = priorityOrder[a.priority] || 2;
       const bPriority = priorityOrder[b.priority] || 2;
 
@@ -248,8 +247,8 @@ router.get('/next',
       }
 
       // If same priority, prefer lower complexity
-      const aComplexity = a.complexityScore || 5;
-      const bComplexity = b.complexityScore || 5;
+      const aComplexity = a.complexity_score || 5;
+      const bComplexity = b.complexity_score || 5;
       return aComplexity - bComplexity;
     });
 
@@ -340,7 +339,7 @@ router.get('/:id',
  *                 enum: [pending, in-progress, done, review, blocked, deferred, cancelled]
  *               priority:
  *                 type: string
- *                 enum: [low, medium, high, urgent]
+ *                 enum: [low, medium, high, critical]
  *     responses:
  *       201:
  *         description: Task created successfully
@@ -577,7 +576,7 @@ router.post('/:id/subtasks',
     // Create subtask
     const subtaskDataWithParent = {
       ...subtaskData,
-      parentTaskId: parentId
+      parent_task_id: parentId
     };
 
     const subtask = await taskDAO.create(subtaskDataWithParent);
@@ -607,9 +606,9 @@ router.post('/:id/subtasks',
  *           schema:
  *             type: object
  *             required:
- *               - dependsOnTaskId
+ *               - depends_on_task_id
  *             properties:
- *               dependsOnTaskId:
+ *               depends_on_task_id:
  *                 type: integer
  *               dependencyType:
  *                 type: string
@@ -621,17 +620,17 @@ router.post('/:id/subtasks',
 router.post('/:id/dependencies',
   validateParams(taskParamsSchema),
   validateBody(z.object({
-    dependsOnTaskId: z.number(),
+    depends_on_task_id: z.number(),
     dependencyType: z.string().default('blocks')
   })),
   asyncHandler(async (req, res) => {
     const taskDAO = TaskDAO;
     const { id } = req.validatedParams;
-    const { dependsOnTaskId, dependencyType } = req.validatedBody;
+    const { depends_on_task_id, dependencyType } = req.validatedBody;
 
     // Check if both tasks exist
     const task = await taskDAO.findById(id);
-    const dependsOnTask = await taskDAO.findById(dependsOnTaskId);
+    const dependsOnTask = await taskDAO.findById(depends_on_task_id);
 
     if (!task) {
       throw new APIError('Task not found', 404, 'TASK_NOT_FOUND');
@@ -642,7 +641,7 @@ router.post('/:id/dependencies',
     }
 
     // Add dependency
-    await taskDAO.addDependency(id, dependsOnTaskId, dependencyType);
+    await taskDAO.addDependency(id, depends_on_task_id, dependencyType);
 
     res.status(201).json(createSuccessResponse(null, 'Dependency added successfully'));
   })
@@ -771,7 +770,7 @@ router.post('/:id/expand',
           description: `${baseSubtasks[i]} for: ${existingTask.description || existingTask.title}`,
           status: 'pending',
           priority: existingTask.priority,
-          parentTaskId: id,
+          parent_task_id: id,
           prdId: existingTask.prdId,
           metadata: {
             generatedBy: 'api-expand',
@@ -791,7 +790,7 @@ router.post('/:id/expand',
           description: `Subtask ${i} for: ${existingTask.description || existingTask.title}`,
           status: 'pending',
           priority: existingTask.priority,
-          parentTaskId: id,
+          parent_task_id: id,
           prdId: existingTask.prdId,
           metadata: {
             generatedBy: 'api-expand-manual',

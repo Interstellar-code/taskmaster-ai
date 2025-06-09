@@ -6,93 +6,56 @@ import path from 'path';
 import fs from 'fs/promises';
 import { APIError } from './errorHandler.js';
 import databaseManager from '../utils/database.js';
+import projectDAO from '../dao/ProjectDAO.js';
 
 /**
  * Validate that the request is for a valid TaskHero project
  */
 export async function validateProject(req, res, next) {
   try {
-    // Get project root from header or query parameter
-    const projectRoot = req.headers['x-project-root'] || 
-                       req.query.projectRoot || 
+    // Determine project root from various sources
+    const projectRoot = req.headers['x-project-root'] ||
+                       req.query.projectRoot ||
+                       process.env.PROJECT_ROOT ||
                        process.cwd();
-    
-    if (!projectRoot) {
-      throw new APIError(
-        'Project root not specified',
-        400,
-        'PROJECT_ROOT_MISSING',
-        { 
-          message: 'Specify project root via X-Project-Root header or projectRoot query parameter' 
-        }
-      );
-    }
-    
-    // Validate project root exists
-    try {
-      const stats = await fs.stat(projectRoot);
-      if (!stats.isDirectory()) {
-        throw new APIError(
-          'Project root is not a directory',
-          400,
-          'INVALID_PROJECT_ROOT'
-        );
-      }
-    } catch (error) {
-      if (error.code === 'ENOENT') {
-        throw new APIError(
-          'Project root directory does not exist',
-          404,
-          'PROJECT_ROOT_NOT_FOUND',
-          { projectRoot }
-        );
-      }
-      throw error;
-    }
-    
-    // Check if it's a TaskHero project
-    const taskHeroDir = path.join(projectRoot, '.taskmaster');
-    try {
-      await fs.access(taskHeroDir);
-    } catch (error) {
-      throw new APIError(
-        'Not a TaskHero project - .taskmaster directory not found',
-        400,
-        'NOT_TASKHERO_PROJECT',
-        { 
-          projectRoot,
-          message: 'Initialize project with "task-hero init" first'
-        }
-      );
-    }
-    
-    // Check database exists
-    const dbPath = path.join(taskHeroDir, 'taskhero.db');
-    try {
-      await fs.access(dbPath);
-    } catch (error) {
-      throw new APIError(
-        'TaskHero database not found',
-        404,
-        'DATABASE_NOT_FOUND',
-        { 
-          dbPath,
-          message: 'Database not initialized. Run "task-hero init" to create database.'
-        }
-      );
-    }
-    
-    // Initialize database connection if not already done
-    if (!databaseManager.isInitialized || databaseManager.projectRoot !== projectRoot) {
-      await databaseManager.initialize(projectRoot);
-    }
-    
-    // Add project info to request
+
+    // Set project root in request context for all routes
     req.projectRoot = projectRoot;
-    req.taskHeroDir = taskHeroDir;
-    req.dbPath = dbPath;
+
+    // Check if we have any active projects in the database first
+    // Use the singleton instance instead of creating a new one
+
+    try {
+      const activeProjects = await projectDAO.findActive();
+      if (activeProjects.length > 0) {
+        // We have an active project in the database, use its data
+        req.projectId = activeProjects[0].id;
+        // Override project root with database value if it exists
+        if (activeProjects[0].root_path) {
+          req.projectRoot = activeProjects[0].root_path;
+        }
+        return next();
+      }
+    } catch (dbError) {
+      console.warn('Database not available for project validation, using filesystem-based validation', {
+        error: dbError.message,
+        projectRoot
+      });
+    }
     
-    next();
+    // No database project found - check filesystem as fallback
+    try {
+      const taskHeroDir = path.join(projectRoot, '.taskmaster');
+      await fs.access(taskHeroDir);
+      console.info('TaskHero project directory found', { projectRoot, taskHeroDir });
+      return next();
+    } catch (fsError) {
+      console.warn('No .taskmaster directory found, but allowing request to proceed', {
+        projectRoot,
+        message: 'The DAO layers will handle project creation automatically'
+      });
+      return next();
+    }
   } catch (error) {
     next(error);
   }

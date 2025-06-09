@@ -6,23 +6,27 @@ export interface TaskFormData {
   description: string;
   priority: 'low' | 'medium' | 'high';
   status: TaskStatus;
-  dependencies: string[];
+  dependencies: number[];
   tags: string[];
   estimatedHours?: number;
   assignee?: string;
   dueDate?: Date;
   attachments?: File[];
   details?: string;
-  testStrategy?: string;
-  prdSource?: string;
+  test_strategy?: string;
+  prd_id?: number;
   subtasks?: TaskMasterSubtaskForm[];
 }
 
 // Bulk operation interface for batch operations
 export interface BulkOperation {
-  taskIds: string[];
+  taskIds: number[];
   operation: 'delete' | 'updateStatus' | 'updatePriority' | 'addDependency';
-  payload: any;
+  payload: {
+    status?: TaskStatus;
+    priority?: 'low' | 'medium' | 'high';
+    depends_on_task_id?: number;
+  };
 }
 
 // Valid task statuses
@@ -30,15 +34,15 @@ export type TaskStatus = 'pending' | 'in-progress' | 'done' | 'review' | 'blocke
 
 // TaskMaster subtask interface (standardized format)
 export interface TaskMasterSubtaskForm {
-  id: string | number;
+  id: number;
   title: string;
   description?: string;
   details?: string;
   status: TaskStatus;
-  dependencies?: (string | number)[];
-  parentTaskId?: string | number;
-  testStrategy?: string;
-  prdSource?: {
+  dependencies?: number[];
+  parent_task_id?: number;
+  test_strategy?: string;
+  prd_source?: {
     filePath: string;
     fileName: string;
     parsedDate: string;
@@ -53,13 +57,13 @@ export interface CreateTaskRequest {
   description: string;
   priority?: 'low' | 'medium' | 'high';
   status?: TaskStatus;
-  dependencies?: string[];
+  dependencies?: number[];
   tags?: string[];
   estimatedHours?: number;
   assignee?: string;
   dueDate?: string; // ISO string format
   details?: string;
-  testStrategy?: string;
+  test_strategy?: string;
   subtasks?: TaskMasterSubtaskForm[]; // Support for subtasks in creation
 }
 
@@ -69,47 +73,48 @@ export interface UpdateTaskRequest {
   description?: string;
   priority?: 'low' | 'medium' | 'high';
   status?: TaskStatus;
-  dependencies?: string[];
+  dependencies?: number[];
   tags?: string[];
   estimatedHours?: number;
   assignee?: string;
   dueDate?: string; // ISO string format
   details?: string;
-  testStrategy?: string;
+  test_strategy?: string;
 }
 
 export interface TaskMasterTask {
-  id: string | number;
+  id: number;
   title: string;
   description: string;
   details?: string;
-  testStrategy?: string;
+  test_strategy?: string;
   status: string;
   priority: string;
-  dependencies: (string | number)[];
+  dependencies: number[];
   subtasks?: TaskMasterSubtask[];
-  prdSource?: {
+  prd_source?: {
     filePath: string;
     fileName: string;
     parsedDate: string;
     fileHash: string;
     fileSize: number;
   } | null;
-  updatedAt?: string;
+  updated_at?: string;
   // Complexity analysis
-  complexityScore?: number;
-  complexityLevel?: 'low' | 'medium' | 'high';
+  complexity_score?: number;
+  complexity_level?: 'low' | 'medium' | 'high';
 }
 
 export interface TaskMasterSubtask {
-  id: string | number;
+  id: number;
   title: string;
   description: string;
   details?: string;
   status: string;
-  dependencies: (string | number)[];
-  parentTaskId?: string | number;
-  prdSource?: {
+  dependencies: number[];
+  parent_task_id?: number;
+  test_strategy?: string;
+  prd_source?: {
     filePath: string;
     fileName: string;
     parsedDate: string;
@@ -153,7 +158,7 @@ export interface KanbanTask {
   title?: string;
   description?: string;
   priority?: string;
-  dependencies?: string[];
+  dependencies?: number[];
   subtasks?: KanbanTask[];
 }
 
@@ -178,15 +183,15 @@ export interface EnhancedKanbanTask {
   };
 
   // Relationships
-  dependencies: string[];
+  dependencies: number[];
   dependencyStatus: 'none' | 'waiting' | 'ready';
 
   // Temporal data
-  updatedAt?: Date;
+  updated_at?: Date;
   ageInDays?: number;
 
   // Source tracking
-  prdSource?: {
+  prd_source?: {
     fileName: string;
     parsedDate: Date;
   };
@@ -195,12 +200,12 @@ export interface EnhancedKanbanTask {
   hasTestStrategy: boolean;
 
   // Complexity analysis
-  complexityScore?: number;
-  complexityLevel?: 'low' | 'medium' | 'high';
+  complexity_score?: number;
+  complexity_level?: 'low' | 'medium' | 'high';
 
   // Additional metadata
   details?: string;
-  testStrategy?: string;
+  test_strategy?: string;
 }
 
 export interface Column {

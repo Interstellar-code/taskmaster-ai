@@ -27,10 +27,8 @@ export const DATABASE_SCHEMA = {
     tasks: `
       CREATE TABLE IF NOT EXISTS tasks (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        project_id INTEGER NOT NULL,
         prd_id INTEGER,
         parent_task_id INTEGER,
-        task_identifier TEXT NOT NULL, -- e.g., "1", "1.1", "1.1.1"
         title TEXT NOT NULL,
         description TEXT,
         details TEXT,
@@ -38,13 +36,16 @@ export const DATABASE_SCHEMA = {
         status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'in-progress', 'done', 'review', 'blocked', 'deferred', 'cancelled')),
         priority TEXT DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high', 'critical')),
         complexity_score REAL DEFAULT 0.0,
+        complexity_level TEXT,
+        estimated_hours INTEGER,
+        assignee TEXT,
+        due_date DATETIME,
+        tags TEXT DEFAULT '[]', -- JSON array
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         metadata TEXT DEFAULT '{}', -- JSON metadata
-        FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
         FOREIGN KEY (prd_id) REFERENCES prds(id) ON DELETE SET NULL,
-        FOREIGN KEY (parent_task_id) REFERENCES tasks(id) ON DELETE CASCADE,
-        UNIQUE(project_id, task_identifier)
+        FOREIGN KEY (parent_task_id) REFERENCES tasks(id) ON DELETE CASCADE
       )
     `,
 
@@ -52,8 +53,6 @@ export const DATABASE_SCHEMA = {
     prds: `
       CREATE TABLE IF NOT EXISTS prds (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        project_id INTEGER NOT NULL,
-        prd_identifier TEXT NOT NULL, -- e.g., "prd_001"
         title TEXT NOT NULL,
         file_name TEXT NOT NULL,
         file_path TEXT NOT NULL,
@@ -67,9 +66,7 @@ export const DATABASE_SCHEMA = {
         created_date DATETIME DEFAULT CURRENT_TIMESTAMP,
         last_modified DATETIME DEFAULT CURRENT_TIMESTAMP,
         task_stats TEXT DEFAULT '{}', -- JSON object with task statistics
-        metadata TEXT DEFAULT '{}', -- JSON metadata
-        FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
-        UNIQUE(project_id, prd_identifier)
+        metadata TEXT DEFAULT '{}' -- JSON metadata
       )
     `,
 
@@ -124,16 +121,16 @@ export const DATABASE_SCHEMA = {
   // Index creation SQL statements for performance optimization
   indexes: {
     // Task indexes
-    idx_tasks_project_id: 'CREATE INDEX IF NOT EXISTS idx_tasks_project_id ON tasks(project_id)',
     idx_tasks_status: 'CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status)',
+    idx_tasks_priority: 'CREATE INDEX IF NOT EXISTS idx_tasks_priority ON tasks(priority)',
     idx_tasks_prd_id: 'CREATE INDEX IF NOT EXISTS idx_tasks_prd_id ON tasks(prd_id)',
     idx_tasks_parent_id: 'CREATE INDEX IF NOT EXISTS idx_tasks_parent_id ON tasks(parent_task_id)',
     idx_tasks_created_at: 'CREATE INDEX IF NOT EXISTS idx_tasks_created_at ON tasks(created_at)',
     idx_tasks_updated_at: 'CREATE INDEX IF NOT EXISTS idx_tasks_updated_at ON tasks(updated_at)',
-    
+
     // PRD indexes
-    idx_prds_project_id: 'CREATE INDEX IF NOT EXISTS idx_prds_project_id ON prds(project_id)',
     idx_prds_status: 'CREATE INDEX IF NOT EXISTS idx_prds_status ON prds(status)',
+    idx_prds_priority: 'CREATE INDEX IF NOT EXISTS idx_prds_priority ON prds(priority)',
     idx_prds_created_date: 'CREATE INDEX IF NOT EXISTS idx_prds_created_date ON prds(created_date)',
     
     // Dependency indexes

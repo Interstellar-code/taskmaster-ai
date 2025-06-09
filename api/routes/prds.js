@@ -8,20 +8,21 @@ import { asyncHandler, createSuccessResponse, APIError } from '../middleware/err
 import { validateBody, validateQuery, validateParams } from '../middleware/validateProject.js';
 import PRDDAO from '../dao/PRDDAO.js';
 import TaskDAO from '../dao/TaskDAO.js';
+import ProjectDAO from '../dao/ProjectDAO.js';
 
 const router = express.Router();
 
 // Validation schemas
 const prdCreateSchema = z.object({
-  prdIdentifier: z.string().min(1).max(50),
+  prd_identifier: z.string().min(1).max(50),
   title: z.string().min(1).max(255),
-  fileName: z.string().min(1).max(255),
-  filePath: z.string().min(1),
-  fileHash: z.string().optional(),
-  fileSize: z.number().optional(),
+  file_name: z.string().min(1).max(255),
+  file_path: z.string().min(1),
+  file_hash: z.string().optional(),
+  file_size: z.number().optional(),
   status: z.enum(['pending', 'in-progress', 'done', 'archived']).default('pending'),
   complexity: z.enum(['low', 'medium', 'high', 'very-high']).default('medium'),
-  priority: z.enum(['low', 'medium', 'high', 'urgent']).default('medium'),
+  priority: z.enum(['low', 'medium', 'high', 'critical']).default('medium'),
   description: z.string().optional(),
   tags: z.array(z.string()).default([]),
   metadata: z.record(z.any()).default({})
@@ -82,7 +83,7 @@ const prdUploadSchema = z.object({
  *           enum: [low, medium, high, very-high]
  *         priority:
  *           type: string
- *           enum: [low, medium, high, urgent]
+ *           enum: [low, medium, high, critical]
  *         description:
  *           type: string
  *         tags:
@@ -272,7 +273,7 @@ router.get('/:id',
  *                 enum: [low, medium, high, very-high]
  *               priority:
  *                 type: string
- *                 enum: [low, medium, high, urgent]
+ *                 enum: [low, medium, high, critical]
  *     responses:
  *       201:
  *         description: PRD created successfully
@@ -374,8 +375,16 @@ router.post('/upload',
         );
       }
 
-      // Determine file path in project
-      const projectRoot = process.env.PROJECT_ROOT || process.cwd();
+      // Determine file path in project - get from database
+      const projectDAO = ProjectDAO;
+      let projectRoot;
+      try {
+        projectRoot = await projectDAO.getCurrentProjectRoot();
+      } catch (error) {
+        // Fallback to environment variable or relative path
+        projectRoot = process.env.PROJECT_ROOT || process.cwd();
+        console.warn('Could not get project root from database, using fallback:', projectRoot);
+      }
       const prdDir = path.join(projectRoot, '.taskmaster', 'prd');
       const filePath = path.join(prdDir, fileName);
 
@@ -391,22 +400,22 @@ router.post('/upload',
 
       // Create PRD entry in database
       const prdData = {
-        prdIdentifier,
+        prd_identifier: prdIdentifier,
         title: fileName.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' '),
-        fileName,
-        filePath: path.relative(projectRoot, filePath),
-        fileHash,
-        fileSize,
+        file_name: fileName,
+        file_path: path.relative(projectRoot, filePath),
+        file_hash: fileHash,
+        file_size: fileSize,
         status: 'pending',
         complexity: 'medium',
         priority: 'medium',
         description: `Uploaded PRD file: ${fileName}`,
         tags: ['uploaded'],
         metadata: {
-          uploadedAt: new Date().toISOString(),
-          fileType,
+          uploaded_at: new Date().toISOString(),
+          file_type: fileType,
           append,
-          numTasks
+          num_tasks: numTasks
         }
       };
 
@@ -415,7 +424,7 @@ router.post('/upload',
         // Update existing PRD
         prd = await prdDAO.update(existingPrd.id, {
           ...prdData,
-          lastModified: new Date().toISOString()
+          last_modified: new Date().toISOString()
         });
       } else {
         // Create new PRD
@@ -423,7 +432,7 @@ router.post('/upload',
       }
 
       res.status(201).json(createSuccessResponse(prd, 'PRD uploaded and registered successfully', {
-        filePath: prd.filePath,
+        file_path: prd.file_path,
         fileSize,
         fileHash
       }));

@@ -21,9 +21,10 @@ export class PRDDAO extends BaseDAO {
       throw new Error(`Validation failed: ${validation.errors.join(', ')}`);
     }
 
-    const preparedData = this.prepareData(prdData);
+    const preparedData = await this.prepareData(prdData);
     return await super.create(preparedData);
   }
+
 
   /**
    * Override findAll to handle search and return pagination format expected by routes
@@ -87,51 +88,26 @@ export class PRDDAO extends BaseDAO {
     };
   }
 
-  /**
-   * Find PRDs by project ID
-   * @param {number} projectId - Project ID
-   * @param {Object} options - Query options
-   * @returns {Promise<Array>} Array of PRDs
-   */
-  async findByProjectId(projectId, options = {}) {
-    return await this.findAll({ project_id: projectId }, {
-      orderBy: 'created_date',
-      orderDirection: 'DESC',
-      ...options
-    });
-  }
+
 
   /**
    * Find PRDs by status
    * @param {string} status - PRD status
-   * @param {number} projectId - Optional project ID filter
    * @returns {Promise<Array>} Array of PRDs
    */
-  async findByStatus(status, projectId = null) {
+  async findByStatus(status) {
     const filters = { status };
-    if (projectId) {
-      filters.project_id = projectId;
-    }
     return await this.findAll(filters, { orderBy: 'created_date', orderDirection: 'DESC' });
   }
 
   /**
-   * Find PRD by identifier
-   * @param {string} prdIdentifier - PRD identifier
-   * @param {number} projectId - Optional project ID
+   * Find PRD by ID (since we removed prd_identifier)
+   * @param {number} prdId - PRD ID
    * @returns {Promise<Object|null>} PRD or null
    */
-  async findByIdentifier(prdIdentifier, projectId = null) {
-    let sql = `SELECT * FROM ${this.tableName} WHERE prd_identifier = ?`;
-    const params = [prdIdentifier];
-
-    if (projectId) {
-      sql += ` AND project_id = ?`;
-      params.push(projectId);
-    }
-
-    const result = await this.db.getQuery(sql, params);
-    return this.parseRecord(result);
+  async findByIdentifier(prdId) {
+    // Since we removed prd_identifier, use the ID instead
+    return await this.findById(prdId);
   }
 
   /**
@@ -194,51 +170,22 @@ export class PRDDAO extends BaseDAO {
     });
   }
 
-  /**
-   * Get next available PRD identifier for a project
-   * @param {number} projectId - Project ID
-   * @returns {Promise<string>} Next PRD identifier
-   */
-  async getNextPrdIdentifier(projectId) {
-    const sql = `
-      SELECT prd_identifier 
-      FROM ${this.tableName} 
-      WHERE project_id = ? 
-      ORDER BY prd_identifier DESC 
-      LIMIT 1
-    `;
-    
-    const lastPrd = await this.db.getQuery(sql, [projectId]);
-    
-    if (lastPrd) {
-      // Extract number from identifier like "prd_001"
-      const match = lastPrd.prd_identifier.match(/prd_(\d+)/);
-      if (match) {
-        const lastNumber = parseInt(match[1]);
-        const nextNumber = (lastNumber + 1).toString().padStart(3, '0');
-        return `prd_${nextNumber}`;
-      }
-    }
-    
-    return 'prd_001';
-  }
+
 
   /**
-   * Get PRD statistics for a project
-   * @param {number} projectId - Project ID
+   * Get PRD statistics
    * @returns {Promise<Object>} PRD statistics
    */
-  async getProjectStats(projectId) {
+  async getStats() {
     const sql = `
-      SELECT 
+      SELECT
         status,
         COUNT(*) as count
-      FROM ${this.tableName} 
-      WHERE project_id = ? 
+      FROM ${this.tableName}
       GROUP BY status
     `;
-    
-    const results = await this.db.getAllQuery(sql, [projectId]);
+
+    const results = await this.db.getAllQuery(sql);
     
     const stats = {
       total: 0,
@@ -323,7 +270,7 @@ export class PRDDAO extends BaseDAO {
    * @param {Object} data - PRD data
    * @returns {Object} Prepared data
    */
-  prepareData(data) {
+  async prepareData(data) {
     const prepared = super.prepareData(data);
     
     // Ensure required fields have defaults
@@ -351,6 +298,9 @@ export class PRDDAO extends BaseDAO {
       prepared.task_stats = JSON.stringify(prepared.task_stats);
     }
 
+    // Remove prd_identifier - we'll use the database ID instead
+    delete prepared.prd_identifier;
+
     return prepared;
   }
 
@@ -364,10 +314,6 @@ export class PRDDAO extends BaseDAO {
     const errors = [];
 
     if (operation === 'create') {
-      if (!data.project_id) {
-        errors.push('project_id is required');
-      }
-      
       if (!data.title || data.title.trim().length === 0) {
         errors.push('title is required');
       }

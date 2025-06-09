@@ -35,22 +35,28 @@ interface CopyTaskData {
   description: string;
   priority: 'high' | 'medium' | 'low';
   status?: string;
-  dependencies: string[];
+  dependencies: number[];
   tags?: string[];
   details?: string;
-  testStrategy?: string;
+  test_strategy?: string;
   subtasks?: Array<{
-    id: string | number;
+    id: number;
     title: string;
     description?: string;
     details?: string;
     status: 'pending' | 'in-progress' | 'done' | 'review' | 'blocked' | 'deferred' | 'cancelled';
-    dependencies: (string | number)[];
-    parentTaskId?: string | number;
-    testStrategy?: string;
-    prdSource?: object | null;
+    dependencies: number[];
+    parent_task_id?: number;
+    test_strategy?: string;
+    prd_source?: {
+      filePath: string;
+      fileName: string;
+      parsedDate: string;
+      fileHash: string;
+      fileSize: number;
+    } | null;
   }>;
-  prdSource?: string; // TaskCreateModal expects string, not object
+  prd_source?: string; // TaskCreateModal expects string, not object
 }
 import { taskService } from "../api/taskService";
 import { TaskEditModal, TaskDeleteDialog, TaskCreateModal } from "./forms";
@@ -62,7 +68,7 @@ export interface EnhancedTaskCardProps {
   onTaskClick?: (taskId: string) => void;
   onTaskUpdated?: (task: TaskMasterTask) => void;
   onTaskDeleted?: (taskId: string) => void;
-  onTaskCreated?: (task: TaskMasterTask) => void;
+  onTaskCreated?: () => void;
 }
 
 export type TaskType = "Task";
@@ -202,15 +208,15 @@ export function EnhancedTaskCard({ task, isOverlay, onTaskClick, onTaskUpdated, 
         }
 
         return {
-          id: `subtask_${Date.now()}_${Math.random()}`,
+          id: parseInt(`${Date.now()}${Math.floor(Math.random() * 1000)}`),
           title: subtask.title,
           description: subtask.description || '',
           details: subtask.details || '',
           status: status,
           dependencies: [], // Clear dependencies for copied subtasks as per user preference
-          parentTaskId: undefined, // Will be set when the parent task is created
-          testStrategy: ('testStrategy' in subtask && typeof subtask.testStrategy === 'string') ? subtask.testStrategy : '',
-          prdSource: subtask.prdSource || null,
+          parent_task_id: undefined, // Will be set when the parent task is created
+          test_strategy: ('test_strategy' in subtask && typeof subtask.test_strategy === 'string') ? subtask.test_strategy : '',
+          prd_source: subtask.prd_source || null,
         };
       }) || [];
 
@@ -222,9 +228,9 @@ export function EnhancedTaskCard({ task, isOverlay, onTaskClick, onTaskUpdated, 
         status: fullTask.status,
         dependencies: [], // Clear dependencies for copied task
         details: fullTask.details,
-        testStrategy: fullTask.testStrategy,
+        test_strategy: fullTask.test_strategy,
         subtasks: transformedSubtasks,
-        prdSource: fullTask.prdSource?.fileName,
+        prd_source: fullTask.prd_source?.fileName,
       };
 
       setCopyTaskData(copyData);
@@ -370,14 +376,14 @@ export function EnhancedTaskCard({ task, isOverlay, onTaskClick, onTaskUpdated, 
             </div>
 
             <div className="flex items-center gap-2">
-              {task.prdSource && (
+              {task.prd_source && (
                 <Tooltip>
                   <TooltipTrigger>
                     <FileText size={14} className="text-muted-foreground" />
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>From: {task.prdSource.fileName}</p>
-                    <p>Parsed: {task.prdSource.parsedDate.toLocaleDateString()}</p>
+                    <p>From: {task.prd_source.fileName}</p>
+                    <p>Parsed: {task.prd_source.parsedDate.toLocaleDateString()}</p>
                   </TooltipContent>
                 </Tooltip>
               )}
@@ -397,7 +403,7 @@ export function EnhancedTaskCard({ task, isOverlay, onTaskClick, onTaskUpdated, 
         <CardContent className="pt-0 px-3 pb-3">
           {/* Task ID and PRD ID */}
           <div className="text-xs text-muted-foreground mb-1 font-mono">
-            {task.prdSource ? `PRD1:Task:${task.id}` : `Task:${task.id}`}
+            {task.prd_source ? `PRD1:Task:${task.id}` : `Task:${task.id}`}
           </div>
 
           <h3 className="font-medium text-sm mb-2 line-clamp-2" title={task.title}>
@@ -567,7 +573,7 @@ export function EnhancedTaskCard({ task, isOverlay, onTaskClick, onTaskUpdated, 
               // TaskCreateModal expects () => void, but we need to call onTaskCreated with task
               // Since we don't have the created task data here, we'll call it without parameters
               // and let the parent component refresh the task list
-              onTaskCreated?.(copyTaskData as TaskMasterTask);
+              onTaskCreated?.();
             }}
             initialData={copyTaskData}
           />

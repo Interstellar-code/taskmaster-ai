@@ -16,6 +16,7 @@ const __dirname = path.dirname(__filename);
 
 // Default configuration
 const DEFAULT_PORT = 3001;
+// Default to current working directory (the TaskHero project root)
 const DEFAULT_PROJECT_ROOT = process.cwd();
 
 /**

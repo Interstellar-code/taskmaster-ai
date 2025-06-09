@@ -21,19 +21,11 @@ export class TaskDAO extends BaseDAO {
       throw new Error(`Validation failed: ${validation.errors.join(', ')}`);
     }
 
-    const preparedData = this.prepareData(taskData);
+    const preparedData = await this.prepareData(taskData);
     return await super.create(preparedData);
   }
 
-  /**
-   * Find tasks by project ID
-   * @param {number} projectId - Project ID
-   * @param {Object} options - Query options
-   * @returns {Promise<Array>} Array of tasks
-   */
-  async findByProjectId(projectId, options = {}) {
-    return await this.findAll({ project_id: projectId }, options);
-  }
+
 
   /**
    * Find tasks by PRD ID
@@ -48,14 +40,10 @@ export class TaskDAO extends BaseDAO {
   /**
    * Find tasks by status
    * @param {string} status - Task status
-   * @param {number} projectId - Optional project ID filter
    * @returns {Promise<Array>} Array of tasks
    */
-  async findByStatus(status, projectId = null) {
+  async findByStatus(status) {
     const filters = { status };
-    if (projectId) {
-      filters.project_id = projectId;
-    }
     return await this.findAll(filters, { orderBy: 'created_at', orderDirection: 'DESC' });
   }
 
@@ -70,12 +58,11 @@ export class TaskDAO extends BaseDAO {
 
   /**
    * Find root tasks (tasks without parent)
-   * @param {number} projectId - Project ID
    * @returns {Promise<Array>} Array of root tasks
    */
-  async findRootTasks(projectId) {
-    const sql = `SELECT * FROM ${this.tableName} WHERE project_id = ? AND parent_task_id IS NULL ORDER BY task_identifier`;
-    const results = await this.db.getAllQuery(sql, [projectId]);
+  async findRootTasks() {
+    const sql = `SELECT * FROM ${this.tableName} WHERE parent_task_id IS NULL ORDER BY task_identifier`;
+    const results = await this.db.getAllQuery(sql);
     return results.map(record => this.parseRecord(record));
   }
 
@@ -128,80 +115,23 @@ export class TaskDAO extends BaseDAO {
     return await this.update(taskId, { status });
   }
 
-  /**
-   * Get next available task identifier for a project
-   * @param {number} projectId - Project ID
-   * @param {number} parentTaskId - Parent task ID (for subtasks)
-   * @returns {Promise<string>} Next task identifier
-   */
-  async getNextTaskIdentifier(projectId, parentTaskId = null) {
-    let sql, params;
-    
-    if (parentTaskId) {
-      // Get parent task identifier
-      const parentTask = await this.findById(parentTaskId);
-      if (!parentTask) {
-        throw new Error('Parent task not found');
-      }
 
-      // Find highest subtask number
-      sql = `
-        SELECT task_identifier 
-        FROM ${this.tableName} 
-        WHERE project_id = ? AND parent_task_id = ? 
-        ORDER BY task_identifier DESC 
-        LIMIT 1
-      `;
-      params = [projectId, parentTaskId];
-      
-      const lastSubtask = await this.db.getQuery(sql, params);
-      
-      if (lastSubtask) {
-        const parts = lastSubtask.task_identifier.split('.');
-        const lastNumber = parseInt(parts[parts.length - 1]);
-        return `${parentTask.task_identifier}.${lastNumber + 1}`;
-      } else {
-        return `${parentTask.task_identifier}.1`;
-      }
-    } else {
-      // Find highest root task number
-      sql = `
-        SELECT task_identifier 
-        FROM ${this.tableName} 
-        WHERE project_id = ? AND parent_task_id IS NULL 
-        ORDER BY CAST(task_identifier AS INTEGER) DESC 
-        LIMIT 1
-      `;
-      params = [projectId];
-      
-      const lastTask = await this.db.getQuery(sql, params);
-      
-      if (lastTask) {
-        const lastNumber = parseInt(lastTask.task_identifier);
-        return (lastNumber + 1).toString();
-      } else {
-        return '1';
-      }
-    }
-  }
 
   /**
-   * Get task statistics for a project
-   * @param {number} projectId - Project ID
+   * Get task statistics
    * @returns {Promise<Object>} Task statistics
    */
-  async getProjectStats(projectId) {
+  async getStats() {
     const sql = `
-      SELECT 
+      SELECT
         status,
         COUNT(*) as count
-      FROM ${this.tableName} 
-      WHERE project_id = ? 
+      FROM ${this.tableName}
       GROUP BY status
     `;
-    
-    const results = await this.db.getAllQuery(sql, [projectId]);
-    
+
+    const results = await this.db.getAllQuery(sql);
+
     const stats = {
       total: 0,
       pending: 0,
@@ -248,7 +178,7 @@ export class TaskDAO extends BaseDAO {
    * @param {Object} data - Task data
    * @returns {Object} Prepared data
    */
-  prepareData(data) {
+  async prepareData(data) {
     const prepared = super.prepareData(data);
 
     // Remove dependencies field - it's handled separately
@@ -267,8 +197,12 @@ export class TaskDAO extends BaseDAO {
       prepared.complexity_score = 0.0;
     }
 
+    // Remove task_identifier - we'll use the database ID instead
+    delete prepared.task_identifier;
+
     return prepared;
   }
+
 
   /**
    * Get task dependencies
@@ -281,7 +215,7 @@ export class TaskDAO extends BaseDAO {
       FROM tasks t
       INNER JOIN task_dependencies td ON t.id = td.depends_on_task_id
       WHERE td.task_id = ?
-      ORDER BY t.task_identifier
+      ORDER BY t.id
     `;
 
     const results = await this.db.getAllQuery(sql, [taskId]);
@@ -449,7 +383,7 @@ export class TaskDAO extends BaseDAO {
     }
 
     if (data.priority) {
-      const validPriorities = ['low', 'medium', 'high', 'urgent'];
+      const validPriorities = ['low', 'medium', 'high', 'critical'];
       if (!validPriorities.includes(data.priority)) {
         errors.push(`Invalid priority: ${data.priority}`);
       }

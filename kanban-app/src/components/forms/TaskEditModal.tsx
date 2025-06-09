@@ -18,30 +18,51 @@ function hasDateProperty(obj: unknown): obj is { dueDate?: string } {
 }
 
 // Create a proper edit schema that makes required fields explicit
+// Type conversion utilities for Phase 4 field mapping fixes
+const convertToIntegerIds = (ids: (string | number)[]): number[] => {
+  return ids.map(id => typeof id === 'string' ? parseInt(id, 10) : id).filter(id => !isNaN(id));
+};
+
+const convertToStringIds = (ids: number[]): string[] => {
+  return ids.map(id => id.toString());
+};
+
 const TaskEditSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters long').max(200, 'Title must be less than 200 characters'),
   description: z.string().min(10, 'Description must be at least 10 characters long').max(5000, 'Description must be less than 5000 characters'),
-  tags: z.array(z.string()),
-  dependencies: z.array(z.string()),
+  tags: z.array(z.string()).default([]),
+  dependencies: z.array(z.union([z.string(), z.number()])).default([]).transform((deps) => convertToIntegerIds(deps)),
   subtasks: z.array(z.object({
     id: z.union([z.string(), z.number()]),
     title: z.string(),
     description: z.string().optional(),
     details: z.string().optional(),
     status: z.enum(['pending', 'in-progress', 'done', 'review', 'blocked', 'deferred', 'cancelled']),
-    dependencies: z.array(z.union([z.string(), z.number()])),
-    parentTaskId: z.union([z.string(), z.number()]).optional(),
-    testStrategy: z.string().optional(),
-    prdSource: z.any().optional(),
-  })),
+    dependencies: z.array(z.union([z.string(), z.number()])).default([]).transform((deps) => convertToIntegerIds(deps)),
+    parent_task_id: z.union([z.string(), z.number()]).optional().transform((val) => {
+      if (val === undefined || val === null) return undefined;
+      return typeof val === 'string' ? parseInt(val, 10) : val;
+    }),
+    test_strategy: z.string().optional(),
+    prd_source: z.object({
+      filePath: z.string(),
+      fileName: z.string(),
+      parsedDate: z.string(),
+      fileHash: z.string(),
+      fileSize: z.number()
+    }).nullable().optional(),
+  })).default([]),
   details: z.string().optional(),
   priority: z.enum(['low', 'medium', 'high']).optional(),
   status: z.enum(['pending', 'in-progress', 'done', 'review', 'blocked', 'deferred', 'cancelled']).optional(),
-  estimatedHours: z.number().optional(),
+  estimated_hours: z.number().optional(),
   assignee: z.string().optional(),
-  dueDate: z.date().optional(),
-  testStrategy: z.string().optional(),
-  prdSource: z.string().optional(),
+  due_date: z.date().optional(),
+  test_strategy: z.string().optional(),
+  prd_id: z.union([z.string(), z.number()]).optional().transform((val) => {
+    if (val === undefined || val === null || val === '') return undefined;
+    return typeof val === 'string' ? parseInt(val, 10) : val;
+  }),
 });
 
 type TaskEditFormData = z.infer<typeof TaskEditSchema>;
@@ -101,13 +122,13 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
       priority: 'medium' as const,
       status: 'pending' as const,
       tags: [],
-      estimatedHours: undefined,
+      estimated_hours: undefined,
       assignee: '',
-      dueDate: undefined,
+      due_date: undefined,
       details: '',
-      testStrategy: '',
+      test_strategy: '',
       dependencies: [],
-      prdSource: '',
+      prd_id: undefined,
       subtasks: [],
     },
   });
@@ -131,10 +152,10 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
         description: subtask.description || '',
         details: subtask.details || '',
         status: (subtask.status as 'pending' | 'in-progress' | 'done' | 'review' | 'blocked' | 'deferred' | 'cancelled') || 'pending',
-        dependencies: (subtask.dependencies || []) as (string | number)[],
-        parentTaskId: subtask.parentTaskId || task.id,
-        testStrategy: '',
-        prdSource: subtask.prdSource || null,
+        dependencies: convertToStringIds(subtask.dependencies || []),
+        parent_task_id: subtask.parent_task_id || parseInt(task.id, 10),
+        test_strategy: subtask.test_strategy || '',
+        prd_source: subtask.prd_source || null,
       })) : [];
 
       form.reset({
@@ -143,13 +164,13 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
         priority: (fullTask.priority as 'low' | 'medium' | 'high') || 'medium',
         status: (fullTask.status as TaskStatus) || 'pending',
         tags: [],
-        estimatedHours: (fullTask as any).estimatedHours || undefined, // Get from task if available
-        assignee: (fullTask as any).assignee || '', // Get from task if available
-        dueDate: hasDateProperty(fullTask) && fullTask.dueDate ? new Date(fullTask.dueDate) : undefined, // Convert string to Date if exists
+        estimated_hours: (fullTask as TaskMasterTask & { estimated_hours?: number }).estimated_hours || undefined,
+        assignee: (fullTask as TaskMasterTask & { assignee?: string }).assignee || '',
+        due_date: hasDateProperty(fullTask) && fullTask.dueDate ? new Date(fullTask.dueDate) : undefined,
         details: fullTask.details || '',
-        testStrategy: fullTask.testStrategy || '',
-        dependencies: Array.isArray(fullTask.dependencies) ? fullTask.dependencies.map(dep => String(dep)) : [],
-        prdSource: fullTask.prdSource?.fileName || '',
+        test_strategy: fullTask.test_strategy || '',
+        dependencies: convertToStringIds(Array.isArray(fullTask.dependencies) ? fullTask.dependencies : []),
+        prd_id: (fullTask as TaskMasterTask & { prd_id?: number }).prd_id || undefined,
         subtasks: formSubtasks,
       });
 
@@ -165,13 +186,13 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
         priority: task.priority || 'medium',
         status: (task.status as TaskStatus) || 'pending',
         tags: [],
-        estimatedHours: undefined,
+        estimated_hours: undefined,
         assignee: '',
-        dueDate: hasDateProperty(task) && task.dueDate ? new Date(task.dueDate) : undefined,
+        due_date: hasDateProperty(task) && task.dueDate ? new Date(task.dueDate) : undefined,
         details: task.details || '',
-        testStrategy: task.testStrategy || '',
-        dependencies: Array.isArray(task.dependencies) ? task.dependencies.map(dep => String(dep)) : [],
-        prdSource: task.prdSource?.fileName || '',
+        test_strategy: task.test_strategy || '',
+        dependencies: convertToStringIds(Array.isArray(task.dependencies) ? task.dependencies : []),
+        prd_id: undefined,
         subtasks: [],
       });
 
@@ -189,7 +210,7 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
 
       // Filter out current task from dependencies
       const filteredTasks = tasks
-        .filter(t => t.id !== task.id)
+        .filter(t => String(t.id) !== task.id)
         .map(t => ({
           id: String(t.id),
           title: t.title
@@ -210,7 +231,7 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
       if (response.ok) {
         const result = await response.json();
         if (result.success && result.data) {
-          return result.data.map((prd: any) => ({
+          return result.data.map((prd: { id: string | number; title?: string; fileName?: string }) => ({
             id: prd.id || prd.fileName,
             title: prd.title || prd.fileName || `PRD ${prd.id}`
           }));
@@ -235,13 +256,13 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
         priority: data.priority,
         status: data.status,
         tags: data.tags,
-        dependencies: Array.isArray(data.dependencies) ? data.dependencies : [],
+        dependencies: data.dependencies, // Already converted to numbers by schema transform
         assignee: data.assignee?.trim() || undefined,
-        estimatedHours: data.estimatedHours || undefined,
-        dueDate: data.dueDate ? data.dueDate.toISOString() : undefined,
+        estimated_hours: data.estimated_hours || undefined,
+        due_date: data.due_date ? data.due_date.toISOString() : undefined,
         details: data.details?.trim() || undefined,
-        testStrategy: data.testStrategy?.trim() || undefined,
-        prdSource: data.prdSource?.trim() || undefined,
+        test_strategy: data.test_strategy?.trim() || undefined,
+        prd_id: data.prd_id || undefined,
         subtasks: data.subtasks || []
       };
 
@@ -348,7 +369,7 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
               />
 
               <FormCombobox
-                name="prdSource"
+                name="prd_id"
                 control={form.control}
                 label="PRD Source"
                 placeholder="Select PRD source..."
@@ -416,7 +437,7 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
                     />
 
                     <FormInput
-                      name="estimatedHours"
+                      name="estimated_hours"
                       control={form.control}
                       label="Est. Hours"
                       placeholder="0.5"
@@ -427,7 +448,7 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
                     />
 
                     <FormDatePicker
-                      name="dueDate"
+                      name="due_date"
                       control={form.control}
                       label="Due Date"
                       placeholder="Select date..."
@@ -447,7 +468,7 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
                     />
 
                     <FormTextarea
-                      name="testStrategy"
+                      name="test_strategy"
                       control={form.control}
                       label="Test Strategy"
                       placeholder="How will this task be tested or validated..."
@@ -476,8 +497,13 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
  * SubtaskManager Component
  * Manages dynamic subtask creation with checkboxes
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface SubtaskManagerProps {
-  form: ReturnType<typeof useForm<TaskEditFormData>>;
+  form: {
+    watch: (name: 'subtasks') => any;
+    getValues: (name: 'subtasks') => any;
+    setValue: (name: 'subtasks', value: any) => void;
+  };
   task: EnhancedKanbanTask;
   onTaskUpdated?: (task: TaskMasterTask) => void;
 }
@@ -490,18 +516,17 @@ function SubtaskManager({ form, task, onTaskUpdated }: SubtaskManagerProps) {
   const addSubtask = () => {
     if (newSubtaskTitle.trim()) {
       const currentSubtasks = form.getValues('subtasks') || [];
-      const nextIndex = currentSubtasks.length + 1;
 
       const newSubtask = {
-        id: `${task?.id || 'new'}.${nextIndex}`,
+        id: parseInt(`${Date.now()}${Math.floor(Math.random() * 1000)}`),
         title: newSubtaskTitle.trim(),
         description: '',
         details: '',
         status: 'pending' as const,
-        dependencies: [] as (string | number)[],
-        parentTaskId: task?.id,
-        testStrategy: '',
-        prdSource: null,
+        dependencies: [],
+        parent_task_id: task?.id ? parseInt(task.id, 10) : undefined,
+        test_strategy: '',
+        prd_source: null,
       };
 
       form.setValue('subtasks', [...currentSubtasks, newSubtask]);
@@ -511,13 +536,13 @@ function SubtaskManager({ form, task, onTaskUpdated }: SubtaskManagerProps) {
 
   const removeSubtask = (subtaskId: string) => {
     const currentSubtasks = form.getValues('subtasks') || [];
-    const updatedSubtasks = currentSubtasks.filter((st) => st.id !== subtaskId);
+    const updatedSubtasks = currentSubtasks.filter((st: { id: string | number }) => st.id !== subtaskId);
     form.setValue('subtasks', updatedSubtasks);
   };
 
   const toggleSubtask = async (subtaskId: string) => {
     const currentSubtasks = form.getValues('subtasks') || [];
-    const targetSubtask = currentSubtasks.find(st => st.id === subtaskId);
+    const targetSubtask = currentSubtasks.find((st: { id: string | number; status: string }) => st.id === subtaskId);
 
     if (!targetSubtask) {
       showError("Update Failed", "Subtask not found.");
@@ -527,7 +552,7 @@ function SubtaskManager({ form, task, onTaskUpdated }: SubtaskManagerProps) {
     const newStatus = targetSubtask.status === 'done' ? 'pending' : 'done';
 
     // Update form state immediately for responsive UI
-    const updatedSubtasks = currentSubtasks.map((st) =>
+    const updatedSubtasks = currentSubtasks.map((st: { id: string | number; status: string }) =>
       st.id === subtaskId ? { ...st, status: newStatus as 'pending' | 'in-progress' | 'done' | 'review' | 'blocked' | 'deferred' | 'cancelled' } : st
     );
     form.setValue('subtasks', updatedSubtasks);

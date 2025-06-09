@@ -42,8 +42,8 @@ class DatabaseManager {
       // Enable foreign key constraints
       await this.runQuery('PRAGMA foreign_keys = ON');
       
-      // Enable WAL mode for better concurrency
-      await this.runQuery('PRAGMA journal_mode = WAL');
+      // Use DELETE mode instead of WAL for WSL compatibility
+      await this.runQuery('PRAGMA journal_mode = DELETE');
       
       // Set reasonable timeout
       await this.runQuery('PRAGMA busy_timeout = 30000');
@@ -66,7 +66,10 @@ class DatabaseManager {
    * @returns {string} Database file path
    */
   getDatabasePath(projectRoot) {
-    return path.join(projectRoot, '.taskmaster', 'taskhero.db');
+    // Use project's .taskmaster directory for the database
+    const dbPath = path.join(projectRoot, '.taskmaster', 'taskhero.db');
+    console.log(`Using project database path: ${dbPath}`);
+    return dbPath;
   }
 
   /**

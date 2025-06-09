@@ -7,7 +7,8 @@ import {
   EnhancedKanbanTask,
   ColumnId,
   STATUS_MAPPING,
-  KANBAN_TO_TASKMASTER_STATUS
+  KANBAN_TO_TASKMASTER_STATUS,
+  UpdateTaskRequest
 } from './types';
 
 // Determine API base URL based on environment
@@ -30,21 +31,51 @@ interface ManualTaskData {
   title: string;
   description: string;
   status?: string;
-  priority?: 'low' | 'medium' | 'high';
-  dependencies?: string[];
+  priority?: 'low' | 'medium' | 'high' | 'critical';
+  dependencies?: number[];
 }
 
 interface ManualSubtaskData {
   title: string;
   description: string;
   status?: string;
-  priority?: 'low' | 'medium' | 'high';
+  priority?: 'low' | 'medium' | 'high' | 'critical';
 }
 
 interface TaskCreateRequest {
+  // Direct task fields for API compatibility
+  title: string;
+  description: string;
+  priority?: 'low' | 'medium' | 'high' | 'critical';
+  status?: string;
+  dependencies?: number[];
+  tags?: string[];
+  estimated_hours?: number;
+  assignee?: string;
+  due_date?: string;
+  details?: string;
+  test_strategy?: string;
+  prd_id?: number;
+  parent_task_id?: number;
+  subtasks?: Array<{
+    id: number;
+    title: string;
+    description?: string;
+    details?: string;
+    status: string;
+    dependencies?: number[];
+    parent_task_id?: number;
+    test_strategy?: string;
+    prd_source?: {
+      filePath: string;
+      fileName: string;
+      parsedDate: string;
+      fileHash: string;
+      fileSize: number;
+    } | null;
+  }>;
+  // Legacy fields for backward compatibility
   prompt?: string;
-  dependencies?: string[];
-  priority?: 'low' | 'medium' | 'high';
   research?: boolean;
   manualTaskData?: ManualTaskData;
 }
@@ -54,37 +85,44 @@ interface TaskUpdateRequest {
   // Structured update fields
   title?: string;
   description?: string;
-  priority?: 'low' | 'medium' | 'high';
+  priority?: 'low' | 'medium' | 'high' | 'critical';
   status?: string;
-  dependencies?: string[];
+  dependencies?: number[];
   tags?: string[];
-  estimatedHours?: number;
+  estimated_hours?: number;
   assignee?: string;
-  dueDate?: string;
+  due_date?: string;
   details?: string;
-  testStrategy?: string;
+  test_strategy?: string;
+  prd_id?: number;
   subtasks?: Array<{
     id: string | number;
     title: string;
     description?: string;
     details?: string;
-    status: string;
-    dependencies?: (string | number)[];
-    parentTaskId?: string | number;
-    testStrategy?: string;
-    prdSource?: any;
+    status: 'pending' | 'in-progress' | 'done' | 'review' | 'blocked' | 'deferred' | 'cancelled';
+    dependencies: number[];
+    parent_task_id?: number;
+    test_strategy?: string;
+    prd_source?: {
+      filePath: string;
+      fileName: string;
+      parsedDate: string;
+      fileHash: string;
+      fileSize: number;
+    } | null;
   }>;
 }
 
 interface SubtaskCreateRequest {
   prompt?: string;
-  dependencies?: string[];
-  priority?: 'low' | 'medium' | 'high';
+  dependencies?: number[];
+  priority?: 'low' | 'medium' | 'high' | 'critical';
   manualSubtaskData?: ManualSubtaskData;
 }
 
 interface DependencyRequest {
-  dependsOn: string;
+  dependsOn: number;
 }
 
 interface TaskMoveRequest {
@@ -122,7 +160,7 @@ interface TaskComplexityAnalysis {
   score: number;
   factors: string[];
   recommendations: string[];
-  estimatedHours?: number;
+  estimated_hours?: number;
 }
 
 interface BulkOperationResult {
@@ -138,6 +176,16 @@ interface TasksApiResponse {
     totalTasks: number;
     statusCounts: Record<string, number>;
   };
+}
+
+interface TaskStatistics {
+  totalTasks: number;
+  statusBreakdown: Record<string, number>;
+  priorityBreakdown: Record<string, number>;
+  complexityDistribution?: Record<string, number>;
+  averageComplexity?: number;
+  completionRate?: number;
+  lastUpdated: string;
 }
 
 class TaskService {
@@ -346,7 +394,7 @@ class TaskService {
   }
 
   // Remove dependency from a task
-  async removeDependency(id: string, dependencyId: string): Promise<void> {
+  async removeDependency(id: string, dependencyId: number): Promise<void> {
     await this.fetchApi<void>(`/api/tasks/${id}/dependencies/${dependencyId}`, {
       method: 'DELETE',
     });
@@ -447,7 +495,7 @@ class TaskService {
   }
 
   // Bulk update tasks
-  async bulkUpdateTasks(taskIds: number[], updateData: any): Promise<BulkOperationResult> {
+  async bulkUpdateTasks(taskIds: number[], updateData: Partial<UpdateTaskRequest>): Promise<BulkOperationResult> {
     const response = await this.fetchApi<BulkOperationResult>('/api/tasks/bulk-update', {
       method: 'POST',
       body: JSON.stringify({ taskIds, updateData }),
@@ -466,15 +514,15 @@ class TaskService {
 
   // Get task statistics
   async getTaskStats(filters?: {
-    prdId?: string;
+    prd_id?: number;
     status?: string;
-  }): Promise<any> {
+  }): Promise<TaskStatistics> {
     const params = new URLSearchParams();
-    if (filters?.prdId) params.append('prdId', filters.prdId);
+    if (filters?.prd_id) params.append('prd_id', filters.prd_id.toString());
     if (filters?.status) params.append('status', filters.status);
 
     const endpoint = `/api/analytics/task-stats${params.toString() ? `?${params.toString()}` : ''}`;
-    const response = await this.fetchApi<any>(endpoint);
+    const response = await this.fetchApi<TaskStatistics>(endpoint);
     return response.data;
   }
 
@@ -489,7 +537,7 @@ class TaskService {
       title: task.title,
       description: task.description,
       priority: task.priority,
-      dependencies: task.dependencies.map(dep => String(dep)),
+      dependencies: task.dependencies || [],
       subtasks: task.subtasks?.map(subtask => ({
         id: String(subtask.id),
         content: subtask.title,
@@ -511,11 +559,11 @@ class TaskService {
       percentage: (task.subtasks.filter(st => st.status === 'done').length / task.subtasks.length) * 100
     } : undefined;
 
-    // Determine dependency status
-    const dependencyStatus = task.dependencies.length === 0 ? 'none' : 'waiting'; // Would need to check actual dependency statuses
+    // Determine dependency status - handle undefined dependencies
+    const dependencyStatus = !task.dependencies || task.dependencies.length === 0 ? 'none' : 'waiting'; // Would need to check actual dependency statuses
 
     // Calculate age in days
-    const ageInDays = task.updatedAt ? Math.floor((Date.now() - new Date(task.updatedAt).getTime()) / (1000 * 60 * 60 * 24)) : undefined;
+    const ageInDays = task.updated_at ? Math.floor((Date.now() - new Date(task.updated_at).getTime()) / (1000 * 60 * 60 * 24)) : undefined;
 
     return {
       id: String(task.id),
@@ -526,19 +574,19 @@ class TaskService {
       priority: (task.priority as 'high' | 'medium' | 'low') || 'medium',
       status: task.status,
       subtaskProgress,
-      dependencies: task.dependencies.map(dep => String(dep)),
+      dependencies: task.dependencies || [],
       dependencyStatus,
-      updatedAt: task.updatedAt ? new Date(task.updatedAt) : undefined,
+      updated_at: task.updated_at ? new Date(task.updated_at) : undefined,
       ageInDays,
-      prdSource: task.prdSource ? {
-        fileName: task.prdSource.fileName,
-        parsedDate: new Date(task.prdSource.parsedDate)
+      prd_source: task.prd_source ? {
+        fileName: task.prd_source.fileName,
+        parsedDate: new Date(task.prd_source.parsedDate)
       } : undefined,
-      hasTestStrategy: Boolean(task.testStrategy?.trim()),
-      complexityScore: task.complexityScore,
-      complexityLevel: task.complexityLevel,
+      hasTestStrategy: Boolean(task.test_strategy?.trim()),
+      complexityScore: task.complexity_score,
+      complexityLevel: task.complexity_level,
       details: task.details,
-      testStrategy: task.testStrategy
+      test_strategy: task.test_strategy
     };
   }
 
