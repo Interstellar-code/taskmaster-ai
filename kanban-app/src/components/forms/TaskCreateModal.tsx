@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -150,13 +150,6 @@ export function TaskCreateModal({
     },
   });
 
-  // Fetch available tasks and PRDs when modal opens
-  useEffect(() => {
-    if (open) {
-      fetchAvailableData();
-    }
-  }, [open]);
-
   // Update form when initialData changes (for copy functionality)
   useEffect(() => {
     if (initialData) {
@@ -190,7 +183,7 @@ export function TaskCreateModal({
     }
   }, [initialData, form]);
 
-  const fetchAvailableData = async () => {
+  const fetchAvailableData = useCallback(async () => {
     try {
       // Fetch existing tasks for dependencies
       const tasksResponse = await taskService.getAllTasks();
@@ -222,7 +215,7 @@ export function TaskCreateModal({
       // Show user-friendly error message
       showWarning('Load Warning', 'Could not load available tasks and PRDs. You can still create a task without dependencies.');
     }
-  };
+  }, [showWarning]);
 
   const fetchPRDs = async (): Promise<EnhancedSelectOption[]> => {
     try {
@@ -258,6 +251,13 @@ export function TaskCreateModal({
       return [];
     }
   };
+
+  // Fetch available tasks and PRDs when modal opens
+  useEffect(() => {
+    if (open) {
+      fetchAvailableData();
+    }
+  }, [open, fetchAvailableData]);
 
   const priorityOptions = [
     { value: 'low', label: 'Low Priority' },

@@ -518,7 +518,7 @@ router.post('/upload',
         prd_identifier: prdIdentifier,
         title: prdMetadata.title,
         file_name: fileName,
-        file_path: path.relative(projectRoot, filePath),
+        file_path: path.relative(projectRoot, filePath).replace(/\\/g, '/'),
         file_hash: fileHash,
         file_size: fileSize,
         status: 'pending',
@@ -646,17 +646,31 @@ router.put('/:id',
  *         schema:
  *           type: integer
  *         description: PRD ID
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               force:
+ *                 type: boolean
+ *                 default: false
+ *                 description: Force delete instead of archive
  *     responses:
  *       200:
- *         description: PRD archived successfully
+ *         description: PRD archived or deleted successfully
  *       404:
  *         description: PRD not found
  */
 router.delete('/:id',
   validateParams(prdParamsSchema),
+  validateBody(z.object({ force: z.boolean().default(false) })),
   asyncHandler(async (req, res) => {
     const prdDAO = PRDDAO;
+    const taskDAO = TaskDAO;
     const { id } = req.validatedParams;
+    const { force } = req.validatedBody;
 
     // Check if PRD exists
     const existingPrd = await prdDAO.findById(id);
@@ -664,10 +678,59 @@ router.delete('/:id',
       throw new APIError('PRD not found', 404, 'PRD_NOT_FOUND');
     }
 
-    // Archive PRD instead of deleting
-    await prdDAO.update(id, { status: 'archived' });
+    if (force) {
+      // Force delete: Delete all linked tasks first, then delete PRD
+      const linkedTasks = await taskDAO.findAll({ prd_id: id });
+      let deletedTaskCount = 0;
 
-    res.json(createSuccessResponse(null, 'PRD archived successfully'));
+      // Delete all linked tasks
+      for (const task of linkedTasks.tasks) {
+        await taskDAO.delete(task.id);
+        deletedTaskCount++;
+      }
+
+      // Delete the PRD file if it exists
+      try {
+        const fs = await import('fs');
+        const path = await import('path');
+
+        // Get project root
+        const projectDAO = ProjectDAO;
+        let projectRoot;
+        try {
+          projectRoot = await projectDAO.getCurrentProjectRoot();
+        } catch (error) {
+          projectRoot = process.env.PROJECT_ROOT || process.cwd();
+        }
+
+        // Resolve file path
+        const normalizedFilePath = existingPrd.filePath.replace(/\\/g, '/');
+        let absoluteFilePath;
+        if (path.isAbsolute(normalizedFilePath)) {
+          absoluteFilePath = normalizedFilePath;
+        } else {
+          absoluteFilePath = path.resolve(projectRoot, normalizedFilePath);
+        }
+
+        if (fs.existsSync(absoluteFilePath)) {
+          fs.unlinkSync(absoluteFilePath);
+        }
+      } catch (fileError) {
+        console.warn('Could not delete PRD file:', fileError.message);
+      }
+
+      // Delete PRD from database
+      await prdDAO.delete(id);
+
+      res.json(createSuccessResponse({
+        deletedTasks: deletedTaskCount,
+        deletedFile: true
+      }, `PRD and ${deletedTaskCount} linked tasks deleted successfully`));
+    } else {
+      // Archive PRD instead of deleting
+      await prdDAO.update(id, { status: 'archived' });
+      res.json(createSuccessResponse(null, 'PRD archived successfully'));
+    }
   })
 );
 
@@ -960,14 +1023,30 @@ router.post('/:id/generate-tasks',
       const path = await import('path');
       const fs = await import('fs');
 
-      // Read PRD content
-      const absolutePrdPath = path.resolve(projectRoot, prd.filePath);
+      // Read PRD content - handle both absolute and relative paths
+      let absolutePrdPath;
+      // Normalize path separators for cross-platform compatibility
+      const normalizedFilePath = prd.filePath.replace(/\\/g, '/');
+
+      if (path.isAbsolute(normalizedFilePath)) {
+        // If filePath is already absolute, use it directly
+        absolutePrdPath = normalizedFilePath;
+      } else {
+        // If filePath is relative, resolve it against project root
+        absolutePrdPath = path.resolve(projectRoot, normalizedFilePath);
+      }
       console.log(`Reading PRD file for task generation: ${absolutePrdPath}`);
 
       let prdContent = '';
       try {
         prdContent = fs.readFileSync(absolutePrdPath, 'utf8');
       } catch (error) {
+        console.error('PRD file read error details:', {
+          prdFilePath: prd.filePath,
+          projectRoot,
+          absolutePrdPath,
+          error: error.message
+        });
         throw new Error(`Could not read PRD file: ${error.message}`);
       }
 
@@ -1218,11 +1297,20 @@ router.post('/:id/analyze',
 
       console.log(`Using project root: ${projectRoot}`);
 
-      // Read PRD content for AI analysis
+      // Read PRD content for AI analysis - handle both absolute and relative paths
       let prdContent = '';
       try {
-        // Resolve the file path relative to project root
-        const absoluteFilePath = path.resolve(projectRoot, prd.filePath);
+        let absoluteFilePath;
+        // Normalize path separators for cross-platform compatibility
+        const normalizedFilePath = prd.filePath.replace(/\\/g, '/');
+
+        if (path.isAbsolute(normalizedFilePath)) {
+          // If filePath is already absolute, use it directly
+          absoluteFilePath = normalizedFilePath;
+        } else {
+          // If filePath is relative, resolve it against project root
+          absoluteFilePath = path.resolve(projectRoot, normalizedFilePath);
+        }
         console.log(`Reading PRD file from: ${absoluteFilePath}`);
         prdContent = fs.readFileSync(absoluteFilePath, 'utf8');
       } catch (error) {
@@ -1524,14 +1612,34 @@ router.get('/:id/download',
     const fs = await import('fs');
     const path = await import('path');
 
+    // Get project root for path resolution
+    const projectDAO = ProjectDAO;
+    let projectRoot;
+    try {
+      projectRoot = await projectDAO.getCurrentProjectRoot();
+    } catch (error) {
+      projectRoot = process.env.PROJECT_ROOT || process.cwd();
+    }
+
+    // Resolve file path - handle both absolute and relative paths
+    let absoluteFilePath;
+    // Normalize path separators for cross-platform compatibility
+    const normalizedFilePath = prd.filePath.replace(/\\/g, '/');
+
+    if (path.isAbsolute(normalizedFilePath)) {
+      absoluteFilePath = normalizedFilePath;
+    } else {
+      absoluteFilePath = path.resolve(projectRoot, normalizedFilePath);
+    }
+
     // Check if file exists
-    if (!fs.existsSync(prd.filePath)) {
+    if (!fs.existsSync(absoluteFilePath)) {
       throw new APIError('PRD file not found on disk', 404, 'FILE_NOT_FOUND');
     }
 
     // Get file info
-    const fileName = path.basename(prd.filePath);
-    const fileStats = fs.statSync(prd.filePath);
+    const fileName = path.basename(absoluteFilePath);
+    const fileStats = fs.statSync(absoluteFilePath);
 
     // Set headers for file download
     res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
@@ -1539,7 +1647,7 @@ router.get('/:id/download',
     res.setHeader('Content-Length', fileStats.size);
 
     // Stream the file
-    const fileStream = fs.createReadStream(prd.filePath);
+    const fileStream = fs.createReadStream(absoluteFilePath);
     fileStream.pipe(res);
   })
 );
@@ -1646,6 +1754,92 @@ router.post('/:id/archive',
       prd: archivedPrd,
       taskStats
     }, 'PRD archived successfully'));
+  })
+);
+
+/**
+ * @swagger
+ * /api/prds/{id}/force-delete:
+ *   delete:
+ *     summary: Force delete PRD with all linked tasks
+ *     description: Permanently delete a PRD and all its linked tasks and files
+ *     tags: [PRDs]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: PRD ID
+ *     responses:
+ *       200:
+ *         description: PRD and linked tasks deleted successfully
+ *       404:
+ *         description: PRD not found
+ */
+router.delete('/:id/force-delete',
+  validateParams(prdParamsSchema),
+  asyncHandler(async (req, res) => {
+    const prdDAO = PRDDAO;
+    const taskDAO = TaskDAO;
+    const { id } = req.validatedParams;
+
+    // Check if PRD exists
+    const existingPrd = await prdDAO.findById(id);
+    if (!existingPrd) {
+      throw new APIError('PRD not found', 404, 'PRD_NOT_FOUND');
+    }
+
+    // Delete all linked tasks first
+    const linkedTasks = await taskDAO.findAll({ prd_id: id });
+    let deletedTaskCount = 0;
+
+    for (const task of linkedTasks.tasks) {
+      await taskDAO.delete(task.id);
+      deletedTaskCount++;
+    }
+
+    // Delete the PRD file if it exists
+    let fileDeleted = false;
+    try {
+      const fs = await import('fs');
+      const path = await import('path');
+
+      // Get project root
+      const projectDAO = ProjectDAO;
+      let projectRoot;
+      try {
+        projectRoot = await projectDAO.getCurrentProjectRoot();
+      } catch (error) {
+        projectRoot = process.env.PROJECT_ROOT || process.cwd();
+      }
+
+      // Resolve file path
+      const normalizedFilePath = existingPrd.filePath.replace(/\\/g, '/');
+      let absoluteFilePath;
+      if (path.isAbsolute(normalizedFilePath)) {
+        absoluteFilePath = normalizedFilePath;
+      } else {
+        absoluteFilePath = path.resolve(projectRoot, normalizedFilePath);
+      }
+
+      if (fs.existsSync(absoluteFilePath)) {
+        fs.unlinkSync(absoluteFilePath);
+        fileDeleted = true;
+      }
+    } catch (fileError) {
+      console.warn('Could not delete PRD file:', fileError.message);
+    }
+
+    // Delete PRD from database
+    await prdDAO.delete(id);
+
+    res.json(createSuccessResponse({
+      success: true,
+      message: `PRD "${existingPrd.title}" deleted successfully`,
+      deletedTasks: deletedTaskCount,
+      fileDeleted
+    }, `PRD and ${deletedTaskCount} linked tasks deleted successfully`));
   })
 );
 

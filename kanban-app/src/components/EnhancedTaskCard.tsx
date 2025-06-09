@@ -297,12 +297,12 @@ export function EnhancedTaskCard({ task, isOverlay, onTaskClick, onTaskUpdated, 
       }
 
       // Fallback: If task has complexity score, use it to determine number of subtasks
-      if (!expandData.prompt && task.complexityScore && task.complexityScore > 5) {
-        const recommendedSubtasks = Math.min(Math.max(Math.floor(task.complexityScore * 1.5), 6), 15);
+      if (!expandData.prompt && task.complexity_score && task.complexity_score > 5) {
+        const recommendedSubtasks = Math.min(Math.max(Math.floor(task.complexity_score * 1.5), 6), 15);
         expandData.num = recommendedSubtasks;
 
         // Add context about complexity
-        expandData.prompt = `This is a complex task (complexity score: ${task.complexityScore}/10). Break it down into ${recommendedSubtasks} detailed, actionable subtasks that address the full scope of work required.`;
+        expandData.prompt = `This is a complex task (complexity score: ${task.complexity_score}/10). Break it down into ${recommendedSubtasks} detailed, actionable subtasks that address the full scope of work required.`;
       }
 
       const result = await taskService.expandTask(task.id, expandData);
@@ -359,17 +359,17 @@ export function EnhancedTaskCard({ task, isOverlay, onTaskClick, onTaskUpdated, 
               </span>
 
               {/* Complexity Score */}
-              {task.complexityScore && (
+              {task.complexity_score && (
                 <Tooltip>
                   <TooltipTrigger>
                     <div className="flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">
                       <BarChart3 size={10} />
-                      <span>{task.complexityScore}</span>
+                      <span>{task.complexity_score}</span>
                     </div>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Complexity Score: {task.complexityScore}/10</p>
-                    <p>Level: {task.complexityLevel || (task.complexityScore >= 8 ? 'high' : task.complexityScore >= 5 ? 'medium' : 'low')}</p>
+                    <p>Complexity Score: {task.complexity_score}/10</p>
+                    <p>Level: {task.complexity_level || (task.complexity_score >= 8 ? 'high' : task.complexity_score >= 5 ? 'medium' : 'low')}</p>
                   </TooltipContent>
                 </Tooltip>
               )}
@@ -469,16 +469,16 @@ export function EnhancedTaskCard({ task, isOverlay, onTaskClick, onTaskUpdated, 
             </div>
 
             {/* Last updated */}
-            {task.updatedAt && (
+            {task.updated_at && (
               <Tooltip>
                 <TooltipTrigger>
                   <div className="flex items-center gap-1 text-muted-foreground">
                     <Clock size={12} />
-                    <span>{taskService.formatRelativeTime(task.updatedAt)}</span>
+                    <span>{taskService.formatRelativeTime(task.updated_at)}</span>
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Last updated: {task.updatedAt.toLocaleString()}</p>
+                  <p>Last updated: {task.updated_at.toLocaleString()}</p>
                   {task.ageInDays !== undefined && (
                     <p>Age: {task.ageInDays} days</p>
                   )}

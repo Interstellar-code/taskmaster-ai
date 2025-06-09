@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 import { EnhancedKanbanBoard } from "./components/EnhancedKanbanBoard";
-import { PRDManagementPage } from "./components/PRDManagementPage";
+import { PRDManagement } from "./components/PRDManagement";
 import { ThemeToggle } from "./components/ThemeToggle";
 import { ThemeProvider } from "./components/theme-provider";
 import { FormDemo } from "./components/forms/FormDemo";
@@ -47,7 +47,7 @@ function App() {
                 <EnhancedKanbanBoard />
               </>
             ) : currentView === 'prds' ? (
-              <PRDManagementPage />
+              <PRDManagement />
             ) : (
               <FormDemo />
             )}

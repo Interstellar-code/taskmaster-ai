@@ -583,8 +583,8 @@ class TaskService {
         parsedDate: new Date(task.prd_source.parsedDate)
       } : undefined,
       hasTestStrategy: Boolean(task.test_strategy?.trim()),
-      complexityScore: task.complexity_score,
-      complexityLevel: task.complexity_level,
+      complexity_score: task.complexity_score,
+      complexity_level: task.complexity_level,
       details: task.details,
       test_strategy: task.test_strategy
     };

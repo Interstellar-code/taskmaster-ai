@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
@@ -133,14 +133,7 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
     },
   });
 
-  // Pre-populate form with task data when modal opens or task changes
-  useEffect(() => {
-    if (isOpen && task) {
-      loadTaskData();
-    }
-  }, [isOpen, task, form]);
-
-  const loadTaskData = async () => {
+  const loadTaskData = useCallback(async () => {
     try {
       // Fetch full task details to get subtasks and other data
       const fullTask = await taskService.getTaskById(task.id);
@@ -198,10 +191,18 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
 
       fetchAvailableData();
     }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [task, form]);
+
+  // Pre-populate form with task data when modal opens or task changes
+  useEffect(() => {
+    if (isOpen && task) {
+      loadTaskData();
+    }
+  }, [isOpen, task, loadTaskData]);
 
   // Fetch available tasks and PRDs when modal opens
-  const fetchAvailableData = async () => {
+  const fetchAvailableData = useCallback(async () => {
     try {
       const [tasks, prds] = await Promise.all([
         taskService.getAllTasks(),
@@ -223,7 +224,7 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       showError("Load Error", `Failed to load form data: ${errorMessage}`);
     }
-  };
+  }, [task.id, showError]);
 
   const fetchPRDs = async (): Promise<Array<{id: string, title: string}>> => {
     try {
@@ -497,12 +498,11 @@ export function TaskEditModal({ task, onTaskUpdated, trigger, open: controlledOp
  * SubtaskManager Component
  * Manages dynamic subtask creation with checkboxes
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface SubtaskManagerProps {
   form: {
-    watch: (name: 'subtasks') => any;
-    getValues: (name: 'subtasks') => any;
-    setValue: (name: 'subtasks', value: any) => void;
+    watch: (name: 'subtasks') => TaskEditFormData['subtasks'];
+    getValues: (name: 'subtasks') => TaskEditFormData['subtasks'];
+    setValue: (name: 'subtasks', value: TaskEditFormData['subtasks']) => void;
   };
   task: EnhancedKanbanTask;
   onTaskUpdated?: (task: TaskMasterTask) => void;
@@ -542,7 +542,7 @@ function SubtaskManager({ form, task, onTaskUpdated }: SubtaskManagerProps) {
 
   const toggleSubtask = async (subtaskId: string) => {
     const currentSubtasks = form.getValues('subtasks') || [];
-    const targetSubtask = currentSubtasks.find((st: { id: string | number; status: string }) => st.id === subtaskId);
+    const targetSubtask = currentSubtasks.find(st => st.id === subtaskId);
 
     if (!targetSubtask) {
       showError("Update Failed", "Subtask not found.");
@@ -552,8 +552,8 @@ function SubtaskManager({ form, task, onTaskUpdated }: SubtaskManagerProps) {
     const newStatus = targetSubtask.status === 'done' ? 'pending' : 'done';
 
     // Update form state immediately for responsive UI
-    const updatedSubtasks = currentSubtasks.map((st: { id: string | number; status: string }) =>
-      st.id === subtaskId ? { ...st, status: newStatus as 'pending' | 'in-progress' | 'done' | 'review' | 'blocked' | 'deferred' | 'cancelled' } : st
+    const updatedSubtasks = currentSubtasks.map(st =>
+      st.id === subtaskId ? { ...st, status: newStatus as TaskStatus } : st
     );
     form.setValue('subtasks', updatedSubtasks);
 
