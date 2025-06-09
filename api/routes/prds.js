@@ -1111,6 +1111,12 @@ router.post('/:id/generate-tasks',
 
       // Use AI to generate tasks
       let generatedTasks = [];
+      console.log('Starting task generation for PRD:', {
+        prdId: id,
+        title: prd.title,
+        recommendedTaskCount,
+        analysisStatus: prd.analysis_status
+      });
 
       try {
         // Import AI service
@@ -1172,6 +1178,13 @@ Respond with a JSON object containing an array of tasks.`;
           tasks: z.array(taskItemSchema).describe('Array of generated tasks')
         });
 
+        console.log('Calling AI service with params:', {
+          promptLength: taskPrompt.length,
+          systemPromptLength: systemPrompt.length,
+          projectRoot,
+          commandName: 'generate-tasks'
+        });
+
         const aiResponse = await generateObjectService({
           prompt: taskPrompt,
           systemPrompt,
@@ -1184,12 +1197,16 @@ Respond with a JSON object containing an array of tasks.`;
           outputType: 'api'
         });
 
+        console.log('AI service call successful, response:', aiResponse ? 'received' : 'null');
+
         // Create tasks in database
-        const generatedTasks = [];
+        generatedTasks = [];
         const aiTasks = aiResponse.object.tasks || [];
 
+        console.log('AI generated tasks count:', aiTasks.length);
         for (let i = 0; i < aiTasks.length; i++) {
           const aiTask = aiTasks[i];
+          console.log('Processing AI task:', { index: i, title: aiTask.title });
 
           const taskData = {
             title: aiTask.title,
@@ -1210,42 +1227,113 @@ Respond with a JSON object containing an array of tasks.`;
             })
           };
 
+          console.log('Creating task:', { title: taskData.title, index: i });
           const createdTask = await taskDAO.create(taskData);
           generatedTasks.push(createdTask);
+          console.log('Task created successfully:', createdTask.id);
         }
 
         console.log(`Generated ${generatedTasks.length} tasks from PRD using AI`);
 
       } catch (aiError) {
-        console.warn('AI task generation failed, using fallback:', aiError.message);
+        console.error('AI task generation failed, using fallback:', {
+          error: aiError.message,
+          prdId: id,
+          prdTitle: prd.title,
+          recommendedTaskCount,
+          prdContentLength: prdContent.length
+        });
+        console.log('AI Error Stack:', aiError.stack);
 
-        // Fallback: Create basic tasks
-        const generatedTasks = [];
+        // Fallback: Create meaningful tasks based on PRD content analysis
+        generatedTasks = [];
         const taskCount = Math.min(recommendedTaskCount, 8);
 
-        for (let i = 1; i <= taskCount; i++) {
+        console.log('Creating enhanced fallback tasks:', { taskCount, recommendedTaskCount });
+        
+        // Analyze PRD content to create specific tasks
+        const contentLower = prdContent.toLowerCase();
+        const isWebApp = contentLower.includes('web') || contentLower.includes('frontend') || contentLower.includes('html') || contentLower.includes('css') || contentLower.includes('javascript');
+        const isAPI = contentLower.includes('api') || contentLower.includes('endpoint') || contentLower.includes('service');
+        const isDatabase = contentLower.includes('database') || contentLower.includes('data') || contentLower.includes('storage');
+        const isAuth = contentLower.includes('auth') || contentLower.includes('login') || contentLower.includes('user');
+        const isTesting = contentLower.includes('test') || contentLower.includes('quality');
+        
+        // Generate specific task templates based on content
+        const taskTemplates = [];
+        
+        if (isAPI) {
+          taskTemplates.push(
+            { title: "API Setup and Configuration", desc: "Set up the basic API structure, routing, and configuration", hours: 6, complexity: 6 },
+            { title: "Core API Endpoints Implementation", desc: "Implement the main API endpoints and request handling", hours: 8, complexity: 7 },
+            { title: "API Integration and Response Handling", desc: "Integrate external APIs and handle responses", hours: 6, complexity: 6 }
+          );
+        }
+        
+        if (isWebApp) {
+          taskTemplates.push(
+            { title: "Frontend Interface Development", desc: "Create the user interface and frontend components", hours: 8, complexity: 6 },
+            { title: "User Experience and Styling", desc: "Implement responsive design and user experience", hours: 5, complexity: 4 }
+          );
+        }
+        
+        if (isDatabase) {
+          taskTemplates.push(
+            { title: "Database Design and Setup", desc: "Design database schema and set up data storage", hours: 4, complexity: 5 }
+          );
+        }
+        
+        if (isAuth) {
+          taskTemplates.push(
+            { title: "User Authentication System", desc: "Implement user registration, login, and authentication", hours: 6, complexity: 7 }
+          );
+        }
+        
+        // Add generic implementation tasks to fill remaining slots
+        while (taskTemplates.length < taskCount) {
+          const remaining = taskCount - taskTemplates.length;
+          if (remaining >= 3) {
+            taskTemplates.push(
+              { title: "Error Handling and Validation", desc: "Implement comprehensive error handling and input validation", hours: 4, complexity: 5 },
+              { title: "Testing and Quality Assurance", desc: "Create tests and ensure quality standards", hours: 5, complexity: 4 },
+              { title: "Documentation and Deployment", desc: "Create documentation and deploy the application", hours: 3, complexity: 3 }
+            );
+          } else {
+            taskTemplates.push(
+              { title: `Additional Implementation Task ${taskTemplates.length + 1}`, desc: "Complete remaining implementation requirements", hours: 4, complexity: 5 }
+            );
+          }
+        }
+        
+        // Create tasks from templates
+        for (let i = 0; i < Math.min(taskCount, taskTemplates.length); i++) {
+          const template = taskTemplates[i];
           const taskData = {
-            title: `Implementation Phase ${i}`,
-            description: `Implement phase ${i} of the PRD requirements based on analysis`,
-            details: `Detailed implementation steps for phase ${i} will be defined during development`,
+            title: template.title,
+            description: template.desc,
+            details: `Based on PRD analysis: ${template.desc}. This task was generated from content analysis.`,
             status: 'pending',
-            priority: 'medium',
-            complexity_score: 5.0,
-            estimated_hours: 4,
+            priority: template.complexity >= 7 ? 'high' : template.complexity >= 5 ? 'medium' : 'low',
+            complexity_score: template.complexity,
+            estimated_hours: template.hours,
             prd_id: id,
-            test_strategy: `Testing approach for phase ${i}`,
+            test_strategy: `Validate implementation meets PRD requirements for: ${template.title.toLowerCase()}`,
             metadata: JSON.stringify({
               generated_from_prd: true,
               prd_title: prd.title,
               generation_date: new Date().toISOString(),
-              fallback_generated: true,
+              content_based_fallback: true,
+              analysis_keywords: { isAPI, isWebApp, isDatabase, isAuth },
               recommended_task_count: recommendedTaskCount
             })
           };
 
+          console.log('Creating content-based fallback task:', { title: taskData.title, index: i });
           const createdTask = await taskDAO.create(taskData);
           generatedTasks.push(createdTask);
+          console.log('Content-based task created successfully:', createdTask.id);
         }
+        console.log(`Generated ${generatedTasks.length} content-based fallback tasks`);
       }
 
       // Update PRD status to generated
