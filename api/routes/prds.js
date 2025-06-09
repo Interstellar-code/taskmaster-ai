@@ -40,7 +40,7 @@ function extractPrdMetadata(content, fileName) {
       }
     }
 
-    // Extract description/summary
+    // Extract description/summary - try specific patterns first
     let description = `PRD: ${title}`;
     const descPatterns = [
       /(?:Description|Summary|Overview|Executive Summary):\s*(.+?)(?:\n\n|\n#|$)/is,
@@ -48,13 +48,38 @@ function extractPrdMetadata(content, fileName) {
       /(?:## Executive Summary)\s*\n(.+?)(?:\n\n|\n#|$)/is
     ];
 
+    let foundPattern = false;
     for (const pattern of descPatterns) {
       const match = content.match(pattern);
       if (match && match[1].trim()) {
         description = match[1].trim().substring(0, 200).replace(/\n/g, ' ');
         if (description.length === 200) description += '...';
+        foundPattern = true;
         break;
       }
+    }
+
+    // If no specific pattern found, extract first paragraph (like analysis fallback)
+    if (!foundPattern) {
+      const firstParagraph = content.split('\n\n')[0];
+      console.log('Upload description extraction:', {
+        foundPattern,
+        firstParagraphLength: firstParagraph ? firstParagraph.length : 0,
+        firstParagraphPreview: firstParagraph ? firstParagraph.substring(0, 100) + '...' : 'none',
+        meetsCriteria: firstParagraph && firstParagraph.length > 20 && firstParagraph.length < 500
+      });
+      
+      if (firstParagraph && firstParagraph.length > 20 && firstParagraph.length < 500) {
+        description = firstParagraph.replace(/\n/g, ' ').trim();
+        if (description.length > 200) {
+          description = description.substring(0, 200) + '...';
+        }
+        console.log('Upload extracted description:', description);
+      } else {
+        console.log('Upload using default description:', description);
+      }
+    } else {
+      console.log('Upload found pattern-based description:', description);
     }
 
     // Determine complexity based on content analysis
@@ -492,19 +517,38 @@ router.post('/upload',
       let projectRoot;
       try {
         projectRoot = await projectDAO.getCurrentProjectRoot();
+        
+        // Validate that project root exists and is not a Windows path on Unix systems
+        if (process.platform !== 'win32' && projectRoot.includes('C:')) {
+          throw new Error('Invalid Windows path on Unix system');
+        }
+        
+        console.log('Using project root from database:', projectRoot);
       } catch (error) {
-        // Fallback to environment variable or relative path
-        projectRoot = process.env.PROJECT_ROOT || process.cwd();
-        console.warn('Could not get project root from database, using fallback:', projectRoot);
+        // Fallback to current working directory
+        projectRoot = process.cwd();
+        console.warn('Could not get valid project root from database, using current directory:', projectRoot);
+        console.warn('Database error:', error.message);
       }
+      
       const prdDir = path.join(projectRoot, '.taskmaster', 'prd');
       const filePath = path.join(prdDir, fileName);
 
+      console.log('PRD Upload - File storage details:', {
+        fileName,
+        projectRoot,
+        prdDir,
+        filePath,
+        fileSize: decodedContent.length
+      });
+
       // Ensure PRD directory exists
       await fs.mkdir(prdDir, { recursive: true });
+      console.log('PRD Upload - Created directory:', prdDir);
 
       // Write file to disk
       await fs.writeFile(filePath, decodedContent, 'utf-8');
+      console.log('PRD Upload - File written successfully:', filePath);
 
       // Calculate file hash and size
       const fileHash = crypto.createHash('sha256').update(decodedContent).digest('hex');
@@ -690,9 +734,10 @@ router.delete('/:id',
       }
 
       // Delete the PRD file if it exists
+      let fileDeleted = false;
       try {
-        const fs = await import('fs');
-        const path = await import('path');
+        const fs = await import('fs/promises');
+        const path = (await import('path')).default;
 
         // Get project root
         const projectDAO = ProjectDAO;
@@ -703,20 +748,34 @@ router.delete('/:id',
           projectRoot = process.env.PROJECT_ROOT || process.cwd();
         }
 
-        // Resolve file path
-        const normalizedFilePath = existingPrd.filePath.replace(/\\/g, '/');
+        console.log('Attempting to delete PRD file:', {
+          prdId: id,
+          filePath: existingPrd.filePath || existingPrd.file_path,
+          projectRoot
+        });
+
+        // Use file_path from database record
+        const storedFilePath = existingPrd.file_path || existingPrd.filePath;
         let absoluteFilePath;
-        if (path.isAbsolute(normalizedFilePath)) {
-          absoluteFilePath = normalizedFilePath;
+        
+        if (path.isAbsolute(storedFilePath)) {
+          absoluteFilePath = storedFilePath;
         } else {
-          absoluteFilePath = path.resolve(projectRoot, normalizedFilePath);
+          absoluteFilePath = path.resolve(projectRoot, storedFilePath);
         }
 
-        if (fs.existsSync(absoluteFilePath)) {
-          fs.unlinkSync(absoluteFilePath);
+        console.log('Computed absolute file path:', absoluteFilePath);
+
+        try {
+          await fs.access(absoluteFilePath);
+          await fs.unlink(absoluteFilePath);
+          fileDeleted = true;
+          console.log('Successfully deleted PRD file:', absoluteFilePath);
+        } catch (accessError) {
+          console.warn('PRD file does not exist or cannot be accessed:', absoluteFilePath);
         }
       } catch (fileError) {
-        console.warn('Could not delete PRD file:', fileError.message);
+        console.error('Error deleting PRD file:', fileError.message);
       }
 
       // Delete PRD from database
@@ -724,7 +783,7 @@ router.delete('/:id',
 
       res.json(createSuccessResponse({
         deletedTasks: deletedTaskCount,
-        deletedFile: true
+        deletedFile: fileDeleted
       }, `PRD and ${deletedTaskCount} linked tasks deleted successfully`));
     } else {
       // Archive PRD instead of deleting
@@ -1354,13 +1413,23 @@ router.post('/:id/analyze',
           ? `file:///${aiServicePath.replace(/\\/g, '/')}`
           : aiServicePath;
         console.log(`Importing AI service from URL: ${aiServiceUrl}`);
-        const { generateTextService } = await import(aiServiceUrl);
+        
+        let generateTextService;
+        try {
+          const aiModule = await import(aiServiceUrl);
+          generateTextService = aiModule.generateTextService;
+          console.log('AI service imported successfully');
+        } catch (importError) {
+          console.error('Failed to import AI service:', importError.message);
+          throw new Error(`AI service import failed: ${importError.message}`);
+        }
 
         // Create AI prompt for PRD analysis
         const analysisPrompt = `Analyze the following PRD (Product Requirements Document) and provide:
 1. Complexity score (1-10 scale where 1=very simple, 10=extremely complex)
 2. Recommended number of tasks to break this PRD into (typically 6-15 tasks)
 3. Brief reasoning for the complexity assessment
+4. Extract or create a clear, concise description of what this PRD is about (2-3 sentences max)
 
 PRD Content:
 ${prdContent}
@@ -1370,7 +1439,8 @@ Respond ONLY with a valid JSON object matching this schema:
   "complexityScore": <number 1-10>,
   "recommendedTaskCount": <number 6-15>,
   "reasoning": "<string explaining the complexity assessment>",
-  "keyComplexityFactors": ["<factor1>", "<factor2>", "..."]
+  "keyComplexityFactors": ["<factor1>", "<factor2>", "..."],
+  "description": "<clear 2-3 sentence description of what this PRD involves>"
 }`;
 
         const systemPrompt = 'You are an expert software architect and project manager analyzing PRD complexity. Focus on technical complexity, scope, integration requirements, and implementation challenges.';
@@ -1400,11 +1470,34 @@ Respond ONLY with a valid JSON object matching this schema:
 
         console.log(`AI Analysis: Complexity ${complexityScore}/10, Recommended ${recommendedTaskCount} tasks`);
 
+        // Create analysis result from AI response
+        analysisResult = {
+          complexity: complexityScore >= 8 ? 'high' : complexityScore >= 5 ? 'medium' : 'low',
+          effortEstimate: complexityScore >= 8 ? '1-2 weeks' : complexityScore >= 5 ? '4-8 hours' : '2-4 hours',
+          recommendedTaskCount,
+          description: aiAnalysis.description || `PRD: ${prd.title}`,
+          analysisData: {
+            taskComplexity: complexityScore,
+            recommendedTaskCount,
+            estimatedHours: complexityScore >= 8 ? 40 : complexityScore >= 5 ? 8 : 4,
+            analysisMethod: 'ai-analysis',
+            reasoning: aiAnalysis.reasoning || '',
+            keyComplexityFactors: aiAnalysis.keyComplexityFactors || []
+          },
+          recommendations: [
+            `Complexity level: ${complexityScore >= 8 ? 'high' : complexityScore >= 5 ? 'medium' : 'low'} (score: ${complexityScore}/10)`,
+            `Estimated effort: ${complexityScore >= 8 ? '1-2 weeks' : complexityScore >= 5 ? '4-8 hours' : '2-4 hours'}`,
+            `Recommended ${recommendedTaskCount} tasks for implementation`
+          ]
+        };
+
       } catch (aiError) {
         console.error('AI analysis failed, using content-based fallback:', {
           error: aiError.message,
           projectRoot,
-          prdContentLength: prdContent.length
+          prdContentLength: prdContent.length,
+          prdId: id,
+          fileName: prd.file_name
         });
         console.log('AI Error Details:', aiError.stack);
 
@@ -1429,11 +1522,33 @@ Respond ONLY with a valid JSON object matching this schema:
           recommendedTaskCount = 8;
         }
 
+        // Generate description from content when AI fails
+        let fallbackDescription = `PRD: ${prd.title}`;
+        
+        // Try to extract a better description from content
+        const firstParagraph = prdContent.split('\n\n')[0];
+        console.log('Fallback description extraction:', {
+          prdContentLength: prdContent.length,
+          firstParagraphLength: firstParagraph ? firstParagraph.length : 0,
+          firstParagraphPreview: firstParagraph ? firstParagraph.substring(0, 100) + '...' : 'none'
+        });
+        
+        if (firstParagraph && firstParagraph.length > 20 && firstParagraph.length < 500) {
+          fallbackDescription = firstParagraph.replace(/\n/g, ' ').trim();
+          if (fallbackDescription.length > 200) {
+            fallbackDescription = fallbackDescription.substring(0, 200) + '...';
+          }
+          console.log('Extracted fallback description:', fallbackDescription);
+        } else {
+          console.log('Using default fallback description:', fallbackDescription);
+        }
+
         // Update analysis method to indicate fallback was used
         analysisResult = {
           complexity: complexityScore >= 8 ? 'high' : complexityScore >= 5 ? 'medium' : 'low',
           effortEstimate: complexityScore >= 8 ? '1-2 weeks' : complexityScore >= 5 ? '4-8 hours' : '2-4 hours',
           recommendedTaskCount,
+          description: fallbackDescription,
           analysisData: {
             taskComplexity: complexityScore,
             recommendedTaskCount,
@@ -1443,41 +1558,7 @@ Respond ONLY with a valid JSON object matching this schema:
         };
       }
 
-      // Only create analysis result if AI succeeded (fallback creates its own)
-      if (!analysisResult) {
-        // Determine complexity level and effort estimate based on score
-        let complexity, effortEstimate, estimatedHours;
-        if (complexityScore >= 8) {
-          complexity = 'high';
-          effortEstimate = '1-2 weeks';
-          estimatedHours = 40;
-        } else if (complexityScore >= 5) {
-          complexity = 'medium';
-          effortEstimate = '4-8 hours';
-          estimatedHours = 8;
-        } else {
-          complexity = 'low';
-          effortEstimate = '2-4 hours';
-          estimatedHours = 4;
-        }
-
-        analysisResult = {
-          complexity,
-          effortEstimate,
-          recommendedTaskCount,
-          analysisData: {
-            taskComplexity: complexityScore,
-            recommendedTaskCount,
-            estimatedHours,
-            analysisMethod: 'ai-analysis'
-          },
-          recommendations: [
-            `Complexity level: ${complexity} (score: ${complexityScore}/10)`,
-            `Estimated effort: ${effortEstimate}`,
-            `Recommended ${recommendedTaskCount} tasks for implementation`
-          ]
-        };
-      }
+      // analysisResult is now created in both success and fallback cases above
 
       // Store analysis results in PRD
       const analysisData = {
@@ -1489,13 +1570,29 @@ Respond ONLY with a valid JSON object matching this schema:
         analyzedAt: new Date().toISOString()
       };
 
-      // Update PRD with analysis results
-      await prdDAO.update(id, {
+      // Update PRD with analysis results including improved description
+      const updateData = {
         analysis_status: 'analyzed',
         complexity: analysisData.complexity,
         estimated_effort: analysisData.effortEstimate,
         analysis_data: JSON.stringify(analysisData)
+      };
+
+      // If AI provided a better description, update it
+      console.log('Analysis description update check:', {
+        hasDescription: !!analysisResult.description,
+        descriptionLength: analysisResult.description ? analysisResult.description.length : 0,
+        descriptionPreview: analysisResult.description ? analysisResult.description.substring(0, 100) + '...' : 'none'
       });
+      
+      if (analysisResult.description && analysisResult.description.trim()) {
+        updateData.description = analysisResult.description.trim();
+        console.log('Analysis updating description to:', updateData.description.substring(0, 100) + '...');
+      } else {
+        console.log('Analysis not updating description');
+      }
+
+      await prdDAO.update(id, updateData);
 
       res.json(createSuccessResponse(analysisData, 'PRD analyzed successfully'));
 
@@ -1898,8 +1995,8 @@ router.delete('/:id/force-delete',
     // Delete the PRD file if it exists
     let fileDeleted = false;
     try {
-      const fs = await import('fs');
-      const path = await import('path');
+      const fs = await import('fs/promises');
+      const path = (await import('path')).default;
 
       // Get project root
       const projectDAO = ProjectDAO;
@@ -1910,18 +2007,31 @@ router.delete('/:id/force-delete',
         projectRoot = process.env.PROJECT_ROOT || process.cwd();
       }
 
-      // Resolve file path
-      const normalizedFilePath = existingPrd.filePath.replace(/\\/g, '/');
+      console.log('Force delete - attempting to delete PRD file:', {
+        prdId: id,
+        filePath: existingPrd.filePath || existingPrd.file_path,
+        projectRoot
+      });
+
+      // Use file_path from database record
+      const storedFilePath = existingPrd.file_path || existingPrd.filePath;
       let absoluteFilePath;
-      if (path.isAbsolute(normalizedFilePath)) {
-        absoluteFilePath = normalizedFilePath;
+      
+      if (path.isAbsolute(storedFilePath)) {
+        absoluteFilePath = storedFilePath;
       } else {
-        absoluteFilePath = path.resolve(projectRoot, normalizedFilePath);
+        absoluteFilePath = path.resolve(projectRoot, storedFilePath);
       }
 
-      if (fs.existsSync(absoluteFilePath)) {
-        fs.unlinkSync(absoluteFilePath);
+      console.log('Force delete - computed absolute file path:', absoluteFilePath);
+
+      try {
+        await fs.access(absoluteFilePath);
+        await fs.unlink(absoluteFilePath);
         fileDeleted = true;
+        console.log('Force delete - successfully deleted PRD file:', absoluteFilePath);
+      } catch (accessError) {
+        console.warn('Force delete - PRD file does not exist or cannot be accessed:', absoluteFilePath);
       }
     } catch (fileError) {
       console.warn('Could not delete PRD file:', fileError.message);
