@@ -1608,6 +1608,15 @@ router.get('/:id/download',
       throw new APIError('PRD not found', 404, 'PRD_NOT_FOUND');
     }
 
+    // Debug: Log PRD data for troubleshooting
+    console.log('Download request for PRD:', {
+      id: prd.id,
+      title: prd.title,
+      fileName: prd.fileName,
+      filePath: prd.filePath,
+      file_path: prd.file_path
+    });
+
     // Import fs module
     const fs = await import('fs');
     const path = await import('path');
@@ -1621,25 +1630,112 @@ router.get('/:id/download',
       projectRoot = process.env.PROJECT_ROOT || process.cwd();
     }
 
-    // Resolve file path - handle both absolute and relative paths
-    let absoluteFilePath;
-    // Normalize path separators for cross-platform compatibility
-    const normalizedFilePath = prd.filePath.replace(/\\/g, '/');
+    // Fix cross-platform project root issues
+    // If we get a Windows path but we're on macOS/Linux, use current working directory
+    if (projectRoot && projectRoot.includes('C:\\') && process.platform !== 'win32') {
+      console.log('Detected Windows path on non-Windows system, using current working directory');
+      projectRoot = process.cwd();
+    }
 
-    if (path.isAbsolute(normalizedFilePath)) {
-      absoluteFilePath = normalizedFilePath;
-    } else {
-      absoluteFilePath = path.resolve(projectRoot, normalizedFilePath);
+    console.log('Using project root:', projectRoot);
+    console.log('Platform:', process.platform);
+
+    // Try multiple possible file path fields
+    const possiblePaths = [
+      prd.file_path,  // Primary field from database
+      prd.filePath,   // Alternative field
+      prd.file_name,  // Fallback to just filename
+      prd.fileName    // Alternative filename field
+    ].filter(Boolean);
+
+    console.log('Trying file paths:', possiblePaths);
+    console.log('Project root:', projectRoot);
+
+    let absoluteFilePath = null;
+    let foundPath = null;
+
+    // Try each possible path
+    for (const filePath of possiblePaths) {
+      // Normalize path separators for cross-platform compatibility
+      // Convert Windows backslashes to forward slashes, then split and rejoin using path.join
+      const pathParts = filePath.replace(/\\/g, '/').split('/').filter(Boolean);
+
+      let testPath;
+      if (path.isAbsolute(filePath)) {
+        testPath = filePath;
+      } else {
+        // Build path using path.join for proper cross-platform support
+        testPath = path.join(projectRoot, ...pathParts);
+      }
+
+      console.log('Testing path:', testPath);
+
+      if (fs.existsSync(testPath)) {
+        absoluteFilePath = testPath;
+        foundPath = filePath;
+        console.log('✅ Found file at:', testPath);
+        break;
+      } else {
+        console.log('❌ File not found at:', testPath);
+      }
+    }
+
+    // If still not found, try common PRD directories as fallback
+    if (!absoluteFilePath && prd.file_name) {
+      const fallbackPaths = [
+        path.join(projectRoot, '.taskmaster', 'prd', prd.file_name),
+        path.join(projectRoot, 'prd', prd.file_name),
+        path.join(projectRoot, 'prds', prd.file_name),
+        path.join(projectRoot, prd.file_name)
+      ];
+
+      console.log('Trying fallback paths:', fallbackPaths);
+
+      for (const fallbackPath of fallbackPaths) {
+        console.log('Testing fallback path:', fallbackPath);
+        if (fs.existsSync(fallbackPath)) {
+          absoluteFilePath = fallbackPath;
+          foundPath = fallbackPath;
+          console.log('✅ Found file at fallback path:', fallbackPath);
+          break;
+        } else {
+          console.log('❌ Fallback path not found:', fallbackPath);
+        }
+      }
     }
 
     // Check if file exists
-    if (!fs.existsSync(absoluteFilePath)) {
-      throw new APIError('PRD file not found on disk', 404, 'FILE_NOT_FOUND');
+    if (!absoluteFilePath) {
+      const allTriedPaths = possiblePaths.map(p => {
+        const normalized = p.replace(/\\/g, '/');
+        return path.isAbsolute(normalized) ? normalized : path.join(projectRoot, normalized);
+      });
+
+      console.error('File not found. Tried paths:', allTriedPaths);
+
+      throw new APIError('PRD file not found on disk', 404, 'FILE_NOT_FOUND', {
+        prdId: id,
+        triedPaths: allTriedPaths,
+        projectRoot,
+        prdData: {
+          file_name: prd.file_name,
+          file_path: prd.file_path,
+          title: prd.title
+        }
+      });
     }
+
+    console.log('Found file at:', absoluteFilePath);
 
     // Get file info
     const fileName = path.basename(absoluteFilePath);
     const fileStats = fs.statSync(absoluteFilePath);
+
+    console.log('Serving file:', {
+      fileName,
+      size: fileStats.size,
+      path: absoluteFilePath
+    });
 
     // Set headers for file download
     res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);

@@ -93,6 +93,47 @@ export function EnhancedKanbanBoard() {
   const [selectedPRD, setSelectedPRD] = useState<string>('all');
   const [availablePRDs, setAvailablePRDs] = useState<Array<{id: string, title: string}>>([]);
 
+  // Check for URL parameters after tasks are loaded
+  useEffect(() => {
+    if (!loading && availablePRDs.length > 0) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const prdFilter = urlParams.get('prd');
+      // Decode URL parameter in case it was encoded
+      const decodedPrdFilter = prdFilter ? decodeURIComponent(prdFilter) : null;
+      
+      console.log('URL Parameter Check:', {
+        loading,
+        availablePRDsLength: availablePRDs.length,
+        prdFilter,
+        decodedPrdFilter,
+        currentSelectedPRD: selectedPRD,
+        fullURL: window.location.href
+      });
+      
+      if (decodedPrdFilter && decodedPrdFilter !== 'all') {
+        // Check if the PRD filter exists in available PRDs
+        const prdExists = availablePRDs.some(prd => prd.id === decodedPrdFilter);
+        console.log('PRD Matching:', {
+          decodedPrdFilter,
+          availablePRDIds: availablePRDs.map(p => p.id),
+          prdExists
+        });
+        
+        if (prdExists) {
+          console.log('Setting PRD filter to:', decodedPrdFilter);
+          setSelectedPRD(decodedPrdFilter);
+        } else {
+          console.warn('PRD filter not found in available PRDs:', decodedPrdFilter);
+        }
+      }
+    }
+  }, [loading, availablePRDs]);
+
+  // Debug: Watch selectedPRD changes
+  useEffect(() => {
+    console.log('selectedPRD changed to:', selectedPRD);
+  }, [selectedPRD]);
+
   // Load tasks from TaskMaster API
   const loadTasks = async () => {
     try {
@@ -125,10 +166,21 @@ export function EnhancedKanbanBoard() {
         }
       });
 
-      setAvailablePRDs(Array.from(prds).map(prd => ({
+      const prdList = Array.from(prds).map(prd => ({
         id: prd,
         title: prd.replace(/\.(md|txt)$/i, '') // Remove file extension for display
-      })));
+      }));
+      
+      setAvailablePRDs(prdList);
+      
+      // Debug: Log available PRDs and URL parameter
+      const urlParams = new URLSearchParams(window.location.search);
+      const prdFilter = urlParams.get('prd');
+      if (prdFilter) {
+        console.log('PRD Filter from URL:', prdFilter);
+        console.log('Available PRDs:', prdList.map(p => p.id));
+        console.log('PRD exists:', prdList.some(p => p.id === prdFilter));
+      }
 
       const tasksByColumns = await taskService.getEnhancedTasksByColumns();
 
@@ -155,6 +207,21 @@ export function EnhancedKanbanBoard() {
 
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
   const [activeTask, setActiveTask] = useState<EnhancedTask | null>(null);
+
+  // Handle PRD filter change and update URL
+  const handlePRDFilterChange = (newPRD: string) => {
+    console.log('handlePRDFilterChange called with:', newPRD);
+    setSelectedPRD(newPRD);
+    
+    // Update URL parameters
+    const url = new URL(window.location.href);
+    if (newPRD === 'all') {
+      url.searchParams.delete('prd');
+    } else {
+      url.searchParams.set('prd', newPRD);
+    }
+    window.history.replaceState({}, '', url.toString());
+  };
 
 
 
@@ -299,7 +366,7 @@ export function EnhancedKanbanBoard() {
           <span className="text-sm font-medium">Filter by PRD:</span>
         </div>
 
-        <Select value={selectedPRD} onValueChange={setSelectedPRD}>
+        <Select value={selectedPRD} onValueChange={handlePRDFilterChange}>
           <SelectTrigger className="w-64">
             <SelectValue placeholder="Select PRD..." />
           </SelectTrigger>
@@ -317,7 +384,7 @@ export function EnhancedKanbanBoard() {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setSelectedPRD('all')}
+            onClick={() => handlePRDFilterChange('all')}
             className="h-8 px-2"
           >
             <X className="h-4 w-4" />

@@ -170,7 +170,51 @@ export class TaskDAO extends BaseDAO {
       }
     }
 
+    // Create prd_source object if PRD information is available
+    if (parsed.prd_file_name) {
+      parsed.prd_source = {
+        fileName: parsed.prd_file_name,
+        filePath: parsed.prd_file_path,
+        parsedDate: new Date().toISOString(), // Use current timestamp as default
+        fileHash: parsed.prd_file_hash || '',
+        fileSize: parsed.prd_file_size || 0
+      };
+      
+      // Clean up the individual PRD fields from the parsed object
+      delete parsed.prd_file_name;
+      delete parsed.prd_file_path;
+      delete parsed.prd_file_hash;
+      delete parsed.prd_file_size;
+      delete parsed.prd_title;
+    }
+
     return parsed;
+  }
+
+  /**
+   * Override findById to include PRD information
+   * @param {number} id - Task ID
+   * @returns {Promise<Object|null>} Task with PRD information or null
+   */
+  async findById(id) {
+    try {
+      const sql = `
+        SELECT t.*, 
+               p.file_name as prd_file_name,
+               p.file_path as prd_file_path,
+               p.title as prd_title,
+               p.file_hash as prd_file_hash,
+               p.file_size as prd_file_size
+        FROM ${this.tableName} t
+        LEFT JOIN prds p ON t.prd_id = p.id
+        WHERE t.id = ?
+      `;
+      const result = await this.db.getQuery(sql, [id]);
+      return this.parseRecord(result);
+    } catch (error) {
+      console.error(`Error finding ${this.tableName} by ID with PRD info:`, error);
+      throw error;
+    }
   }
 
   /**
@@ -291,11 +335,11 @@ export class TaskDAO extends BaseDAO {
       if (value !== undefined && value !== null) {
         // Map API field names to database field names
         if (key === 'prdId') {
-          cleanFilters.prd_id = value;
+          cleanFilters['t.prd_id'] = value;
         } else if (key === 'parentTaskId') {
-          cleanFilters.parent_task_id = value;
+          cleanFilters['t.parent_task_id'] = value;
         } else if (key !== 'search') {
-          cleanFilters[key] = value;
+          cleanFilters[`t.${key}`] = value;
         }
       }
     });
@@ -304,13 +348,28 @@ export class TaskDAO extends BaseDAO {
     let searchCondition = '';
     let searchParams = [];
     if (filters.search) {
-      searchCondition = ' AND (title LIKE ? OR description LIKE ?)';
+      searchCondition = ' AND (t.title LIKE ? OR t.description LIKE ?)';
       searchParams = [`%${filters.search}%`, `%${filters.search}%`];
     }
 
-    // Build base query
-    let sql = `SELECT * FROM ${this.tableName}`;
-    let countSql = `SELECT COUNT(*) as total FROM ${this.tableName}`;
+    // Build base query with LEFT JOIN to include PRD information
+    let sql = `
+      SELECT t.*, 
+             p.file_name as prd_file_name,
+             p.file_path as prd_file_path,
+             p.title as prd_title,
+             p.file_hash as prd_file_hash,
+             p.file_size as prd_file_size
+      FROM ${this.tableName} t
+      LEFT JOIN prds p ON t.prd_id = p.id
+    `;
+    
+    let countSql = `
+      SELECT COUNT(*) as total 
+      FROM ${this.tableName} t
+      LEFT JOIN prds p ON t.prd_id = p.id
+    `;
+    
     const params = [];
 
     // Add WHERE conditions
@@ -324,8 +383,9 @@ export class TaskDAO extends BaseDAO {
       params.push(...Object.values(cleanFilters), ...searchParams);
     }
 
-    // Add ORDER BY
-    sql += ` ORDER BY ${sortBy} ${sortOrder.toUpperCase()}`;
+    // Add ORDER BY (handle table alias)
+    const orderByField = sortBy === 'created_at' || sortBy === 'updated_at' ? `t.${sortBy}` : `t.${sortBy}`;
+    sql += ` ORDER BY ${orderByField} ${sortOrder.toUpperCase()}`;
 
     // Add LIMIT and OFFSET
     const offset = (page - 1) * limit;

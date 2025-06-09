@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import { EnhancedKanbanBoard } from "./components/EnhancedKanbanBoard";
 import { PRDManagement } from "./components/PRDManagement";
@@ -10,6 +10,20 @@ import { Toaster } from "./components/ui/toaster";
 
 function App() {
   const [currentView, setCurrentView] = useState<'kanban' | 'forms' | 'prds'>('kanban');
+
+  // Check URL parameters to determine initial view
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const prdFilter = urlParams.get('prd');
+    const viewParam = urlParams.get('view');
+    
+    // If there's a PRD filter, show kanban view
+    if (prdFilter) {
+      setCurrentView('kanban');
+    } else if (viewParam && ['kanban', 'forms', 'prds'].includes(viewParam)) {
+      setCurrentView(viewParam as 'kanban' | 'forms' | 'prds');
+    }
+  }, []);
 
   return (
     <>
