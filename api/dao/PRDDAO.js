@@ -395,22 +395,41 @@ export class PRDDAO extends BaseDAO {
   }
 
   /**
+   * Update PRD record by ID with proper data preparation
+   * @param {number} id - Record ID
+   * @param {Object} data - Updated data
+   * @returns {Promise<Object|null>} Updated record or null
+   */
+  async update(id, data) {
+    try {
+      // Prepare data for database (convert arrays to JSON strings, etc.)
+      const preparedData = await this.prepareData(data);
+
+      // Call parent update method with prepared data
+      return await super.update(id, preparedData);
+    } catch (error) {
+      console.error('Error updating PRD:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Prepare PRD data for database insertion
    * @param {Object} data - PRD data
    * @returns {Object} Prepared data
    */
   async prepareData(data) {
     const prepared = super.prepareData(data);
-    
+
     // Ensure required fields have defaults
     if (!prepared.status) {
       prepared.status = 'pending';
     }
-    
+
     if (!prepared.complexity) {
       prepared.complexity = 'medium';
     }
-    
+
     if (!prepared.priority) {
       prepared.priority = 'medium';
     }

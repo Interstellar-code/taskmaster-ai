@@ -178,6 +178,16 @@ const prdCreateSchema = z.object({
   metadata: z.record(z.any()).default({})
 });
 
+// Separate update schema for metadata updates (frontend compatibility)
+const prdMetadataUpdateSchema = z.object({
+  title: z.string().min(1).max(255).optional(),
+  description: z.string().optional(),
+  priority: z.enum(['low', 'medium', 'high', 'critical']).optional(),
+  complexity: z.enum(['low', 'medium', 'high']).optional(), // Frontend only uses these 3
+  tags: z.array(z.string()).optional(),
+  estimated_effort: z.string().optional()
+});
+
 const prdUpdateSchema = prdCreateSchema.partial();
 
 const prdQuerySchema = z.object({
@@ -644,7 +654,7 @@ router.post('/upload',
  */
 router.put('/:id',
   validateParams(prdParamsSchema),
-  validateBody(prdUpdateSchema),
+  validateBody(prdMetadataUpdateSchema),
   asyncHandler(async (req, res) => {
     const prdDAO = PRDDAO;
     const { id } = req.validatedParams;

@@ -91,6 +91,27 @@ export function PRDManagement() {
     setDetailsModalOpen(true);
   };
 
+  // Handle PRD update - refresh both list and selected PRD
+  const handlePRDUpdate = async () => {
+    try {
+      // Refresh the PRD list
+      await loadPRDs();
+
+      // If a PRD is currently selected, refresh its data
+      if (selectedPRD) {
+        const updatedPRD = await prdService.getPRDById(selectedPRD.id);
+        setSelectedPRD(updatedPRD);
+      }
+    } catch (error) {
+      console.error('Failed to refresh PRD data:', error);
+      // If we can't refresh the selected PRD, close the modal
+      if (selectedPRD) {
+        setDetailsModalOpen(false);
+        setSelectedPRD(null);
+      }
+    }
+  };
+
   // Handle view tasks - open kanban board in new tab with PRD filter
   const handleViewTasks = (prd: PRD) => {
     console.log('PRD object:', prd);
@@ -460,7 +481,7 @@ export function PRDManagement() {
         open={detailsModalOpen}
         onOpenChange={setDetailsModalOpen}
         prd={selectedPRD}
-        onPRDUpdate={loadPRDs}
+        onPRDUpdate={handlePRDUpdate}
       />
     </div>
   );

@@ -221,6 +221,18 @@ export function PRDDetailsModal({ open, onOpenChange, prd, onPRDUpdate }: PRDDet
 
   if (!prd) return null;
 
+  // Safe date formatting function
+  const formatDate = (dateString: string | null | undefined) => {
+    if (!dateString) return 'Unknown';
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Invalid Date';
+      return date.toLocaleDateString();
+    } catch (error) {
+      return 'Invalid Date';
+    }
+  };
+
   // Get status color
   const getStatusColor = (status: PRD['status']) => {
     switch (status) {
@@ -286,12 +298,12 @@ export function PRDDetailsModal({ open, onOpenChange, prd, onPRDUpdate }: PRDDet
                   <div className="flex items-center gap-2">
                     <Calendar className="h-3 w-3" />
                     <span className="font-medium">Created:</span>
-                    <span>{new Date(prd.created_date).toLocaleDateString()}</span>
+                    <span>{formatDate(prd.created_date)}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Clock className="h-3 w-3" />
                     <span className="font-medium">Modified:</span>
-                    <span>{new Date(prd.last_modified).toLocaleDateString()}</span>
+                    <span>{formatDate(prd.last_modified)}</span>
                   </div>
                 </div>
               </div>
@@ -337,6 +349,12 @@ export function PRDDetailsModal({ open, onOpenChange, prd, onPRDUpdate }: PRDDet
                       {prd.complexity}
                     </Badge>
                   </div>
+                  {prd.estimated_effort && (
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-sm">Estimated Effort:</span>
+                      <span className="text-sm">{prd.estimated_effort}</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

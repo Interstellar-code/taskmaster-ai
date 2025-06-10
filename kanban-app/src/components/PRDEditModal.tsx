@@ -36,7 +36,7 @@ export function PRDEditModal({ open, onOpenChange, prd, onPRDUpdate }: PRDEditMo
     },
   });
 
-  // Reset form when PRD changes
+  // Reset form when PRD changes or modal opens
   React.useEffect(() => {
     if (prd && open) {
       form.reset({

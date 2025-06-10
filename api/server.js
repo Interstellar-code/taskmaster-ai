@@ -166,13 +166,13 @@ function createApp() {
  */
 async function startServer(port = 3001, projectRoot = null) {
   try {
-    // Initialize database if project root is provided
-    if (projectRoot) {
-      // Set PROJECT_ROOT environment variable for runtime use
-      process.env.PROJECT_ROOT = projectRoot;
-      await databaseManager.initialize(projectRoot);
-      logger.info(`Database initialized for project: ${projectRoot}`);
-    }
+    // Initialize database (auto-detect project root if not provided)
+    await databaseManager.initialize(projectRoot);
+
+    // Set PROJECT_ROOT environment variable for runtime use
+    const actualProjectRoot = projectRoot || databaseManager.findProjectRoot() || process.cwd();
+    process.env.PROJECT_ROOT = actualProjectRoot;
+    logger.info(`Database initialized for project: ${actualProjectRoot}`);
 
     const app = createApp();
     const server = createServer(app);

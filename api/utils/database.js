@@ -22,14 +22,58 @@ class DatabaseManager {
   }
 
   /**
+   * Find the correct TaskHero project root
+   * @param {string} startPath - Starting path to search from
+   * @returns {string|null} Project root path or null if not found
+   */
+  findProjectRoot(startPath = process.cwd()) {
+    let currentPath = path.resolve(startPath);
+    const root = path.parse(currentPath).root;
+
+    while (currentPath !== root) {
+      const taskmasterPath = path.join(currentPath, '.taskmaster');
+      const dbPath = path.join(taskmasterPath, 'taskhero.db');
+
+      // Check if .taskmaster directory and database exist
+      if (fs.existsSync(taskmasterPath) && fs.existsSync(dbPath)) {
+        console.log(`Found TaskHero project at: ${currentPath}`);
+        return currentPath;
+      }
+
+      // Move up one directory
+      currentPath = path.dirname(currentPath);
+    }
+
+    console.log(`No TaskHero project found starting from: ${startPath}`);
+    return null;
+  }
+
+  /**
    * Initialize database connection
-   * @param {string} projectRoot - Root path of the project
+   * @param {string} projectRoot - Root path of the project (optional, will auto-detect if not provided)
    * @returns {Promise<void>}
    */
-  async initialize(projectRoot) {
+  async initialize(projectRoot = null) {
     try {
+      // Auto-detect project root if not provided
+      if (!projectRoot) {
+        projectRoot = this.findProjectRoot();
+        if (!projectRoot) {
+          // Fallback to current directory if no existing project found
+          projectRoot = process.cwd();
+          console.log(`No existing TaskHero project found, using current directory: ${projectRoot}`);
+        }
+      } else {
+        // If project root is provided, check if it's valid
+        const detectedRoot = this.findProjectRoot(projectRoot);
+        if (detectedRoot && detectedRoot !== projectRoot) {
+          console.log(`Using detected project root: ${detectedRoot} instead of provided: ${projectRoot}`);
+          projectRoot = detectedRoot;
+        }
+      }
+
       const dbPath = this.getDatabasePath(projectRoot);
-      
+
       // Ensure .taskmaster directory exists
       const taskmasterDir = path.dirname(dbPath);
       if (!fs.existsSync(taskmasterDir)) {
@@ -38,22 +82,22 @@ class DatabaseManager {
 
       // Create database connection
       this.db = await this.createConnection(dbPath);
-      
+
       // Enable foreign key constraints
       await this.runQuery('PRAGMA foreign_keys = ON');
-      
+
       // Use DELETE mode instead of WAL for WSL compatibility
       await this.runQuery('PRAGMA journal_mode = DELETE');
-      
+
       // Set reasonable timeout
       await this.runQuery('PRAGMA busy_timeout = 30000');
-      
+
       // Initialize schema if needed
       await this.initializeSchema();
-      
+
       this.isInitialized = true;
       console.log(`Database initialized at: ${dbPath}`);
-      
+
     } catch (error) {
       console.error('Database initialization failed:', error);
       throw error;
