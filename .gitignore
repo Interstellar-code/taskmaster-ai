@@ -116,12 +116,11 @@ test-init/
 !test-init/prd/**
 !test-init/tasks/**
 
-# TaskMaster AI - Ignore everything in kanban-app/ except prd/ and tasks/
-kanban-app/
-!kanban-app/prd/
-!kanban-app/tasks/
-!kanban-app/prd/**
-!kanban-app/tasks/**
+# Kanban app build artifacts and dependencies
+kanban-app/node_modules/
+kanban-app/dist/
+kanban-app/dist-ssr/
+kanban-app/*.local
 
 # TaskMaster AI - Ignore everything in test-init-project/ except prd/ and tasks/
 test-init-project/
