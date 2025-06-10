@@ -14,6 +14,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Interactive menu**: `npm run menu` or `task-hero menu`
 - **Web interface**: `npm run web` (starts Express server)
 - **Build web app**: `npm run web:build` (builds React Kanban app)
+- **Full dev environment**: `npm run dev:full` (API + React dev server)
+- **API server**: `npm run api` (starts API server on port 3000)
+- **API dev server**: `npm run api:dev` (starts API server on port 3001)
+- **API tests**: `npm run api:test` (tests API endpoints)
 - **MCP server**: `npm run mcp-server` or `node mcp-server/server.js`
 - **Format code**: `npm run format` (Prettier)
 - **Format check**: `npm run format-check`
@@ -56,10 +60,11 @@ TaskHero is an AI-driven task management system with three main interfaces:
    - `src/core/direct-functions/`: Direct function wrappers (camelCase with 'Direct' suffix)
    - `src/core/utils/path-utils.js`: Path resolution utilities
 
-3. **Web Interface** (`kanban-app/` + `src/web/`)
-   - React/TypeScript Kanban board with drag-and-drop
-   - Express.js API server (`src/web/server.js`)
+3. **Web Interface** (`kanban-app/` + `api/`)
+   - React/TypeScript Kanban board with drag-and-drop (`kanban-app/`)
+   - Express.js API server (`api/server.js`) with SQLite database
    - Terminal-based Kanban interface (`src/kanban/`)
+   - REST API with routes for tasks, PRDs, analytics, and health checks
 
 ### AI Provider System (`src/ai-providers/`)
 
@@ -67,11 +72,29 @@ TaskHero is an AI-driven task management system with three main interfaces:
 - Supports: Anthropic, OpenAI, Google, Perplexity, xAI, OpenRouter, Ollama, Azure, Bedrock
 - Unified interface through `ai-services-unified.js`
 
+### Web API Architecture (`api/`)
+
+- **Express.js REST API** with SQLite database backend
+- **DAO Pattern**: Data Access Objects handle database operations (`api/dao/`)
+  - `BaseDAO.js`: Common database operations and utilities
+  - `TaskDAO.js`: Task CRUD operations with dependency management
+  - `PRDDAO.js`: PRD file management and analysis tracking
+  - `ConfigurationDAO.js`: Application configuration management
+- **Route Handlers** (`api/routes/`):
+  - `tasks.js`: Task management endpoints with CRUD operations
+  - `prds.js`: PRD upload, analysis, and task generation endpoints
+  - `analytics.js`: Project analytics and reporting endpoints
+  - `health.js`: System health and status monitoring
+  - `config.js`: Configuration management endpoints
+- **Middleware**: CORS, error handling, request logging, validation
+- **Database**: SQLite with migrations support for schema updates
+
 ### Data Flow
 
 - **CLI**: Commands → Core Logic → AI Services → Providers
 - **MCP**: Tools → Direct Functions → Core Logic → AI Services → Providers
-- **Web**: API → Core Logic → AI Services → Providers
+- **Web API**: REST Routes → DAO Layer → Database/File System
+- **Web App**: React Components → API Services → REST API
 
 ## Key Conventions
 
@@ -85,7 +108,8 @@ TaskHero is an AI-driven task management system with three main interfaces:
 
 - **Project settings**: `.taskmasterconfig` (managed via `task-hero models`)
 - **API keys**: `.env` file (CLI) or `mcp.json` env section (MCP)
-- **Task data**: `tasks.json` in project root
+- **Task data**: `tasks.json` in project root OR SQLite database (`.taskmaster/taskhero.db`)
+- **PRD storage**: `.taskmaster/prd/` directory for file-based PRD management
 
 ### Silent Mode Implementation
 
@@ -143,12 +167,15 @@ export async function someDirectFunction(args, log) {
 
 ## Important Files
 
-- `tasks.json`: Central task data store
+- `tasks.json`: Central task data store (CLI/MCP mode)
+- `.taskmaster/taskhero.db`: SQLite database (Web API mode)
 - `.taskmasterconfig`: Project configuration (models, parameters)
 - `package.json`: Dependencies and npm scripts
 - `jest.config.js`: Test configuration
 - `bin/task-hero.js`: CLI entry point
 - `mcp-server/server.js`: MCP server entry point
+- `api/server.js`: Web API server entry point
+- `kanban-app/`: React Kanban frontend application
 
 ## TaskHero Development Workflow
 
@@ -200,3 +227,31 @@ TaskHero itself uses TaskHero for task management. When working on this codebase
 ## Running Lint/TypeCheck
 
 This project uses Prettier for formatting. Run `npm run format-check` to check formatting and `npm run format` to fix formatting issues. The project does not currently have ESLint or TypeScript checking configured for the main codebase (only for the Kanban React app).
+
+## Development Modes and Data Storage
+
+TaskHero operates in different modes depending on the interface used:
+
+### CLI/MCP Mode
+- Uses `tasks.json` file for task storage
+- File-based configuration with `.taskmasterconfig`
+- Individual task files in `tasks/` directory
+- Suitable for development workflows and AI editor integration
+
+### Web API Mode  
+- Uses SQLite database (`.taskmaster/taskhero.db`)
+- DAO pattern for data access
+- REST API endpoints for CRUD operations
+- Suitable for web applications and multi-user scenarios
+
+### PRD Management
+- File-based storage in `.taskmaster/prd/` directory
+- Lifecycle management with status-based organization
+- AI-powered analysis and task generation
+- Supports both CLI and web interfaces
+
+# important-instruction-reminders
+Do what has been asked; nothing more, nothing less.
+NEVER create files unless they're absolutely necessary for achieving your goal.
+ALWAYS prefer editing an existing file to creating a new one.
+NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.
