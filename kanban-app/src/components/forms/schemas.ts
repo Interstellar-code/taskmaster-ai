@@ -131,6 +131,46 @@ export const createFieldSchema = {
   dependencies: () => z.array(z.string()).default([]),
 };
 
+// PRD status enum
+export const PRDStatusSchema = z.enum(['pending', 'in-progress', 'done', 'archived']);
+
+// PRD priority enum
+export const PRDPrioritySchema = z.enum(['low', 'medium', 'high', 'critical']);
+
+// PRD complexity enum
+export const PRDComplexitySchema = z.enum(['low', 'medium', 'high']);
+
+// PRD edit schema
+export const PRDEditSchema = z.object({
+  title: z
+    .string()
+    .min(3, 'Title must be at least 3 characters long')
+    .max(200, 'Title must be less than 200 characters'),
+
+  description: z
+    .string()
+    .min(10, 'Description must be at least 10 characters long')
+    .max(2000, 'Description must be less than 2000 characters')
+    .optional(),
+
+  priority: PRDPrioritySchema.default('medium'),
+
+  complexity: PRDComplexitySchema.default('medium'),
+
+  tags: z
+    .array(z.string())
+    .default([])
+    .refine(
+      (tags) => new Set(tags).size === tags.length,
+      'Tags must be unique'
+    ),
+
+  estimated_effort: z
+    .string()
+    .max(100, 'Estimated effort must be less than 100 characters')
+    .optional(),
+});
+
 // Export types
 export type TaskFormData = z.infer<typeof TaskFormSchema>;
 export type TaskCreateData = z.infer<typeof TaskCreateSchema>;
@@ -139,3 +179,7 @@ export type BulkOperationData = z.infer<typeof BulkOperationSchema>;
 export type TaskFilterData = z.infer<typeof TaskFilterSchema>;
 export type TaskStatus = z.infer<typeof TaskStatusSchema>;
 export type TaskPriority = z.infer<typeof TaskPrioritySchema>;
+export type PRDEditData = z.infer<typeof PRDEditSchema>;
+export type PRDStatus = z.infer<typeof PRDStatusSchema>;
+export type PRDPriority = z.infer<typeof PRDPrioritySchema>;
+export type PRDComplexity = z.infer<typeof PRDComplexitySchema>;

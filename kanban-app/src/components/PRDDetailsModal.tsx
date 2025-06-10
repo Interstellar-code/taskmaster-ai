@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { ScrollArea } from './ui/scroll-area';
 import { Separator } from './ui/separator';
 import { useFormToast } from './forms/FormToast';
+import { PRDEditModal } from './PRDEditModal';
 import {
   FileText,
   Calendar,
@@ -19,7 +20,8 @@ import {
   Search,
   Plus,
   Loader2,
-  Trash2
+  Trash2,
+  Edit
 } from 'lucide-react';
 
 interface PRDDetailsModalProps {
@@ -36,6 +38,7 @@ export function PRDDetailsModal({ open, onOpenChange, prd, onPRDUpdate }: PRDDet
   const [generatingTasks, setGeneratingTasks] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
   const { showSuccess, showError } = useFormToast();
 
   useEffect(() => {
@@ -409,6 +412,14 @@ export function PRDDetailsModal({ open, onOpenChange, prd, onPRDUpdate }: PRDDet
             <Button
               variant="outline"
               size="sm"
+              onClick={() => setEditModalOpen(true)}
+            >
+              <Edit className="h-3 w-3 mr-1" />
+              Edit
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
               onClick={handleAnalyzePRD}
               disabled={isAnalyzing || isAnalyzed}
             >
@@ -483,6 +494,14 @@ export function PRDDetailsModal({ open, onOpenChange, prd, onPRDUpdate }: PRDDet
           </div>
         </div>
       </DialogContent>
+
+      {/* Edit Modal */}
+      <PRDEditModal
+        open={editModalOpen}
+        onOpenChange={setEditModalOpen}
+        prd={prd}
+        onPRDUpdate={onPRDUpdate}
+      />
     </Dialog>
   );
 }
