@@ -12,9 +12,10 @@ export default defineConfig(() => ({
   },
   base: "/",
   server: {
+    port: parseInt(process.env.VITE_PORT || '5173'),
     proxy: {
       '/api': {
-        target: process.env.VITE_API_URL || 'http://localhost:3001',
+        target: process.env.VITE_API_URL || `http://localhost:${process.env.PORT || '3001'}`,
         changeOrigin: true,
         secure: false,
         configure: (proxy, options) => {
@@ -23,7 +24,7 @@ export default defineConfig(() => ({
         }
       },
       '/health': {
-        target: process.env.VITE_API_URL || 'http://localhost:3001',
+        target: process.env.VITE_API_URL || `http://localhost:${process.env.PORT || '3001'}`,
         changeOrigin: true,
         secure: false,
       }

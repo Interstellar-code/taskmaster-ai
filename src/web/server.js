@@ -10,6 +10,32 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 /**
+ * Wait for a server to be ready by polling its health endpoint
+ * @param {string} url - URL to check
+ * @param {number} timeout - Timeout in milliseconds
+ */
+async function waitForServer(url, timeout = 10000) {
+	const startTime = Date.now();
+	
+	while (Date.now() - startTime < timeout) {
+		try {
+			const fetch = (await import('node-fetch')).default;
+			const response = await fetch(url, { timeout: 1000 });
+			if (response.ok) {
+				return true;
+			}
+		} catch (error) {
+			// Server not ready yet, continue waiting
+		}
+		
+		// Wait 500ms before next attempt
+		await new Promise(resolve => setTimeout(resolve, 500));
+	}
+	
+	throw new Error(`Server at ${url} did not become ready within ${timeout}ms`);
+}
+
+/**
  * Start TaskHero Web Interface
  * @param {Object} options - Configuration options
  * @param {number} options.port - Port to run on (will auto-discover if not specified)
@@ -48,11 +74,32 @@ export async function startWebInterface(options = {}) {
  * Start in development mode with hot reload
  */
 async function startDevelopmentMode(options) {
-	const port = options.port || 3000;
-
 	console.log(chalk.yellow('📦 Development mode: Starting with hot reload...'));
-	console.log(chalk.gray('Frontend: http://localhost:5173'));
-	console.log(chalk.gray('Backend: http://localhost:3001'));
+
+	// Find available ports for both API and frontend
+	let apiPort, frontendPort;
+	
+	if (options.port) {
+		// User specified port preference
+		frontendPort = options.port;
+		apiPort = await findAvailablePort(3001);
+		while (apiPort === frontendPort) {
+			apiPort = await findAvailablePort(apiPort + 1);
+		}
+	} else {
+		// Auto-discover both ports sequentially to avoid conflicts
+		apiPort = await findAvailablePort(3001);
+		// Find frontend port starting from 5173, but skip the API port
+		frontendPort = await findAvailablePort(5173);
+		while (frontendPort === apiPort) {
+			frontendPort = await findAvailablePort(frontendPort + 1);
+		}
+	}
+
+	console.log(chalk.green(`🔍 API server will use port: ${apiPort}`));
+	console.log(chalk.green(`🔍 Frontend dev server will use port: ${frontendPort}`));
+	console.log(chalk.gray(`Frontend: http://localhost:${frontendPort}`));
+	console.log(chalk.gray(`Backend: http://localhost:${apiPort}`));
 
 	const webappPath = path.join(__dirname, '../../kanban-app');
 
@@ -68,13 +115,18 @@ async function startDevelopmentMode(options) {
 	// Install dependencies if needed
 	await ensureWebappDependencies(webappPath);
 
-	// Start both frontend and backend
+	// Start both frontend and backend with discovered ports
 	console.log(chalk.blue('🔄 Starting development servers...'));
 
 	const child = spawn('npm', ['run', 'dev:full'], {
 		cwd: webappPath,
 		stdio: 'inherit',
-		shell: true
+		shell: true,
+		env: { 
+			...process.env, 
+			PORT: apiPort.toString(),     // API server port
+			VITE_PORT: frontendPort.toString()  // Frontend dev server port
+		}
 	});
 
 	// Open browser after a delay
@@ -82,11 +134,11 @@ async function startDevelopmentMode(options) {
 		setTimeout(async () => {
 			try {
 				const open = (await import('open')).default;
-				await open('http://localhost:5173');
-				console.log(chalk.green('🌐 Browser opened to http://localhost:5173'));
+				await open(`http://localhost:${frontendPort}`);
+				console.log(chalk.green(`🌐 Browser opened to http://localhost:${frontendPort}`));
 			} catch (error) {
 				console.log(
-					chalk.yellow('💡 Open your browser to: http://localhost:5173')
+					chalk.yellow(`💡 Open your browser to: http://localhost:${frontendPort}`)
 				);
 			}
 		}, 3000);
@@ -106,9 +158,30 @@ async function startDevelopmentMode(options) {
  * Start in production mode with built app
  */
 async function startProductionMode(options) {
-	const port = options.port || 3000;
-
 	console.log(chalk.blue('🏭 Production mode: Serving built application...'));
+
+	// Find available ports for both API and web server
+	let apiPort, webPort;
+	
+	if (options.port) {
+		// User specified web port, find API port avoiding conflict
+		webPort = options.port;
+		apiPort = await findAvailablePort(3001);
+		while (apiPort === webPort) {
+			apiPort = await findAvailablePort(apiPort + 1);
+		}
+	} else {
+		// Auto-discover both ports sequentially to avoid conflicts
+		apiPort = await findAvailablePort(3001);
+		// Find web port starting from 3000, but skip the API port
+		webPort = await findAvailablePort(3000);
+		while (webPort === apiPort) {
+			webPort = await findAvailablePort(webPort + 1);
+		}
+	}
+
+	console.log(chalk.green(`🔍 API server will use port: ${apiPort}`));
+	console.log(chalk.green(`🔍 Web server will use port: ${webPort}`));
 
 	// Build the webapp if needed
 	await buildWebApp();
@@ -135,31 +208,66 @@ async function startProductionMode(options) {
 		process.exit(1);
 	}
 
-	// API routes - integrate with kanban-app API
+	// Start API server first
+	let apiProcess;
 	try {
-		// Mount API routes with port configuration
-		const apiMiddleware = await createApiMiddleware(options);
+		console.log(chalk.blue(`🚀 Starting unified API server on port ${apiPort}...`));
+		
+		// Start the unified API server with discovered port
+		apiProcess = spawn('node', ['api/start.js'], {
+			cwd: path.join(__dirname, '../..'),
+			stdio: 'pipe',
+			env: { ...process.env, PORT: apiPort.toString() }
+		});
 
-		// Mount the entire kanban-app API server at root, since it already has /api routes
-		app.use('/', apiMiddleware);
+		// Log API server output
+		apiProcess.stdout.on('data', (data) => {
+			console.log(chalk.gray(`[API:${apiPort}] ${data.toString().trim()}`));
+		});
 
-		// Ensure app.locals are properly copied from the integrated API
-		if (apiMiddleware.locals) {
-			Object.assign(app.locals, apiMiddleware.locals);
-		}
+		apiProcess.stderr.on('data', (data) => {
+			console.log(chalk.yellow(`[API:${apiPort}] ${data.toString().trim()}`));
+		});
 
-		console.log(chalk.green('✅ Using TaskHero API server'));
-		console.log(chalk.green('✅ API routes mounted'));
-		console.log(
-			chalk.green(
-				`✅ TaskMaster integration: ${app.locals.taskMasterInitialized ? 'Active' : 'Fallback'}`
-			)
-		);
+		// Wait for API server to be ready
+		console.log(chalk.blue('⏳ Waiting for API server to be ready...'));
+		await waitForServer(`http://localhost:${apiPort}/health`, 10000);
+
+		console.log(chalk.green(`✅ API server started on port ${apiPort}`));
+		
+		// Store API process for cleanup
+		app.locals.apiProcess = apiProcess;
+		app.locals.apiPort = apiPort;
+		app.locals.taskMasterInitialized = true;
+
+		// Proxy API requests to the unified API server
+		app.use('/api', async (req, res) => {
+			try {
+				const apiUrl = `http://localhost:${apiPort}${req.originalUrl}`;
+				const fetch = (await import('node-fetch')).default;
+				
+				const response = await fetch(apiUrl, {
+					method: req.method,
+					headers: { 'Content-Type': 'application/json' },
+					body: req.method !== 'GET' ? JSON.stringify(req.body) : undefined
+				});
+				
+				const data = await response.json();
+				res.status(response.status).json(data);
+			} catch (error) {
+				res.status(500).json({ error: 'API proxy error', message: error.message });
+			}
+		});
+
+		console.log(chalk.green('✅ API proxy configured'));
 	} catch (error) {
-		console.error(chalk.red('❌ Error loading API routes:'), error.message);
-		console.error(
-			chalk.yellow('💡 Make sure kanban-app/server/index.js exists')
-		);
+		console.error(chalk.red('❌ Error starting unified API server:'), error.message);
+		console.error(chalk.yellow('💡 Falling back to basic API'));
+
+		// Kill API process if it was started
+		if (apiProcess) {
+			apiProcess.kill('SIGINT');
+		}
 
 		// Fallback API
 		app.use('/api', createFallbackApi());
@@ -194,12 +302,12 @@ async function startProductionMode(options) {
 		});
 	});
 
-	// Start server
-	const server = app.listen(port, () => {
+	// Start web server
+	const server = app.listen(webPort, () => {
 		console.log(chalk.green('✅ TaskHero Web Interface running!'));
-		console.log(chalk.blue(`📊 Kanban Board: http://localhost:${port}`));
-		console.log(chalk.blue(`🔌 API: http://localhost:${port}/api`));
-		console.log(chalk.blue(`🏥 Health: http://localhost:${port}/health`));
+		console.log(chalk.blue(`📊 Kanban Board: http://localhost:${webPort}`));
+		console.log(chalk.blue(`🔌 API: http://localhost:${webPort}/api (proxied to :${apiPort})`));
+		console.log(chalk.blue(`🏥 Health: http://localhost:${webPort}/health`));
 		console.log(chalk.gray(`⏰ Started at: ${new Date().toISOString()}`));
 
 		// Open browser
@@ -207,13 +315,13 @@ async function startProductionMode(options) {
 			setTimeout(async () => {
 				try {
 					const open = (await import('open')).default;
-					await open(`http://localhost:${port}`);
+					await open(`http://localhost:${webPort}`);
 					console.log(
-						chalk.green(`🌐 Browser opened to http://localhost:${port}`)
+						chalk.green(`🌐 Browser opened to http://localhost:${webPort}`)
 					);
 				} catch (error) {
 					console.log(
-						chalk.yellow(`💡 Open your browser to: http://localhost:${port}`)
+						chalk.yellow(`💡 Open your browser to: http://localhost:${webPort}`)
 					);
 				}
 			}, 1000);
@@ -223,6 +331,13 @@ async function startProductionMode(options) {
 	// Handle graceful shutdown
 	process.on('SIGINT', () => {
 		console.log(chalk.yellow('\n🛑 Shutting down server...'));
+		
+		// Kill API process if it exists
+		if (app.locals.apiProcess) {
+			console.log(chalk.yellow('🛑 Stopping API server...'));
+			app.locals.apiProcess.kill('SIGINT');
+		}
+		
 		server.close(() => {
 			console.log(chalk.green('✅ Server shut down gracefully'));
 			process.exit(0);

@@ -3319,6 +3319,23 @@ Examples:
 			}
 		});
 
+	// web command
+	programInstance
+		.command('web')
+		.description('Start TaskHero web interface')
+		.option('-p, --port <number>', 'Port to run on (defaults to auto-discovery)')
+		.option('-d, --dev', 'Development mode with hot reload')
+		.option('--no-open', 'Don\'t open browser automatically')
+		.action(async (options) => {
+			try {
+				const { startWebInterface } = await import('../../src/web/server.js');
+				await startWebInterface(options);
+			} catch (error) {
+				console.error(chalk.red('Error starting web interface:'), error.message);
+				process.exit(1);
+			}
+		});
+
 	return programInstance;
 }
 
