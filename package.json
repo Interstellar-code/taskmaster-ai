@@ -124,7 +124,10 @@
 	],
 	"overrides": {
 		"node-fetch": "^2.6.12",
-		"whatwg-url": "^11.0.0"
+		"whatwg-url": "^11.0.0",
+		"brace-expansion": "^1.1.11",
+		"minimatch": "^3.1.2",
+		"glob": "^7.2.3"
 	},
 	"devDependencies": {
 		"@changesets/changelog-github": "^0.5.1",
